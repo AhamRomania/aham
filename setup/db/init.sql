@@ -29,8 +29,8 @@ create table users (
 create table reports (
     id serial primary key,
     reporter integer references users(id),
-    reporter_name varchar(255) not null,
-    reporter_email varchar(255) not null,
+    reporter_name varchar(255),
+    reporter_email varchar(255),
     reference varchar(2000) not null,
     reason varchar(255) not null,
     comments text not null,
@@ -41,7 +41,7 @@ create table reports (
     foreign key (reporter) references users(id),
     check (status in ('pending', 'approved', 'rejected')),
     check (reason in ('inappropriate', 'spam', 'other')),
-    unique (reference,reason,comments,navitator,ip)
+    unique (email,reference,reason,comments,navitator,ip)
 );
 
 insert into counties (name) values ('Cluj'), ('Timiș'), ('Alba');
