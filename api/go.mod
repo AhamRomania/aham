@@ -16,5 +16,6 @@ require (
 
 require (
 	github.com/ajg/form v1.5.1 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/jackc/pgx/v5 v5.7.2
 )

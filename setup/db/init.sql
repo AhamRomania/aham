@@ -19,6 +19,8 @@ create table users (
     name varchar(255) not null,
     phone varchar(20) not null,
     city integer not null references cities(id),
+    email_activation_token varchar(255),
+    phone_activation_token varchar(255),
     created_at timestamp not null default current_timestamp
 );
 

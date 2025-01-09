@@ -14,6 +14,7 @@ func main() {
 	rest := chi.NewMux()
 
 	rest.Post("/users", route.CreateUser)
+	rest.Post("/auth", route.Auth)
 	rest.Post("/ads", route.CreateAd)
 	rest.Get("/ads/{id}", route.GetAd)
 
