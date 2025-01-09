@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Api",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "env": {
+                "PORT": ":8080",
+                "DB": "postgres://aham:aham@localhost:5432/aham"
+            },
+            "program": "${workspaceFolder}/api/main.go",
+            "output": "${workspaceFolder}/bin/api"
+        }
+    ]
+}
