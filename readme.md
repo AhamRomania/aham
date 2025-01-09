@@ -1,4 +1,5 @@
 # Aham Ads Platform
 
 Values:
-- **MVP**: Minimum Viable Product
+- **Minimum Viable Product**
+- **Quality over Quantity**
