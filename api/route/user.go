@@ -3,7 +3,7 @@ package route
 import (
 	"aham/c"
 	"aham/db"
-	"fmt"
+	"aham/service/emails"
 	"net/http"
 	"unicode"
 
@@ -32,20 +32,18 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var req CreateUserRequest
 
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to decode request body for user creation"))
+		c.Error(w, http.StatusBadRequest, "Failed to decode request body for user creation")
 		return
 	}
 
 	if db.VerifyEmailExists(req.Email) {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Email already exists"))
+		c.Log().Info("Email already exists: ", req.Email)
+		c.Error(w, http.StatusBadRequest, "Email already exists")
 		return
 	}
 
 	if !isPasswordComplex(req.Password) {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character."))
+		c.Error(w, http.StatusBadRequest, "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.")
 		return
 	}
 
@@ -55,24 +53,21 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to hash password"))
+		c.Error(w, http.StatusInternalServerError, "Failed to hash password")
 		return
 	}
 
 	if req.Name == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Name cannot be empty"))
+		c.Error(w, http.StatusBadRequest, "Name cannot be empty")
 		return
 	}
 
 	if req.Phone == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Phone number cannot be empty"))
+		c.Error(w, http.StatusBadRequest, "Phone number cannot be empty")
 		return
 	}
 
-	user := db.User{
+	user := &db.User{
 		Email:    req.Email,
 		Password: string(password),
 		Name:     req.Name,
@@ -81,11 +76,14 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := user.Create(); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		fmt.Println(err)
+		c.Log().Info("Failed to create user", "error", err)
+		c.Error(w, http.StatusInternalServerError, "Failed to create user")
 		return
 	}
+
+	emails.Send(user, emails.WELCOME, &emails.Args{
+		"ACTIVATION_URL": "https://aham.ro/activare?secret=ABC",
+	})
 
 	render.JSON(w, r, req)
 }

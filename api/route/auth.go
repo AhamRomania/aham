@@ -22,22 +22,19 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 	var req AuthRequest
 
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Failed to decode request body for user authentication"))
+		c.Error(w, http.StatusBadRequest, "Failed to decode request body for user authentication")
 		return
 	}
 
 	user, err := db.GetUserByEmail(req.Email)
 
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Invalid email or password"))
+		c.Error(w, http.StatusUnauthorized, "Invalid email or password")
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Invalid email or password"))
+		c.Error(w, http.StatusUnauthorized, "Invalid email or password")
 		return
 	}
 
@@ -59,8 +56,7 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to generate token"))
+		c.Error(w, http.StatusInternalServerError, "Failed to generate token")
 		return
 	}
 

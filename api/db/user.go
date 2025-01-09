@@ -18,6 +18,14 @@ type User struct {
 	CreatedAt            time.Time `json:"created_at"`
 }
 
+func (u *User) ToEmail() string {
+	return u.Email
+}
+
+func (u *User) ToName() string {
+	return u.Name
+}
+
 func (u *User) Create() error {
 	_, err := c.DB().Exec(
 		context.Background(),
