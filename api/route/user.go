@@ -51,6 +51,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if req.Name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Name cannot be empty"))
+		return
+	}
+
 	if req.Phone == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Phone number cannot be empty"))
@@ -67,7 +73,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := user.Create(); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Failed to create user"))
+		w.Write([]byte(err.Error()))
 		fmt.Println(err)
 		return
 	}
