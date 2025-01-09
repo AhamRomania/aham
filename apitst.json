@@ -1,0 +1,115 @@
+{
+  "info": {
+    "name": "apitst",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create User",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{HOST}}/users",
+          "query": null,
+          "protocol": null,
+          "host": [
+            "{{HOST}}/users"
+          ],
+          "port": null,
+          "path": null
+        },
+        "description": "",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false,
+            "description": null
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "disabled": false,
+          "raw": "{\"email\":\"jhon@doe.com\",\"password\":\"P@ssword42\",\"name\":\"Jhon Doe\",\"phone\":\"5887255636\",\"city\":1}"
+        },
+        "auth": null
+      },
+      "protocolProfileBehavior": {
+        "followRedirects": false,
+        "followOriginalHttpMethod": false,
+        "followAuthorizationHeader": false
+      },
+      "response": []
+    },
+    {
+      "name": "Auth",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "{{HOST}}/auth",
+          "query": null,
+          "protocol": null,
+          "host": [
+            "{{HOST}}/auth"
+          ],
+          "port": null,
+          "path": null
+        },
+        "description": "",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false,
+            "description": null
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "disabled": false,
+          "raw": "{\"email\":\"jhon@doe.com\",\"password\":\"P@ssword42\"}"
+        },
+        "auth": null
+      },
+      "protocolProfileBehavior": {
+        "followRedirects": false,
+        "followOriginalHttpMethod": false,
+        "followAuthorizationHeader": false
+      },
+      "response": []
+    },
+    {
+      "name": "Me",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{HOST}}/users/me",
+          "query": null,
+          "protocol": null,
+          "host": [
+            "{{HOST}}/users/me"
+          ],
+          "port": null,
+          "path": null
+        },
+        "description": "",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMSIsImV4cCI6MTczNjQ3OTI2MCwic3ViIjoiYXV0aCJ9.CQCmZujEJ2CZL06WZlT9gsEDYZhGnONPL-dXiZPkvp8",
+            "disabled": false,
+            "description": null
+          }
+        ],
+        "body": null,
+        "auth": null
+      },
+      "protocolProfileBehavior": {
+        "followRedirects": false,
+        "followOriginalHttpMethod": false,
+        "followAuthorizationHeader": false
+      },
+      "response": []
+    }
+  ]
+}
