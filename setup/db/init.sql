@@ -44,5 +44,7 @@ create table reports (
     unique (email,reference,reason,comments,navitator,ip)
 );
 
+CREATE INDEX reports_index ON reports(reporter,reason,status);
+
 insert into counties (name) values ('Cluj'), ('Timiș'), ('Alba');
 insert into cities (name, county) values ('Cluj-Napoca', 1), ('Timișoara', 2), ('Alba Iulia', 3);

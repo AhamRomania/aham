@@ -7,15 +7,21 @@ import (
 )
 
 type User struct {
-	ID                   int       `json:"id"`
-	Email                string    `json:"email"`
-	Password             string    `json:"-"`
-	Name                 string    `json:"name"`
-	Phone                string    `json:"phone"`
-	City                 int64     `json:"city"`
-	EmailActivationToken *string   `json:"email_activation_token"`
-	PhoneActivationToken *string   `json:"phone_activation_token"`
-	CreatedAt            time.Time `json:"created_at"`
+	ID                   int        `json:"id"`
+	Email                string     `json:"email"`
+	Password             string     `json:"-"`
+	Name                 string     `json:"name"`
+	Phone                string     `json:"phone"`
+	City                 int64      `json:"city"`
+	EmailActivationToken *string    `json:"email_activation_token"`
+	PhoneActivationToken *string    `json:"phone_activation_token"`
+	EmailActivatedAt     *time.Time `json:"email_activated_at"`
+	PhoneActivatedAt     *time.Time `json:"phone_activated_at"`
+	CreatedAt            time.Time  `json:"created_at"`
+}
+
+func (u *User) Activated() bool {
+	return u.EmailActivatedAt != nil
 }
 
 func (u *User) ToEmail() string {
