@@ -9,7 +9,7 @@ import (
 type User struct {
 	ID                   int       `json:"id"`
 	Email                string    `json:"email"`
-	Password             string    `json:"password"`
+	Password             string    `json:"-"`
 	Name                 string    `json:"name"`
 	Phone                string    `json:"phone"`
 	City                 int64     `json:"city"`
@@ -49,6 +49,18 @@ func GetUserByEmail(email string) (*User, error) {
 		context.Background(),
 		"SELECT id, email, password, name, phone, city, email_activation_token, phone_activation_token, created_at FROM users WHERE email = $1",
 		email,
+	).Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt)
+
+	return &user, err
+}
+
+func GetUserByID(id int64) (*User, error) {
+	var user User
+
+	err := c.DB().QueryRow(
+		context.Background(),
+		"SELECT id, email, password, name, phone, city, email_activation_token, phone_activation_token, created_at FROM users WHERE id = $1",
+		id,
 	).Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt)
 
 	return &user, err

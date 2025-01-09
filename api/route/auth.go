@@ -1,6 +1,7 @@
 package route
 
 import (
+	"aham/c"
 	"aham/db"
 	"fmt"
 	"net/http"
@@ -45,12 +46,12 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 		jwt.StandardClaims
 	}
 
-	var jwtKey = []byte("your_secret_key")
+	var jwtKey = []byte(c.JWT_KEY)
 
 	claims := &Claims{
 		UserID: fmt.Sprint(user.ID),
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
+			ExpiresAt: time.Now().Add(c.JWT_EXPIRE).Unix(),
 			Subject:   "auth",
 		},
 	}
@@ -63,6 +64,5 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(tokenString))
+	render.JSON(w, r, map[string]string{"token": tokenString})
 }

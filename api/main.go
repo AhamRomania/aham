@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aham/c"
 	"aham/route"
 	"flag"
 	"fmt"
@@ -14,6 +15,7 @@ func main() {
 	rest := chi.NewMux()
 
 	rest.Post("/users", route.CreateUser)
+	rest.Get("/users/me", c.Guard(route.GetCurrentUser))
 	rest.Post("/auth", route.Auth)
 	rest.Post("/ads", route.CreateAd)
 	rest.Get("/ads/{id}", route.GetAd)

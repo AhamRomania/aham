@@ -1,6 +1,7 @@
 package route
 
 import (
+	"aham/c"
 	"aham/db"
 	"fmt"
 	"net/http"
@@ -16,6 +17,14 @@ type CreateUserRequest struct {
 	Name     string `json:"name"`
 	Phone    string `json:"phone"`
 	City     int64  `json:"city"`
+}
+
+func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
+	if id, err := c.UserID(r); err == nil {
+		if user, err := db.GetUserByID(id); err == nil {
+			render.JSON(w, r, user)
+		}
+	}
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
