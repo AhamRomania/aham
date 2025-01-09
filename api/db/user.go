@@ -29,8 +29,8 @@ func (u *User) ToName() string {
 func (u *User) Create() error {
 	_, err := c.DB().Exec(
 		context.Background(),
-		"INSERT INTO users (email, password, name, phone, city) VALUES ($1, $2, $3, $4, $5)",
-		u.Email, u.Password, u.Name, u.Phone, u.City,
+		"INSERT INTO users (email, password, name, phone, city, email_activation_token) VALUES ($1, $2, $3, $4, $5, $6)",
+		u.Email, u.Password, u.Name, u.Phone, u.City, u.EmailActivationToken,
 	)
 
 	return err

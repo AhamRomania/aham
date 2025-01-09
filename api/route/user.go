@@ -4,10 +4,12 @@ import (
 	"aham/c"
 	"aham/db"
 	"aham/service/emails"
+	"context"
 	"net/http"
 	"unicode"
 
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -17,6 +19,26 @@ type CreateUserRequest struct {
 	Name     string `json:"name"`
 	Phone    string `json:"phone"`
 	City     int64  `json:"city"`
+}
+
+func ActivateUser(w http.ResponseWriter, r *http.Request) {
+
+	rows, err := c.DB().Query(
+		context.Background(),
+		"UPDATE users SET email_activation_token = NULL, email_activated_at = now() WHERE email_activation_token = $1",
+		r.URL.Query().Get("ref"),
+	)
+
+	if err != nil {
+		c.Log().Error(err.Error())
+		c.Error(w, http.StatusInternalServerError, "Failed to activate user")
+		return
+	}
+
+	if rows.CommandTag().RowsAffected() == 0 {
+		c.Error(w, http.StatusBadRequest, "Invalid activation token")
+		return
+	}
 }
 
 func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
@@ -68,11 +90,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := &db.User{
-		Email:    req.Email,
-		Password: string(password),
-		Name:     req.Name,
-		Phone:    req.Phone,
-		City:     req.City,
+		Email:                req.Email,
+		Password:             string(password),
+		Name:                 req.Name,
+		Phone:                req.Phone,
+		City:                 req.City,
+		EmailActivationToken: c.String(uuid.NewString()),
 	}
 
 	if err := user.Create(); err != nil {
@@ -82,7 +105,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	emails.Send(user, emails.WELCOME, &emails.Args{
-		"ACTIVATION_URL": "https://aham.ro/activare?secret=ABC",
+		"ACTIVATION_URL": c.URLF("/activare?ref=%s", *user.EmailActivationToken),
 	})
 
 	render.JSON(w, r, req)
