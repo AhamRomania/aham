@@ -1,3 +1,5 @@
+CREATE TYPE currency AS ENUM ('RON', 'EUR', 'USD');
+
 create table counties (
     id serial primary key,
     name varchar(255) not null,
@@ -15,16 +17,42 @@ create table cities (
 create table users (
     id serial primary key,
     email varchar(255) not null,
-    password varchar(255) not null,
-    name varchar(255) not null,
-    phone varchar(20) not null,
-    city integer not null references cities(id),
+    password varchar(255),
+    given_name varchar(255) not null,
+    family_name varchar(255) not null,
+    phone varchar(20),
+    city integer references cities(id),
+    picture varchar(255),
     email_activation_token varchar(255),
     phone_activation_token varchar(255),
     created_at timestamp not null default current_timestamp,
     email_activated_at timestamp,
     phone_activated_at timestamp
 );
+
+create table categories (
+    id serial primary key,
+    name varchar(255) not null,
+    parent integer references categories(id),
+    unique (name)
+);
+
+create table ads (
+    id serial primary key,
+    title varchar(255) not null,
+    description text not null,
+    category integer not null references categories(id),
+    user integer not null references users(id),
+    city integer not null references cities(id),
+    coordinates geography,
+    price integer not null,
+    currency currency not null,
+    created_at timestamp not null default current_timestamp,
+    status varchar(20) not null default 'active',
+    foreign key (user) references users(id),
+    foreign key (category) references categories(id),
+    check (status in ('active', 'inactive'))
+)
 
 create table reports (
     id serial primary key,
@@ -41,10 +69,12 @@ create table reports (
     foreign key (reporter) references users(id),
     check (status in ('pending', 'approved', 'rejected')),
     check (reason in ('inappropriate', 'spam', 'other')),
-    unique (email,reference,reason,comments,navitator,ip)
+    unique (reporter_email,reference,reason,comments,navitator,ip)
 );
 
 CREATE INDEX reports_index ON reports(reporter,reason,status);
 
 insert into counties (name) values ('Cluj'), ('Timiș'), ('Alba');
 insert into cities (name, county) values ('Cluj-Napoca', 1), ('Timișoara', 2), ('Alba Iulia', 3);
+
+insert into categories (name) values ('Electronice'), ('Imobiliare'), ('Auto', 1), ('Telefoane', 1), ('Laptopuri', 1), ('Apartamente', 2), ('Case', 2), ('Terenuri', 2);

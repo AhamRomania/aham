@@ -10,9 +10,11 @@ type User struct {
 	ID                   int        `json:"id"`
 	Email                string     `json:"email"`
 	Password             string     `json:"-"`
-	Name                 string     `json:"name"`
+	GivenName            string     `json:"given_name"`
+	FamilyName           string     `json:"family_name"`
 	Phone                string     `json:"phone"`
 	City                 int64      `json:"city"`
+	Picture              *string    `json:"picture"`
 	EmailActivationToken *string    `json:"email_activation_token"`
 	PhoneActivationToken *string    `json:"phone_activation_token"`
 	EmailActivatedAt     *time.Time `json:"email_activated_at"`
@@ -29,14 +31,14 @@ func (u *User) ToEmail() string {
 }
 
 func (u *User) ToName() string {
-	return u.Name
+	return u.GivenName + " " + u.FamilyName
 }
 
 func (u *User) Create() error {
 	_, err := c.DB().Exec(
 		context.Background(),
-		"INSERT INTO users (email, password, name, phone, city, email_activation_token) VALUES ($1, $2, $3, $4, $5, $6)",
-		u.Email, u.Password, u.Name, u.Phone, u.City, u.EmailActivationToken,
+		"INSERT INTO users (email, password, given_name, family_name, phone, city, email_activation_token) VALUES ($1, $2, $3, $4, $5, $6)",
+		u.Email, u.Password, u.GivenName, u.FamilyName, u.Phone, u.City, u.EmailActivationToken,
 	)
 
 	return err
@@ -61,9 +63,9 @@ func GetUserByEmail(email string) (*User, error) {
 
 	err := c.DB().QueryRow(
 		context.Background(),
-		"SELECT id, email, password, name, phone, city, email_activation_token, phone_activation_token, created_at FROM users WHERE email = $1",
+		"SELECT id, email, password, given_name, family_name, phone, city, email_activation_token, phone_activation_token, created_at FROM users WHERE email = $1",
 		email,
-	).Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt)
+	).Scan(&user.ID, &user.Email, &user.Password, &user.GivenName, &user.FamilyName, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt)
 
 	return &user, err
 }
@@ -73,9 +75,9 @@ func GetUserByID(id int64) (*User, error) {
 
 	err := c.DB().QueryRow(
 		context.Background(),
-		"SELECT id, email, password, name, phone, city, email_activation_token, phone_activation_token, created_at FROM users WHERE id = $1",
+		"SELECT id, email, password, given_name, family_name, phone, city, email_activation_token, phone_activation_token, created_at FROM users WHERE id = $1",
 		id,
-	).Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt)
+	).Scan(&user.ID, &user.Email, &user.Password, &user.GivenName, &user.FamilyName, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt)
 
 	return &user, err
 }

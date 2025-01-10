@@ -14,11 +14,12 @@ import (
 )
 
 type CreateUserRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Name     string `json:"name"`
-	Phone    string `json:"phone"`
-	City     int64  `json:"city"`
+	Email      string `json:"email"`
+	Password   string `json:"password"`
+	GivenName  string `json:"given_name"`
+	FamilyName string `json:"family_name"`
+	Phone      string `json:"phone"`
+	City       int64  `json:"city"`
 }
 
 func ActivateUser(w http.ResponseWriter, r *http.Request) {
@@ -79,8 +80,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Name == "" {
-		c.Error(w, http.StatusBadRequest, "Name cannot be empty")
+	if req.GivenName == "" {
+		c.Error(w, http.StatusBadRequest, "Given name cannot be empty")
 		return
 	}
 
@@ -92,7 +93,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	user := &db.User{
 		Email:                req.Email,
 		Password:             string(password),
-		Name:                 req.Name,
+		GivenName:            req.GivenName,
+		FamilyName:           req.FamilyName,
 		Phone:                req.Phone,
 		City:                 req.City,
 		EmailActivationToken: c.String(uuid.NewString()),
