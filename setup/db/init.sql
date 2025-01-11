@@ -42,17 +42,15 @@ create table ads (
     title varchar(255) not null,
     description text not null,
     category integer not null references categories(id),
-    user integer not null references users(id),
+    poster integer not null references users(id),
     city integer not null references cities(id),
-    coordinates geography,
+    coordinates point,
     price integer not null,
     currency currency not null,
     created_at timestamp not null default current_timestamp,
     status varchar(20) not null default 'active',
-    foreign key (user) references users(id),
-    foreign key (category) references categories(id),
     check (status in ('active', 'inactive'))
-)
+);
 
 create table reports (
     id serial primary key,
@@ -77,4 +75,4 @@ CREATE INDEX reports_index ON reports(reporter,reason,status);
 insert into counties (name) values ('Cluj'), ('Timiș'), ('Alba');
 insert into cities (name, county) values ('Cluj-Napoca', 1), ('Timișoara', 2), ('Alba Iulia', 3);
 
-insert into categories (name) values ('Electronice'), ('Imobiliare'), ('Auto', 1), ('Telefoane', 1), ('Laptopuri', 1), ('Apartamente', 2), ('Case', 2), ('Terenuri', 2);
+insert into categories (id, name, parent) values (1, 'Electronice', NULL), (2, 'Imobiliare', NULL), (3, 'Auto', 1), (4, 'Telefoane', 1), (5, 'Laptopuri', 1), (6, 'Apartamente', 2), (7, 'Case', 2), (8, 'Terenuri', 2);

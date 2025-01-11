@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -28,11 +29,13 @@ func main() {
 		r.Post("/report", route.Report)
 	})
 
-	port := flag.String("port", ":8080", "Rest api http port")
+	port := os.Getenv("LISTEN")
 
 	flag.Parse()
 
 	fmt.Println("Server is running on port", *port)
 
-	http.ListenAndServe(*port, rest)
+	if err := http.ListenAndServe(*port, rest); err != nil {
+		fmt.Println("Error starting server", err)
+	}
 }
