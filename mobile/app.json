@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Aham",
-    "slug": "Aham",
+    "slug": "aham",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -16,12 +16,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#286fb4"
       },
-      "package": "ro.aham",
-      "splash": {
-        "image": "./assets/images/adaptive-icon.png",
-        "resizeMode": "cover",
-        "backgroundColor": "#286fb4"
-      }
+      "package": "ro.aham.app"
     },
     "web": {
       "bundler": "metro",
@@ -42,6 +37,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "dfaffa9f-5765-48be-b3cd-93570d5aa0ca"
+      }
+    },
+    "owner": "cosminalbulescu"
   }
 }
