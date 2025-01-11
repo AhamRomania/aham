@@ -7,7 +7,7 @@
             "request": "launch",
             "mode": "auto",
             "env": {
-                "PORT": ":8080",
+                "LISTEN": ":80",
                 "DB": "postgres://aham:aham@localhost:5432/aham"
             },
             "program": "${workspaceFolder}/api/main.go",
