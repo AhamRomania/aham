@@ -37,7 +37,7 @@ func (u *User) ToName() string {
 func (u *User) Create() error {
 	_, err := c.DB().Exec(
 		context.Background(),
-		"INSERT INTO users (email, password, given_name, family_name, phone, city, email_activation_token) VALUES ($1, $2, $3, $4, $5, $6)",
+		"INSERT INTO users (email, password, given_name, family_name, phone, city, email_activation_token) VALUES ($1, $2, $3, $4, $5, $6, $7)",
 		u.Email, u.Password, u.GivenName, u.FamilyName, u.Phone, u.City, u.EmailActivationToken,
 	)
 
@@ -63,9 +63,9 @@ func GetUserByEmail(email string) (*User, error) {
 
 	err := c.DB().QueryRow(
 		context.Background(),
-		"SELECT id, email, password, given_name, family_name, phone, city, email_activation_token, phone_activation_token, created_at FROM users WHERE email = $1",
+		"SELECT id, email, password, given_name, family_name, phone, city, email_activation_token, phone_activation_token, created_at, email_activated_at FROM users WHERE email = $1",
 		email,
-	).Scan(&user.ID, &user.Email, &user.Password, &user.GivenName, &user.FamilyName, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt)
+	).Scan(&user.ID, &user.Email, &user.Password, &user.GivenName, &user.FamilyName, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt, &user.EmailActivatedAt)
 
 	return &user, err
 }
@@ -75,9 +75,9 @@ func GetUserByID(id int64) (*User, error) {
 
 	err := c.DB().QueryRow(
 		context.Background(),
-		"SELECT id, email, password, given_name, family_name, phone, city, email_activation_token, phone_activation_token, created_at FROM users WHERE id = $1",
+		"SELECT id, email, password, given_name, family_name, phone, city, email_activation_token, phone_activation_token, created_at, email_activated_at FROM users WHERE id = $1",
 		id,
-	).Scan(&user.ID, &user.Email, &user.Password, &user.GivenName, &user.FamilyName, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt)
+	).Scan(&user.ID, &user.Email, &user.Password, &user.GivenName, &user.FamilyName, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt, &user.EmailActivatedAt)
 
 	return &user, err
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"aham/c"
 	"aham/route"
-	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -29,13 +28,11 @@ func main() {
 		r.Post("/report", route.Report)
 	})
 
-	port := os.Getenv("LISTEN")
+	listen := os.Getenv("LISTEN")
 
-	flag.Parse()
+	fmt.Println("Server is listening on", listen)
 
-	fmt.Println("Server is running on port", *port)
-
-	if err := http.ListenAndServe(*port, rest); err != nil {
+	if err := http.ListenAndServe(listen, rest); err != nil {
 		fmt.Println("Error starting server", err)
 	}
 }
