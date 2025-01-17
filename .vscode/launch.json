@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Api",
+            "name": "Launch API",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -12,6 +12,18 @@
             },
             "program": "${workspaceFolder}/backend/service/api/main.go",
             "output": "${workspaceFolder}/bin/api"
+        },
+        {
+            "name": "Launch CDN",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "env": {
+                "LISTEN": ":8081",
+                "REDIS": "redis://:aham@localhost:6379/0?protocol=3"
+            },
+            "program": "${workspaceFolder}/backend/service/cdn/main.go",
+            "output": "${workspaceFolder}/bin/cdn"
         }
     ]
 }
