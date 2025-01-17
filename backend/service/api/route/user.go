@@ -1,9 +1,9 @@
 package route
 
 import (
-	"aham/c"
-	"aham/db"
-	"aham/service/emails"
+	"aham/common/c"
+	"aham/common/emails"
+	"aham/service/api/db"
 	"context"
 	"net/http"
 	"unicode"

@@ -1,8 +1,8 @@
 package route
 
 import (
-	"aham/c"
-	"aham/db"
+	"aham/common/c"
+	"aham/service/api/db"
 	"fmt"
 	"net/http"
 	"time"

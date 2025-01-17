@@ -1,7 +1,7 @@
 package db
 
 import (
-	"aham/c"
+	"aham/common/c"
 	"context"
 	"time"
 )

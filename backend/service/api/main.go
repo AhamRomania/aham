@@ -1,8 +1,8 @@
 package main
 
 import (
-	"aham/c"
-	"aham/route"
+	"aham/common/c"
+	"aham/service/api/route"
 	"fmt"
 	"net/http"
 	"os"

@@ -10,7 +10,7 @@
                 "LISTEN": ":8080",
                 "DB": "postgres://aham:aham@localhost:5432/aham"
             },
-            "program": "${workspaceFolder}/api/main.go",
+            "program": "${workspaceFolder}/backend/service/api/main.go",
             "output": "${workspaceFolder}/bin/api"
         }
     ]
