@@ -2,6 +2,7 @@ package main
 
 import (
 	"aham/common/c"
+	"aham/common/ws"
 	"aham/service/api/route"
 	"net/http"
 	"os"
@@ -41,7 +42,7 @@ func main() {
 
 		r.Get("/sitemap", route.Sitemap)
 
-		r.HandleFunc("/ws", route.WebSocket)
+		r.HandleFunc("/ws", ws.GetHandler())
 	})
 
 	listen := os.Getenv("LISTEN")

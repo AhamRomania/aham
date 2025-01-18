@@ -3,6 +3,7 @@ go 1.23.4
 use (
     "common/c"
     "common/cdn"
+    "common/ws"
     "common/emails"
     "service/cdn"
     "service/api"
