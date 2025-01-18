@@ -243,4 +243,4 @@ INSERT INTO meta_assign (category, meta)
         -- Cloth
         (4,1),(4,2),(4,3),(4,14);
 
-INSERT INTO users (id, email, "password", given_name, family_name, email_activated_at) VALUES (1000,'cosmin.albulescu@gmail.com', '$2a$10$wTisw11KVIc22d/ef.xV.u6MrBKuEOUVcEo.BJJcZUdA11kK1BkBK', 'Cosmin', 'Albulescu', now());
+INSERT INTO users (id, email, "password", given_name, family_name, phone, city, email_activated_at) VALUES (1000,'cosmin.albulescu@gmail.com', '$2a$10$wTisw11KVIc22d/ef.xV.u6MrBKuEOUVcEo.BJJcZUdA11kK1BkBK', 'Cosmin', 'Albulescu', '+40790535355', 13, now());

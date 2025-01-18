@@ -22,8 +22,8 @@ type User struct {
 	CreatedAt            time.Time  `json:"created_at"`
 }
 
-func (u *User) Activated() bool {
-	return u.EmailActivatedAt != nil
+func (user *User) Activated() bool {
+	return user.EmailActivatedAt != nil
 }
 
 func (u *User) ToEmail() string {
@@ -57,16 +57,46 @@ func VerifyEmailExists(email string) bool {
 	return found > 0
 }
 
-func GetUserByEmail(email string) (*User, error) {
-	var user User
+func GetUserByEmail(email string) (user *User, err error) {
 
-	err := c.DB().QueryRow(
-		context.Background(),
-		"SELECT id, email, password, given_name, family_name, phone, city, email_activation_token, phone_activation_token, created_at, email_activated_at FROM users WHERE email = $1",
+	user = &User{}
+
+	err = c.DB().QueryRow(
+		context.TODO(),
+		`SELECT
+			id,
+			email,
+			password,
+			given_name,
+			family_name,
+			phone,
+			city,
+			picture,
+			email_activation_token,
+			phone_activation_token,
+			email_activated_at,
+			created_at			
+		FROM
+			users
+		WHERE
+			email = $1`,
 		email,
-	).Scan(&user.ID, &user.Email, &user.Password, &user.GivenName, &user.FamilyName, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt, &user.EmailActivatedAt)
+	).Scan(
+		&user.ID,
+		&user.Email,
+		&user.Password,
+		&user.GivenName,
+		&user.FamilyName,
+		&user.Phone,
+		&user.City,
+		&user.Picture,
+		&user.EmailActivationToken,
+		&user.PhoneActivationToken,
+		&user.EmailActivatedAt,
+		&user.CreatedAt,
+	)
 
-	return &user, err
+	return
 }
 
 func GetUserByID(id int64) (*User, error) {
