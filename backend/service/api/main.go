@@ -30,6 +30,10 @@ func main() {
 
 	listen := os.Getenv("LISTEN")
 
+	if listen == "" {
+		panic("LISTEN env is required")
+	}
+
 	fmt.Println("Server is listening on", listen)
 
 	if err := http.ListenAndServe(listen, rest); err != nil {

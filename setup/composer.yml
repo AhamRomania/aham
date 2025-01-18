@@ -11,7 +11,7 @@ services:
     volumes:
       - ./db:/docker-entrypoint-initdb.d
   redis:
-    image: redis:latest
+    image: redis/redis-stack:latest
     container_name: cdndb
     restart: always
     ports:

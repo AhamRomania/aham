@@ -5,10 +5,8 @@ import (
 	"aham/service/api/db"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/render"
-	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -65,35 +63,14 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 
 func authorize(w http.ResponseWriter, r *http.Request, user *db.User) {
 
-	type Claims struct {
-		UserID string `json:"user_id"`
-		jwt.StandardClaims
-	}
-
-	var jwtKey = []byte(c.JWT_KEY)
-
-	claims := &Claims{
-		UserID: fmt.Sprint(user.ID),
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(c.JWT_EXPIRE).Unix(),
-			Subject:   "auth",
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtKey)
+	token, err := c.JWTUserID(user.ID)
 
 	if err != nil {
-		c.Error(w, http.StatusInternalServerError, "Failed to generate access token")
+		c.Error(w, http.StatusInternalServerError, "Failed to generate JWT token")
 		return
 	}
 
-	if err != nil {
-		c.Error(w, http.StatusInternalServerError, "Failed to generate access token")
-		return
-	}
-
-	render.JSON(w, r, map[string]string{"token": tokenString})
+	render.JSON(w, r, map[string]string{"token": token})
 }
 
 func matchGoogleAccount(token string) (user *db.User, err error) {

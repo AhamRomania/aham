@@ -3,3 +3,4 @@ bin/*
 !bin/.gitkeep
 data/*
 !data/.gitkeep
+!data/test.png

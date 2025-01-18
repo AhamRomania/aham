@@ -10,6 +10,8 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -30,9 +32,12 @@ func init() {
 		panic(err)
 	}
 
+	opts.UnstableResp3 = true
+
 	fmt.Println("Connected to redis @", opts.Addr)
 
 	redisc = redis.NewClient(opts)
+
 }
 
 func main() {
@@ -76,11 +81,16 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.ParseMultipartForm(10 << 20)
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		c.Log().Error(err)
+		http.Error(w, "Fail to parse request", http.StatusBadRequest)
+		return
+	}
 
 	f, h, err := r.FormFile("file")
 
 	if err != nil {
+		c.Log().Error(err)
 		http.Error(w, "Nu am putut citi fișierul încărcat. Eroare 400.", http.StatusBadRequest)
 		return
 	}
@@ -88,6 +98,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	data, err := io.ReadAll(f)
 
 	if err != nil {
+		c.Log().Error(err)
 		http.Error(w, "Nu am putut citi fișierul încărcat. Eroare 500.", http.StatusInternalServerError)
 		return
 	}
@@ -99,22 +110,9 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	table := crc32.MakeTable(crc32.IEEE)
 	checksum := crc32.Checksum(data, table)
 
-	redisc.FTCreate(
-		context.Background(),
-		"idx",
-		&redis.FTCreateOptions{
-			Fields: []string{"crc"},
-		},
-	)
-
-	cmd := redisc.FTSearch(
-		context.Background(),
-		fmt.Sprintf("@crc(%08x)", checksum),
-	)
-
 	mime := http.DetectContentType(data)
 
-	exts := []string{".jpg", ".jpeg", ".png", ".gif"}
+	exts := []string{".jpg", ".jpeg", ".png"}
 
 	ext := filepath.Ext(h.Filename)
 
@@ -123,34 +121,49 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !strings.Contains(mime, "image/") {
+		http.Error(w, "Tipul fișierului nu este permis. Folosește doar image/{jpeg|png}", http.StatusBadRequest)
+		return
+	}
+
 	rid := uuid.New().String()
 
-	dst, err := os.Create(filepath.Join(os.Getenv("FILES"), rid))
+	fpath := filepath.Join(os.Getenv("FILES"), fmt.Sprint(uid), rid)
+
+	if err := os.MkdirAll(fpath, os.ModePerm); err != nil {
+		c.Log().Error(err)
+		http.Error(w, "Nu am putut încărca fișierul.", http.StatusInternalServerError)
+		return
+	}
+
+	dst, err := os.Create(filepath.Join(fpath, "raw"))
 
 	if err != nil {
+		c.Log().Error(err)
 		http.Error(w, "Nu am putut salva fișierul încărcat. Eroare 500.", http.StatusInternalServerError)
 		return
 	}
 
 	if _, err := io.Copy(dst, f); err != nil {
+		c.Log().Error(err)
 		http.Error(w, "Nu am putut salva fișierul încărcat. Eroare 500.", http.StatusInternalServerError)
 		return
 	}
 
-	redisc.Set(context.Background(), rid, "hello", 0)
-
 	uinfo := `
 		{
 			"uuid":"` + rid + `",
-			"uid":"` + fmt.Sprintf("%d", uid) + `",
+			"uid":` + fmt.Sprintf("%d", uid) + `,
 			"filename":"` + h.Filename + `",
 			"size":"` + fmt.Sprintf("%d", h.Size) + `",
 			"crc":"` + fmt.Sprintf("%08x", checksum) + `",
-			"mime":"` + mime + `"
+			"mime":"` + mime + `",
+			"ctime":"` + fmt.Sprint(time.Now().Unix()) + `"
 		}
 	`
 
 	if cmd := redisc.Set(context.Background(), rid, uinfo, 0); cmd.Err() != nil {
+		c.Log().Error(cmd.Err())
 		http.Error(w, "Nu am putut salva metadatele fișierului încărcat. Eroare 500.", http.StatusInternalServerError)
 		return
 	}
