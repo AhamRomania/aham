@@ -31,6 +31,8 @@ func main() {
 		r.Post("/qa", c.Todo("create a question"))
 		r.Post("/qa/{id}", c.Todo("post an answer"))
 		r.Get("/qa/{id}", c.Todo("get a question"))
+
+		r.Get("/sitemap", route.Sitemap)
 	})
 
 	listen := os.Getenv("LISTEN")

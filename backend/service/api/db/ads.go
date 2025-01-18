@@ -18,6 +18,7 @@ type Ad struct {
 	Price       int64     `json:"price"`
 	Currency    string    `json:"currency"`
 	City        int64     `json:"city"`
+	Props       *c.D      `json:"props,omitempty"`
 	Created     time.Time `json:"created"`
 }
 

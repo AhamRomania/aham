@@ -1,6 +1,8 @@
-dev:
-	docker compose -f ./setup/composer.yml -p aham down
+dev@start: dev@stop
 	docker compose -f ./setup/composer.yml -p aham up -d
+
+dev@stop:
+	docker compose -f ./setup/composer.yml -p aham down
 
 test:
 	

@@ -1,12 +1,48 @@
 package c
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
 )
+
+type D map[string]any
+type M map[string]string
+
+func (a D) Value() (driver.Value, error) {
+	return json.Marshal(a)
+}
+
+func (a *D) Scan(value interface{}) error {
+
+	b, ok := value.([]byte)
+
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+
+	return json.Unmarshal(b, &a)
+}
+
+func (a M) Value() (driver.Value, error) {
+	return json.Marshal(a)
+}
+
+func (a *M) Scan(value interface{}) error {
+
+	b, ok := value.([]byte)
+
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+
+	return json.Unmarshal(b, &a)
+}
 
 func NilID(id int64) *int64 {
 	if id == 0 {
