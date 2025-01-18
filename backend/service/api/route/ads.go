@@ -1,17 +1,52 @@
 package route
 
-import "net/http"
+import (
+	"aham/common/c"
+	"aham/service/api/db"
+	"encoding/json"
+	"net/http"
+)
 
 type CreateAdRequest struct {
-	Category    int64  `json:"category"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Price       int64  `json:"price"`
-	Currency    string `json:"currency"`
+	Category    int64    `json:"category"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Price       int64    `json:"price"`
+	Currency    string   `json:"currency"`
+	Pictures    []string `json:"pictures"`
 }
 
 func CreateAd(w http.ResponseWriter, r *http.Request) {
-	// Create ad
+
+	user, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	p := CreateAdRequest{}
+
+	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
+		http.Error(w, "can't parse payload", http.StatusBadRequest)
+		return
+	}
+
+	ad := db.Ad{
+		Category:    1,
+		Owner:       user,
+		Title:       p.Title,
+		Description: p.Description,
+		Pictures:    p.Pictures,
+		Price:       p.Price,
+		Currency:    p.Currency,
+		City:        1,
+	}
+
+	if err := ad.Save(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }
 
 func GetAd(w http.ResponseWriter, r *http.Request) {

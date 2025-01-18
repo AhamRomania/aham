@@ -40,7 +40,6 @@ func (u *User) Create() error {
 		"INSERT INTO users (email, password, given_name, family_name, phone, city, email_activation_token) VALUES ($1, $2, $3, $4, $5, $6, $7)",
 		u.Email, u.Password, u.GivenName, u.FamilyName, u.Phone, u.City, u.EmailActivationToken,
 	)
-
 	return err
 }
 

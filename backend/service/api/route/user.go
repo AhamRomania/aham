@@ -24,20 +24,35 @@ type CreateUserRequest struct {
 
 func ActivateUser(w http.ResponseWriter, r *http.Request) {
 
+	ref := r.URL.Query().Get("ref")
+
+	if ref == "" {
+		http.Error(w, "invalid ref", http.StatusBadRequest)
+		return
+	}
+
 	rows, err := c.DB().Query(
 		context.Background(),
-		"UPDATE users SET email_activation_token = NULL, email_activated_at = now() WHERE email_activation_token = $1",
-		r.URL.Query().Get("ref"),
+		`UPDATE
+			users
+		SET
+			email_activation_token = NULL,
+			email_activated_at = now()
+		WHERE
+			email_activation_token = $1`,
+		ref,
 	)
 
 	if err != nil {
 		c.Log().Error(err.Error())
-		c.Error(w, http.StatusInternalServerError, "Failed to activate user")
+		http.Error(w, "Failed to activate user", http.StatusInternalServerError)
 		return
 	}
 
+	defer rows.Close()
+
 	if rows.CommandTag().RowsAffected() == 0 {
-		c.Error(w, http.StatusBadRequest, "Invalid activation token")
+		http.Error(w, "Invalid activation token", http.StatusBadRequest)
 		return
 	}
 }
@@ -55,18 +70,18 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var req CreateUserRequest
 
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
-		c.Error(w, http.StatusBadRequest, "Failed to decode request body for user creation")
+		http.Error(w, "Failed to decode request body for user creation", http.StatusBadRequest)
 		return
 	}
 
 	if db.VerifyEmailExists(req.Email) {
 		c.Log().Info("Email already exists: ", req.Email)
-		c.Error(w, http.StatusBadRequest, "Email already exists")
+		http.Error(w, "Email already exists", http.StatusBadRequest)
 		return
 	}
 
 	if !isPasswordComplex(req.Password) {
-		c.Error(w, http.StatusBadRequest, "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.")
+		http.Error(w, "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.", http.StatusBadRequest)
 		return
 	}
 

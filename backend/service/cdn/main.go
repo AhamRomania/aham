@@ -68,6 +68,8 @@ func main() {
 
 	mux.Trace("/{uuid}", trace)
 
+	mux.Put("/{uuid}", persist)
+
 	listen := os.Getenv("LISTEN")
 
 	fmt.Println("Server is listening on", listen)
@@ -154,6 +156,34 @@ func trace(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Nu am găsit resursa căutată. Eroare 404.", http.StatusNotFound)
 		return
 	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.Write([]byte(cmd.Val()))
+}
+
+func persist(w http.ResponseWriter, r *http.Request) {
+
+	uuid := strings.Split(r.URL.Path, "/")
+
+	if len(uuid) != 2 {
+		http.Error(w, "Nu am găsit resursa căutată. Eroare 400.", http.StatusBadRequest)
+		return
+	}
+
+	cmd := redisc.Get(
+		context.Background(),
+		uuid[1],
+	)
+
+	if cmd.Err() != nil {
+		http.Error(w, "Nu am găsit resursa căutată. Eroare 404.", http.StatusNotFound)
+		return
+	}
+
+	if r.URL.Query().Get("persist") != "" {
+		redisc.Persist(context.TODO(), uuid[1])
+		redisc.Del(context.TODO(), "shadow:"+uuid[1])
+	}
 }
 
 func serve(w http.ResponseWriter, r *http.Request) {
@@ -189,11 +219,6 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Invalid data", http.StatusInternalServerError)
 		return
-	}
-
-	if r.URL.Query().Get("persist") != "" {
-		redisc.Persist(context.TODO(), u.UUID.String())
-		redisc.Del(context.TODO(), "shadow:"+u.UUID.String())
 	}
 
 	duration := redisc.TTL(context.TODO(), u.UUID.String())

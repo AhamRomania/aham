@@ -42,14 +42,15 @@ create table ads (
     title varchar(255) not null,
     description text not null,
     category integer not null references categories(id),
-    poster integer not null references users(id),
+    owner integer not null references users(id),
     city integer not null references cities(id),
     coordinates point,
     price integer not null,
     currency currency not null,
+    pictures text[] not null,
     created_at timestamp not null default current_timestamp,
-    status varchar(20) not null default 'active',
-    check (status in ('active', 'inactive'))
+    status varchar(20) not null default 'pending',
+    check (status in ('pending', 'active', 'inactive'))
 );
 
 create table reports (
