@@ -16,6 +16,10 @@ type CreateAdRequest struct {
 	Price       int64    `json:"price"`
 	Currency    string   `json:"currency"`
 	Pictures    []string `json:"pictures"`
+	URL         string   `json:"url"`
+	Messages    bool     `json:"messages"`
+	ShowPhone   bool     `json:"show_phone"`
+	Phone       string   `json:"phone"`
 }
 
 func CreateAd(w http.ResponseWriter, r *http.Request) {

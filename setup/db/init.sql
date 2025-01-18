@@ -32,10 +32,19 @@ create table users (
 
 create table categories (
     id serial primary key,
-    name varchar(255) not null,
+    name text not null,
+    slug text not null,
+    "sort" int DEFAULT 0,
+    "hidden" boolean DEFAULT false,
     parent integer references categories(id),
-    unique (name)
+    unique (name),
+    unique (slug)
 );
+
+CREATE INDEX categories_slug_index ON categories ((lower(slug)));
+CREATE INDEX categories_parent_index ON categories (parent);
+CREATE INDEX categories_sort_index ON categories (sort);
+CREATE INDEX categories_hidden_index ON categories (hidden);
 
 create table ads (
     id serial primary key,
@@ -45,6 +54,10 @@ create table ads (
     owner integer not null references users(id),
     city integer not null references cities(id),
     coordinates point,
+    url text,
+    messages boolean default true,
+    show_phone boolean default false,
+    phone text,
     price integer not null,
     currency currency not null,
     pictures text[] not null,
