@@ -11,11 +11,9 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-
-	"github.com/google/uuid"
 )
 
-func TestUploadSuccess(t *testing.T) {
+func TestUploadAndAccess(t *testing.T) {
 
 	var userID int64 = 100000
 
@@ -61,15 +59,9 @@ func TestUploadSuccess(t *testing.T) {
 		return
 	}
 
-	if rec.Result().StatusCode != 200 {
+	if rec.Result().StatusCode != 201 {
 		t.Error(string(data))
 		return
-	}
-
-	type Upload struct {
-		UUID     uuid.UUID `json:"uuid"`
-		UserID   int64     `json:"uid"`
-		Filename string    `json:"filename"`
 	}
 
 	var u = &Upload{}
@@ -79,19 +71,33 @@ func TestUploadSuccess(t *testing.T) {
 		return
 	}
 
-	path := filepath.Join(os.Getenv("FILES"), fmt.Sprint(userID), u.UUID.String())
+	defer func() {
 
-	fi, err := os.Stat(path)
+		path := filepath.Join(os.Getenv("FILES"), fmt.Sprint(userID), u.UUID.String())
 
-	if err != nil {
-		t.Error(err)
-		return
-	}
+		fi, err := os.Stat(path)
 
-	if fi.IsDir() {
-		if err := os.RemoveAll(filepath.Dir(path)); err != nil {
+		if err != nil {
 			t.Error(err)
 			return
 		}
+
+		if fi.IsDir() {
+			if err := os.RemoveAll(filepath.Dir(path)); err != nil {
+				t.Error(err)
+				return
+			}
+		}
+
+	}()
+
+	rec = httptest.NewRecorder()
+	req = httptest.NewRequest("GET", fmt.Sprintf("/%s", u.UUID.String()), nil)
+
+	serve(rec, req)
+
+	if rec.Result().StatusCode != 200 {
+		t.Error("Failed to serve newly created upload. Got", rec.Result().StatusCode)
+		return
 	}
 }

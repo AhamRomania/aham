@@ -3,6 +3,7 @@ package main
 import (
 	"aham/common/c"
 	"context"
+	"encoding/json"
 	"fmt"
 	"hash/crc32"
 	"io"
@@ -17,6 +18,16 @@ import (
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
+
+type Upload struct {
+	UUID        uuid.UUID `json:"uuid"`
+	UserID      int64     `json:"uid"`
+	Filename    string    `json:"filename"`
+	Size        int64     `json:"size"`
+	CRC         string    `json:"crc"`
+	Mime        string    `json:"mime"`
+	CreatedTime string    `json:"ctime"`
+}
 
 var redisc *redis.Client
 
@@ -59,9 +70,16 @@ func main() {
 
 func serve(w http.ResponseWriter, r *http.Request) {
 
+	uuid := strings.Split(r.URL.String(), "/")
+
+	if len(uuid) != 2 {
+		http.Error(w, "Nu am găsit resursa căutată. Eroare 400.", http.StatusBadRequest)
+		return
+	}
+
 	cmd := redisc.Get(
 		context.Background(),
-		chi.URLParam(r, "uuid"),
+		uuid[1],
 	)
 
 	if cmd.Err() != nil {
@@ -69,7 +87,25 @@ func serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(cmd.Val()))
+	var u = &Upload{}
+
+	if err := json.Unmarshal([]byte(cmd.Val()), u); err != nil {
+		http.Error(w, "Invalid json", http.StatusInternalServerError)
+		return
+	}
+
+	path := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), u.UUID.String(), "raw")
+
+	data, err := os.ReadFile(path)
+
+	if err != nil {
+		http.Error(w, "Invalid data", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", u.Mime)
+
+	w.Write(data)
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {
@@ -155,7 +191,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 			"uuid":"` + rid + `",
 			"uid":` + fmt.Sprintf("%d", uid) + `,
 			"filename":"` + h.Filename + `",
-			"size":"` + fmt.Sprintf("%d", h.Size) + `",
+			"size":` + fmt.Sprintf("%d", h.Size) + `,
 			"crc":"` + fmt.Sprintf("%08x", checksum) + `",
 			"mime":"` + mime + `",
 			"ctime":"` + fmt.Sprint(time.Now().Unix()) + `"
@@ -168,5 +204,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Add("Content-Type", "application/json")
 	w.Write([]byte(uinfo))
 }
