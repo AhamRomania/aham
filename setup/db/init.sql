@@ -50,7 +50,7 @@ create table ads (
     pictures text[] not null,
     created_at timestamp not null default current_timestamp,
     status varchar(20) not null default 'pending',
-    check (status in ('pending', 'active', 'inactive'))
+    check (status in ('pending', 'published', 'completed', 'dropped'))
 );
 
 create table reports (

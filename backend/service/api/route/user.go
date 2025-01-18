@@ -91,17 +91,17 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		c.Error(w, http.StatusInternalServerError, "Failed to hash password")
+		http.Error(w, "Failed to hash password", http.StatusInternalServerError)
 		return
 	}
 
 	if req.GivenName == "" {
-		c.Error(w, http.StatusBadRequest, "Given name cannot be empty")
+		http.Error(w, "Given name cannot be empty", http.StatusBadRequest)
 		return
 	}
 
 	if req.Phone == "" {
-		c.Error(w, http.StatusBadRequest, "Phone number cannot be empty")
+		http.Error(w, "Phone number cannot be empty", http.StatusBadRequest)
 		return
 	}
 
@@ -117,7 +117,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := user.Create(); err != nil {
 		c.Log().Info("Failed to create user", "error", err)
-		c.Error(w, http.StatusInternalServerError, "Failed to create user")
+		http.Error(w, "Failed to create user", http.StatusInternalServerError)
 		return
 	}
 

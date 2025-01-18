@@ -68,3 +68,47 @@ func (ad *Ad) Save() error {
 
 	return err
 }
+
+func GetAd(id int64) (ad *Ad, err error) {
+
+	ad = &Ad{}
+
+	row := c.DB().QueryRow(
+		context.TODO(),
+		`
+		SELECT
+			id,
+			category,
+			owner,
+			title,
+			description,
+			pictures,
+			city,
+			price,
+			currency,
+			created_at
+		FROM
+			ads
+		WHERE
+			id = $1 AND
+			status = 'published'
+		LIMIT 1
+		`,
+		id,
+	)
+
+	err = row.Scan(
+		&ad.ID,
+		&ad.Category,
+		&ad.Owner,
+		&ad.Title,
+		&ad.Description,
+		&ad.Pictures,
+		&ad.City,
+		&ad.Price,
+		&ad.Currency,
+		&ad.Created,
+	)
+
+	return
+}

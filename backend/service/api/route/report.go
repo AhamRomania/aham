@@ -21,7 +21,7 @@ func Report(w http.ResponseWriter, r *http.Request) {
 	var req ReportRequest
 
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
-		c.Error(w, http.StatusBadRequest, "Failed to decode request body for report creation")
+		http.Error(w, "Failed to decode request body for report creation", http.StatusBadRequest)
 		return
 	}
 
@@ -30,12 +30,12 @@ func Report(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 
 		if req.Email == "" {
-			c.Error(w, http.StatusBadRequest, "Email is required for anonymous report")
+			http.Error(w, "Email is required for anonymous report", http.StatusBadRequest)
 			return
 		}
 
 		if req.Name == "" {
-			c.Error(w, http.StatusBadRequest, "Name is required for anonymous report")
+			http.Error(w, "Name is required for anonymous report", http.StatusBadRequest)
 			return
 		}
 	}
@@ -55,7 +55,7 @@ func Report(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		c.Log().Error(err.Error())
-		c.Error(w, http.StatusInternalServerError, "Failed to create report")
+		http.Error(w, "Failed to create report", http.StatusInternalServerError)
 		return
 	}
 }

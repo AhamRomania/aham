@@ -5,6 +5,8 @@ import (
 	"aham/service/api/db"
 	"encoding/json"
 	"net/http"
+
+	"github.com/go-chi/render"
 )
 
 type CreateAdRequest struct {
@@ -50,5 +52,13 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAd(w http.ResponseWriter, r *http.Request) {
-	// Get ad
+
+	ad, err := db.GetAd(c.ID(r, "id"))
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	render.JSON(w, r, ad)
 }

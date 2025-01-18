@@ -1,6 +1,12 @@
 package c
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
+)
 
 func NilID(id int64) *int64 {
 	if id == 0 {
@@ -28,4 +34,16 @@ func NilString(s string) *string {
 		return nil
 	}
 	return &s
+}
+
+func ID(r *http.Request, name string) int64 {
+
+	n, err := strconv.ParseInt(chi.URLParam(r, name), 10, 64)
+
+	if err != nil {
+		Log().Error(err)
+		return -0
+	}
+
+	return n
 }

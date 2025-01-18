@@ -25,7 +25,7 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			c.Log().Error(err)
-			c.Error(w, http.StatusUnauthorized, "Failed to fetch matching Google account")
+			http.Error(w, "Failed to fetch matching Google account", http.StatusUnauthorized)
 			return
 		}
 
@@ -37,24 +37,24 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 	var req AuthRequest
 
 	if err := render.DecodeJSON(r.Body, &req); err != nil {
-		c.Error(w, http.StatusBadRequest, "Failed to decode request body for user authentication")
+		http.Error(w, "Failed to decode request body for user authentication", http.StatusBadRequest)
 		return
 	}
 
 	user, err := db.GetUserByEmail(req.Email)
 
 	if !user.Activated() {
-		c.Error(w, http.StatusUnauthorized, "User account is not activated")
+		http.Error(w, "User account is not activated", http.StatusUnauthorized)
 		return
 	}
 
 	if err != nil {
-		c.Error(w, http.StatusUnauthorized, "Invalid email or password")
+		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		c.Error(w, http.StatusUnauthorized, "Invalid email or password")
+		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
 
@@ -66,7 +66,7 @@ func authorize(w http.ResponseWriter, r *http.Request, user *db.User) {
 	token, err := c.JWTUserID(user.ID)
 
 	if err != nil {
-		c.Error(w, http.StatusInternalServerError, "Failed to generate JWT token")
+		http.Error(w, "Failed to generate JWT token", http.StatusInternalServerError)
 		return
 	}
 
