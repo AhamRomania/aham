@@ -22,9 +22,13 @@ func main() {
 		r.Get("/activate", route.ActivateUser)
 		r.Post("/auth", route.Auth)
 
+		r.Get("/counties", route.GetCounties)
+		r.Get("/counties/{county}", route.GetCounty)
+		r.Get("/counties/{county}/{city}", route.GetCity)
+
 		r.Get("/categories", route.GetCategories)
 
-		r.Post("/ads", route.CreateAd)
+		r.Post("/ads", c.Guard(route.CreateAd))
 		r.Get("/ads/{id}", route.GetAd)
 		r.Post("/report", route.Report)
 
