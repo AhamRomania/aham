@@ -20,7 +20,7 @@ jobs:
 
     - name: Build
       working-directory: backend/service/cdn
-      run: go build -v ./... -o ../../../bin/
+      run: go build -o ../../../bin/ ./...
 
     - name: Test
       working-directory: backend/service/cdn
