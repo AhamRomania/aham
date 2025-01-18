@@ -15,7 +15,7 @@ var upgrader = websocket.Upgrader{
 var connections = make(map[*websocket.Conn]bool)
 
 func Broadcast()            {}
-func Send(user int64) error {}
+func Send(user int64) error { return nil }
 
 func GetHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
