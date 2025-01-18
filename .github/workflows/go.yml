@@ -13,15 +13,5 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.23.4'
-
-    - name: Build
-      working-directory: backend/service/cdn
-      run: go build -o ../../../bin/ ./...
-
     - name: Test
-      working-directory: backend/service/cdn
-      run: go test -v ./...
+      run: make test
