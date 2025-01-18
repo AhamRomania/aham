@@ -170,10 +170,8 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Query().Get("persist") != "" {
-		redisc.Persist(
-			context.Background(),
-			u.UUID.String(),
-		)
+		redisc.Persist(context.TODO(), u.UUID.String())
+		redisc.Del(context.TODO(), "shadow:"+u.UUID.String())
 	}
 
 	duration := redisc.TTL(context.TODO(), u.UUID.String())
