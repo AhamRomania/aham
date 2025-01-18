@@ -136,7 +136,7 @@ func deleteAfterExpired() {
 
 func serve(w http.ResponseWriter, r *http.Request) {
 
-	uuid := strings.Split(r.URL.String(), "/")
+	uuid := strings.Split(r.URL.Path, "/")
 
 	if len(uuid) != 2 {
 		http.Error(w, "Nu am găsit resursa căutată. Eroare 400.", http.StatusBadRequest)
@@ -275,7 +275,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		}
 	`
 
-	if cmd := redisc.Set(context.Background(), rid, uinfo, time.Second*10); cmd.Err() != nil {
+	if cmd := redisc.Set(context.Background(), rid, uinfo, time.Minute*7); cmd.Err() != nil {
 		c.Log().Error(cmd.Err())
 		http.Error(w, "Nu am putut salva metadatele fișierului încărcat. Eroare 500.", http.StatusInternalServerError)
 		return
