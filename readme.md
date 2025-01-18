@@ -6,7 +6,7 @@
 - Quality over Quantity
 
 **Main features:**
-- [*] Bazar 
+- [x] Bazar 
 - [ ] Află
 - [ ] Poze
 
