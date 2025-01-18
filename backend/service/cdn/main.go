@@ -46,7 +46,7 @@ func init() {
 
 	opts.UnstableResp3 = true
 
-	fmt.Println("Connected to redis @", opts.Addr)
+	c.Log().Infof("Connected to redis: %s", opts.Addr)
 
 	redisc = redis.NewClient(opts)
 
@@ -72,10 +72,10 @@ func main() {
 
 	listen := os.Getenv("LISTEN")
 
-	fmt.Println("Server is listening on", listen)
+	c.Log().Info("Server is listening on", listen)
 
 	if err := http.ListenAndServe(listen, mux); err != nil {
-		fmt.Println("Error starting server", err)
+		c.Log().Info("Error starting server", err)
 	}
 }
 

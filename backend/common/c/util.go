@@ -47,3 +47,9 @@ func ID(r *http.Request, name string) int64 {
 
 	return n
 }
+
+func Todo(todo string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Todo: " + todo))
+	}
+}

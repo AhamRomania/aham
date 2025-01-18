@@ -3,7 +3,6 @@ package main
 import (
 	"aham/common/c"
 	"aham/service/api/route"
-	"fmt"
 	"net/http"
 	"os"
 
@@ -25,6 +24,10 @@ func main() {
 		r.Post("/ads", route.CreateAd)
 		r.Get("/ads/{id}", route.GetAd)
 		r.Post("/report", route.Report)
+
+		r.Post("/qa", c.Todo("create a question"))
+		r.Post("/qa/{id}", c.Todo("post an answer"))
+		r.Get("/qa/{id}", c.Todo("get a question"))
 	})
 
 	listen := os.Getenv("LISTEN")
@@ -33,9 +36,9 @@ func main() {
 		panic("LISTEN env is required")
 	}
 
-	fmt.Println("Server is listening on", listen)
+	c.Log().Info("Server is listening on", listen)
 
 	if err := http.ListenAndServe(listen, rest); err != nil {
-		fmt.Println("Error starting server", err)
+		c.Log().Info("Error starting server", err)
 	}
 }
