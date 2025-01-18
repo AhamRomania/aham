@@ -99,8 +99,9 @@ func GetUserByEmail(email string) (user *User, err error) {
 	return
 }
 
-func GetUserByID(id int64) (*User, error) {
-	var user User
+func GetUserByID(id int64) *User {
+
+	var user User = User{}
 
 	err := c.DB().QueryRow(
 		context.Background(),
@@ -108,5 +109,10 @@ func GetUserByID(id int64) (*User, error) {
 		id,
 	).Scan(&user.ID, &user.Email, &user.Password, &user.GivenName, &user.FamilyName, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt, &user.EmailActivatedAt)
 
-	return &user, err
+	if err != nil {
+		c.Log().Error(err)
+		return nil
+	}
+
+	return &user
 }

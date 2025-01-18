@@ -1,4 +1,4 @@
-create type currency as enum ('ron', 'eur', 'usd');
+create type currency as enum ('RON', 'EUR', 'USD');
 
 create type metatype as enum (
     'TEXT',

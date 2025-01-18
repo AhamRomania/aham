@@ -59,9 +59,7 @@ func ActivateUser(w http.ResponseWriter, r *http.Request) {
 
 func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 	if id, err := c.UserID(r); err == nil {
-		if user, err := db.GetUserByID(id); err == nil {
-			render.JSON(w, r, user)
-		}
+		render.JSON(w, r, db.GetUserByID(id))
 	}
 }
 

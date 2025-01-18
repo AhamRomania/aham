@@ -3,6 +3,7 @@ package route
 import (
 	"aham/common/c"
 	"aham/service/api/db"
+	"aham/service/api/vo"
 	"encoding/json"
 	"net/http"
 
@@ -64,5 +65,5 @@ func GetAd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	render.JSON(w, r, ad)
+	render.JSON(w, r, vo.AdFromDB(ad))
 }

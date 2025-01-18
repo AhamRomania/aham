@@ -89,3 +89,14 @@ func Todo(todo string) http.HandlerFunc {
 		w.Write([]byte("Todo: " + todo))
 	}
 }
+
+func Copy(dst, from any) error {
+
+	data, err := json.Marshal(from)
+
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(data, dst)
+}
