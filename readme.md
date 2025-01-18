@@ -1,4 +1,4 @@
-# Aham Ads Platform
+# Aham Ads Platform [![Go](https://github.com/albulescu/aham/actions/workflows/go.yml/badge.svg)](https://github.com/albulescu/aham/actions/workflows/go.yml)
 
 **Development values:**
 - Keep it simple
