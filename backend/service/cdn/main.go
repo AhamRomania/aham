@@ -35,7 +35,7 @@ var redisc *redis.Client
 func init() {
 
 	if s, err := os.Stat(os.Getenv("FILES")); err != nil || !s.IsDir() {
-		panic("FILES must be a directory")
+		panic("FILES must be a directory: " + os.Getenv("FILES"))
 	}
 
 	opts, err := redis.ParseURL(os.Getenv("REDIS"))
