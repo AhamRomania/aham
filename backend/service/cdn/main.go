@@ -66,6 +66,8 @@ func main() {
 
 	mux.Get("/{uuid}", serve)
 
+	mux.Trace("/{uuid}", trace)
+
 	listen := os.Getenv("LISTEN")
 
 	fmt.Println("Server is listening on", listen)
@@ -131,6 +133,26 @@ func deleteAfterExpired() {
 				}
 			}
 		}
+	}
+}
+
+func trace(w http.ResponseWriter, r *http.Request) {
+
+	uuid := strings.Split(r.URL.Path, "/")
+
+	if len(uuid) != 2 {
+		http.Error(w, "Nu am găsit resursa căutată. Eroare 400.", http.StatusBadRequest)
+		return
+	}
+
+	cmd := redisc.Get(
+		context.Background(),
+		uuid[1],
+	)
+
+	if cmd.Err() != nil {
+		http.Error(w, "Nu am găsit resursa căutată. Eroare 404.", http.StatusNotFound)
+		return
 	}
 }
 
