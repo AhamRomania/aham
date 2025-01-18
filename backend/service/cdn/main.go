@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -49,9 +50,15 @@ func init() {
 
 	redisc = redis.NewClient(opts)
 
+	if cmd := redisc.ConfigSet(context.TODO(), "notify-keyspace-events", "AKE"); cmd.Err() != nil {
+		panic("set notify keyspace events failed")
+	}
+
 }
 
 func main() {
+
+	go deleteAfterExpired()
 
 	mux := chi.NewMux()
 
@@ -65,6 +72,65 @@ func main() {
 
 	if err := http.ListenAndServe(listen, mux); err != nil {
 		fmt.Println("Error starting server", err)
+	}
+}
+
+func deleteAfterExpired() {
+
+	ps := redisc.PSubscribe(
+		context.TODO(),
+		"__key*__:*",
+	)
+
+	reg := regexp.MustCompile("Message<__keyevent@0__:expired: (.*)>")
+
+	for {
+
+		e := <-ps.Channel()
+
+		if strings.Contains(e.String(), "expired") {
+			match := reg.FindSubmatch([]byte(e.String()))
+			if len(match) > 0 {
+
+				rid := string(match[1])
+
+				cmd := redisc.Get(context.Background(), "shadow:"+rid)
+
+				if cmd.Err() != nil {
+					c.Log().Error(cmd.Err())
+					continue
+				}
+
+				var u = &Upload{}
+
+				if err := json.Unmarshal([]byte(cmd.Val()), u); err != nil {
+					c.Log().Error(cmd.Err())
+					continue
+				}
+
+				dataPath := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), rid)
+
+				fi, err := os.Stat(dataPath)
+
+				if err != nil {
+					c.Log().Error(cmd.Err())
+					continue
+				}
+
+				if fi.IsDir() {
+
+					c.Log().Infof("Removing data for expired key %s", rid)
+
+					if err := os.RemoveAll(dataPath); err != nil {
+						redisc.Del(context.TODO(), "shadow:"+rid)
+						c.Log().Error(cmd.Err())
+						continue
+					}
+
+					redisc.Del(context.TODO(), "shadow:"+rid)
+				}
+			}
+		}
 	}
 }
 
@@ -110,7 +176,11 @@ func serve(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 
+	duration := redisc.TTL(context.TODO(), u.UUID.String())
+
 	w.Header().Add("Content-Type", u.Mime)
+	w.Header().Add("Created-At", u.CreatedTime)
+	w.Header().Add("Expire-In", duration.Val().String())
 
 	w.Write(data)
 }
@@ -205,7 +275,13 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		}
 	`
 
-	if cmd := redisc.Set(context.Background(), rid, uinfo, time.Minute*5); cmd.Err() != nil {
+	if cmd := redisc.Set(context.Background(), rid, uinfo, time.Second*10); cmd.Err() != nil {
+		c.Log().Error(cmd.Err())
+		http.Error(w, "Nu am putut salva metadatele fișierului încărcat. Eroare 500.", http.StatusInternalServerError)
+		return
+	}
+
+	if cmd := redisc.Set(context.Background(), "shadow:"+rid, uinfo, 0); cmd.Err() != nil {
 		c.Log().Error(cmd.Err())
 		http.Error(w, "Nu am putut salva metadatele fișierului încărcat. Eroare 500.", http.StatusInternalServerError)
 		return
