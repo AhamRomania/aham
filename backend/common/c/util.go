@@ -94,6 +94,7 @@ func ID(r *http.Request, name string) int64 {
 
 func Todo(todo string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotImplemented)
 		w.Write([]byte("Todo: " + todo))
 	}
 }

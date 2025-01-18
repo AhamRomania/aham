@@ -17,6 +17,7 @@ func main() {
 	rest.Use(middleware.RealIP)
 
 	rest.Route("/v1", func(r chi.Router) {
+
 		r.Post("/users", route.CreateUser)
 		r.Get("/users/me", c.Guard(route.GetCurrentUser))
 		r.Get("/activate", route.ActivateUser)
@@ -39,6 +40,8 @@ func main() {
 		r.Get("/qa/{id}", c.Todo("get a question"))
 
 		r.Get("/sitemap", route.Sitemap)
+
+		r.HandleFunc("/ws", route.WebSocket)
 	})
 
 	listen := os.Getenv("LISTEN")

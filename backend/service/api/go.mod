@@ -20,6 +20,7 @@ require (
 require (
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.1
+	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.15.0
 	github.com/jackc/pgx/v5 v5.7.2
 	go.uber.org/zap v1.27.0
