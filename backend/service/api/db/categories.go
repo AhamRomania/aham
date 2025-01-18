@@ -138,3 +138,80 @@ func GetCategories() (categories []*Category) {
 
 	return
 }
+
+func GetCategoryProps(category int64) (metaProps []*MetaProp) {
+
+	sql := `
+		select
+			mp.id,
+			mp.name,
+			mp.title,
+			mp.group,
+			mp.required,
+			mp.template,
+			mp.description,
+			mp.help,
+			mp.type,
+			mp.options,
+			mp.microdata
+		from
+			meta_assign as ma
+		left join meta_props as mp on ma.meta = mp.id
+		where
+			ma.category = $1
+		order by sort
+	`
+
+	metaProps = make([]*MetaProp, 0)
+
+	rows, err := c.DB().Query(
+		context.Background(),
+		sql,
+		category,
+	)
+
+	if err != nil {
+		c.Log().Error(err)
+		return
+	}
+
+	for rows.Next() {
+
+		metaProp := &MetaProp{}
+
+		var template, description, help *string
+
+		err = rows.Scan(
+			&metaProp.ID,
+			&metaProp.Name,
+			&metaProp.Title,
+			&metaProp.Group,
+			&metaProp.Required,
+			&template,
+			&description,
+			&help,
+			&metaProp.Type,
+			&metaProp.Options,
+			&metaProp.Microdata,
+		)
+
+		if template != nil {
+			metaProp.Template = *template
+		}
+		if description != nil {
+			metaProp.Description = *description
+		}
+		if help != nil {
+			metaProp.Help = *help
+		}
+
+		if err != nil {
+			c.Log().Error(err)
+			return
+		}
+
+		metaProps = append(metaProps, metaProp)
+	}
+
+	return metaProps
+}

@@ -65,5 +65,5 @@ func GetAd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	render.JSON(w, r, vo.AdFromDB(ad))
+	render.JSON(w, r, vo.NewAd(ad))
 }

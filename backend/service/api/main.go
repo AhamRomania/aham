@@ -27,6 +27,8 @@ func main() {
 		r.Get("/cities/{city}", route.GetCity)
 
 		r.Get("/categories", route.GetCategories)
+		r.Get("/categories/{id}", route.GetCategory)
+		r.Get("/categories/{id}/props", route.GetCategoryProps)
 
 		r.Post("/ads", c.Guard(route.CreateAd))
 		r.Get("/ads/{id}", route.GetAd)

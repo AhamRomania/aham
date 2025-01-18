@@ -8,6 +8,14 @@ import (
 	"github.com/go-chi/render"
 )
 
+func GetCategory(w http.ResponseWriter, r *http.Request) {
+	render.JSON(w, r, db.GetCategory(c.ID(r, "id")))
+}
+
+func GetCategoryProps(w http.ResponseWriter, r *http.Request) {
+	render.JSON(w, r, db.GetCategoryProps(c.ID(r, "id")))
+}
+
 func GetCategories(w http.ResponseWriter, r *http.Request) {
 
 	var categories []*db.Category

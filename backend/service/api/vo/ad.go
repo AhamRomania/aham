@@ -18,14 +18,15 @@ type Ad struct {
 	City        City      `json:"city,omitempty"`
 	URL         *string   `json:"url,omitempty"`
 	Props       *c.D      `json:"props,omitempty"`
+	Status      string    `json:"status,omitempty"`
 	Created     time.Time `json:"created,omitempty"`
 }
 
-func AdFromDB(src *db.Ad) Ad {
+func NewAd(src *db.Ad) Ad {
 	return Ad{
 		ID:          src.ID,
 		Category:    Category(*db.GetCategory(src.Category)),
-		Owner:       UserFromDB(*db.GetUserByID(src.Owner)),
+		Owner:       NewUser(*db.GetUserByID(src.Owner)),
 		Title:       src.Title,
 		Description: src.Description,
 		Pictures:    src.Pictures,
@@ -34,6 +35,7 @@ func AdFromDB(src *db.Ad) Ad {
 		City:        City(*db.GetCity(src.City)),
 		URL:         src.URL,
 		Props:       src.Props,
+		Status:      src.Status,
 		Created:     src.Created,
 	}
 }

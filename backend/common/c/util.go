@@ -20,13 +20,17 @@ func (a D) Value() (driver.Value, error) {
 
 func (a *D) Scan(value interface{}) error {
 
-	b, ok := value.([]byte)
-
-	if !ok {
-		return errors.New("type assertion to []byte failed")
+	if value == nil {
+		return nil
 	}
 
-	return json.Unmarshal(b, &a)
+	b, ok := value.(string)
+
+	if !ok {
+		return errors.New("c.D type assertion to []byte failed")
+	}
+
+	return json.Unmarshal([]byte(b), &a)
 }
 
 func (a M) Value() (driver.Value, error) {
@@ -35,13 +39,17 @@ func (a M) Value() (driver.Value, error) {
 
 func (a *M) Scan(value interface{}) error {
 
-	b, ok := value.([]byte)
-
-	if !ok {
-		return errors.New("type assertion to []byte failed")
+	if value == nil {
+		return nil
 	}
 
-	return json.Unmarshal(b, &a)
+	b, ok := value.(string)
+
+	if !ok {
+		return errors.New("c.M type assertion to []byte failed")
+	}
+
+	return json.Unmarshal([]byte(b), &a)
 }
 
 func NilID(id int64) *int64 {

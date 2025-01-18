@@ -23,6 +23,7 @@ type Ad struct {
 	ShowPhone   bool      `json:"show_phone,omitempty"`
 	Phone       *string   `json:"phone,omitempty"`
 	Props       *c.D      `json:"props,omitempty"`
+	Status      string    `json:"status,omitempty"`
 	Created     time.Time `json:"created,omitempty"`
 }
 
@@ -95,7 +96,8 @@ func GetAd(id int64) (ad *Ad, err error) {
 			url,
 			messages,
 			show_phone,
-			phone
+			phone,
+			status
 		FROM
 			ads
 		WHERE
@@ -121,6 +123,7 @@ func GetAd(id int64) (ad *Ad, err error) {
 		&ad.Messages,
 		&ad.ShowPhone,
 		&ad.Phone,
+		&ad.Status,
 	)
 
 	return

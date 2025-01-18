@@ -10,7 +10,7 @@ type User struct {
 	Picture    *string `json:"picture,omitempty"`
 }
 
-func UserFromDB(db db.User) User {
+func NewUser(db db.User) User {
 	return User{
 		ID:         db.ID,
 		Email:      db.Email,
