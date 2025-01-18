@@ -61,7 +61,7 @@ func GetAd(w http.ResponseWriter, r *http.Request) {
 	ad, err := db.GetAd(c.ID(r, "id"))
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		http.Error(w, "Eroare 404: anunțul nu a fost găsit.", http.StatusNotFound)
 		return
 	}
 

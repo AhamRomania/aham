@@ -8,16 +8,17 @@ import (
 
 type Ad struct {
 	ID          int64     `json:"id"`
-	Category    Category  `json:"category"`
-	Owner       User      `json:"owner"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Pictures    []string  `json:"pictures"`
-	Price       int64     `json:"price"`
-	Currency    string    `json:"currency"`
-	City        City      `json:"city"`
+	Category    Category  `json:"category,omitempty"`
+	Owner       User      `json:"owner,omitempty"`
+	Title       string    `json:"title,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Pictures    []string  `json:"pictures,omitempty"`
+	Price       int64     `json:"price,omitempty"`
+	Currency    string    `json:"currency,omitempty"`
+	City        City      `json:"city,omitempty"`
+	URL         *string   `json:"url,omitempty"`
 	Props       *c.D      `json:"props,omitempty"`
-	Created     time.Time `json:"created"`
+	Created     time.Time `json:"created,omitempty"`
 }
 
 func AdFromDB(src *db.Ad) Ad {
@@ -31,6 +32,7 @@ func AdFromDB(src *db.Ad) Ad {
 		Price:       src.Price,
 		Currency:    src.Currency,
 		City:        City(*db.GetCity(src.City)),
+		URL:         src.URL,
 		Props:       src.Props,
 		Created:     src.Created,
 	}

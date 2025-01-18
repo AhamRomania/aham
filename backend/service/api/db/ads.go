@@ -10,16 +10,20 @@ import (
 
 type Ad struct {
 	ID          int64     `json:"id"`
-	Category    int64     `json:"category"`
-	Owner       int64     `json:"owner"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Pictures    []string  `json:"pictures"`
-	Price       int64     `json:"price"`
-	Currency    string    `json:"currency"`
-	City        int64     `json:"city"`
+	Category    int64     `json:"category,omitempty"`
+	Owner       int64     `json:"owner,omitempty"`
+	Title       string    `json:"title,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Pictures    []string  `json:"pictures,omitempty"`
+	Price       int64     `json:"price,omitempty"`
+	Currency    string    `json:"currency,omitempty"`
+	City        int64     `json:"city,omitempty"`
+	URL         *string   `json:"string,omitempty"`
+	Messages    bool      `json:"messages,omitempty"`
+	ShowPhone   bool      `json:"show_phone,omitempty"`
+	Phone       *string   `json:"phone,omitempty"`
 	Props       *c.D      `json:"props,omitempty"`
-	Created     time.Time `json:"created"`
+	Created     time.Time `json:"created,omitempty"`
 }
 
 func (ad *Ad) Save() error {
@@ -87,7 +91,11 @@ func GetAd(id int64) (ad *Ad, err error) {
 			city,
 			price,
 			currency,
-			created_at
+			created_at,
+			url,
+			messages,
+			show_phone,
+			phone
 		FROM
 			ads
 		WHERE
@@ -109,6 +117,10 @@ func GetAd(id int64) (ad *Ad, err error) {
 		&ad.Price,
 		&ad.Currency,
 		&ad.Created,
+		&ad.URL,
+		&ad.Messages,
+		&ad.ShowPhone,
+		&ad.Phone,
 	)
 
 	return
