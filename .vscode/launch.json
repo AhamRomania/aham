@@ -20,6 +20,7 @@
             "mode": "auto",
             "env": {
                 "LISTEN": ":8081",
+                "FILES": "${workspaceFolder}/data",
                 "REDIS": "redis://:aham@localhost:6379/0?protocol=3"
             },
             "program": "${workspaceFolder}/backend/service/cdn/main.go",
