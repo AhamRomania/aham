@@ -103,6 +103,13 @@ func serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.URL.Query().Get("persist") != "" {
+		redisc.Persist(
+			context.Background(),
+			u.UUID.String(),
+		)
+	}
+
 	w.Header().Add("Content-Type", u.Mime)
 
 	w.Write(data)
@@ -198,7 +205,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		}
 	`
 
-	if cmd := redisc.Set(context.Background(), rid, uinfo, 0); cmd.Err() != nil {
+	if cmd := redisc.Set(context.Background(), rid, uinfo, time.Minute*5); cmd.Err() != nil {
 		c.Log().Error(cmd.Err())
 		http.Error(w, "Nu am putut salva metadatele fișierului încărcat. Eroare 500.", http.StatusInternalServerError)
 		return
