@@ -5,12 +5,16 @@ import styles from './style.module.css';
 import { ListItemIcon, ListItemText, Menu, MenuItem, Button } from '@mui/material';
 import { Sell, Forum, Favorite, ManageAccounts, Logout, Add } from '@mui/icons-material';
 import UserAvatar from '../avatar';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface HeadMenuProps {
     isLoggedIn?: boolean
 };
 
 const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
+
+    const router = useRouter()
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -24,13 +28,15 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
 
     if (!isLoggedIn) {
         return (
-            <Button
-                startIcon={<Add/>}
-                variant="contained"
-                color="secondary"
-            >
-                Anunț
-            </Button>
+            <Link href="/anunt">
+                <Button
+                    startIcon={<Add/>}
+                    variant="contained"
+                    color="secondary"
+                >
+                    Anunț
+                </Button>
+            </Link>
         )
     }
 
@@ -62,31 +68,31 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                <MenuItem onClick={handleClose}>
+                <MenuItem onClick={() => router.push('/u/anunturi')}>
                     <ListItemIcon>
                         <Sell fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Anunțuri</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={handleClose}>
+                <MenuItem onClick={() => router.push('/u/mesaje')}>
                     <ListItemIcon>
                         <Forum fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Mesaje</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={handleClose}>
+                <MenuItem onClick={() => router.push('/u/favorite')}>
                     <ListItemIcon>
                         <Favorite fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Favorite</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={handleClose}>
+                <MenuItem onClick={() => router.push('/u/cont')}>
                     <ListItemIcon>
                         <ManageAccounts fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Cont</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={handleClose}>
+                <MenuItem onClick={() => router.push('/logout')}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
                     </ListItemIcon>

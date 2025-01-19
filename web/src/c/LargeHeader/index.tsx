@@ -5,10 +5,12 @@ import styles from './style.module.css';
 import SearchInput from '../SearchInput';
 import Logo from '../logo';
 import HeadMenu from '../HeadMenu';
+import useIsLoggedIn from '@/hooks/auth';
 
-const LargeHeader: FC = () => {
+const LargeHeader: FC = async () => {
 
     const {publicRuntimeConfig} = getConfig();
+    const isLoggedIn = await useIsLoggedIn();
 
     return (
         <header className={styles.header}>
@@ -17,7 +19,7 @@ const LargeHeader: FC = () => {
                 <div className={styles.actual}>
                     <Logo size={60} padding={15} bg='#0C5BA1' color='#FFF'/>
                     <div style={{flex:1}}></div>
-                    <HeadMenu isLoggedIn={false}/>
+                    <HeadMenu isLoggedIn={isLoggedIn}/>
                 </div>
 
                 <div className={styles.messages}>
