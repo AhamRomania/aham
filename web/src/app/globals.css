@@ -19,6 +19,7 @@ body {
 body {
   background: var(--background);
   font-family: Quicksand, Quicksand-Fallback;
+  font-size: 19px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

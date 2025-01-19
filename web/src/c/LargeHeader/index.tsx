@@ -4,6 +4,7 @@ import getConfig from 'next/config';
 
 import styles from './style.module.css';
 import SearchInput from '../SearchInput';
+import HeadMenu from '../HeadMenu';
 
 const LargeHeader: FC = () => {
 
@@ -13,13 +14,17 @@ const LargeHeader: FC = () => {
         <header className={styles.header}>
             <div style={{paddingTop: 25}} className={styles.wrapper}>
                 
-                <Image
-                    priority
-                    width={78}
-                    height={76}
-                    src="large-header-logo.svg"
-                    alt="Large Header Logo"
-                />
+                <div className={styles.actual}>
+                    <Image
+                        priority
+                        width={63}
+                        height={62}
+                        src="large-header-logo.svg"
+                        alt="Large Header Logo"
+                    />
+                    <div style={{flex:1}}></div>
+                    <HeadMenu/>
+                </div>
 
                 <div className={styles.messages}>
                     <h1>Bazarul tău</h1>
