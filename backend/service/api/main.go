@@ -15,6 +15,7 @@ func main() {
 
 	rest := chi.NewMux()
 
+	rest.Use(c.CORS())
 	rest.Use(middleware.RealIP)
 
 	rest.Route("/v1", func(r chi.Router) {
