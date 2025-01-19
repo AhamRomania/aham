@@ -7,6 +7,7 @@ import { Sell, Forum, Favorite, ManageAccounts, Logout, Add } from '@mui/icons-m
 import UserAvatar from '../avatar';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Cookie from 'js-cookie';
 
 interface HeadMenuProps {
     isLoggedIn?: boolean
@@ -25,6 +26,11 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const logout = () => {
+        Cookie.remove('ahamjwt');
+        window.location.reload()
+    }
 
     if (!isLoggedIn) {
         return (
@@ -92,7 +98,7 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
                     </ListItemIcon>
                     <ListItemText>Cont</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={() => router.push('/logout')}>
+                <MenuItem onClick={() => logout()}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
                     </ListItemIcon>
