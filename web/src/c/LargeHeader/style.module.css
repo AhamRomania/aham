@@ -1,33 +1,52 @@
 .header {
-    height: 495px;
     color: #FFF;
     background: var(--main-color);
     padding: 20px;
 }
 
-@media only screen and (min-width : 1200px) {
-    .wrapper {
-        width: 1024px;
-        margin: 0 auto;
-    }
-}
-
 .header h1 {
     font-weight: 500;
-    font-size: 65px;
+    font-size: 55px;
 }
 
 .header h2 {
     font-weight: 400;
-    font-size: 35px;
+    font-size: 25px;
+    margin-top:20px;
+}
+
+.messages {
+    padding: 20px 0;
+}
+
+@media only screen and (min-width : 1200px) {
+    
+    .header {
+        height: 495px;
+    }
+    
+    .wrapper {
+        width: 1024px;
+        margin: 0 auto;
+    }
+
+    .header h1 {
+        font-weight: 500;
+        font-size: 65px;
+    }
+
+    .header h2 {
+        font-weight: 400;
+        font-size: 35px;
+        margin-top:10px;    }
+
+    .messages {
+        padding: 30px 0;
+    }
 }
 
 .searchWrapper {
     margin: 40px 0;
-}
-
-.messages {
-    padding: 30px 0;
 }
 
 .actual {

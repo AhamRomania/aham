@@ -3,7 +3,7 @@ import getConfig from 'next/config';
 
 import styles from './style.module.css';
 import SearchInput from '../SearchInput';
-import LargeHeaderLogo from './logo';
+import Logo from '../logo';
 import HeadMenu from '../HeadMenu';
 
 const LargeHeader: FC = () => {
@@ -15,7 +15,7 @@ const LargeHeader: FC = () => {
             <div style={{paddingTop: 25}} className={styles.wrapper}>
                 
                 <div className={styles.actual}>
-                    <LargeHeaderLogo size={80} bg='#0C5BA1' color='#FFF'/>
+                    <Logo size={60} padding={15} bg='#0C5BA1' color='#FFF'/>
                     <div style={{flex:1}}></div>
                     <HeadMenu/>
                 </div>

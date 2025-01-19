@@ -1,6 +1,6 @@
 .searchInput {
     display: block;
-    width: 620px;
+    max-width: 620px;
     height: 50px;
     position: relative;
     display: flex;
