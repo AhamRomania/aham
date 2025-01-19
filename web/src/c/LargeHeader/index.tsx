@@ -1,9 +1,9 @@
 import { FC } from 'react';
-import Image from 'next/image';
 import getConfig from 'next/config';
 
 import styles from './style.module.css';
 import SearchInput from '../SearchInput';
+import LargeHeaderLogo from './logo';
 import HeadMenu from '../HeadMenu';
 
 const LargeHeader: FC = () => {
@@ -15,13 +15,7 @@ const LargeHeader: FC = () => {
             <div style={{paddingTop: 25}} className={styles.wrapper}>
                 
                 <div className={styles.actual}>
-                    <Image
-                        priority
-                        width={63}
-                        height={62}
-                        src="large-header-logo.svg"
-                        alt="Large Header Logo"
-                    />
+                    <LargeHeaderLogo size={80} bg='#0C5BA1' color='#FFF'/>
                     <div style={{flex:1}}></div>
                     <HeadMenu/>
                 </div>

@@ -2,11 +2,14 @@
     height: 495px;
     color: #FFF;
     background: var(--main-color);
+    padding: 20px;
 }
 
-.wrapper {
-    width: 1024px;
-    margin: 0 auto;
+@media only screen and (min-width : 1200px) {
+    .wrapper {
+        width: 1024px;
+        margin: 0 auto;
+    }
 }
 
 .header h1 {
