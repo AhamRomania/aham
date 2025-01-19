@@ -1,0 +1,22 @@
+<svg width="87px" height="86px" viewBox="0 0 87 86" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Desktop" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Homepage" transform="translate(-270, -25)" fill-rule="nonzero">
+            <g id="Group" transform="translate(270, 25)">
+                <rect id="Rectangle" fill="#0C5BA1" x="0" y="0" width="87" height="86" rx="3"></rect>
+                <rect id="Rectangle" fill="#FFFFFF" x="4" y="4" width="79" height="78" rx="2"></rect>
+                <polygon id="Path" fill="#0C5BA1" points="4 41 83 41 83 45 4 45"></polygon>
+                <polygon id="Path" fill="#0C5BA1" points="42 3 46 3 46 84 42 84"></polygon>
+                <polygon id="Path" fill="#0C5BA1" points="19 12 27 12 27 24 19 24"></polygon>
+                <polygon id="Path" fill="#0C5BA1" points="60 4 68 4 68 16 60 16"></polygon>
+                <polygon id="Path" fill="#0C5BA1" points="60 31 68 31 68 43 60 43"></polygon>
+                <polygon id="Path" fill="#0C5BA1" points="60 45 68 45 68 57 60 57"></polygon>
+                <polygon id="Path" fill="#0C5BA1" points="60 71 68 71 68 83 60 83"></polygon>
+                <polygon id="Path" fill="#0C5BA1" points="19 30 27 30 27 42 19 42"></polygon>
+                <polygon id="Path" fill="#0C5BA1" points="19 54 27 54 27 66 19 66"></polygon>
+                <polygon id="Path" fill="#0C5BA1" points="64.0002036 62 68 57 60 57"></polygon>
+                <polygon id="Path" fill="#0C5BA1" points="19 71 27 71 27 83 19 83"></polygon>
+                <polygon id="Path" fill="#FFFFFF" points="63.9997964 75 68 70 60 70"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

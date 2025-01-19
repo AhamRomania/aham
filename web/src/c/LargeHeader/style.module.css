@@ -1,0 +1,28 @@
+.header {
+    height: 495px;
+    color: #FFF;
+    background: var(--main-color);
+}
+
+.wrapper {
+    width: 1024px;
+    margin: 0 auto;
+}
+
+.header h1 {
+    font-weight: 500;
+    font-size: 65px;
+}
+
+.header h2 {
+    font-weight: 400;
+    font-size: 35px;
+}
+
+.searchWrapper {
+    margin: 40px 0;
+}
+
+.messages {
+    padding: 25px 0;
+}
