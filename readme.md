@@ -1,5 +1,8 @@
 # Aham Ads Platform [![Go](https://github.com/albulescu/aham/actions/workflows/go.yml/badge.svg)](https://github.com/albulescu/aham/actions/workflows/go.yml)
 
+**Essence guide:**
+- See great things
+
 **Development values:**
 - Keep it simple
 - Minimum Viable Product
