@@ -17,5 +17,8 @@ export async function middleware(request: NextRequest) {
 }
  
 export const config = {
-  matcher: '/u/:path*',
+  matcher: [
+    '/u/:path*',
+    '/anunt'
+  ]
 }

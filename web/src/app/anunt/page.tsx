@@ -1,14 +1,10 @@
-import useIsLoggedIn from "@/hooks/auth";
-import { redirect } from "next/navigation";
+import LargeHeader from "@/c/LargeHeader";
 
 export default async function Page() {
-
-    const isLoggedIn = await useIsLoggedIn();
-
-    if (!isLoggedIn) {
-        return redirect('/login');
-    }
-
-    return <>Creaza anunt</>;
+    return (
+        <>
+            <LargeHeader />
+            <div style={{margin:"0 auto", width:1024}}>Adaugă anunț</div>
+        </>
+    )
 }
-  

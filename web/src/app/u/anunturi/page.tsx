@@ -1,4 +1,8 @@
 export default async function Page() {
-    return <>Anunturi</>;
+    return (
+        <>
+            <div>Anunturi</div>
+        </>
+    )
 }
   

@@ -1,4 +1,8 @@
 export default async function Page() {
-    return <>Favorite</>;
+    return (
+        <>
+            <div>Favorite</div>
+        </>
+    )
 }
   

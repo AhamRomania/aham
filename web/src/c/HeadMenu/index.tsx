@@ -32,6 +32,11 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
         window.location.reload()
     }
 
+    const navigate = (to: string) => {
+        setAnchorEl(null);
+        router.push(to);
+    }
+
     if (!isLoggedIn) {
         return (
             <Link href="/anunt">
@@ -74,25 +79,31 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                <MenuItem onClick={() => router.push('/u/anunturi')}>
+                <MenuItem onClick={() => navigate('/anunt')}>
+                    <ListItemIcon>
+                        <Add fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Anunț</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={() => navigate('/u/anunturi')}>
                     <ListItemIcon>
                         <Sell fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Anunțuri</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={() => router.push('/u/mesaje')}>
+                <MenuItem onClick={() => navigate('/u/mesaje')}>
                     <ListItemIcon>
                         <Forum fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Mesaje</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={() => router.push('/u/favorite')}>
+                <MenuItem onClick={() => navigate('/u/favorite')}>
                     <ListItemIcon>
                         <Favorite fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Favorite</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={() => router.push('/u/cont')}>
+                <MenuItem onClick={() => navigate('/u/cont')}>
                     <ListItemIcon>
                         <ManageAccounts fontSize="small" />
                     </ListItemIcon>

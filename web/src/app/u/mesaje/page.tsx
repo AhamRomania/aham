@@ -1,4 +1,8 @@
 export default async function Page() {
-    return <>Mesaje</>;
+    return (
+        <>
+            <div>Mesaje</div>
+        </>
+    )
 }
   
