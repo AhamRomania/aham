@@ -1,13 +1,43 @@
 'use client';
 
-import { createTheme } from '@mui/material/styles';
+import { createTheme as createThemeMaterial } from '@mui/material/styles';
+import { extendTheme as extendThemeJoy } from '@mui/joy/styles';
 
-const theme = createTheme({
-    palette: {
-      primary: {
-        main: '#1F70B8',
+export const MaterialTheme = createThemeMaterial({
+  palette: {
+    primary: {
+      main: '#1F70B8',
+    },
+  },
+});
+
+
+
+export const JoyTheme = extendThemeJoy({
+  colorSchemes: {
+    dark: {
+      palette: {
+        primary: {
+          mainChannel: '#1F70B8',
+        },
       },
     },
-  });
+  },
+  shadows: {
+    elevation: '',
+  },
+  shadow: {
 
-export default theme;
+  },
+  vars: {
+    Avatar: {
+      defaultBg: '',
+    }
+  },
+  shape: {
+    borderRadius: 8,
+  },
+  typography: {
+    pxToRem: (size: number) => `${size / 16}rem`,
+  }
+});

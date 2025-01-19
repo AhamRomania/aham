@@ -1,42 +1,50 @@
-import type { Metadata } from "next";
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { GoogleAnalytics } from '@next/third-parties/google'
-import { Quicksand } from "next/font/google";
-import getConfig from "next/config";
-import { ThemeProvider } from "@mui/material";
+"use client";
 
-import theme from './theme';
+import { ThemeProvider } from "@mui/material";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import { Quicksand } from "next/font/google";
+import { MaterialTheme } from "./theme";
 
 import "./globals.css";
+
 const qs = Quicksand({
-  weight: '400',
-  subsets: ['latin'],
+  weight: "400",
+  subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Aham: Bazarul tău",
-  description: "Începe explorarea în bazarul tău preferat unde găsești și cunoști o grămadă de lucruri.",
-};
+import {
+  extendTheme as materialExtendTheme,
+  CssVarsProvider as MaterialCssVarsProvider,
+  THEME_ID as MATERIAL_THEME_ID,
+} from "@mui/material/styles";
+import { CssVarsProvider as JoyCssVarsProvider } from "@mui/joy/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 
+const materialTheme = materialExtendTheme();
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  const { publicRuntimeConfig } = getConfig();
-
   return (
     <html lang="en">
       <body className={`${qs.className}`}>
-        <AppRouterCacheProvider options={{ key: 'aham' }}>
-          <ThemeProvider theme={theme}>
-            {children}
+        <AppRouterCacheProvider options={{ key: "aham" }}>
+          <ThemeProvider theme={MaterialTheme}>
+            <MaterialCssVarsProvider
+              theme={{ [MATERIAL_THEME_ID]: materialTheme }}
+            >
+              <JoyCssVarsProvider>
+                <CssBaseline enableColorScheme />
+                {children}
+              </JoyCssVarsProvider>
+            </MaterialCssVarsProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
-      <GoogleAnalytics gaId={publicRuntimeConfig.googleAnalyticsID} />
+      <GoogleAnalytics gaId="G-1X7Y30KPPK" />
     </html>
   );
 }

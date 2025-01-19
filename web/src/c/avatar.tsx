@@ -1,5 +1,5 @@
 import { Face } from "@mui/icons-material";
-import { Avatar } from "@mui/material";
+import { Avatar } from "@mui/joy";
 import * as React from "react"
 
 export type UserAvatarProps = {
@@ -9,7 +9,7 @@ export type UserAvatarProps = {
 const UserAvatar = (props: UserAvatarProps) => {
 
     return (
-        <Avatar variant="rounded">
+        <Avatar>
             <Face/>
         </Avatar>
     )
