@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { Quicksand } from "next/font/google";
 import "./globals.css";
 import getConfig from "next/config";
+import { ThemeProvider } from "@mui/material";
+import theme from './theme';
 
 const qs = Quicksand({
   weight: '400',
@@ -21,12 +24,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const {publicRuntimeConfig} = getConfig();
+  const { publicRuntimeConfig } = getConfig();
 
   return (
     <html lang="en">
       <body className={`${qs.className}`}>
-        {children}
+        <AppRouterCacheProvider options={{ key: 'aham' }}>
+          <ThemeProvider theme={theme}>
+            {children}
+          </ThemeProvider>
+        </AppRouterCacheProvider>
       </body>
       <GoogleAnalytics gaId={publicRuntimeConfig.googleAnalyticsID} />
     </html>

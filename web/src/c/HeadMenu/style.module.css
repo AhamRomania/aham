@@ -15,12 +15,12 @@
     justify-content: center;
 }
 
-.headMenuButtonMore svg {
+.headMenuButtonMore > svg {
     margin-right: 5px;
     margin-top: -1px;
 }
 
-.headMenuButtonMore:active svg {
+.headMenuButtonMore:active > svg {
     margin-top: 0px;
 }
 

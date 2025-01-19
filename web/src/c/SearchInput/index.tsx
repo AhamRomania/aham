@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEventHandler, FC, useCallback, useState } from 'react';
-import { sendGAEvent } from '@next/third-parties/google'
+import { sendGAEvent } from '@next/third-parties/google';
 import styles from './style.module.css';
 
 type SearchInputProps = {

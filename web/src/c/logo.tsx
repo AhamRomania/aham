@@ -22,7 +22,7 @@ const LogoIcon = (props: LogoProps) => {
             borderRadius: 8,
             display: "flex",
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
         }}>
             <svg
                 style={{

@@ -17,7 +17,7 @@ const LargeHeader: FC = () => {
                 <div className={styles.actual}>
                     <Logo size={60} padding={15} bg='#0C5BA1' color='#FFF'/>
                     <div style={{flex:1}}></div>
-                    <HeadMenu/>
+                    <HeadMenu isLoggedIn={false}/>
                 </div>
 
                 <div className={styles.messages}>
