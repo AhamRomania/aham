@@ -20,7 +20,7 @@ const LargeHeader: FC = async () => {
         <div className={styles.actual}>
           <Tip title="Navighează la pagina principală">
             <Link href="/">
-                <Logo size={60} padding={15} bg="#9c27b0" color="#FFF" />
+                <Logo size={60} padding={17} bg="#9c27b0" color="#FFF" />
             </Link>
           </Tip>
           <div style={{ flex: 1 }}></div>

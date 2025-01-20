@@ -10,7 +10,7 @@ import HeadMenu from "../HeadMenu";
 import { getLoggedInState } from "../Auth";
 
 const Header: FC = () => {
-
+  
   const [isLoggedIn,  setIsLoggedIn] = useState(false);
 
   useEffect(() => {
