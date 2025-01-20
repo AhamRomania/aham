@@ -13,6 +13,13 @@
     margin-bottom: 30px;
 }
 
+.menus section main {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
 .menu {
     display: flex;
     flex-direction: column;
@@ -22,12 +29,10 @@
 
 .menus section:first-child {
     flex: 1;
-    margin-right: 50px;
 }
 
 .menus section:first-child main {
     flex: 1;
-    margin-right: 50px;
     display: flex;
 }
 
@@ -108,7 +113,26 @@
     .menus {
         flex-direction: row;
     }
-    
+
+
+    .menus {
+        flex-direction: row;
+    }
+
+    .menus section main {
+        flex-direction: row;
+        text-align: left;
+    }
+
+
+    .menus section:first-child {
+        margin-right: 50px;
+    }
+
+    .menus section:first-child main {
+        margin-right: 50px;
+    }
+
     .menus section:last-child {
         width: 330px;
     }
