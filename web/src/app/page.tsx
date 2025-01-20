@@ -1,9 +1,11 @@
-import LargeHeader from "@/c/LargeHeader";
+import { HomepageLayout } from "@/c/Layout";
 
 export default function Home() {
   return (
     <>
-      <LargeHeader/>
+      <HomepageLayout>
+        Hello World!
+      </HomepageLayout>
     </>  
   );
 }

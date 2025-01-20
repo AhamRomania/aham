@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
     version,
     searchDefaultPlaceholder: 'Mașină mâna a 2 sub 3000 euro',
   },
+  reactStrictMode: true,
+  compiler: {
+    emotion: true,
+  },
+  // its a qs param for js/css
+  //deploymentId: '2'
 };
 
 export default nextConfig;

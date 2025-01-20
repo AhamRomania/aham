@@ -25,7 +25,14 @@ export default function Page() {
       }
 
       resp.json().then((data) => {
-        Cookies.set("ahamjwt", data.token, { expires: 30 });
+        
+        Cookies.set("ahamjwt", data.token, {
+          expires: 30,
+          // todo: enable
+          //sameSite: 'strict',
+          //secure: true,
+          //domain: '*.aham.ro'
+        });
 
         window.location.href = "/anunt";
       });

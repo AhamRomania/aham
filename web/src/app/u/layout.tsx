@@ -1,4 +1,4 @@
-import LargeHeader from "@/c/LargeHeader";
+import { HomepageLayout } from "@/c/Layout";
 
 export default function RootLayout({
   children,
@@ -7,9 +7,8 @@ export default function RootLayout({
 }>) {
 
   return (
-    <>
-      <LargeHeader />
-      <div style={{margin:"0 auto", width:1024}}>{children}</div>
-    </>
+    <HomepageLayout>
+      {children}
+    </HomepageLayout>
   );
 }

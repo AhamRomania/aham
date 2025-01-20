@@ -6,11 +6,7 @@ const ACCESS_TOKEN_COOKIE_NAME = 'ahamjwt';
 // Get access token from browser or request
 const getAccessToken = async (): Promise<string | null> => {
 
-    console.log('Get token')
-
     if (typeof window !== 'undefined') {
-        
-        console.log('Get token: from browser')
 
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const cookies = require("js-cookie");

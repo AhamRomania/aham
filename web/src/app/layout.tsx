@@ -5,6 +5,12 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Quicksand } from "next/font/google";
 import { MaterialTheme } from "./theme";
+import createCache from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
+import { Global } from '@emotion/react'
+import globalstyles from './globals'
+
+const cache = createCache({ key: "aham" });
 
 import "./globals.css";
 
@@ -29,20 +35,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="aham">
       <body className={`${qs.className}`}>
-        <AppRouterCacheProvider options={{ key: "aham" }}>
-          <ThemeProvider theme={MaterialTheme}>
-            <MaterialCssVarsProvider
-              theme={{ [MATERIAL_THEME_ID]: materialTheme }}
-            >
-              <JoyCssVarsProvider>
-                <CssBaseline enableColorScheme />
-                {children}
-              </JoyCssVarsProvider>
-            </MaterialCssVarsProvider>
-          </ThemeProvider>
-        </AppRouterCacheProvider>
+        <CacheProvider value={cache}>
+          <AppRouterCacheProvider options={{ key: "aham" }}>
+            <ThemeProvider theme={MaterialTheme}>
+              <MaterialCssVarsProvider
+                theme={{ [MATERIAL_THEME_ID]: materialTheme }}
+              >
+                <JoyCssVarsProvider>
+                  <CssBaseline enableColorScheme />
+                  <Global styles={globalstyles}/>
+                  {children}
+                </JoyCssVarsProvider>
+              </MaterialCssVarsProvider>
+            </ThemeProvider>
+          </AppRouterCacheProvider>
+        </CacheProvider>
       </body>
       <GoogleAnalytics gaId="G-1X7Y30KPPK" />
     </html>
