@@ -40,3 +40,10 @@ a {
     color-scheme: dark;
   }
 }
+
+@media only screen and (min-width : 1200px) { 
+  .centred {
+      width: 1024px;
+      margin: 0 auto;
+  }
+}

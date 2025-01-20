@@ -8,7 +8,7 @@ import { MaterialTheme } from "./theme";
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import { Global } from '@emotion/react'
-import globalstyles from './globals'
+import globalstyles from './css'
 
 const cache = createCache({ key: "aham" });
 

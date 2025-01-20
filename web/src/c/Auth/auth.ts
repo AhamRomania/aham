@@ -1,5 +1,4 @@
 import { getAccessToken } from '@/c/Auth'
-import 'server-only'
 
 const getUser = async () => {
 

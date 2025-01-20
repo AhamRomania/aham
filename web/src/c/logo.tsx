@@ -6,21 +6,23 @@ export type LogoProps = {
     size: number
     bg: string;
     color: string;
-    padding?: number
+    padding?: number;
+    radius?: number;
 }
 
 const LogoIcon = (props: LogoProps) => {
 
     const size = props.size || 60;
-    const color = props.color || 'green';
+    const color = props.color || 'white';
     const padding = size - (size * ((props.padding||10)/100))
+    const radius = props.radius || 8;
 
     return (
         <div style={{
             width: size,
             height: size,
             background: props.bg,
-            borderRadius: 8,
+            borderRadius: radius,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",

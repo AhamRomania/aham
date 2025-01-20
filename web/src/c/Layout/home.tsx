@@ -1,5 +1,6 @@
 import * as React from "react"
 import LargeHeader from "../LargeHeader";
+import Footer from "../Footer";
 
 const HomepageLayout = ({children}: React.PropsWithChildren) => {
 
@@ -9,6 +10,7 @@ const HomepageLayout = ({children}: React.PropsWithChildren) => {
             <div style={{margin:'0 auto', width: 1024}}>
                 {children}
             </div>
+            <Footer/>
         </div>
     )
 }
