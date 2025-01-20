@@ -1,12 +1,23 @@
-import useIsLoggedIn from '@/hooks/auth'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
- 
+import { getAccessToken } from './c/Auth';
+
 export async function middleware(request: NextRequest) {
 
-    const isLoggedIn = await useIsLoggedIn();
+    const token = await getAccessToken();
 
-    if (!isLoggedIn) {
+    const res = await fetch(
+        'http://localhost:8080/v1/me',
+        {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+            
+            cache: 'no-store'
+        }
+    )
+
+    if (res.status !== 200) {
         return NextResponse.redirect(new URL(
             '/login',
             request.url
@@ -15,10 +26,10 @@ export async function middleware(request: NextRequest) {
 
     return NextResponse.next();
 }
- 
+
 export const config = {
-  matcher: [
-    '/u/:path*',
-    '/anunt'
-  ]
+    matcher: [
+        '/u/:path*',
+        '/anunt'
+    ]
 }

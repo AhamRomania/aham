@@ -5,13 +5,13 @@ import styles from "./style.module.css";
 import SearchInput from "../SearchInput";
 import Logo from "../logo";
 import HeadMenu from "../HeadMenu";
-import useIsLoggedIn from "@/hooks/auth";
+import { getLoggedInState } from "@/c/Auth";
 import Link from "next/link";
 import Tooltip from "../tooltip";
 
 const LargeHeader: FC = async () => {
   const { publicRuntimeConfig } = getConfig();
-  const isLoggedIn = await useIsLoggedIn();
+  const isLoggedIn = await getLoggedInState();
 
   return (
     <header className={styles.header}>
