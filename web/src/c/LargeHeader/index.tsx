@@ -7,6 +7,7 @@ import Logo from "../logo";
 import HeadMenu from "../HeadMenu";
 import useIsLoggedIn from "@/hooks/auth";
 import Link from "next/link";
+import Tooltip from "../tooltip";
 
 const LargeHeader: FC = async () => {
   const { publicRuntimeConfig } = getConfig();
@@ -17,9 +18,11 @@ const LargeHeader: FC = async () => {
       <div style={{ paddingTop: 25 }} className={styles.wrapper}>
 
         <div className={styles.actual}>
-          <Link href="/">
-            <Logo size={60} padding={15} bg="#0C5BA1" color="#FFF" />
-          </Link>
+          <Tooltip title="Navighează la pagina principală">
+            <Link href="/">
+                <Logo size={60} padding={15} bg="#0C5BA1" color="#FFF" />
+            </Link>
+          </Tooltip>
           <div style={{ flex: 1 }}></div>
           <HeadMenu isLoggedIn={isLoggedIn} />
         </div>
