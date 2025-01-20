@@ -28,7 +28,11 @@ const Header: FC = () => {
         css={css`
           height: 60px;
           align-items: center;
-          justify-content: center;  
+          justify-content: center; 
+          padding: 0 10px;
+          @media only screen and (min-width : 1200px) { 
+            padding: 0 0px;
+          }
         `}
       >
         <Tip title="Navighează la pagina principală">
