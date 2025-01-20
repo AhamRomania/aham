@@ -37,7 +37,7 @@ const Header: FC = () => {
       >
         <Tip title="Navighează la pagina principală">
           <Link href="/">
-            <Logo size={34} padding={8} bg="#0C5BA1" color="#FFF" radius={2} />
+            <Logo size={34} padding={15} bg="#9c27b0" color="#FFF" radius={2} />
           </Link>
         </Tip>
         <Space/>
