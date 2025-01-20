@@ -14,7 +14,14 @@ var _conn *pgx.Conn
 func DB() *pgx.Conn {
 
 	if _conn != nil {
-		return _conn
+
+		if err := _conn.DeallocateAll(context.TODO()); err != nil {
+			Log().Error(err)
+		}
+
+		if !_conn.IsClosed() {
+			return _conn
+		}
 	}
 
 	conn, err := pgx.Connect(context.Background(), os.Getenv("DB"))

@@ -103,11 +103,40 @@ func GetUserByID(id int64) *User {
 
 	var user User = User{}
 
-	err := c.DB().QueryRow(
+	row := c.DB().QueryRow(
 		context.Background(),
-		"SELECT id, email, password, given_name, family_name, phone, city, email_activation_token, phone_activation_token, created_at, email_activated_at FROM users WHERE id = $1",
+		`SELECT
+			id,
+			email,
+			password,
+			given_name,
+			family_name,
+			phone,
+			city,
+			email_activation_token,
+			phone_activation_token,
+			created_at,
+			email_activated_at
+		FROM
+			users
+		WHERE
+			id = $1`,
 		id,
-	).Scan(&user.ID, &user.Email, &user.Password, &user.GivenName, &user.FamilyName, &user.Phone, &user.City, &user.EmailActivationToken, &user.PhoneActivationToken, &user.CreatedAt, &user.EmailActivatedAt)
+	)
+
+	err := row.Scan(
+		&user.ID,
+		&user.Email,
+		&user.Password,
+		&user.GivenName,
+		&user.FamilyName,
+		&user.Phone,
+		&user.City,
+		&user.EmailActivationToken,
+		&user.PhoneActivationToken,
+		&user.CreatedAt,
+		&user.EmailActivatedAt,
+	)
 
 	if err != nil {
 		c.Log().Error(err)
