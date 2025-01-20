@@ -7,15 +7,15 @@ export type TooltipProps = {
   title: string;
 };
 
-const Tooltip = ({title, children}: TooltipProps & React.PropsWithChildren) => {
+const Tip = ({title, children}: TooltipProps & React.PropsWithChildren) => {
   return (
     <JoyTooltip
       title={title}
       color="primary"
-      size="md"
-      variant="soft"
+      size="lg"
+      variant="outlined"
     >{children}</JoyTooltip>
   );
 };
 
-export default Tooltip;
+export default Tip;

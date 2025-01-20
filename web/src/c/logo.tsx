@@ -14,30 +14,31 @@ const LogoIcon = (props: LogoProps) => {
 
     const size = props.size || 60;
     const color = props.color || 'white';
-    const padding = size - (size * ((props.padding||10)/100))
+    const icon = size - (size * ((props.padding||10)/100))
     const radius = props.radius || 8;
 
     return (
-        <div style={{
-            width: size,
-            height: size,
-            background: props.bg,
-            borderRadius: radius,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-        }}>
+        <div
+            style={{
+                width: size,
+                height: size,
+                background: props.bg,
+                borderRadius: radius,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
             <svg
                 style={{
-                    width: padding,
-                    height: padding,
+                    width: icon,
+                    height: icon,
                 }}
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 92 92"
                 width={92}
                 height={92}
                 fill="none"
-                {...props}
             >
                 <path
                 fill={color}

@@ -3,7 +3,7 @@
 import { FC, useEffect, useState } from "react";
 import { css } from "@emotion/react";
 import Logo from "../logo";
-import Tooltip from "../tooltip";
+import Tip from "../tooltip";
 import Link from "next/link";
 import { Centred, Space } from "../Layout";
 import HeadMenu from "../HeadMenu";
@@ -31,11 +31,11 @@ const Header: FC = () => {
           justify-content: center;  
         `}
       >
-        <Tooltip title="Navighează la pagina principală">
+        <Tip title="Navighează la pagina principală">
           <Link href="/">
             <Logo size={34} padding={8} bg="#0C5BA1" color="#FFF" radius={2} />
           </Link>
-        </Tooltip>
+        </Tip>
         <Space/>
         <HeadMenu isLoggedIn={isLoggedIn}/>
       </Centred>

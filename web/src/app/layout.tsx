@@ -44,7 +44,7 @@ export default function RootLayout({
                 theme={{ [MATERIAL_THEME_ID]: materialTheme }}
               >
                 <JoyCssVarsProvider>
-                  <CssBaseline enableColorScheme />
+                  {/*<CssBaseline enableColorScheme />*/}
                   <Global styles={globalstyles}/>
                   {children}
                 </JoyCssVarsProvider>

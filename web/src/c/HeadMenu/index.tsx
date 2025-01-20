@@ -8,7 +8,7 @@ import UserAvatar from '../avatar';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Cookie from 'js-cookie';
-import Tooltip from '../tooltip';
+import Tip from '../tooltip';
 
 interface HeadMenuProps {
     isLoggedIn?: boolean
@@ -55,7 +55,7 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
     return (
         <div className={styles.headMenu}>
 
-            <Tooltip title='Deschide meniul'>
+            <Tip title='Deschide meniul'>
                 <button
                     onClick={handleClick}
                     className={styles.headMenuButtonMore}
@@ -73,7 +73,7 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
                     
                     <UserAvatar/>
                 </button>
-            </Tooltip>
+            </Tip>
 
             <Menu
                 id="basic-menu"
