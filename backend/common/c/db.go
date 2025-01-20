@@ -15,14 +15,20 @@ func DB() *pgx.Conn {
 
 	if _conn != nil {
 
-		if err := _conn.DeallocateAll(context.TODO()); err != nil {
-			Log().Error(err)
+		if err := _conn.Ping(context.Background()); err != nil {
+			Log().Warn("Pg reconnect on ping failed")
+			return conn()
 		}
 
 		if !_conn.IsClosed() {
 			return _conn
 		}
 	}
+
+	return conn()
+}
+
+func conn() *pgx.Conn {
 
 	conn, err := pgx.Connect(context.Background(), os.Getenv("DB"))
 
@@ -38,5 +44,5 @@ func DB() *pgx.Conn {
 
 	_conn = conn
 
-	return _conn
+	return conn
 }

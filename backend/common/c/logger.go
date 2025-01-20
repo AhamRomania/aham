@@ -1,8 +1,18 @@
 package c
 
-import "go.uber.org/zap"
+import (
+	"time"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+)
 
 func Log() *zap.SugaredLogger {
-	logger := zap.Must(zap.NewDevelopment())
+	config := zap.NewProductionConfig()
+	config.DisableStacktrace = true
+	config.Encoding = "console"
+	config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(time.RFC3339)
+	config.EncoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+	logger := zap.Must(config.Build())
 	return logger.Sugar()
 }
