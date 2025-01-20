@@ -9,7 +9,7 @@
 
 .menus {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     margin-bottom: 30px;
 }
 
@@ -31,17 +31,12 @@
     display: flex;
 }
 
-.menus section:last-child {
-    width: 330px;
-}
-
 .menus section:last-child main {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     margin-top: 30px;
-    margin-bottom: 30px;
 }
 
 .menus section h4 {
@@ -56,7 +51,7 @@
     height: 80px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     padding: 0 20px;
     width: 100%;
 }
@@ -81,12 +76,13 @@
 }
 
 .bottomMenu i {
+    display: none;
     font-style: normal;
     margin: 0 20px;
 }
 
 .bottomMenu nav {
-    display: flex;
+    display: none;
     gap: 15px;
 }
 
@@ -105,4 +101,35 @@
 .version a {
     color: #888888;
     font-size: 14px;
+}
+
+@media only screen and (min-width : 1200px) {
+    
+    .menus {
+        flex-direction: row;
+    }
+    
+    .menus section:last-child {
+        width: 330px;
+    }
+
+    .menus section:last-child main {
+        margin-bottom: 30px;
+    }
+
+    .hideOnDesktop {
+        display: none;
+    }
+
+    .bottomMenu nav {
+        display: flex;
+    }
+
+    .bottomMenu i {
+        display: block;
+    }
+
+    .socials {
+        justify-content: flex-start;
+    }
 }

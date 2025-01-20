@@ -29,6 +29,12 @@ const Footer: FC = () => {
                                 <Link href="/afla">Află</Link>
                                 <Link href="/developeri">Developeri</Link>
                             </nav>
+                            <nav className={style.hideOnDesktop + ' ' + style.menu}>
+                                <Link href="/ajutor">Ajutor</Link>
+                                <Link href="/cookies">Cookies</Link>
+                                <Link href="/termeni-si-conditii">Termeni și condiții</Link>
+                                <Link href="/contact">Contact</Link>
+                            </nav>
                         </main>
                     </section>
                     <section>
