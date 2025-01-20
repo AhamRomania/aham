@@ -29,7 +29,7 @@ const getLoggedInState = async () => {
 
     const me = await getUser();
 
-    if (typeof(me['hasOwnProperty']) != null) {
+    if (me && typeof(me['hasOwnProperty']) != 'undefined') {
         return me.hasOwnProperty('id');
     }
 

@@ -1,4 +1,4 @@
-import { HomepageLayout } from "@/c/Layout";
+import { MainLayout } from "@/c/Layout";
 
 export default function RootLayout({
   children,
@@ -7,8 +7,8 @@ export default function RootLayout({
 }>) {
 
   return (
-    <HomepageLayout>
+    <MainLayout>
       {children}
-    </HomepageLayout>
+    </MainLayout>
   );
 }
