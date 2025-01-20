@@ -8,6 +8,7 @@ import UserAvatar from '../avatar';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Cookie from 'js-cookie';
+import Tooltip from '../tooltip';
 
 interface HeadMenuProps {
     isLoggedIn?: boolean
@@ -53,22 +54,26 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
 
     return (
         <div className={styles.headMenu}>
-            <button
-                onClick={handleClick}
-                className={styles.headMenuButtonMore}
-                aria-controls={open ? 'basic-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width={11} height={7}>
-                    <path
-                        fill="#E8EAED"
-                        fillRule="nonzero"
-                        d="M5.5 7 0 1.706 1.772 0 5.5 3.588 9.228 0 11 1.706z"
-                    />
-                </svg>
-                <UserAvatar/>
-            </button>
+
+            <Tooltip title='Deschide meniul'>
+                <button
+                    onClick={handleClick}
+                    className={styles.headMenuButtonMore}
+                    aria-controls={open ? 'basic-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width={11} height={7}>
+                        <path
+                            fill="#E8EAED"
+                            fillRule="nonzero"
+                            d="M5.5 7 0 1.706 1.772 0 5.5 3.588 9.228 0 11 1.706z"
+                        />
+                    </svg>
+                    
+                    <UserAvatar/>
+                </button>
+            </Tooltip>
 
             <Menu
                 id="basic-menu"
