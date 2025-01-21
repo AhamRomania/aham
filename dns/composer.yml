@@ -1,0 +1,11 @@
+services:
+  dns:
+    image: 'coredns/coredns'
+    container_name: dns
+    ports:
+      - '53:53'
+      - '53:53/udp'
+    command: -conf /etc/coredns/Corefile -dns.port 53
+    volumes:
+      - ./Corefile:/etc/coredns/Corefile
+      - ./zones:/etc/coredns/zones
