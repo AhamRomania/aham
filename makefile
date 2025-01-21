@@ -1,12 +1,24 @@
-dev:
+env PATH=$PATH:/usr/local/go/bin
+
+run-api:
 	docker compose -f ./setup/composer.yml -p aham up -d
-	read -p 'What projet? (api|cdn): ' app && \
-	echo "Using $$app..." && \
-	cd "backend/service/$$app" && \
+	cd "backend/service/api" && \
 	LISTEN=:8080 \
 	DB=postgres://aham:aham@localhost:5432/aham \
 	CDN=http://localhost:8081 \
 	go run ./main.go
+
+run-cdn:
+	pwd
+	docker compose -f ./setup/composer.yml -p aham up -d
+	cd "backend/service/cdn" && \
+	LISTEN=:8081 \
+	FILES=/usr/local/aham/data \
+	REDIS=redis://:aham@localhost:6379/0?protocol=3 \
+	go run ./main.go
+
+run-web:
+	cd web/ && npm run start
 
 test:
 	
