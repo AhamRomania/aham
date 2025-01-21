@@ -5,31 +5,29 @@ echo "Please run as root"
 exit
 fi
 
-echo "Cleaning up..."
-
 rm -rf /var/www/aham.ro
-
-echo "Setup folders..."
 
 mkdir -p /var/www/aham.ro/api
 mkdir -p /var/www/aham.ro/cdn
 mkdir -p /var/www/aham.ro/web
-mkdir -p /var/www/aham.ro/certs/{api,cdn,web}
+mkdir -p /var/www/aham.ro/certs
 
-echo "Setup nginx..."
+cp -f conf/acme-aham.conf /etc/nginx/sites-enabled/acme-aham.conf
 
-cp -f conf/aham.conf /etc/nginx/sites-enabled/aham.conf
+service nginx restart
 
-echo "Setup ssl certificates..."
-
-certbot certonly --webroot -w /var/www/aham.ro/certs/web -d aham.ro
-certbot certonly --webroot -w /var/www/aham.ro/certs/api -d api.aham.ro
-certbot certonly --webroot -w /var/www/aham.ro/certs/cdn -d cdn.aham.ro
+certbot certonly --webroot -w /var/www/aham.ro/certs -d aham.ro
+certbot certonly --webroot -w /var/www/aham.ro/certs -d api.aham.ro
+certbot certonly --webroot -w /var/www/aham.ro/certs -d cdn.aham.ro
 
 cp ../web/src/app/favicon.ico /var/www/aham.ro
 
-echo 'Hello World!' > /var/www/aham.ro/web/index.html
-
 chown -R www-data:www-data /var/www/aham.ro
+
+rm -f /etc/nginx/sites-enabled/acme-aham.conf
+
+rm -rf /var/www/aham.ro/certs
+
+cp -f conf/aham.conf /etc/nginx/sites-enabled/aham.conf
 
 service nginx restart

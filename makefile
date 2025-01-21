@@ -33,3 +33,6 @@ test:
 
 	@echo "\033[0;32m> Docker Down...\033[0m"
 	@docker compose --progress=quiet -f ./setup/composer-test.yml -p aham-test down
+
+setup:
+	cd ./setup && ./nginx.sh
