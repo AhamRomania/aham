@@ -12,7 +12,6 @@ export const MaterialTheme = createThemeMaterial({
 });
 
 
-
 export const JoyTheme = extendThemeJoy({
   colorSchemes: {
     dark: {
@@ -23,21 +22,21 @@ export const JoyTheme = extendThemeJoy({
       },
     },
   },
-  shadows: {
-    elevation: '',
-  },
+  //shadows: {
+  //  elevation: '',
+  //},
   shadow: {
 
   },
-  vars: {
-    Avatar: {
-      defaultBg: '',
-    }
-  },
-  shape: {
-    borderRadius: 8,
-  },
+  //vars: {
+  //  Avatar: {
+  //    defaultBg: '',
+  //  }
+  //},
+  //shape: {
+  //  borderRadius: 8,
+  //},
   typography: {
-    pxToRem: (size: number) => `${size / 16}rem`,
+    //pxToRem: (size: number) => `${size / 16}rem`,
   }
 });

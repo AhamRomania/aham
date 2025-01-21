@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
     const token = await getAccessToken();
 
     const res = await fetch(
-        'http://localhost:8080/v1/me',
+        'https://api.aham.ro/v1/me',
         {
             headers: {
                 "Authorization": `Bearer ${token}`

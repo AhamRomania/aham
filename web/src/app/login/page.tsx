@@ -1,6 +1,5 @@
 "use client";
 
-import LargeHeader from "@/c/LargeHeader";
 import Cookies from "js-cookie";
 
 export default function Page() {
@@ -15,7 +14,7 @@ export default function Page() {
     const user = (userElement as HTMLInputElement).value;
     const pass = (passElement as HTMLInputElement).value;
 
-    fetch("http://localhost:8080/v1/auth", {
+    fetch("https://api.aham.ro/v1/auth", {
       method: "POST",
       body: JSON.stringify({ email: user, password: pass }),
     }).then((resp) => {
@@ -28,10 +27,9 @@ export default function Page() {
         
         Cookies.set("ahamjwt", data.token, {
           expires: 30,
-          // todo: enable
-          //sameSite: 'strict',
-          //secure: true,
-          //domain: '*.aham.ro'
+          sameSite: 'strict',
+          secure: true,
+          domain: 'aham.ro'
         });
 
         window.location.href = "/anunt";

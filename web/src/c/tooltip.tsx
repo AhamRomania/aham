@@ -14,7 +14,9 @@ const Tip = ({title, children}: TooltipProps & React.PropsWithChildren) => {
       color="primary"
       size="lg"
       variant="outlined"
-    >{children}</JoyTooltip>
+    >
+      <div>{children}</div>
+    </JoyTooltip>
   );
 };
 

@@ -7,7 +7,7 @@ const getUser = async () => {
     if (token) {
 
         const res = await fetch(
-            'http://localhost:8080/v1/me',
+            'https://api.aham.ro/v1/me',
             {
                 headers: {
                     "Authorization": `Bearer ${token}`
