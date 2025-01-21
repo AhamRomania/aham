@@ -1,0 +1,9 @@
+[Unit]
+Description=Aham API
+After=network.target
+
+[Service]
+ExecStart=/usr/local/apache2/bin/httpd -D FOREGROUND -k start
+ExecReload=/usr/local/apache2/bin/httpd -k graceful
+Type=notify
+Restart=always

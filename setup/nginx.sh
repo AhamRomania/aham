@@ -5,6 +5,11 @@ echo "Please run as root"
 exit
 fi
 
+if [ ! -d "/var/www" ]; then
+echo "/var/www missing. Nginx running?"
+exit
+fi
+
 rm -rf /var/www/aham.ro
 
 mkdir -p /var/www/aham.ro/api
