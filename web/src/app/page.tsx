@@ -1,26 +1,16 @@
-import { CategoryList } from "@/c";
+import { Category, CategoryList } from "@/c";
 import { HomepageLayout } from "@/c/Layout";
 import Section from "@/c/section";
+import useApiFetch from "@/hooks/api";
 
-export default function Home() {
-  const categories = [
-    { name: "Vehicule", href: "/c/vehicule" },
-    { name: "Proprietăți de închiriat", href: "/c/proprietati-de-inchiriat" },
-    { name: "Mica publicitate", href: "/c/mica-publicitate" },
-    { name: "Haine", href: "/c/haine" },
-    { name: "Electronice", href: "/c/electronice" },
-    { name: "Vehicule", href: "/c/vehicule" },
-    { name: "Proprietăți de închiriat", href: "/c/proprietati-de-inchiriat" },
-    { name: "Mica publicitate", href: "/c/mica-publicitate" },
-    { name: "Haine", href: "/c/haine" },
-    { name: "Electronice", href: "/c/electronice" },
-    { name: "Vehicule", href: "/c/vehicule" },
-    { name: "Proprietăți de închiriat", href: "/c/proprietati-de-inchiriat" },
-    { name: "Mica publicitate", href: "/c/mica-publicitate" },
-    { name: "Haine", href: "/c/haine" },
-    { name: "Electronice", href: "/c/electronice" },
-  ];
+export default async function Home () {
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const fetch = useApiFetch<Category[]>();
+
+  const categories = await fetch('/categories');
+  console.log(categories)
+debugger
   return (
     <HomepageLayout>
       <Section title="Categorii">

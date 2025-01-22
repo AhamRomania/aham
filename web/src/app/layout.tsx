@@ -25,6 +25,7 @@ import {
   THEME_ID as MATERIAL_THEME_ID,
 } from "@mui/material/styles";
 import { CssVarsProvider as JoyCssVarsProvider } from "@mui/joy/styles";
+import Head from "next/head";
 // import CssBaseline from "@mui/material/CssBaseline";
 
 const materialTheme = materialExtendTheme();
@@ -36,6 +37,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="aham">
+      <Head>
+        <meta name="theme-color" defaultValue="#1F70B8"/>
+      </Head>
       <body className={`${qs.className}`}>
         <CacheProvider value={cache}>
           <AppRouterCacheProvider options={{ key: "aham" }}>

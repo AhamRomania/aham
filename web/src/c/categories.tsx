@@ -4,9 +4,10 @@ import { css } from "@emotion/react";
 import Link from "next/link";
 import { FC } from "react";
 
-export interface Category {
+export type Category = {
+  id: string;
   name: string;
-  href: string;
+  slug: string;
 }
 
 export interface CategoriesProps {
@@ -31,7 +32,7 @@ export const Item: FC<CategoryProps> = ({ category }) => {
       `)}
     >
       <Icon color="#F2F2F2" />
-      <Link href={category.href}>
+      <Link href={`/c/${category.slug}`}>
         <span>{category.name}</span>
       </Link>
     </div>

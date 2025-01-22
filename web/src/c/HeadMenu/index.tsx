@@ -54,7 +54,7 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
                     variant="contained"
                     color="secondary"
                 >
-                    Anunț
+                    Adaugă Anunț
                 </Button>
             </Link>
         )
