@@ -63,10 +63,10 @@ const Footer: FC = () => {
                             <h4>Aplicații Mobile</h4>
                             <main>
                                 <Button variant="plain" onClick={() => openMobileApp('IOS')}>
-                                    <Image src="ios.svg" width={186} height={55} alt="Aham pe IOS"/>
+                                    <Image src="/ios.svg" width={186} height={55} alt="Aham pe IOS"/>
                                 </Button>
                                 <Button variant="plain" onClick={() => openMobileApp('Android')}>
-                                    <Image src="android.svg" width={186} height={55} alt="Aham pe Android"/>
+                                    <Image src="/android.svg" width={186} height={55} alt="Aham pe Android"/>
                                 </Button>
                             </main>
                         </section>

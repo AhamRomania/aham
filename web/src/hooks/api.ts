@@ -31,8 +31,6 @@ const useApiFetch = <T>(props?:ApiFetchProps) => {
             'Authorization': `Bearer${token}`,
         };
 
-        console.log('Requesting: ' + input)
-
         const resp = await fetch(input, init);
 
         if (!resp) {

@@ -8,7 +8,7 @@ const HomepageLayout = ({children}: React.PropsWithChildren) => {
     return (
         <div>
             <LargeHeader />
-            <Centred>
+            <Centred mode="column">
                 {children}
             </Centred>
             <Footer/>
