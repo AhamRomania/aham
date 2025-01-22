@@ -6,6 +6,7 @@ export interface ApiFetchProps {
 
 const useApiFetch = <T>(props?:ApiFetchProps) => {
 
+    const version = props?.version || 'v1';
     const token = getAccessToken();
 
     return async (
@@ -13,7 +14,13 @@ const useApiFetch = <T>(props?:ApiFetchProps) => {
         init?: RequestInit,
     ): Promise<T> => {
 
-        input = `https://api.aham.ro/${props?.version || `v1`}${input}`;
+        let api = `https://api.aham.ro/${version}`
+        
+        if (process.env.NODE_ENV === 'development') {
+            api = `http://localhost:8080/${version}`
+        }
+
+        input = api + input;
 
         if (typeof(init) === 'undefined') {
             init = {};
@@ -24,7 +31,13 @@ const useApiFetch = <T>(props?:ApiFetchProps) => {
             'Authorization': `Bearer${token}`,
         };
 
+        console.log('Requesting: ' + input)
+
         const resp = await fetch(input, init);
+
+        if (!resp) {
+            return Promise.reject('error');
+        }
 
         if (resp.status != 200) {
             return Promise.reject();
