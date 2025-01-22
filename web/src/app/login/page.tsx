@@ -1,5 +1,6 @@
 "use client";
 
+import { ACCESS_TOKEN_COOKIE_NAME } from "@/c/Auth";
 import Cookies from "js-cookie";
 
 export default function Page() {
@@ -25,7 +26,7 @@ export default function Page() {
 
       resp.json().then((data) => {
         
-        Cookies.set("ahamjwt", data.token, {
+        Cookies.set(ACCESS_TOKEN_COOKIE_NAME, data.token, {
           expires: 30,
           sameSite: 'strict',
           secure: true,

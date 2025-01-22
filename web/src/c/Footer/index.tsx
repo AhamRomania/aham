@@ -41,7 +41,7 @@ const Footer: FC = () => {
                                     <Link href="/despre">Despre Aham</Link>
                                     <Link href="/promovare">Promovează</Link>
                                     <Link href="/categorii">Categorii</Link>
-                                    <Link href="/curiozitati">Întrebări frecvente</Link>
+                                    <Link href="/curiozitati">Curiozitati</Link>
                                     <Link href="/contact">Contact</Link>
                                     <Link href="/cariere">Cariere</Link>
                                 </nav>

@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Cookie from 'js-cookie';
 import Tip from '../tooltip';
+import { ACCESS_TOKEN_COOKIE_NAME } from '../Auth';
 
 interface HeadMenuProps {
     isLoggedIn?: boolean
@@ -29,7 +30,14 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
     };
 
     const logout = () => {
-        Cookie.remove('ahamjwt');
+        Cookie.remove(
+            ACCESS_TOKEN_COOKIE_NAME,
+            {
+                sameSite: 'strict',
+                secure: true,
+                domain: 'aham.ro'
+            }
+        );
         window.location.reload()
     }
 
