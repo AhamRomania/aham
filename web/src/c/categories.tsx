@@ -43,11 +43,13 @@ export const CategoryList: FC<CategoriesProps> = ({ categories }) => {
     <div
       css={css(`
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr; 
-            grid-template-rows: 1fr 1fr 1fr; 
-            gap: 0px 0px; 
-            grid-template-areas: 
-                ". . ."; 
+            @media only screen and (min-width : 1200px) {
+                grid-template-columns: 1fr 1fr 1fr; 
+                grid-template-rows: 1fr 1fr 1fr; 
+                gap: 0px 0px; 
+                grid-template-areas: 
+                    ". . .";
+            }
         `)}
     >
       {categories.map((c, i) => (

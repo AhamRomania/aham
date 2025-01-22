@@ -1,15 +1,16 @@
 import * as React from "react"
 import LargeHeader from "../LargeHeader";
 import Footer from "../Footer";
+import { Centred } from "./common";
 
 const HomepageLayout = ({children}: React.PropsWithChildren) => {
 
     return (
         <div>
             <LargeHeader />
-            <div style={{margin:'0 auto', width: 1024}}>
+            <Centred>
                 {children}
-            </div>
+            </Centred>
             <Footer/>
         </div>
     )

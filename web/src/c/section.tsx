@@ -11,11 +11,11 @@ export interface SectionProps {
 
 const Section: FC<SectionProps & PropsWithChildren> = ({title, children}) => {
     return (
-        <div css={css`margin-bottom: 50px`}>
+        <div css={css`margin-bottom: 50px; margin-top: 50px; width: 100%;`}>
             <h2>{title}</h2>
             <div css={css`margin-top: 50px;`}>{children}</div>
             <div css={css`display: flex; justify-content: flex-end;`}>
-                <Button variant="plain" endDecorator={<ArrowRight/>}>Categorii</Button>
+                <Button size="lg" variant="plain" endDecorator={<ArrowRight/>}>Categorii</Button>
             </div>
         </div>
     )
