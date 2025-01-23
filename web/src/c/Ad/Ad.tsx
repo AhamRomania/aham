@@ -65,7 +65,7 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
                             margin-top:5px;
                         `}
                     >
-                        <svg css={css`margin-right: 5px;`} xmlns="http://www.w3.org/2000/svg" width={16} height={20}>
+                        <svg css={css`margin-right: 10px;`} xmlns="http://www.w3.org/2000/svg" width={16} height={20}>
                             <path
                             fill="#000"
                             fillRule="nonzero"
@@ -81,7 +81,7 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
                             margin-top:5px;
                         `}
                     >
-                        <svg css={css`margin-right: 5px;`} xmlns="http://www.w3.org/2000/svg" width={18} height={18}>
+                        <svg css={css`margin-right: 10px;`} xmlns="http://www.w3.org/2000/svg" width={18} height={18}>
                             <path
                             fill="#000"
                             fillRule="nonzero"
