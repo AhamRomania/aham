@@ -16,9 +16,9 @@
 **Hosting candidates:**
 - thc.ro/servere-dedicate - 300 ron / m
 
-
 **Links:**
 - https://www.gumtree.com/
 - https://imgur.com/
 - https://raw.githubusercontent.com/romania/localitati/refs/heads/master/json/orase.json
 - https://gitlab.com/anuntam/website/-/blob/main/init.sql?ref_type=heads
+- https://github.com/pacocoursey/next-themes
