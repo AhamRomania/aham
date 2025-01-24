@@ -73,8 +73,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if db.VerifyEmailExists(req.Email) {
-		c.Log().Info("Email already exists: ", req.Email)
-		http.Error(w, "Email already exists", http.StatusBadRequest)
+		c.Log().Info("Adresa de email există deja: ", req.Email)
+		http.Error(w, "Adresa de email există deja", http.StatusBadRequest)
 		return
 	}
 
@@ -123,7 +123,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		"ACTIVATION_URL": c.URLF("/activare?ref=%s", *user.EmailActivationToken),
 	})
 
-	render.JSON(w, r, req)
+	render.JSON(w, r, map[string]any{
+		"id":          user.ID,
+		"given_name":  user.GivenName,
+		"family_name": user.FamilyName,
+	})
 }
 
 func isPasswordComplex(password string) bool {

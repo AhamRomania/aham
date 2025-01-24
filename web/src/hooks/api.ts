@@ -31,17 +31,34 @@ const useApiFetch = (props?:ApiFetchProps) => {
             'Authorization': `Bearer${token}`,
         };
 
-        const resp = await fetch(input, init);
+        let resp;
+
+        try
+        {
+            resp = await fetch(input, init);
+        }
+        catch(e) {
+            return Promise.reject(e)
+        }
 
         if (!resp) {
             return Promise.reject('error');
         }
 
         if (resp.status != 200) {
-            return Promise.reject();
+            return Promise.reject(await resp.text());
         }
 
-        return await resp.json();
+        let out;
+
+        try
+        {
+            out = await resp.json();
+        } catch(e) {
+            return Promise.reject(e);
+        }
+
+        return out;
     }
 }
 

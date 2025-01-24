@@ -1,15 +1,24 @@
 "use client";
 
-import { ACCESS_TOKEN_COOKIE_NAME } from "@/c/Auth";
-import CitySelect from "@/c/Form/CitySelect";
 import Logo from "@/c/logo";
 import OrSection from "@/c/orsection";
-import Tip from "@/c/tooltip";
 import useApiFetch from "@/hooks/api";
 import { css } from "@emotion/react";
-import { Apple, Google, X, Facebook } from "@mui/icons-material";
-import { Autocomplete, AutocompleteOption, Button, CircularProgress, IconButton, Input, Option, Select, Stack } from "@mui/joy";
-import Cookies from "js-cookie";
+import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+import {
+    Autocomplete,
+    Button,
+    CircularProgress,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    Input,
+    Modal,
+    ModalDialog,
+    Stack
+} from "@mui/joy";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -17,7 +26,11 @@ export default function Page() {
   const api = useApiFetch();
   const [counties, setCounties] = useState([]);
   const [open, setOpen] = useState(false);
+  const [city, setCity] = useState(0);
   const loading = open && counties.length === 0;
+
+  const [formDialogOpen, setFormDialogOpen] = useState(false);
+  const [formDialogMessage, setFormDialogMessage] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -50,7 +63,9 @@ export default function Page() {
           align-items: center;
           flex-direction: column;
           margin-bottom: 50px;
-          h1 { margin-top: 20px; }
+          h1 {
+            margin-top: 20px;
+          }
         `}
       >
         <Link href="/">
@@ -60,30 +75,27 @@ export default function Page() {
       </div>
 
       <form
-        autoComplete="none"
+        autoComplete="off"
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
           const formJson = Object.fromEntries((formData as any).entries());
-
-          api<{ token: string }>("/auth", {
+          formJson.city = city.id;
+          api<{ token: string }>("/users", {
             method: "POST",
             body: JSON.stringify(formJson),
           }).then((data) => {
-            Cookies.set(ACCESS_TOKEN_COOKIE_NAME, data.token, {
-              expires: 30,
-              //sameSite: "strict",
-              //secure: true,
-              //domain: "localhost",
-            });
-
-            window.location.href = "/anunt";
+            window.location.href = `/cont/succes?id=${data.id}&name=${data.given_name}`;
+          }).catch(e => {
+            setFormDialogOpen(true)
+            setFormDialogMessage(e);
           });
         }}
       >
         <Stack spacing={1}>
           <Input
             name="email"
+            autoComplete="off"
             type="text"
             placeholder="Email"
             size="lg"
@@ -122,31 +134,51 @@ export default function Page() {
             name="city"
             required
             size="lg"
+            onChange={(event, value) => {
+              setCity(value);
+            }}
             onOpen={() => {
-                setOpen(true);
+              setOpen(true);
             }}
             onClose={() => {
-                setOpen(false);
+              setOpen(false);
             }}
             endDecorator={
-                loading ? (
-                <CircularProgress size="sm" sx={{ bgcolor: 'background.surface' }} />
-                ) : null
+              loading ? (
+                <CircularProgress
+                  size="sm"
+                  sx={{ bgcolor: "background.surface" }}
+                />
+              ) : null
             }
             options={counties}
-            groupBy={o => o.county_name}
+            groupBy={(o) => o.county_name}
             getOptionLabel={(option) => option.name}
-            renderOption={(props, option) => (
-                <AutocompleteOption {...props} key={option.id}>
-                {option.name}
-                </AutocompleteOption>
-            )}
-            ></Autocomplete>
+            getOptionKey={(o) => o.id}
+          ></Autocomplete>
           <Button size="lg" type="submit">
-            Intră
+            Crează
           </Button>
         </Stack>
       </form>
+
+      <Modal open={formDialogOpen} onClose={() => setFormDialogOpen(false)}>
+        <ModalDialog variant="outlined" role="alertdialog">
+          <DialogTitle>
+            <WarningRoundedIcon />
+            Eroare creare cont
+          </DialogTitle>
+          <Divider />
+          <DialogContent>
+            {formDialogMessage}
+          </DialogContent>
+          <DialogActions>
+            <Button variant="solid" color="danger" onClick={() => setFormDialogOpen(false)}>
+              OK
+            </Button>
+          </DialogActions>
+        </ModalDialog>
+      </Modal>
 
       <OrSection>sau</OrSection>
 

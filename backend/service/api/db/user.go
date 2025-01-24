@@ -35,11 +35,15 @@ func (u *User) ToName() string {
 }
 
 func (u *User) Create() error {
-	_, err := c.DB().Exec(
+
+	row := c.DB().QueryRow(
 		context.Background(),
-		"INSERT INTO users (email, password, given_name, family_name, phone, city, email_activation_token) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+		"INSERT INTO users (email, password, given_name, family_name, phone, city, email_activation_token) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
 		u.Email, u.Password, u.GivenName, u.FamilyName, u.Phone, u.City, u.EmailActivationToken,
 	)
+
+	err := row.Scan(&u.ID)
+
 	return err
 }
 
