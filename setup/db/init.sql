@@ -1,4 +1,4 @@
-create type currency as enum ('RON', 'EUR', 'USD');
+create type currency as enum ('LEI', 'EUR', 'USD');
 
 create type metatype as enum (
     'TEXT',
@@ -114,6 +114,7 @@ create table meta_assign (
 
 create table ads (
     id serial primary key,
+    slug varchar(255) not null,
     title varchar(255) not null,
     description text not null,
     category integer not null references categories(id),

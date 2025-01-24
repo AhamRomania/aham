@@ -44,6 +44,7 @@ func Persist(uuid string) error {
 	}
 
 	if resp.StatusCode != 200 {
+		c.Log().Errorf("Can't save upload, status code is: ", resp.StatusCode)
 		return errors.New("can't save upload")
 	}
 

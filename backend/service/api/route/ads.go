@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
+	"github.com/gosimple/slug"
 )
 
 type CreateAdRequest struct {
@@ -40,14 +41,15 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ad := db.Ad{
-		Category:    1,
+		CategoryID:  1,
 		Owner:       user,
+		Slug:        slug.Make(p.Title),
 		Title:       p.Title,
 		Description: p.Description,
 		Pictures:    p.Pictures,
 		Price:       p.Price,
 		Currency:    p.Currency,
-		City:        1,
+		CityID:      1,
 	}
 
 	if err := ad.Save(); err != nil {
@@ -66,4 +68,8 @@ func GetAd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.JSON(w, r, vo.NewAd(ad))
+}
+
+func GetAds(w http.ResponseWriter, r *http.Request) {
+	render.JSON(w, r, db.GetAds())
 }

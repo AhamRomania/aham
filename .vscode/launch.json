@@ -9,7 +9,7 @@
             "env": {
                 "LISTEN": ":8080",
                 "DB": "postgres://aham:aham@localhost:5432/aham",
-                "CDN": "https://cdn.aham.ro"
+                "CDN": "http://localhost:8081"
             },
             "program": "${workspaceFolder}/backend/service/api/main.go",
             "output": "${workspaceFolder}/bin/api"

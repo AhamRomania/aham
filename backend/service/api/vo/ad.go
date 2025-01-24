@@ -25,14 +25,14 @@ type Ad struct {
 func NewAd(src *db.Ad) Ad {
 	return Ad{
 		ID:          src.ID,
-		Category:    Category(*db.GetCategory(src.Category)),
+		Category:    Category(*db.GetCategory(src.CategoryID)),
 		Owner:       NewUser(*db.GetUserByID(src.Owner)),
 		Title:       src.Title,
 		Description: src.Description,
 		Pictures:    src.Pictures,
 		Price:       src.Price,
 		Currency:    src.Currency,
-		City:        City(*db.GetCity(src.City)),
+		City:        City(*db.GetCity(src.CityID)),
 		URL:         src.URL,
 		Props:       src.Props,
 		Status:      src.Status,

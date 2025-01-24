@@ -35,6 +35,7 @@ func main() {
 
 		r.Post("/ads", c.Guard(route.CreateAd))
 		r.Get("/ads/{id}", route.GetAd)
+		r.Get("/ads", route.GetAds)
 		r.Post("/report", route.Report)
 
 		r.Post("/qa", c.Todo("create a question"))

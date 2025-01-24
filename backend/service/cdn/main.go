@@ -180,10 +180,8 @@ func persist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.URL.Query().Get("persist") != "" {
-		redisc.Persist(context.TODO(), uuid[1])
-		redisc.Del(context.TODO(), "shadow:"+uuid[1])
-	}
+	redisc.Persist(context.TODO(), uuid[1])
+	redisc.Del(context.TODO(), "shadow:"+uuid[1])
 }
 
 func serve(w http.ResponseWriter, r *http.Request) {
@@ -309,15 +307,15 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	uinfo := `
-		{
-			"uuid":"` + rid + `",
-			"uid":` + fmt.Sprintf("%d", uid) + `,
-			"filename":"` + h.Filename + `",
-			"size":` + fmt.Sprintf("%d", h.Size) + `,
-			"crc":"` + fmt.Sprintf("%08x", checksum) + `",
-			"mime":"` + mime + `",
-			"ctime":"` + fmt.Sprint(time.Now().Unix()) + `"
-		}
+{
+	"uuid":"` + rid + `",
+	"uid":` + fmt.Sprintf("%d", uid) + `,
+	"filename":"` + h.Filename + `",
+	"size":` + fmt.Sprintf("%d", h.Size) + `,
+	"crc":"` + fmt.Sprintf("%08x", checksum) + `",
+	"mime":"` + mime + `",
+	"ctime":"` + fmt.Sprint(time.Now().Unix()) + `"
+}
 	`
 
 	if cmd := redisc.Set(context.Background(), rid, uinfo, time.Minute*7); cmd.Err() != nil {
