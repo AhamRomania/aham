@@ -6,7 +6,6 @@ import useApiFetch from "@/hooks/api";
 import { ArrowRight } from "@mui/icons-material";
 import { Button } from "@mui/joy";
 import style from './page.module.css';
-<<<<<<< HEAD
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,9 +13,7 @@ export const metadata: Metadata = {
   description:
     'Începe explorarea în bazarul tău preferat unde găsești și cunoști o grămadă de lucruri.',
 };
-=======
 import { Ad as AdType } from "@/c/types";
->>>>>>> 480fa85 (mix: display ads from api)
 
 export default async function Home () {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -33,25 +30,7 @@ export default async function Home () {
         title="Promovate"
         className={style.listing}
       >
-<<<<<<< HEAD
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-        <Ad width={312} height={357} vo={{title: 'Mini Couper', loc: 'Timiș/Timișoara', ago: 'acum 2 ore', price: '99 Lei'}}/>
-=======
         {(promovations && promovations.length) ? promovations.map((vo,index) => <Ad key={index} width={312} height={357} vo={vo}/>) : <NoItems text='Nicio promovare'/>}
->>>>>>> 480fa85 (mix: display ads from api)
       </Section>
       <Section
         title="Recomandate"

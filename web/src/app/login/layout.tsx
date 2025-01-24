@@ -8,7 +8,7 @@ export default function RootLayout({
 
   return (
       <AuthLayout>
-        <div style={{margin:"0 auto", width:1024}}>{children}</div>
+        {children}
       </AuthLayout>
   );
 }

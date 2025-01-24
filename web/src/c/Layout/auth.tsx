@@ -1,6 +1,7 @@
 "use client"
 
 import { css } from "@emotion/react";
+import Image from "next/image";
 import * as React from "react";
 
 const AuthLayout = ({children}: React.PropsWithChildren) => {
@@ -17,19 +18,48 @@ const AuthLayout = ({children}: React.PropsWithChildren) => {
                     background: var(--main-color);
                     width: 50%;
                     height: 100%;
+                    color: #FFFFFF;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-item: center;
+                    padding: 0 50px;
+
                     em {
                         text-transform: uppercase;
-                    }    
+                        font-size: 12px;
+                        font-style: inherit;
+                    }
+
+                    h1 {
+                        font-size: 65px;
+                        margin-top: 25px;
+                    }
+
+                    p {
+                        font-size: 35px;
+                        margin-top: 25px;
+                    }
+                    
+                    .image {
+                        mix-blend-mode: screen;
+                        margin-top: 50px;
+                    }
                 `}
             >
                 <em>Bine ai venit</em>
                 <h1>Bazarul tău</h1>
                 <p>Începe explorarea în bazarul tău preferat unde găsești și cunoști o grămadă de lucruri.</p>
+                <Image className="image" src="/objects.png" width={652.93} height={429} alt={"Objects"} />
             </div>
             <div
                 css={css`
                     width: 50%;
                     height: 100%;
+                    overflow: auto;
+                    display: flex;
+                    align-items: center;
+                    flex-direction: column;
                 `}
             >
                 {children}
