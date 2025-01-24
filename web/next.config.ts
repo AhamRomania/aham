@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
   compiler: {
     emotion: true,
   },
+  images: {
+    domains: [
+      'cdn.aham.ro',
+      'localhost'
+    ],
+  },
   // its a qs param for js/css
   //deploymentId: '2'
 };

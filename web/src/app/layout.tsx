@@ -3,7 +3,7 @@
 import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Quicksand } from "next/font/google";
+import { Quicksand, Inter } from "next/font/google";
 import { MaterialTheme } from "./theme";
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
@@ -19,6 +19,8 @@ const qs = Quicksand({
   subsets: ["latin"],
 });
 
+const interFont = Inter({weight: "400", subsets:["latin"]})
+
 import {
   extendTheme as materialExtendTheme,
   CssVarsProvider as MaterialCssVarsProvider,
@@ -27,6 +29,10 @@ import {
 import { CssVarsProvider as JoyCssVarsProvider } from "@mui/joy/styles";
 import Head from "next/head";
 // import CssBaseline from "@mui/material/CssBaseline";
+import { register } from 'timeago.js';
+import ro from 'timeago.js/lib/lang/ro';
+
+register('ro', ro);
 
 const materialTheme = materialExtendTheme();
 
@@ -36,11 +42,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="aham">
+    <html lang="ro" className="aham">
       <Head>
         <meta name="theme-color" defaultValue="#1F70B8"/>
       </Head>
-      <body className={`${qs.className}`}>
+      <body className={`${interFont.className}`}>
         <CacheProvider value={cache}>
           <AppRouterCacheProvider options={{ key: "aham" }}>
             <ThemeProvider theme={MaterialTheme}>

@@ -45,8 +45,7 @@ export const CategoryList: FC<CategoriesProps> = ({ categories }) => {
       css={css(`
             display: grid;
             @media only screen and (min-width : 1200px) {
-                grid-template-columns: 1fr 1fr 1fr; 
-                grid-template-rows: 1fr 1fr 1fr; 
+                grid-template-columns: 1fr 1fr 1fr;
                 gap: 0px 0px; 
                 grid-template-areas: 
                     ". . .";

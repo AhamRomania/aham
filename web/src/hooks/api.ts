@@ -4,12 +4,12 @@ export interface ApiFetchProps {
     version?: string
 }
 
-const useApiFetch = <T>(props?:ApiFetchProps) => {
+const useApiFetch = (props?:ApiFetchProps) => {
 
     const version = props?.version || 'v1';
     const token = getAccessToken();
 
-    return async (
+    return async <T>(
         input: string | URL | globalThis.Request,
         init?: RequestInit,
     ): Promise<T> => {
