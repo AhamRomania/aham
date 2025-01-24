@@ -26,15 +26,18 @@ export default function Page() {
     >
       <div
         css={css`
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 50px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          margin-bottom: 50px;
+          h1 { margin-top: 20px; }
         `}
       >
         <Link href="/">
-          <Logo bg="#9C27B0" color="#FFF" size={42} padding={18}/>
+          <Logo bg="#9C27B0" color="#FFF" size={42} padding={18} />
         </Link>
+        <h1>CONECTARE</h1>
       </div>
 
       <form

@@ -48,12 +48,15 @@ export default function Page() {
           display: flex;
           justify-content: center;
           align-items: center;
+          flex-direction: column;
           margin-bottom: 50px;
+          h1 { margin-top: 20px; }
         `}
       >
         <Link href="/">
           <Logo bg="#9C27B0" color="#FFF" size={42} padding={18} />
         </Link>
+        <h1>CONT NOU</h1>
       </div>
 
       <form
