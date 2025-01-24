@@ -28,6 +28,7 @@ func main() {
 		r.Get("/counties", route.GetCounties)
 		r.Get("/counties/{county}", route.GetCounty)
 		r.Get("/cities/{city}", route.GetCity)
+		r.Get("/cities", route.GetCities)
 
 		r.Get("/categories", route.GetCategories)
 		r.Get("/categories/{id}", route.GetCategory)

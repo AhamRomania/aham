@@ -176,6 +176,27 @@ create table reports (
     unique (reporter_email,reference,reason,comments,navitator,ip)
 );
 
+CREATE OR REPLACE FUNCTION unaccent(character varying) 
+  RETURNS character varying AS 
+$BODY$ 
+declare 
+        p_str    alias for $1; 
+        v_str    varchar; 
+begin 
+        select translate(p_str, 'ă', 'a') into v_str;
+        select translate(v_str, 'Ă', 'A') into v_str;
+        select translate(v_str, 'â', 'a') into v_str;
+        select translate(v_str, 'Â', 'A') into v_str;
+        select translate(v_str, 'î', 'i') into v_str;
+        select translate(v_str, 'Î', 'I') into v_str;
+        select translate(v_str, 'ț', 't') into v_str;
+        select translate(v_str, 'Ț', 'T') into v_str;
+        select translate(v_str, 'ș', 's') into v_str;
+        select translate(v_str, 'Ș', 'S') into v_str;
+        return v_str; 
+end;$BODY$ 
+  LANGUAGE 'plpgsql' VOLATILE; 
+
 CREATE INDEX reports_index ON reports(reporter,reason,status);
 
 INSERT INTO counties (id, auto, name) VALUES (1, 'AB', 'Alba'),(2, 'AR', 'Arad'),(3, 'AG', 'Argeş'),(4, 'BC', 'Bacău'),(5, 'BH', 'Bihor'),(6, 'BN', 'Bistriţa-Năsăud'),(7, 'BT', 'Botoşani'),(8, 'BR', 'Brăila'),(9, 'BV', 'Braşov'),(10, 'B', 'Bucureşti'),(11, 'BZ', 'Buzău'),(12, 'CL', 'Călăraşi'),(13, 'CS', 'Caraş-Severin'),(14, 'CJ', 'Cluj'),(15, 'CT', 'Constanţa'),(16, 'CV', 'Covasna'),(17, 'DB', 'Dâmboviţa'),(18, 'DJ', 'Dolj'),(19, 'GL', 'Galaţi'),(20, 'GR', 'Giurgiu'),(21, 'GJ', 'Gorj'),(22, 'HR', 'Harghita'),(23, 'HD', 'Hunedoara'),(24, 'IL', 'Ialomiţa'),(25, 'IS', 'Iaşi'),(26, 'IF', 'Ilfov'),(27, 'MM', 'Maramureş'),(28, 'MH', 'Mehedinţi'),(29, 'MS', 'Mureş'),(30, 'NT', 'Neamţ'),(31, 'OT', 'Olt'),(32, 'PH', 'Prahova'),(33, 'SJ', 'Sălaj'),(34, 'SM', 'Satu Mare'),(35, 'SB', 'Sibiu'),(36, 'SV', 'Suceava'),(37, 'TR', 'Teleorman'),(38, 'TM', 'Timiş'),(39, 'TL', 'Tulcea'),(40, 'VL', 'Vâlcea'),(41, 'VS', 'Vaslui'),(42, 'VN', 'Vrancea');

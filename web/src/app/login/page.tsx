@@ -1,12 +1,15 @@
 "use client";
 
 import { ACCESS_TOKEN_COOKIE_NAME } from "@/c/Auth";
+import Logo from "@/c/logo";
+import OrSection from "@/c/orsection";
 import Tip from "@/c/tooltip";
 import useApiFetch from "@/hooks/api";
 import { css } from "@emotion/react";
 import { Apple, Google, X, Facebook } from "@mui/icons-material";
 import { Button, IconButton, Input, Stack } from "@mui/joy";
 import Cookies from "js-cookie";
+import Link from "next/link";
 
 export default function Page() {
   const api = useApiFetch();
@@ -21,6 +24,19 @@ export default function Page() {
         align-item: center;
       `}
     >
+      <div
+        css={css`
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 50px;
+        `}
+      >
+        <Link href="/">
+          <Logo bg="#9C27B0" color="#FFF" size={42} padding={18}/>
+        </Link>
+      </div>
+
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -58,11 +74,12 @@ export default function Page() {
         </Stack>
       </form>
 
+      <OrSection>sau cu</OrSection>
+
       <div
         css={css`
           display: flex;
           justify-content: center;
-          margin-top: 20px;
         `}
       >
         <div
@@ -95,6 +112,15 @@ export default function Page() {
           </Tip>
         </div>
       </div>
+
+      <OrSection>sau</OrSection>
+
+      <Link href="/cont">
+        <Button style={{width: '100%'}} size="lg" type="submit" variant="outlined">
+          Crează cont nou
+        </Button>
+      </Link>
+
     </div>
   );
 }

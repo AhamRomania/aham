@@ -59,6 +59,7 @@ const AuthLayout = ({children}: React.PropsWithChildren) => {
                     overflow: auto;
                     display: flex;
                     align-items: center;
+                    justify-content: center;
                     flex-direction: column;
                 `}
             >

@@ -84,6 +84,116 @@ func GetCounties() []County {
 	return counties
 }
 
+type Group struct {
+	ID     int64   `json:"id"`
+	Name   string  `json:"name"`
+	Cities []*City `json:"cities"`
+}
+
+func GetCitiesFlat(query string) (cities []*City) {
+
+	cities = make([]*City, 0)
+
+	rows, err := c.DB().Query(
+		context.TODO(),
+		`select
+			cities.id,
+			cities.name,
+			cities.county,
+			counties.name
+		from cities
+		left join counties on counties.id = cities.county
+		where lower(unaccent(cities.name)) like '%' || $1 || '%'
+		order by counties.name asc
+		`,
+		query,
+	)
+
+	if err != nil {
+		c.Log().Error(err)
+		return cities
+	}
+
+	for rows.Next() {
+
+		city := &City{}
+
+		err = rows.Scan(
+			&city.ID,
+			&city.Name,
+			&city.County,
+			&city.CountyName,
+		)
+
+		if err != nil {
+			c.Log().Error(err)
+			return cities
+		}
+
+		cities = append(cities, city)
+	}
+
+	return
+}
+
+func GetCitiesGroup(query string) (flat []*Group) {
+
+	flat = make([]*Group, 0)
+
+	rows, err := c.DB().Query(
+		context.TODO(),
+		`select
+			cities.id,
+			cities.name,
+			cities.county,
+			counties.name
+		from cities
+		left join counties on counties.id = cities.county
+		where lower(unaccent(cities.name)) like '%' || $1 || '%'
+		order by counties.name asc
+		`,
+		query,
+	)
+
+	if err != nil {
+		c.Log().Error(err)
+		return flat
+	}
+
+	n := make(map[int64]string, 0)
+	m := make(map[int64][]*City, 0)
+
+	for rows.Next() {
+
+		city := &City{}
+
+		err = rows.Scan(
+			&city.ID,
+			&city.Name,
+			&city.County,
+			&city.CountyName,
+		)
+
+		if err != nil {
+			c.Log().Error(err)
+			return flat
+		}
+
+		n[city.County] = city.CountyName
+		m[city.County] = append(m[city.County], city)
+	}
+
+	for id, cities := range m {
+		flat = append(flat, &Group{
+			ID:     id,
+			Name:   n[id],
+			Cities: cities,
+		})
+	}
+
+	return flat
+}
+
 func GetCities(county int64) []City {
 
 	cities := make([]City, 0)

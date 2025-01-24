@@ -33,9 +33,9 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
         Cookie.remove(
             ACCESS_TOKEN_COOKIE_NAME,
             {
-                sameSite: 'strict',
-                secure: true,
-                domain: 'aham.ro'
+                //sameSite: 'strict',
+                //secure: true,
+                //domain: 'aham.ro'
             }
         );
         window.location.reload()
