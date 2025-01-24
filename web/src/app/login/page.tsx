@@ -35,7 +35,7 @@ export default function Page() {
         `}
       >
         <Link href="/">
-          <Logo bg="#9C27B0" color="#FFF" size={42} padding={18} />
+          <Logo bg="#9C27B0" color="#FFF" size={42} padding={21} />
         </Link>
         <h1>CONECTARE</h1>
       </div>
@@ -93,26 +93,31 @@ export default function Page() {
             gap: 10px;
           `}
         >
-          <Tip title="Connectare cu Apple">
-            <IconButton variant="outlined" size="lg">
-              <Apple />
+          
+            <IconButton disabled variant="outlined" size="lg">
+              <Tip title="Connectare cu Apple">
+                <Apple />
+              </Tip>
             </IconButton>
-          </Tip>
-          <Tip title="Conectare cu Google">
+          
+          
             <IconButton variant="outlined" size="lg">
-              <Google />
+              <Tip title="Conectare cu Google">
+                <Google />
+              </Tip>
             </IconButton>
-          </Tip>
-          <Tip title="Conectare cu Facebook">
-            <IconButton variant="outlined" size="lg">
-              <Facebook />
+          
+            <IconButton disabled variant="outlined" size="lg">
+              <Tip title="Conectare cu Facebook">
+                <Facebook />
+              </Tip>
             </IconButton>
-          </Tip>
-          <Tip title="Conectare cu X">
-            <IconButton variant="outlined" size="lg">
-              <X />
+          
+            <IconButton disabled variant="outlined" size="lg">
+              <Tip title="Conectare cu X">
+                <X />
+              </Tip>
             </IconButton>
-          </Tip>
         </div>
       </div>
 

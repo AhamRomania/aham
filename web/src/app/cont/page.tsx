@@ -69,7 +69,7 @@ export default function Page() {
         `}
       >
         <Link href="/">
-          <Logo bg="#9C27B0" color="#FFF" size={42} padding={18} />
+          <Logo bg="#9C27B0" color="#FFF" size={42} padding={21} />
         </Link>
         <h1>CONT NOU</h1>
       </div>
