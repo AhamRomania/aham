@@ -21,30 +21,19 @@ import {
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { IMaskInput } from "react-imask";
 
 export default function Page() {
   const api = useApiFetch();
   const [counties, setCounties] = useState([]);
-  const [open, setOpen] = useState(false);
   const [city, setCity] = useState(0);
-  const loading = open && counties.length === 0;
-
+  const [phone,setPhone] = useState('(100) 000-000')
   const [formDialogOpen, setFormDialogOpen] = useState(false);
   const [formDialogMessage, setFormDialogMessage] = useState(false);
 
   useEffect(() => {
-    let active = true;
-
-    if (!loading) {
-      return undefined;
-    }
-
     api("/cities").then(setCounties);
-
-    return () => {
-      active = false;
-    };
-  }, [loading]);
+  }, []);
 
   return (
     <div
@@ -81,6 +70,7 @@ export default function Page() {
           const formData = new FormData(event.currentTarget);
           const formJson = Object.fromEntries((formData as any).entries());
           formJson.city = city.id;
+          formJson.phone = phone;
           api<{ token: string }>("/users", {
             method: "POST",
             body: JSON.stringify(formJson),
@@ -124,10 +114,27 @@ export default function Page() {
           />
           <Input
             name="phone"
-            type="text"
-            placeholder="Număr de telefon"
             size="lg"
             required
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+            slotProps={{ input: { component: ()=>(
+              <IMaskInput
+                mask="+4\0 000 000 000"
+                definitions={{}}
+                placeholder="Număr de telefon"
+                overwrite="shift"
+                css={css`
+                  outline: none;
+                  background: transparent;
+                  border: none;
+                  font-size: 19px;
+                  &::placeholder {
+                    color: #7A7F82;
+                  }
+                `}
+              />
+            ) } }}
           />
           <Autocomplete
             placeholder="Localitate"
@@ -137,20 +144,6 @@ export default function Page() {
             onChange={(event, value) => {
               setCity(value);
             }}
-            onOpen={() => {
-              setOpen(true);
-            }}
-            onClose={() => {
-              setOpen(false);
-            }}
-            endDecorator={
-              loading ? (
-                <CircularProgress
-                  size="sm"
-                  sx={{ bgcolor: "background.surface" }}
-                />
-              ) : null
-            }
             options={counties}
             groupBy={(o) => o.county_name}
             getOptionLabel={(option) => option.name}
