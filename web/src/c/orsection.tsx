@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { FC, PropsWithChildren } from "react";
 
-const OrSection: FC = ({children}: PropsWithChildren) => {
+const OrSection: FC<PropsWithChildren> = ({children}) => {
     return (
         <div
             css={css`

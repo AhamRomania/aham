@@ -2,6 +2,7 @@ package db
 
 import (
 	"aham/common/c"
+	"aham/common/emails"
 	"context"
 	"time"
 )
@@ -26,12 +27,8 @@ func (user *User) Activated() bool {
 	return user.EmailActivatedAt != nil
 }
 
-func (u *User) ToEmail() string {
-	return u.Email
-}
-
-func (u *User) ToName() string {
-	return u.GivenName + " " + u.FamilyName
+func (u *User) Recipient() *emails.UserRecipient {
+	return emails.NewUserRecipient(u.GivenName, u.Email)
 }
 
 func (u *User) Create() error {

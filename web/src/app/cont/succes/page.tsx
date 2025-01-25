@@ -5,8 +5,6 @@ import { css } from "@emotion/react";
 import { CheckCircleOutline } from "@mui/icons-material";
 import { Button } from "@mui/joy";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-
 
 export default function Page() {
   const searchParams = new URLSearchParams(window.location.search);

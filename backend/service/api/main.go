@@ -25,6 +25,8 @@ func main() {
 		r.Get("/activate", route.ActivateUser)
 		r.Post("/auth", route.Auth)
 
+		r.Get("/uicfg", route.Setup)
+
 		r.Get("/counties", route.GetCounties)
 		r.Get("/counties/{county}", route.GetCounty)
 		r.Get("/cities/{city}", route.GetCity)

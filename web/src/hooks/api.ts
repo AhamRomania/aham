@@ -1,4 +1,5 @@
 import { getAccessToken } from "@/c/Auth";
+import useDomain, { Domain } from "./domain";
 
 export interface ApiFetchProps {
     version?: string
@@ -8,17 +9,12 @@ const useApiFetch = (props?:ApiFetchProps) => {
 
     const version = props?.version || 'v1';
     const token = getAccessToken();
+    const api = useDomain(Domain.Api, '/' + version)
 
     return async <T>(
         input: string | URL | globalThis.Request,
         init?: RequestInit,
     ): Promise<T> => {
-
-        let api = `https://api.aham.ro/${version}`
-        
-        if (process.env.NODE_ENV === 'development') {
-            api = `http://localhost:8080/${version}`
-        }
 
         input = api + input;
 

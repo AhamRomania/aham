@@ -119,9 +119,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	emails.Send(user, emails.WELCOME, &emails.Args{
-		"ACTIVATION_URL": c.URLF("/activare?ref=%s", *user.EmailActivationToken),
-	})
+	emails.Welcome(
+		user.Recipient(),
+		emails.WelcomeParams{
+			ActivationURL: c.URLF("/activare?ref=%s", *user.EmailActivationToken),
+		},
+	)
 
 	render.JSON(w, r, map[string]any{
 		"id":          user.ID,

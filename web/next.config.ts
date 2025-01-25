@@ -11,9 +11,9 @@ const nextConfig: NextConfig = {
     emotion: true,
   },
   images: {
-    domains: [
-      'cdn.aham.ro',
-      'localhost'
+    remotePatterns: [
+      {hostname: 'cdn.aham.ro'},
+      {hostname: 'localhost'}
     ],
   },
   // its a qs param for js/css
