@@ -34,6 +34,14 @@ func (u *User) Recipient() *emails.UserRecipient {
 	return emails.NewUserRecipient(u.GivenName, u.Email)
 }
 
+func (u *User) SetPicture(picture string) (err error) {
+	_, err = c.DB().Exec(context.TODO(), `update users set picture = $1 where id = $2`, picture, u.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (u *User) Create() error {
 
 	row := c.DB().QueryRow(

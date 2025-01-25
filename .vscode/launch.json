@@ -8,6 +8,7 @@
             "mode": "auto",
             "env": {
                 "LISTEN": ":8080",
+                "DEV": "true",
                 "DB": "postgres://aham:aham@localhost:5432/aham",
                 "CDN": "http://localhost:8081"
             },
@@ -22,6 +23,7 @@
             "env": {
                 "LISTEN": ":8081",
                 "FILES": "${workspaceFolder}/data",
+                "DEV": "true",
                 "REDIS": "redis://:aham@localhost:6379/0?protocol=3"
             },
             "program": "${workspaceFolder}/backend/service/cdn/main.go",

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
@@ -61,6 +62,10 @@ func NilID(id int64) *int64 {
 
 func String(s string) *string {
 	return &s
+}
+
+func Dev() bool {
+	return os.Getenv("DEV") == "true"
 }
 
 func URLF(s string, a ...any) string {

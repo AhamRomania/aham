@@ -2,6 +2,7 @@ package service
 
 import (
 	"aham/common/c"
+	"aham/common/cdn"
 	"aham/service/api/db"
 	"encoding/json"
 	"errors"
@@ -58,8 +59,6 @@ func (tpsi *ThirdPartySignIn) GetUser() (user *db.User, err error) {
 
 	user, _ = db.GetUserByEmail(info.Email)
 
-	fmt.Println(err)
-
 	if user == nil {
 
 		first, last, err := info.Names()
@@ -74,11 +73,31 @@ func (tpsi *ThirdPartySignIn) GetUser() (user *db.User, err error) {
 			FamilyName:            last,
 			Source:                tpsi.adapter.Slug(),
 			ThirdPartyAccessToken: info.AccessToken,
-			Picture:               c.String(info.Picture),
 		}
 
 		if err := user.Create(); err != nil {
 			return nil, err
+		}
+
+		if info.Picture != "" {
+
+			id, err := cdn.Store(user.ID, info.Picture, "image")
+
+			if err != nil {
+				c.Log().Errorf("CdnStore: %s", err.Error())
+				return user, err
+			}
+
+			pictureURL, err := c.URL("cdn", "/"+id)
+
+			if err != nil {
+				return user, err
+			}
+
+			if err := user.SetPicture(pictureURL); err != nil {
+				c.Log().Errorf("Failed to set user picture: %s", err.Error())
+				return user, err
+			}
 		}
 	}
 
