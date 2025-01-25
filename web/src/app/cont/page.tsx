@@ -8,7 +8,6 @@ import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import {
     Autocomplete,
     Button,
-    CircularProgress,
     DialogActions,
     DialogContent,
     DialogTitle,

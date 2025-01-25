@@ -3,12 +3,23 @@ package route
 import (
 	"aham/common/c"
 	"aham/service/api/db"
-	"fmt"
+	"aham/service/api/service"
 	"net/http"
 
 	"github.com/go-chi/render"
 	"golang.org/x/crypto/bcrypt"
 )
+
+type ThirdPartySource string
+
+const (
+	Google   ThirdPartySource = "google"
+	Facebook ThirdPartySource = "facebook"
+)
+
+type ThirdPartyAuthrequest struct {
+	AccessToken string `json:"access_token"`
+}
 
 type AuthRequest struct {
 	Email    string `json:"email"`
@@ -16,23 +27,6 @@ type AuthRequest struct {
 }
 
 func Auth(w http.ResponseWriter, r *http.Request) {
-
-	gtoken := r.URL.Query().Get("google_token")
-
-	if gtoken != "" {
-
-		user, err := matchGoogleAccount(gtoken)
-
-		if err != nil {
-			c.Log().Error(err)
-			http.Error(w, "Failed to fetch matching Google account", http.StatusUnauthorized)
-			return
-		}
-
-		authorize(w, r, user)
-
-		return
-	}
 
 	var req AuthRequest
 
@@ -61,6 +55,40 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 	authorize(w, r, user)
 }
 
+func AuthWithGoogle(w http.ResponseWriter, r *http.Request) {
+
+	s := service.NewThirdPartySignIn(
+		&service.GoogleAdapter{},
+		r,
+	)
+
+	user, err := s.GetUser()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	authorize(w, r, user)
+}
+
+func AuthWithFacebook(w http.ResponseWriter, r *http.Request) {
+
+	s := service.NewThirdPartySignIn(
+		&service.FacebookAdapter{},
+		r,
+	)
+
+	user, err := s.GetUser()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	authorize(w, r, user)
+}
+
 func authorize(w http.ResponseWriter, r *http.Request, user *db.User) {
 
 	token, err := c.JWTUserID(user.ID)
@@ -71,61 +99,4 @@ func authorize(w http.ResponseWriter, r *http.Request, user *db.User) {
 	}
 
 	render.JSON(w, r, map[string]string{"token": token})
-}
-
-func matchGoogleAccount(token string) (user *db.User, err error) {
-
-	req, err := http.NewRequest("GET", "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token="+token, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to verify Google token")
-	}
-
-	type GoogleTokenInfo struct {
-		Email      string `json:"email"`
-		GivenName  string `json:"given_name"`
-		FamilyName string `json:"family_name"`
-		Picture    string `json:"picture"`
-	}
-
-	var data GoogleTokenInfo = GoogleTokenInfo{}
-
-	if err := render.DecodeJSON(resp.Body, &data); err != nil {
-		return nil, err
-	}
-
-	user, err = db.GetUserByEmail(data.Email)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if user == nil {
-
-		user = &db.User{
-			Email:      data.Email,
-			GivenName:  data.GivenName,
-			FamilyName: data.FamilyName,
-			Picture:    c.String(data.Picture),
-		}
-
-		if err := user.Create(); err != nil {
-			return nil, err
-		}
-	}
-
-	return user, nil
 }

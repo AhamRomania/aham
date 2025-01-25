@@ -17,6 +17,7 @@ func main() {
 
 	rest.Use(c.CORS())
 	rest.Use(middleware.RealIP)
+	rest.Use(middleware.Logger)
 
 	rest.Route("/v1", func(r chi.Router) {
 
@@ -24,8 +25,10 @@ func main() {
 		r.Get("/me", c.Guard(route.GetCurrentUser))
 		r.Get("/activate", route.ActivateUser)
 		r.Post("/auth", route.Auth)
+		r.Post("/auth/google", route.AuthWithGoogle)
+		r.Post("/auth/facebook", route.AuthWithFacebook)
 
-		r.Get("/uicfg", route.Setup)
+		r.Get("/config", route.Setup)
 
 		r.Get("/counties", route.GetCounties)
 		r.Get("/counties/{county}", route.GetCounty)

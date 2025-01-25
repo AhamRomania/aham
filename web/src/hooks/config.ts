@@ -16,7 +16,7 @@ const getConfig = async (): Promise<Config> => {
         return Promise.resolve(config);
     }
 
-    config = await api('/uicfg')
+    config = await api('/config')
 
     return Promise.resolve(config)
 }

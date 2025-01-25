@@ -8,19 +8,22 @@ import (
 )
 
 type User struct {
-	ID                   int64      `json:"id"`
-	Email                string     `json:"email"`
-	Password             string     `json:"-"`
-	GivenName            string     `json:"given_name"`
-	FamilyName           string     `json:"family_name"`
-	Phone                string     `json:"phone"`
-	City                 int64      `json:"city"`
-	Picture              *string    `json:"picture"`
-	EmailActivationToken *string    `json:"email_activation_token"`
-	PhoneActivationToken *string    `json:"phone_activation_token"`
-	EmailActivatedAt     *time.Time `json:"email_activated_at"`
-	PhoneActivatedAt     *time.Time `json:"phone_activated_at"`
-	CreatedAt            time.Time  `json:"created_at"`
+	ID                    int64      `json:"id"`
+	Email                 string     `json:"email"`
+	Password              string     `json:"-"`
+	GivenName             string     `json:"given_name"`
+	FamilyName            string     `json:"family_name"`
+	Phone                 string     `json:"phone"`
+	City                  int64      `json:"city"`
+	Picture               *string    `json:"picture"`
+	Source                string     `json:"source"`
+	ThirdPartyAccessToken string     `json:"third_pary_access_token"`
+	Settled               bool       `json:"settled"`
+	EmailActivationToken  *string    `json:"email_activation_token"`
+	PhoneActivationToken  *string    `json:"phone_activation_token"`
+	EmailActivatedAt      *time.Time `json:"email_activated_at"`
+	PhoneActivatedAt      *time.Time `json:"phone_activated_at"`
+	CreatedAt             time.Time  `json:"created_at"`
 }
 
 func (user *User) Activated() bool {
@@ -35,8 +38,28 @@ func (u *User) Create() error {
 
 	row := c.DB().QueryRow(
 		context.Background(),
-		"INSERT INTO users (email, password, given_name, family_name, phone, city, email_activation_token) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
-		u.Email, u.Password, u.GivenName, u.FamilyName, u.Phone, u.City, u.EmailActivationToken,
+		`INSERT INTO users 
+			(
+				email,
+				password,
+				given_name,
+				family_name,
+				phone,
+				city,
+				source,
+				third_pary_access_token,
+				email_activation_token
+			)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+		u.Email,
+		u.Password,
+		u.GivenName,
+		u.FamilyName,
+		u.Phone,
+		u.City,
+		u.Source,
+		u.ThirdPartyAccessToken,
+		u.EmailActivationToken,
 	)
 
 	err := row.Scan(&u.ID)
@@ -96,6 +119,10 @@ func GetUserByEmail(email string) (user *User, err error) {
 		&user.EmailActivatedAt,
 		&user.CreatedAt,
 	)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return
 }
