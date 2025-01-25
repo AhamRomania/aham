@@ -19,11 +19,12 @@ const AuthLayout = ({children}: React.PropsWithChildren) => {
                     width: 50%;
                     height: 100%;
                     color: #FFFFFF;
-                    display: flex;
+                    display: none;
                     flex-direction: column;
                     justify-content: center;
                     align-item: center;
                     padding: 0 50px;
+                    display: none;
 
                     em {
                         text-transform: uppercase;
@@ -45,6 +46,10 @@ const AuthLayout = ({children}: React.PropsWithChildren) => {
                         mix-blend-mode: screen;
                         margin-top: 50px;
                     }
+
+                    @media only screen and (min-width : 1200px) { 
+                        display: flex;
+                    }
                 `}
             >
                 <em>Bine ai venit</em>
@@ -54,13 +59,16 @@ const AuthLayout = ({children}: React.PropsWithChildren) => {
             </div>
             <div
                 css={css`
-                    width: 50%;
+                    width:100%;
                     height: 100%;
                     overflow: auto;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     flex-direction: column;
+                    @media only screen and (min-width : 1200px) { 
+                        width: 50%;
+                    }
                 `}
             >
                 {children}
