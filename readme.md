@@ -2,6 +2,7 @@
 
 **Essence guide:**
 - See great things
+- Things reveal themselfs so have patience
 
 **Development values:**
 - Keep it simple

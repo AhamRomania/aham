@@ -32,7 +32,7 @@ test:
 	cd backend/service/cdn && \
 	LISTEN=:8071 \
 	REDIS=redis://:aham@localhost:6380/0?protocol=3 \
-	FILES=$(realpath data) \
+	FILES="$(realpath data)/cdn" \
 	go test -v ./...
 
 	@echo "\033[0;32m> Test API...\033[0m"
@@ -48,3 +48,17 @@ test:
 
 setup:
 	cd ./setup && ./nginx.sh
+
+nic:
+	go run backend/service/nic/main.go
+
+clean:
+	rm  -rf data/wp
+	rm  -rf data/db/wp
+	mkdir -rf data/wp
+	mkdir -rf data/db/wp
+
+start-docker:
+	docker compose -f ./setup/composer.yml -p aham up -d
+stop-docker:
+	docker compose -f ./setup/composer.yml -p aham down

@@ -38,15 +38,14 @@ const Footer: FC = () => {
                             <h4>Aham</h4>
                             <main>
                                 <nav className={style.menu}>
-                                    <Link href="/despre">Despre Aham</Link>
+                                    <Link href="/despre">Despre</Link>
                                     <Link href="/promovare">Promovează</Link>
                                     <Link href="/categorii">Categorii</Link>
                                     <Link href="/curiozitati">Curiozitati</Link>
                                     <Link href="/contact">Contact</Link>
-                                    <Link href="/cariere">Cariere</Link>
                                 </nav>
                                 <nav className={style.menu}>
-                                    <Link href="/blog">Blog</Link>
+                                    <Link href="https://blog.aham.ro">Blog</Link>
                                     <Link href="/ajutor">Ajutor</Link>
                                     <Link href="/afla">Află</Link>
                                     <Link href="/developeri">Developeri</Link>
@@ -128,10 +127,9 @@ const Footer: FC = () => {
                             <em>© Aham {(new Date()).getFullYear()}</em>
                             <i>㆐</i>
                             <nav>
-                                <Link href="/ajutor">Ajutor</Link>
+                                <Link href="/confidentialitate">Confidentialitate</Link>
                                 <Link href="/cookies">Cookies</Link>
                                 <Link href="/termeni-si-conditii">Termeni și condiții</Link>
-                                <Link href="/contact">Contact</Link>
                             </nav>
                         </div>
                         <Space/>

@@ -12,10 +12,16 @@ import (
 var domains = []string{
 
 	// aham.ro
-	"https://freedns.afraid.org/dynamic/update.php?M3NmYzBDUENmdkhFbHI5MXlqMXk6MjM2ODc0Mjg=",
+	"https://freedns.afraid.org/dynamic/update.php?c0lnazM3QTE1SWdTMzk0UmJ1V0E6MjM2ODc0Mjg=",
+
+	// api.aham.ro
+	"https://freedns.afraid.org/dynamic/update.php?c0lnazM3QTE1SWdTMzk0UmJ1V0E6MjM2ODc2ODA=",
 
 	// cdn.aham.ro
-	"https://freedns.afraid.org/dynamic/update.php?M3NmYzBDUENmdkhFbHI5MXlqMXk6MjM2ODczOTk=",
+	"https://freedns.afraid.org/dynamic/update.php?c0lnazM3QTE1SWdTMzk0UmJ1V0E6MjM2ODczOTk=",
+
+	// blog.aham.ro
+	"https://freedns.afraid.org/dynamic/update.php?c0lnazM3QTE1SWdTMzk0UmJ1V0E6MjM2OTg3OTY=",
 }
 
 func main() {

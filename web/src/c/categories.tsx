@@ -32,7 +32,7 @@ export const Item: FC<CategoryProps> = ({ category }) => {
       `)}
     >
       <Icon color="#F2F2F2" />
-      <Link href={`/c/${category.slug}`}>
+      <Link href={`/${category.slug}`}>
         <span>{category.name}</span>
       </Link>
     </div>
