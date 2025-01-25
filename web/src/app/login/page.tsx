@@ -218,7 +218,7 @@ export default function Page() {
 
         <OrSection>sau</OrSection>
 
-        <Link href="/cont">
+        <Link href="/u/anunturi/creaza">
           <Button
             style={{ width: "100%" }}
             size="lg"
@@ -230,8 +230,8 @@ export default function Page() {
         </Link>
         <div
           id="g_id_onload"
-          data-client_id="YOUR_GOOGLE_CLIENT_ID"
-          data-login_uri="https://aham.ro/cont"
+          data-client_id={config.GOOGLE_CLIENT_ID}
+          data-login_uri="https://aham.ro/u/anunturi/creaza"
           data-auto_prompt="true"
         ></div>
       </div>

@@ -117,9 +117,11 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 </Breadcrumbs>
 
                 <Tip title="Adaugă anunț">
-                    <IconButton variant="soft" color="primary" size="sm">
-                        <Add/>
-                    </IconButton>
+                    <Link href="/u/anunturi/creaza">
+                        <IconButton variant="soft" color="primary" size="sm">
+                            <Add/>
+                        </IconButton>
+                    </Link>
                 </Tip>
             </div>
             <Space/>

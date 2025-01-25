@@ -92,7 +92,7 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                <MenuItem onClick={() => navigate('/anunt')}>
+                <MenuItem onClick={() => navigate('/u/anunturi/creaza')}>
                     <ListItemIcon>
                         <Add fontSize="small" />
                     </ListItemIcon>
