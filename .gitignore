@@ -5,3 +5,4 @@ data/*
 !data/.gitkeep
 !data/test.png
 .env
+web/cypress/screenshots/*
