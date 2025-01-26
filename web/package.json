@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "e2e:chrome": "cypress run --browser chrome",
-    "e2e:firefox": "cypress run --browser firefox",
-    "e2e:open": "cypress open --browser chrome"
+    "e2e:chrome": "URL=http://localhost:3000 cypress run --browser chrome",
+    "e2e:firefox": "URL=http://localhost:3000 cypress run --browser firefox",
+    "e2e:open": "URL=http://localhost:3000 cypress open --browser chrome"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",

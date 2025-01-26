@@ -1,7 +1,9 @@
 describe('Navigate after login', () => {
     it('should go to add ad after login', () => {
 
-      cy.visit('http://localhost:3000');
+      Cypress.env('URL')
+
+      cy.visit(Cypress.env('URL'));
    
       cy.get('[data-test-id="add-button"]').click();
       
