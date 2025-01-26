@@ -6,10 +6,19 @@ const getUser = async () => {
 }
 
 const getLoggedInState = async () => {
-    const me = await getUser();
+    
+    let me = null;
+    
+    try {
+        me = await getUser();
+    } catch(e) {
+        return false;
+    }
+
     if (me && typeof(me['hasOwnProperty']) != 'undefined') {
         return me.hasOwnProperty('id');
     }
+    
     return false;
 }
 

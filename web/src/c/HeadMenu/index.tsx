@@ -10,9 +10,11 @@ import Link from 'next/link';
 import Cookie from 'js-cookie';
 import Tip from '../tooltip';
 import { ACCESS_TOKEN_COOKIE_NAME, getLoggedInState } from '../Auth';
+import { CircularProgress } from '@mui/joy';
 
-const HeadMenu: FC<HeadMenuProps> = () => {
+const HeadMenu: FC = () => {
 
+    const [ready, setReady] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const router = useRouter()
@@ -25,7 +27,10 @@ const HeadMenu: FC<HeadMenuProps> = () => {
     
     useEffect(() => {
         getLoggedInState().then(
-            state => setIsLoggedIn(state)
+            state => {
+                setIsLoggedIn(state);
+                setReady(true);
+            }
         );
     }, []);
 
@@ -50,17 +55,27 @@ const HeadMenu: FC<HeadMenuProps> = () => {
         router.push(to);
     }
 
+    if (!ready) {
+        return (
+            <div className={styles.headMenu}>
+                <CircularProgress size="sm" />
+            </div>
+        )
+    }
+
     if (!isLoggedIn) {
         return (
-            <Link href="/anunt">
-                <Button
-                    startIcon={<Add/>}
-                    variant="contained"
-                    color="secondary"
-                >
-                    Adaugă Anunț
-                </Button>
-            </Link>
+            <div className={styles.headMenu}>
+                <Link href="/u/anunturi/creaza">
+                    <Button
+                        startIcon={<Add/>}
+                        variant="contained"
+                        color="secondary"
+                    >
+                        Adaugă Anunț
+                    </Button>
+                </Link>
+            </div>
         )
     }
 

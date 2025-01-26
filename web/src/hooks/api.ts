@@ -30,30 +30,29 @@ const useApiFetch = (props?:ApiFetchProps) => {
         };
 
         return new Promise((resolve, reject) => {
-            fetch(input, init).then(
-                (response) => {
+            try {
+                fetch(input, init).then(
+                    (response) => {
 
-                    if (!response) {
-                        reject('error');
-                        return
+                        if (response.status === 401) {
+                            reject('unauthorized');
+                            return;
+                        }
+
+                        response.json().then(
+                            (obj) => resolve(obj),
+                        ).catch(
+                            (err) => reject(err)
+                        );
                     }
-
-                    if (response.status == 401) {
-                        reject('unauthorized');
-                        return
+                ).catch(
+                    (error) => {
+                        reject(error);
                     }
-
-                    response.json().then(
-                        (obj) => resolve(obj),
-                    ).catch(
-                        (err) => reject(err)
-                    );
-                }
-            ).catch(
-                (error) => {
-                    reject(error);
-                }
-            )
+                )
+            }catch(e) {
+                reject(e)
+            }
         });
     }
 }

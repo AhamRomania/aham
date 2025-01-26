@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "NODE_OPTIONS='--inspect' next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -23,6 +23,7 @@
     "cookies-next": "^5.1.0",
     "js-cookie": "^3.0.5",
     "next": "^15.1.5",
+    "ofetch": "^1.4.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-imask": "^7.6.1",
