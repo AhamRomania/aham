@@ -14,10 +14,12 @@ const cache = createCache({ key: "aham" });
 
 import "./globals.css";
 
+/*
 const qs = Quicksand({
   weight: "400",
   subsets: ["latin"],
 });
+*/
 
 const interFont = Inter({weight: "400", subsets:["latin"]})
 
