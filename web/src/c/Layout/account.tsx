@@ -80,6 +80,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           flex: 1;
           display: flex;
           width: 100%;
+          height: 100%;
           flex-direction: column;
         `}
       >
@@ -118,7 +119,11 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             <Space/>
             <HeadMenu/>
         </div>
-        <div>
+        <div
+          css={css`
+            overflow: auto;  
+          `}
+        >
             {children}
         </div>
       </div>
