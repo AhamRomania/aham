@@ -4,3 +4,4 @@ bin/*
 data/*
 !data/.gitkeep
 !data/test.png
+.env
