@@ -3,7 +3,7 @@
 import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Quicksand, Inter } from "next/font/google";
+import { /*Quicksand,*/ Inter } from "next/font/google";
 import { MaterialTheme } from "./theme";
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";

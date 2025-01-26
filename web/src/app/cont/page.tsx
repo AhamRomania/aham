@@ -67,7 +67,7 @@ export default function Page() {
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          const formJson = Object.fromEntries((formData as any).entries());
+          const formJson = Object.fromEntries((formData).entries());
           formJson.city = city.id;
           formJson.phone = phone;
           api<{ token: string }>("/users", {

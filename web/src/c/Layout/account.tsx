@@ -5,7 +5,7 @@ import { css } from "@emotion/react";
 import Logo from "../logo";
 import Link from "next/link";
 import { useState } from "react";
-import { Add, ArrowLeft, ArrowRight, Home } from "@mui/icons-material";
+import { Add, Home } from "@mui/icons-material";
 import Tip from "../tooltip";
 import HeadMenu from "../HeadMenu";
 import { Breadcrumbs, IconButton } from "@mui/joy";

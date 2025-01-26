@@ -1,5 +1,4 @@
 import useApiFetch from "./api";
-import useDomain, { Domain } from "./domain";
 
 export interface Config {
     GOOGLE_CLIENT_ID: string

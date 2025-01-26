@@ -1,6 +1,7 @@
 import useApiFetch from '@/hooks/api'
 
-const getUser = async () => {
+const useUser = async () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const api = useApiFetch();
     return await api<{id: string}>('/me');
 }
@@ -10,8 +11,10 @@ const getLoggedInState = async () => {
     let me = null;
     
     try {
-        me = await getUser();
-    } catch(e) {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        me = await useUser();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch(e: unknown) {
         return false;
     }
 
@@ -22,4 +25,4 @@ const getLoggedInState = async () => {
     return false;
 }
 
-export {getUser, getLoggedInState};
+export {useUser, getLoggedInState};

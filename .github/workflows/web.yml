@@ -18,6 +18,10 @@ jobs:
       with:
         node-version: '23.6.0'
 
+    - name: Install
+      run: cd web && npm install
+    - name: Lint
+      run: cd web && npm run lint
     - name: Build
       run: cd web && npm install && npm run build
     - name: Test Chrome

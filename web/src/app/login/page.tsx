@@ -11,7 +11,7 @@ import { Google, Facebook } from "@mui/icons-material";
 import { Button, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Input, Modal, ModalDialog, Stack } from "@mui/joy";
 import Cookies from "js-cookie";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 
 export default function Page() {
