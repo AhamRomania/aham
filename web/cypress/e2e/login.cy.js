@@ -1,7 +1,7 @@
 describe('Navigate after login', () => {
     it('should go to add ad after login', () => {
 
-      Cypress.env('URL')
+      cy.log("Open:", Cypress.env('URL'))
 
       cy.visit(Cypress.env('URL'));
    
