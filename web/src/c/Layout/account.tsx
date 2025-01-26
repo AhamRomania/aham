@@ -58,31 +58,22 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             onClick={() => setOpen(!open)}
             css={css`
                 background: var(--main-color);
-                width: 13px;
-                height: 25px;
-                border:none;
+                width: 7px;
+                border: none;
+                height: 100%;
                 position:absolute;
-                bottom: 20px;
-                right: -13px; 
-                border-radius: 0px 8px 8px 0px;
-                justify-content: flex-end;
-                cursor: pointer;
+                top:0;
+                right: 0px; 
+                cursor: e-resize;
                 display: none;
                 @media only screen and (min-width : 1200px) {
-                    display: flex;
+                    display: block;
                 }
                 &:hover {
                     filter: brightness(85%);
                 }
-                svg {
-                    color: #FFF;
-                    position:absolute;
-                    margin-right: -4px;
-                }
             `}
-        >
-            {open ? <ArrowLeft/> : <ArrowRight/>}
-        </button>
+        />
       </div>
       <div
         css={css`
@@ -125,7 +116,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 </Tip>
             </div>
             <Space/>
-            <HeadMenu isLoggedIn={true} />
+            <HeadMenu/>
         </div>
         <div>
             {children}
