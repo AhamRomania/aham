@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Check if the commit message follows the conventional commit format
+# (e.g., <type>(<scope>): <short description>)
+# You can customize the regex to match your desired format
+
+if ! git log -1 --pretty=format:"%s" | grep -E '^(feat|fix|docs|refactor|style|chore|test|build|ci|perf|revert|merge)(\(.+\))?: (.*)' > /dev/null; then
+  echo "Commit message does not follow the conventional commit format." >&2
+  echo "Example: feat(http): Added new endpoint for user registration" >&2
+  exit 1
+fi
+
+if ! cd web && npm run lint; then
+  echo "Linting failed." >&2
+  exit 1
+fi
+
+exit 0
