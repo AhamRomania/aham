@@ -5,7 +5,11 @@ import styled from '@emotion/styled';
 
 export const Flex = styled.div`display flex;`
 
-const CentredStyle = p =>
+export interface CentredStyleProps {
+    mode?: string
+}
+
+const CentredStyle = ({mode}:CentredStyleProps) =>
     css`
         @media only screen and (min-width : 1200px) {
             width: 1024px;
@@ -13,7 +17,7 @@ const CentredStyle = p =>
             padding: 0px;
         }
         display: flex;
-        flex-direction: ${p.mode};
+        flex-direction: ${mode ? mode : 'column'};
         padding: 20px;
     `
 

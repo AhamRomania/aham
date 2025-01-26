@@ -1,4 +1,4 @@
-import { CategoryList } from "@/c";
+import { Category, CategoryList } from "@/c";
 import { MainLayout } from "@/c/Layout";
 import Section from "@/c/section";
 import useApiFetch from "@/hooks/api";

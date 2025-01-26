@@ -7,7 +7,7 @@ import { Button } from "@mui/joy";
 import Link from "next/link";
 
 export default function Page() {
-  const searchParams = new URLSearchParams(window.location.search);
+  const searchParams = new URLSearchParams(typeof(window) != 'undefined' ? window.location.search  : '');
   return (
     <div
       css={css`

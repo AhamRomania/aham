@@ -2,6 +2,7 @@
 
 import Logo from "@/c/logo";
 import OrSection from "@/c/orsection";
+import { City, CreateUserRequest, CreateUserResponse } from "@/c/types";
 import useApiFetch from "@/hooks/api";
 import { css } from "@emotion/react";
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
@@ -24,14 +25,15 @@ import { IMaskInput } from "react-imask";
 
 export default function Page() {
   const api = useApiFetch();
-  const [counties, setCounties] = useState([]);
-  const [city, setCity] = useState(0);
+
+  const [counties, setCounties] = useState<City[]>([]);
+  const [city, setCity] = useState<City>({} as City);
   const [phone,setPhone] = useState('(100) 000-000')
   const [formDialogOpen, setFormDialogOpen] = useState(false);
   const [formDialogMessage, setFormDialogMessage] = useState(false);
 
   useEffect(() => {
-    api("/cities").then(setCounties);
+    api<City[]>("/cities").then(setCounties);
   }, [api]);
 
   return (
@@ -67,13 +69,13 @@ export default function Page() {
         onSubmit={(event) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          const formJson = Object.fromEntries((formData).entries());
+          const formJson: CreateUserRequest = (Object.fromEntries((formData).entries()) as unknown) as CreateUserRequest;
           formJson.city = city.id;
           formJson.phone = phone;
-          api<{ token: string }>("/users", {
+          api<CreateUserResponse>("/users", {
             method: "POST",
             body: JSON.stringify(formJson),
-          }).then((data) => {
+          }).then((data:CreateUserResponse) => {
             window.location.href = `/cont/succes?id=${data.id}&name=${data.given_name}`;
           }).catch(e => {
             setFormDialogOpen(true)
@@ -141,7 +143,8 @@ export default function Page() {
             required
             size="lg"
             onChange={(event, value) => {
-              setCity(value);
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              setCity(value as any);
             }}
             options={counties}
             groupBy={(o) => o.county_name}

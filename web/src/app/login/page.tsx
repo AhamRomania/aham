@@ -14,6 +14,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const FB: any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const gapi: any;
+
 export default function Page() {
   const api = useApiFetch();
   const [config, setConfig] = useState<Config>({} as Config);
@@ -44,7 +49,8 @@ export default function Page() {
 
   const loginWithFacebook = () => {
     FB.login(
-      function (response) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      function (response: any) {
         if (response.authResponse) {
           const access_token = response.authResponse.accessToken; //get access token
           const user_id = response.authResponse.userID; //get FB UID
@@ -77,7 +83,8 @@ export default function Page() {
       script.src = "https://apis.google.com/js/api:client.js";
 
       script.addEventListener("load", () => {
-        gapi.load("auth2", function (auth2: unknown) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        gapi.load("auth2", function (auth2: any) {
           // Retrieve the singleton for the GoogleAuth library and set up the client.
           auth2 = gapi.auth2.init({
             client_id: config.GOOGLE_CLIENT_ID,
@@ -89,10 +96,12 @@ export default function Page() {
           auth2.attachClickHandler(
             element,
             {},
-            function (googleUser: unknown) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            function (googleUser: any) {
               console.log(googleUser.getBasicProfile());
             },
-            function (error: unknown) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            function (error: any) {
               setDialogOpen(true)
               setDialogMessage('Eroare la conectarea cu Google. Detalii: ' + error.error)
             }

@@ -1,11 +1,25 @@
+export type Category = {
+    id: number;
+    name: string;
+    slug: string;
+}
+
+export type County = {
+    id: number;
+    name: string;
+}
+
+export type City = {
+    id: number;
+    county: number;
+    name: string;
+    county_name: string;
+}
+
 export type Ad = {
     id: number,
     category_id: number,
-    caregory: {
-        id: number,
-        name: string,
-        slug: string
-    },
+    category: Category,
     slug: string,
     owner: number,
     title: string,
@@ -18,4 +32,20 @@ export type Ad = {
     messages: boolean,
     status: 'published',
     created: string
+}
+
+export type TokenResponse = {
+    token: string;
+}
+
+export type CreateUserRequest = {
+    given_name: string;
+    family_name: string;
+    city: number;
+    phone: string;
+}
+
+export type CreateUserResponse = {
+    id: number;
+    given_name: string;
 }

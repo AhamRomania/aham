@@ -7,13 +7,17 @@ import { ArrowRight } from "@mui/icons-material";
 import { Button } from "@mui/joy";
 import style from './page.module.css';
 import { Metadata } from "next";
+import { Ad as AdType } from "@/c/types";
 
 export const metadata: Metadata = {
   title: 'Aham: Bazarul tău',
   description:
     'Începe explorarea în bazarul tău preferat unde găsești și cunoști o grămadă de lucruri.',
 };
-import { Ad as AdType } from "@/c/types";
+
+const NoItems = ({text}:{text:string}) => (
+  <span style={{fontStyle: 'italic', color: '#999'}}>{text}</span>
+)
 
 export default async function Home () {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -41,7 +45,3 @@ export default async function Home () {
     </HomepageLayout>
   );
 }
-
-export const NoItems = ({text}:{text:string}) => (
-  <span style={{fontStyle: 'italic', color: '#999'}}>{text}</span>
-)
