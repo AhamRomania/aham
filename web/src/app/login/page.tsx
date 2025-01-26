@@ -11,12 +11,12 @@ import { Google, Facebook } from "@mui/icons-material";
 import { Button, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Input, Modal, ModalDialog, Stack } from "@mui/joy";
 import Cookies from "js-cookie";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 
 export default function Page() {
   const api = useApiFetch();
-  const [config, setConfig] = useState({});
+  const [config, setConfig] = useState<Config>({} as Config);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState<string>('');
 
@@ -69,12 +69,12 @@ export default function Page() {
     );
   };
 
-  useEffect(() => {
-    if (config && window && document) {
+  const setupGoogleLoginButton = () => {
+    if (config && config.GOOGLE_CLIENT_ID && window && document) {
+      
       const script = document.createElement("script");
       const body = document.getElementsByTagName("body")[0];
-      script.src = "//apis.google.com/js/api:client.js";
-      body.appendChild(script);
+      script.src = "https://apis.google.com/js/api:client.js";
 
       script.addEventListener("load", () => {
         gapi.load("auth2", function (auth2: unknown) {
@@ -99,8 +99,11 @@ export default function Page() {
           );
         });
       });
+
+      body.appendChild(script);
+
     }
-  }, [config]);
+  }
 
   return (
     <>
@@ -148,12 +151,13 @@ export default function Page() {
                 //domain: "localhost",
               });
 
-              window.location.href = "/anunt";
+              window.location.href = "/u/anunturi/creaza";
             });
           }}
         >
           <Stack spacing={1}>
             <Input
+              data-test-id="login-email-input"
               name="email"
               type="text"
               placeholder="Email"
@@ -161,13 +165,14 @@ export default function Page() {
               required
             />
             <Input
+              data-test-id="login-password-input"
               name="password"
               type="password"
               placeholder="Parolă"
               size="lg"
               required
             />
-            <Button size="lg" type="submit">
+            <Button size="lg" type="submit" data-test-id="login-submit">
               Intră
             </Button>
           </Stack>
@@ -192,6 +197,7 @@ export default function Page() {
             <div>
               <Tip title="Conectare cu Google">
                 <IconButton
+                  onMouseOver={() => setupGoogleLoginButton()}
                   id="connect_with_google"
                   variant="outlined"
                   size="lg"

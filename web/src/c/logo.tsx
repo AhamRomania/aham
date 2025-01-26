@@ -19,7 +19,7 @@ const LogoIcon = (props: LogoProps) => {
 
     return (
         <div
-            data-testid="logo"
+            data-test-id="logo"
             style={{
                 width: size,
                 height: size,

@@ -38,7 +38,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         `}
       >
         <div
-            data-testid="account-aside-header"
+            data-test-id="account-aside-header"
             css={css`
                 height: 80px;
                 display: flex;
@@ -92,7 +92,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             `}
         >
             <div
-                data-testid="account-header-breadcrumbs"
+                data-test-id="account-header-breadcrumbs"
                 css={css`
                     height: 80px;
                     display: flex;
