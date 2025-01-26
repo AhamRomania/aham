@@ -5,7 +5,7 @@ start-api:
 	cd "backend/service/api" && \
 	LISTEN=:8080 \
 	DB=postgres://aham:aham@localhost:5432/aham \
-	CDN=http://localhost:8081 \
+	CDN=https://cdn.aham.ro \
 	go run ./main.go
 
 start-cdn:

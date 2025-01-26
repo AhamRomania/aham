@@ -16,13 +16,13 @@ func URL(ctx string, append ...string) (url string, err error) {
 	switch ctx {
 	case "cdn":
 		if Dev() {
-			return fmt.Sprintf("http://localhost:8081%s", extra), nil
+			return fmt.Sprintf("https://cdn.aham.ro%s", extra), nil
 		} else {
 			return fmt.Sprintf("https://cdn.aham.ro%s", extra), nil
 		}
 	case "api":
 		if Dev() {
-			return fmt.Sprintf("http://localhost:8080%s", extra), nil
+			return fmt.Sprintf("https://api.aham.ro%s", extra), nil
 		} else {
 			return fmt.Sprintf("https://api.aham.ro%s", extra), nil
 		}

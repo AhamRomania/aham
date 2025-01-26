@@ -44,7 +44,7 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
                         height: 242px;
                     `)}
                 >
-                    <Image src={'http://localhost:8081/' + vo.pictures[0]} width={312} height={242} alt={vo.title}/>
+                    <Image src={'https://cdn.aham.ro/' + vo.pictures[0]} width={312} height={242} alt={vo.title}/>
                 </div>
                 
                 <div
