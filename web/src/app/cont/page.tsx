@@ -32,7 +32,7 @@ export default function Page() {
 
   useEffect(() => {
     api("/cities").then(setCounties);
-  }, []);
+  }, [api]);
 
   return (
     <div
