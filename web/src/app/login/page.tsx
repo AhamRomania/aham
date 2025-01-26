@@ -232,7 +232,7 @@ export default function Page() {
 
         <OrSection>sau</OrSection>
 
-        <Link href="/u/anunturi/creaza">
+        <Link href="/cont">
           <Button
             style={{ width: "100%" }}
             size="lg"
