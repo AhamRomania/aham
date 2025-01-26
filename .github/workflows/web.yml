@@ -20,3 +20,7 @@ jobs:
 
     - name: Build
       run: cd web && npm install && npm run build
+    - name: Test Chrome
+      run: cd web && npm run e2e:chrome
+    - name: Test Firefox
+      run: cd web && npm run e2e:firefox
