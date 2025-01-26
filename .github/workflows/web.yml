@@ -25,6 +25,6 @@ jobs:
     - name: Build
       run: cd web && npm install && npm run build
     - name: Test Chrome
-      run: cd web && URL=https://aham.ro npm run e2e:chrome
+      run: cd web && npm run prod:e2e:chrome
     - name: Test Firefox
-      run: cd web && URL=https://aham.ro npm run e2e:firefox
+      run: cd web && npm run prod:e2e:firefox

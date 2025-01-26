@@ -1,5 +1,5 @@
 describe('Navigation', () => {
-    it('should navigate to the about page', () => {
+    it('should navigate to the category page', () => {
       // Start from the index page
       cy.visit(Cypress.env('URL')+'/vehicule')
    
