@@ -1,23 +1,10 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { getAccessToken } from './c/Auth';
+import { getLoggedInState } from './c/Auth';
 
 export async function middleware(request: NextRequest) {
-
-    const token = await getAccessToken();
-
-    const res = await fetch(
-        'https://api.aham.ro/v1/me',
-        {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            },
-            
-            cache: 'no-store'
-        }
-    )
-
-    if (res.status !== 200) {
+    const isLoggedIn = await getLoggedInState();
+    if (!isLoggedIn) {
         return NextResponse.redirect(new URL(
             '/login',
             request.url
@@ -30,6 +17,5 @@ export async function middleware(request: NextRequest) {
 export const config = {
     matcher: [
         '/u/:path*',
-        '/anunt'
     ]
 }

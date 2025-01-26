@@ -74,7 +74,7 @@ const Footer: FC = () => {
                     <div className={style.socials}>
 
                         <Tip title="Navighează pe X">
-                            <Link href="http://aham.ro/nav?social=x">
+                            <Link href="/nav?social=x">
                                 <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
                                     <path
                                         fill="#000"
@@ -86,7 +86,7 @@ const Footer: FC = () => {
                         </Tip>
 
                         <Tip title="Navighează pe Facebook">
-                            <Link href="http://aham.ro/nav?social=facebook">
+                            <Link href="/nav?social=facebook">
                                 <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
                                     <path
                                     fill="#000"
@@ -98,7 +98,7 @@ const Footer: FC = () => {
                         </Tip>
 
                         <Tip title="Navighează pe Instagram">
-                            <Link href="http://aham.ro/nav?social=instagram">
+                            <Link href="/nav?social=instagram">
                                 <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
                                     <path
                                     fill="#000"
@@ -110,7 +110,7 @@ const Footer: FC = () => {
                         </Tip>
 
                         <Tip title="Navighează pe Pinterest">
-                            <Link href="http://aham.ro/nav?social=pinterest">
+                            <Link href="/nav?social=pinterest">
                                 <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
                                     <path
                                     fill="#000"

@@ -16,7 +16,6 @@ const getAccessToken = async (): Promise<string | null> => {
         }
 
     } else {
-
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const cookies = await (await require('next/headers')).cookies()
         const cookie = cookies.get(ACCESS_TOKEN_COOKIE_NAME)

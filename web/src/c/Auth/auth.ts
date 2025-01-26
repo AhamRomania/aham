@@ -1,38 +1,15 @@
-import { getAccessToken } from '@/c/Auth'
+import useApiFetch from '@/hooks/api'
 
 const getUser = async () => {
-
-    const token = await getAccessToken()
-    
-    if (token) {
-
-        const res = await fetch(
-            'https://api.aham.ro/v1/me',
-            {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-                cache: 'no-store'
-            }
-        )
-        
-        if (res.status === 200) {
-            const data = await res.json();
-            return data;
-        }
-    }
-
-    return false;
+    const api = useApiFetch();
+    return await api<{id: string}>('/me');
 }
 
 const getLoggedInState = async () => {
-
     const me = await getUser();
-
     if (me && typeof(me['hasOwnProperty']) != 'undefined') {
         return me.hasOwnProperty('id');
     }
-
     return false;
 }
 

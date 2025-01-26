@@ -7,16 +7,9 @@ import Tip from "../tooltip";
 import Link from "next/link";
 import { Centred, Space } from "../Layout";
 import HeadMenu from "../HeadMenu";
-import { getLoggedInState } from "../Auth";
 
 const Header: FC = () => {
   
-  const [isLoggedIn,  setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    getLoggedInState().then(setIsLoggedIn);
-  }, []);
-
   return (
     <div
       css={css`
@@ -41,7 +34,7 @@ const Header: FC = () => {
           </Link>
         </Tip>
         <Space/>
-        <HeadMenu isLoggedIn={isLoggedIn}/>
+        <HeadMenu />
       </Centred>
     </div>
   );

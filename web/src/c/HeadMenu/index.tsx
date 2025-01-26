@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styles from './style.module.css';
 import { ListItemIcon, ListItemText, Menu, MenuItem, Button } from '@mui/material';
 import { Sell, Forum, Favorite, ManageAccounts, Logout, Add } from '@mui/icons-material';
@@ -9,13 +9,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Cookie from 'js-cookie';
 import Tip from '../tooltip';
-import { ACCESS_TOKEN_COOKIE_NAME } from '../Auth';
+import { ACCESS_TOKEN_COOKIE_NAME, getLoggedInState } from '../Auth';
 
-interface HeadMenuProps {
-    isLoggedIn?: boolean
-};
+const HeadMenu: FC<HeadMenuProps> = () => {
 
-const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const router = useRouter()
 
@@ -25,6 +23,12 @@ const HeadMenu: FC<HeadMenuProps> = ({ isLoggedIn }) => {
         setAnchorEl(event.currentTarget);
     };
     
+    useEffect(() => {
+        getLoggedInState().then(
+            state => setIsLoggedIn(state)
+        );
+    }, []);
+
     const handleClose = () => {
         setAnchorEl(null);
     };

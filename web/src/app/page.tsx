@@ -17,10 +17,10 @@ import { Ad as AdType } from "@/c/types";
 
 export default async function Home () {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const fetch = useApiFetch();
-  const categories = await fetch<Category[]>('/categories');
-  const promovations = await fetch<AdType[]>('/ads?filter=promovations');
-  const recomandations = await fetch<AdType[]>('/ads?filter=recomandations');
+  const api = useApiFetch();
+  const categories = await api<Category[]>('/categories');
+  const promovations = await api<AdType[]>('/ads?filter=promovations');
+  const recomandations = await api<AdType[]>('/ads?filter=recomandations');
   return (
     <HomepageLayout>
       <Section title="Categorii" after={<Button size="lg" variant="plain" endDecorator={<ArrowRight/>}>Categorii</Button>}>

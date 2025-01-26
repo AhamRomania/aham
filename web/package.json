@@ -20,6 +20,7 @@
     "@mui/material-nextjs": "^6.3.1",
     "@next/third-parties": "^15.1.5",
     "@types/gapi": "^0.0.47",
+    "cookies-next": "^5.1.0",
     "js-cookie": "^3.0.5",
     "next": "^15.1.5",
     "react": "^19.0.0",

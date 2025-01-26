@@ -1,18 +1,14 @@
 import { FC } from "react";
 import getConfig from "next/config";
-
 import styles from "./style.module.css";
 import SearchInput from "../SearchInput";
 import Logo from "../logo";
 import HeadMenu from "../HeadMenu";
-import { getLoggedInState } from "@/c/Auth";
 import Link from "next/link";
 import Tip from "../tooltip";
 
 const LargeHeader: FC = async () => {
   const { publicRuntimeConfig } = getConfig();
-  const isLoggedIn = await getLoggedInState();
-
   return (
     <header className={styles.header}>
       <div style={{ paddingTop: 25 }} className={styles.wrapper}>
@@ -24,7 +20,7 @@ const LargeHeader: FC = async () => {
             </Link>
           </Tip>
           <div style={{ flex: 1 }}></div>
-          <HeadMenu isLoggedIn={isLoggedIn} />
+          <HeadMenu />
         </div>
 
         <div className={styles.messages}>

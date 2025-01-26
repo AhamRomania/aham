@@ -13,6 +13,7 @@ require (
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 )

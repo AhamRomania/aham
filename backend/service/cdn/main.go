@@ -17,6 +17,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -33,6 +34,10 @@ type Upload struct {
 var redisc *redis.Client
 
 func init() {
+
+	if err := godotenv.Load(); err != nil {
+		panic(err)
+	}
 
 	if s, err := os.Stat(os.Getenv("FILES")); err != nil || !s.IsDir() {
 		panic("FILES must be a directory: " + os.Getenv("FILES"))

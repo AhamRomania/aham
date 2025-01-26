@@ -16,8 +16,7 @@ import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 
 export default function Page() {
   const api = useApiFetch();
-
-  const [config, setConfig] = useState<Config>({} as Config);
+  const [config, setConfig] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState<string>('');
 

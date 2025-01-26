@@ -8,13 +8,15 @@ export interface ApiFetchProps {
 const useApiFetch = (props?:ApiFetchProps) => {
 
     const version = props?.version || 'v1';
-    const token = getAccessToken();
+    
     const api = useDomain(Domain.Api, '/' + version)
 
     return async <T>(
         input: string | URL | globalThis.Request,
         init?: RequestInit,
     ): Promise<T> => {
+
+        const token = await getAccessToken();
 
         input = api + input;
 
@@ -24,37 +26,35 @@ const useApiFetch = (props?:ApiFetchProps) => {
 
         init.headers = {
             ...init.headers,
-            'Authorization': `Bearer${token}`,
+            'Authorization': `Bearer ${token}`,
         };
 
-        let resp;
+        return new Promise((resolve, reject) => {
+            fetch(input, init).then(
+                (response) => {
 
-        try
-        {
-            resp = await fetch(input, init);
-        }
-        catch(e) {
-            return Promise.reject(e)
-        }
+                    if (!response) {
+                        reject('error');
+                        return
+                    }
 
-        if (!resp) {
-            return Promise.reject('error');
-        }
+                    if (response.status == 401) {
+                        reject('unauthorized');
+                        return
+                    }
 
-        if (resp.status != 200) {
-            return Promise.reject(await resp.text());
-        }
-
-        let out;
-
-        try
-        {
-            out = await resp.json();
-        } catch(e) {
-            return Promise.reject(e);
-        }
-
-        return out;
+                    response.json().then(
+                        (obj) => resolve(obj),
+                    ).catch(
+                        (err) => reject(err)
+                    );
+                }
+            ).catch(
+                (error) => {
+                    reject(error);
+                }
+            )
+        });
     }
 }
 
