@@ -1,6 +1,6 @@
 "use client"
 
-import Pictures from "@/c/Form/Pictures";
+import Pictures, { Image } from "@/c/Form/Pictures";
 import Location from "@/c/Form/Location";
 import { Centred, PageName } from "@/c/Layout";
 import { css } from "@emotion/react";
@@ -21,6 +21,10 @@ export default function Page() {
   const [descriptionCharCount, setDescriptionCharCount] = useState(0);
   const [imagesCount, setImagesCount] = useState(0)
   const [savingAd, setSavingAd] = useState(false);
+
+  const onImagesChange = (images:Image[]) => {
+    setImagesCount(images.length);
+  }
 
   const cancelAdCreating = () => {
       if(confirm('Anulează adăugarea anunțului')) {
@@ -54,7 +58,7 @@ export default function Page() {
       >
         <FormControl size="lg" required>
             <FormLabel>Imagini</FormLabel>
-            <Pictures/>
+            <Pictures onChange={onImagesChange}/>
             <FormHelperText>
                 <Grid flex="1" container flexDirection="row">
                   <Grid></Grid>
