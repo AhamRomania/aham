@@ -4,13 +4,14 @@ import Pictures from "@/c/Form/Pictures";
 import Location from "@/c/Form/Location";
 import { Centred, PageName } from "@/c/Layout";
 import { css } from "@emotion/react";
-import { Close } from "@mui/icons-material";
+import { Close, Edit } from "@mui/icons-material";
 import { Button, FormHelperText, Grid, IconButton, Input, Textarea } from "@mui/joy";
 import { FormControl, FormLabel } from '@mui/joy';
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Backdrop } from "@mui/material";
 import { BouncingLogo } from "@/c/logo";
+import Tip from "@/c/tooltip";
 
 export default function Page() {
 
@@ -18,6 +19,7 @@ export default function Page() {
 
   const [showSlugEditor, setShowSlugEditor] = useState(false);
   const [descriptionCharCount, setDescriptionCharCount] = useState(0);
+  const [imagesCount, setImagesCount] = useState(0)
   const [savingAd, setSavingAd] = useState(false);
 
   const cancelAdCreating = () => {
@@ -53,6 +55,15 @@ export default function Page() {
         <FormControl size="lg" required>
             <FormLabel>Imagini</FormLabel>
             <Pictures/>
+            <FormHelperText>
+                <Grid flex="1" container flexDirection="row">
+                  <Grid></Grid>
+                  <Grid flex={1}></Grid>
+                  <Grid>
+                    {imagesCount}/20
+                  </Grid>
+                </Grid>
+            </FormHelperText>
         </FormControl>
 
         <FormControl size="lg" required>
@@ -60,14 +71,22 @@ export default function Page() {
             <Input value="Minge de baschet culoare portocalie"/>
             <FormHelperText>
               <span style={{color:'#999'}}>aham.ro/categorie/</span>
-              <span onClick={() => setShowSlugEditor(true)} style={{fontWeight:500}}>minge-de-baschet-culoare-portocalie</span>
+              <a onClick={() => setShowSlugEditor(true)} style={{fontWeight:500}}>minge-de-baschet-culoare-portocalie</a>
             </FormHelperText>
         </FormControl>
 
         {showSlugEditor && (
           <FormControl size="lg" required>
             <FormLabel>URL</FormLabel>
-            <Input startDecorator={<span style={{color:'#999'}}>aham.ro/categorie/</span>} value="minge-de-baschet-culoare-portocalie"/>
+            <Input
+              startDecorator={<span style={{color:'#999'}}>aham.ro/categorie/</span>}
+              endDecorator={(
+                <Tip title="Folosește valoarea prestabilită">
+                  <IconButton onClick={() => setShowSlugEditor(false)}><Close/></IconButton>
+                </Tip>
+              )}
+              value="minge-de-baschet-culoare-portocalie"
+            />
         </FormControl>
         )}
 
