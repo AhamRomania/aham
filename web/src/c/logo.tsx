@@ -1,6 +1,7 @@
 "use client"
 
-import { memo } from "react"
+import { css } from "@emotion/react";
+import { FC, memo } from "react"
 
 export type LogoProps = {
     size: number
@@ -51,3 +52,31 @@ const LogoIcon = (props: LogoProps) => {
 }
 const Logo = memo(LogoIcon)
 export default Logo
+
+export const BouncingLogo: FC = () => {
+    return (
+        <div
+            css={css`
+                div {
+                    animation: zoom-in-zoom-out 1s ease infinite;
+                    svg {
+                        box-shadow: 0px 0px 20px 0px #4a4a4a;
+                    }
+                }
+                @keyframes zoom-in-zoom-out {
+                    0% {
+                        scale: 100%;
+                    }
+                    50% {
+                        scale: 150%;
+                    }
+                    100% {
+                        scale: 100%;
+                    }
+                }
+            `}
+        >
+            <LogoIcon size={42} bg="transparent" color="#FFF"/>
+        </div>
+    )
+}

@@ -89,7 +89,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 height: 80px;
                 display: flex;
                 background: #FAFAFA;
-                margin: 0 10px;
+                padding: 0 20px;
             `}
         >
             <div

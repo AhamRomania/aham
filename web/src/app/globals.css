@@ -35,7 +35,7 @@ body {
 
 a {
   color: #6c177b;
-  font-size: 19px;
+  font-size: inherit;
   font-weight: 500;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
