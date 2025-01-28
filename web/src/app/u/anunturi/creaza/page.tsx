@@ -1,6 +1,6 @@
 "use client"
 
-import Pictures, { Image } from "@/c/Form/Pictures";
+import Pictures, { ImageData } from "@/c/Form/Pictures";
 import Location from "@/c/Form/Location";
 import { Centred, PageName } from "@/c/Layout";
 import { css } from "@emotion/react";
@@ -22,7 +22,7 @@ export default function Page() {
   const [imagesCount, setImagesCount] = useState(0)
   const [savingAd, setSavingAd] = useState(false);
 
-  const onImagesChange = (images:Image[]) => {
+  const onImagesChange = (images:ImageData[]) => {
     setImagesCount(images.length);
   }
 

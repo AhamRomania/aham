@@ -70,6 +70,8 @@ func main() {
 
 	mux := chi.NewMux()
 
+	mux.Use(c.CORS())
+
 	mux.Post("/", upload)
 
 	mux.Get("/{uuid}", serve)

@@ -1,31 +1,51 @@
 import { css } from "@emotion/react";
-import { Button, Stack } from "@mui/joy";
+import { Delete } from "@mui/icons-material";
+import { Button, CircularProgress, Stack } from "@mui/joy";
+import { IconButton } from "@mui/material";
+import Image from "next/image";
 import { FC, useEffect, useRef, useState } from "react";
+import Tip from "../tooltip";
+import useDomain, { Domain } from "@/hooks/domain";
+import { getAccessToken } from "../Auth";
 
-export interface Image {}
+export interface ImageData {
+    file: File
+    uuid: string;
+}
 
 export interface PicturesProps {
-    onChange?: (images:Image[]) => void;
+    onChange?: (images:ImageData[]) => void;
 }
 
 const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
 
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState<ImageData[]>([] as ImageData[]);
     const input = useRef<HTMLInputElement>(null);
     const [dropHighlighted, setDropHighlighted] = useState(false);
 
+    // eslint-disable-next-line 
     const onFilesChange = (event: any) => {
         
-        let selectedFiles = event.dataTransfer ? event.dataTransfer.files : event.target.files;
+        const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
 
-        let list = [...images];
-        for(let i=0;i<selectedFiles.length;i++) {
-            list = [...list, selectedFiles[i]];
+        let list:ImageData[] = [...images];
+        for(let i=0;i<files.length;i++) {
+            list = [...list, {
+                file: files[i],
+                uuid: '',
+            }];
         }
 
         setImages(list)
 
-        onChange && onChange(list)
+        if (onChange) {
+            onChange(list);
+        }
+    }
+
+    const onImageDelete = (index: number) => {
+        images.splice(index, 1)
+        setImages([...images])
     }
 
     const select = () => {
@@ -56,6 +76,8 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
                 border: var(--variant-borderWidth) ${dropHighlighted ? 'dashed':'solid'};
                 border-color: ${dropHighlighted ? 'var(--main-color)' : 'var(--variant-outlinedBorder, var(--joy-palette-neutral-outlinedBorder, var(--joy-palette-neutral-300, #CDD7E1)))'};
                 background-color: var(--joy-palette-background-surface);
+                overflow: auto;
+                padding: 10px 0px;
             `}
         >
 
@@ -103,8 +125,15 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
                     </Stack>
                 </div>
             ) : (
-                <div>
-                    {images.map((image, index) => <Picture file={image} key={index}/>)}
+                <div
+                    css={css`
+                        display: grid; 
+                        grid-template-columns: 1fr 1fr 1fr; 
+                        gap: 10px 10px;
+                        margin: 5px 10px;
+                    `}
+                >
+                    {images.map((image, index) => <Picture onDelete={() => onImageDelete(index)} image={image} key={index}/>)}
                 </div>
             )}
 
@@ -125,13 +154,154 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
 export default Pictures;
 
 export interface PictureProps {
-    file: File;
+    image: ImageData;
+    onDelete?: () => void;
 }
 
-const Picture: FC<PictureProps> = ({file}) => {
+const Picture: FC<PictureProps> = ({image, onDelete}) => {
+
+    const cdnURL = useDomain(Domain.Cdn);
+
+    const [token, setToken] = useState('');
+    const imgref = useRef<HTMLImageElement>(null);
+    const [src, setSrc] = useState<string>("");
+    const [uploading, setUploading] = useState(true);
+    const [progress, setProgress] = useState(0);
+    const [progressComputable, setProgressComputable] = useState(true);
+
+    useEffect(() => {
+        getAccessToken().then(setToken);
+    }, []);
+
+    useEffect(() => {
+
+        if (!image || !image.file) {
+            return;
+        }
+
+        const reader = new FileReader();
+        
+        reader.onload = function () {
+            if (reader.result !== "") {
+                setSrc(reader.result as string);
+            }
+        }
+
+        reader.readAsDataURL(image.file);
+
+    }, [image]);
+
+    useEffect(() => {
+        
+        if (src === '' || token === '' || cdnURL === '' || !image.file) {
+            console.log(
+                token,
+                cdnURL,
+                image.file,
+            )
+            return;
+        }
+
+        const fd = new FormData();
+        fd.set("file", image.file)
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.addEventListener("progress", (event) => {
+            if (event.lengthComputable) {
+                setProgress((event.loaded / event.total) * 100);
+            } else {
+                setProgressComputable(false);
+            }
+        });
+
+        xhr.addEventListener("loadend", () => {
+            setUploading(false);
+            setProgress(100);
+            const upload = JSON.parse(xhr.responseText);
+            image.uuid = upload.uuid;
+            setSrc(cdnURL + '/' + image.uuid)
+        });
+
+        xhr.open("POST", cdnURL);
+        xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+        xhr.send(fd);
+
+    }, [src, cdnURL, token, image.file]);
+
     return (
-        <div>
-            TEST {file.name}
+        <div
+            data-testid="image-item"
+            css={css`
+                width: 226px;
+                height: 173px;
+                border: 4px solid var(--main-color);
+                position: relative;
+                background: #ddd;
+                padding: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;    
+                padding: 4px;
+                border-radius: 8px;
+                overflow: hidden;
+                display: inline-block;
+                font-size: 12px;
+                button {
+                    background: #FFF;
+                }
+            `}
+        >
+            {
+                src === "" ?
+                <div>Image Placeholder</div> :
+                <Image
+                    src={src}
+                    ref={imgref}
+                    objectFit="cover"
+                    layout="fill"
+                    alt={image.file.name}
+                />
+            }
+            {uploading && <div
+                data-testid="image-upload-progress"
+                css={css`
+                    position: absolute;
+                    left: 10px;
+                    bottom: 5px;   
+                    
+                    button svg {
+                        fill: #000;
+                    }
+                `}
+            >
+                <CircularProgress
+                    color="primary"
+                    size="sm"
+                    variant="solid"
+                    thickness={3}
+                    value={progress}
+                    determinate={!progressComputable}
+                />
+            </div>}
+            {!uploading && <div
+                data-testid="image-delete-container"
+                css={css`
+                    position: absolute;
+                    right: 5px;
+                    top: 5px;   
+                    
+                    button svg {
+                        fill: #000;
+                    }
+                `}
+            >
+                <Tip title="Șterge">
+                    <IconButton size="small" onClick={() => onDelete && onDelete()}>
+                        <Delete/>
+                    </IconButton>
+                </Tip>
+            </div>}
         </div>
     )
 }

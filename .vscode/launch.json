@@ -22,7 +22,7 @@
             "mode": "auto",
             "env": {
                 "LISTEN": ":8081",
-                "FILES": "${workspaceFolder}/data",
+                "FILES": "${workspaceFolder}/data/cdn",
                 "DEV": "true",
                 "REDIS": "redis://:aham@localhost:6379/0?protocol=3"
             },
