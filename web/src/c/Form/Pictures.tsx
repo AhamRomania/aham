@@ -193,12 +193,7 @@ const Picture: FC<PictureProps> = ({image, onDelete}) => {
 
     useEffect(() => {
         
-        if (src === '' || token === '' || cdnURL === '' || !image.file) {
-            console.log(
-                token,
-                cdnURL,
-                image.file,
-            )
+        if (token === '' || cdnURL === '' || !image.file) {
             return;
         }
 
@@ -220,14 +215,14 @@ const Picture: FC<PictureProps> = ({image, onDelete}) => {
             setProgress(100);
             const upload = JSON.parse(xhr.responseText);
             image.uuid = upload.uuid;
-            setSrc(cdnURL + '/' + image.uuid)
+            setSrc(cdnURL + '/' + image.uuid + '?w=226')
         });
 
         xhr.open("POST", cdnURL);
         xhr.setRequestHeader('Authorization', 'Bearer ' + token);
         xhr.send(fd);
 
-    }, [src, cdnURL, token, image.file]);
+    }, [cdnURL, token, image.file]);
 
     return (
         <div
@@ -238,11 +233,9 @@ const Picture: FC<PictureProps> = ({image, onDelete}) => {
                 border: 4px solid var(--main-color);
                 position: relative;
                 background: #ddd;
-                padding: 8px;
                 display: flex;
                 align-items: center;
-                justify-content: center;    
-                padding: 4px;
+                justify-content: center;
                 border-radius: 8px;
                 overflow: hidden;
                 display: inline-block;
@@ -250,16 +243,20 @@ const Picture: FC<PictureProps> = ({image, onDelete}) => {
                 button {
                     background: #FFF;
                 }
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
             `}
         >
             {
                 src === "" ?
                 <div>Image Placeholder</div> :
-                <Image
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
                     src={src}
                     ref={imgref}
-                    objectFit="cover"
-                    layout="fill"
                     alt={image.file.name}
                 />
             }

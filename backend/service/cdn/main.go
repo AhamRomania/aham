@@ -2,10 +2,15 @@ package main
 
 import (
 	"aham/common/c"
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"hash/crc32"
+	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	"image/png"
 	"io"
 	"net/http"
 	"os"
@@ -19,6 +24,7 @@ import (
 	"github.com/go-chi/httprate"
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	"github.com/nfnt/resize"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -32,7 +38,7 @@ type Upload struct {
 	CreatedTime string    `json:"ctime"`
 }
 
-var uploadRateLimiter = httprate.NewRateLimiter(5, time.Minute)
+var uploadRateLimiter = httprate.NewRateLimiter(100, time.Minute)
 
 var redisc *redis.Client
 
@@ -209,6 +215,7 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if cmd.Err() != nil {
+		c.Log().Error(cmd.Err())
 		http.Error(w, "Nu am găsit resursa căutată. Eroare 404.", http.StatusNotFound)
 		return
 	}
@@ -220,22 +227,37 @@ func serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), u.UUID.String(), "raw")
+	path := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), u.UUID.String(), "png")
 
-	data, err := os.ReadFile(path)
-
+	file, err := os.Open(path)
 	if err != nil {
-		http.Error(w, "Invalid data", http.StatusInternalServerError)
+		c.Log().Error(err)
+		http.Error(w, "Invalid file path", http.StatusInternalServerError)
 		return
 	}
 
+	defer file.Close()
+
+	img, _, err := image.Decode(file)
+
+	if err != nil {
+		c.Log().Error(err)
+		http.Error(w, "Invalid image file", http.StatusInternalServerError)
+		return
+	}
+
+	m := resize.Resize(226, 0, img, resize.Lanczos3)
+
 	duration := redisc.TTL(context.TODO(), u.UUID.String())
 
-	w.Header().Add("Content-Type", u.Mime)
+	w.Header().Add("Content-Type", "image/png")
 	w.Header().Add("Created-At", u.CreatedTime)
 	w.Header().Add("Expire-In", duration.Val().String())
 
-	w.Write(data)
+	if err := png.Encode(w, m); err != nil {
+		http.Error(w, "Encode png failed", http.StatusInternalServerError)
+		return
+	}
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {
@@ -319,6 +341,32 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Nu am putut salva fișierul încărcat. Eroare 500.", http.StatusInternalServerError)
 		return
 	}
+
+	dst.Close()
+
+	img, _, err := image.Decode(bytes.NewBuffer(data))
+
+	if err != nil {
+		c.Log().Error(err)
+		http.Error(w, "Nu am putut decoda fișierul. Eroare 500.", http.StatusInternalServerError)
+		return
+	}
+
+	dstPNG, err := os.Create(filepath.Join(fpath, "png"))
+
+	if err != nil {
+		c.Log().Error(err)
+		http.Error(w, "Nu am putut salva fișierul încărcat. Eroare 500.", http.StatusInternalServerError)
+		return
+	}
+
+	if err := png.Encode(dstPNG, img); err != nil {
+		c.Log().Error(err)
+		http.Error(w, "Nu am putut decoda fișierul pentru format standard. Eroare 500.", http.StatusInternalServerError)
+		return
+	}
+
+	dstPNG.Close()
 
 	uinfo := `
 {
