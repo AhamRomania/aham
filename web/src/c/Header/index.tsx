@@ -18,6 +18,7 @@ const Header: FC = () => {
       `}
     >
       <Centred
+        mode="row"
         css={css`
           height: 60px;
           align-items: center;
