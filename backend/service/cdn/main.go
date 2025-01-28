@@ -20,6 +20,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/TwiN/go-color"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/httprate"
 	"github.com/google/uuid"
@@ -60,7 +61,7 @@ func init() {
 
 	opts.UnstableResp3 = true
 
-	c.Log().Infof("Connected to redis: %s", opts.Addr)
+	c.Log().Infof("Connected to redis: %s", color.Ize(color.Yellow, opts.Addr))
 
 	redisc = redis.NewClient(opts)
 
@@ -88,10 +89,10 @@ func main() {
 
 	listen := os.Getenv("LISTEN")
 
-	c.Log().Info("Server is listening on", listen)
+	c.Log().Infof("Server is listening on: %s", color.Ize(color.Yellow, listen))
 
 	if err := http.ListenAndServe(listen, mux); err != nil {
-		c.Log().Info("Error starting server", err)
+		c.Log().Errorf("Error starting server: %s", color.Ize(color.Red, err.Error()))
 	}
 }
 
