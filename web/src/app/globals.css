@@ -19,7 +19,7 @@ body {
 
 body {
   background: var(--background);
-  font-family: Inter, Quicksand-Fallback;
+  font-family: Inter;
   font-size: 19px;
   font-weight: 500;
   height: 100%;
