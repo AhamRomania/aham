@@ -19,12 +19,11 @@ body {
 
 body {
   background: var(--background);
-  font-family: Inter;
   font-size: 19px;
-  font-weight: 500;
   height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
 }
 
 * {

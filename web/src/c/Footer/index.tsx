@@ -31,8 +31,7 @@ const Footer: FC = () => {
     return (
         <>
             <footer className={style.footer}>
-                <Centred>
-
+                <Centred padding={0}>
                     <div className={style.menus}>
                         <section>
                             <h4>Aham</h4>
@@ -146,7 +145,6 @@ const Footer: FC = () => {
                             </Tip>
                         </div>
                     </div>
-
                 </Centred>
             </footer>
 

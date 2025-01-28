@@ -9,9 +9,10 @@ export const Flex = styled.div`display flex;`
 export interface CentredStyleProps {
     mode?: string
     width?: number
+    padding?: number;
 }
 
-export const CentredStyle = ({width, mode}:CentredStyleProps) =>
+export const CentredStyle = ({width, mode, padding}:CentredStyleProps) =>
     css`
         @media only screen and (min-width : 1200px) {
             width: ${width ? width : 1024}px;
@@ -20,7 +21,7 @@ export const CentredStyle = ({width, mode}:CentredStyleProps) =>
         }
         display: flex;
         flex-direction: ${mode ? mode : 'column'};
-        padding: 20px;
+        padding: 20px ${typeof(padding) === 'number' ? padding + 'px' : '20px'};
     `
 
 export const Centred = styled(Flex)`
