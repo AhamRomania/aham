@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/httprate"
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
@@ -30,6 +31,8 @@ type Upload struct {
 	Mime        string    `json:"mime"`
 	CreatedTime string    `json:"ctime"`
 }
+
+var uploadRateLimiter = httprate.NewRateLimiter(5, time.Minute)
 
 var redisc *redis.Client
 
@@ -239,6 +242,10 @@ func upload(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, "Nu sunteți autentificat. Eroare 401.", http.StatusUnauthorized)
+		return
+	}
+
+	if uploadRateLimiter.RespondOnLimit(w, r, fmt.Sprint(uid)) {
 		return
 	}
 
