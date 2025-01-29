@@ -8,6 +8,9 @@
 ## Email Addresses
 Use docker image for email server https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/ for email `contact@aham.ro`
 
+## DNS
+- https://brandonrozek.com/blog/coredns/
+
 ## Inspiration
 
 **Links:**
