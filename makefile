@@ -43,4 +43,3 @@ clean:
 prod:
 	./setup/provision.sh
 	./setup/docker.sh
-	./setup/nginx.sh
