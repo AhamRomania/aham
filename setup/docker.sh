@@ -4,6 +4,11 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(dirname $SCRIPT_DIR)"
 BIN_PATH="$ROOT_DIR/bin"
 
+mkdir -p $ROOT_DIR/data/cdn
+mkdir -p $ROOT_DIR/data/db/api
+mkdir -p $ROOT_DIR/data/db/wp
+mkdir -p $ROOT_DIR/data/db/redis
+
 # WEB
 
 docker build --no-cache -t cosminalbu/aham:web -f $SCRIPT_DIR/docker/build/web $ROOT_DIR/web

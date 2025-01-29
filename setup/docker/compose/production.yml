@@ -84,6 +84,38 @@ services:
     networks:
       aham:
         ipv4_address: 10.5.0.9
+  wpdb:
+    image: mysql:8.0
+    restart: always
+    container_name: aham_prod_wp_db
+    environment:
+      MYSQL_DATABASE: aham
+      MYSQL_USER: aham
+      MYSQL_PASSWORD: aham
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - ../../../data/db/wp:/var/lib/mysql
+    networks:
+      aham:
+        ipv4_address: 10.5.0.10
+  wp:
+    image: 'wordpress:latest'
+    container_name: aham_prod_wp
+    restart: always
+    ports:
+      - 8083:80
+    environment:
+      WORDPRESS_DB_HOST: 10.5.0.10
+      WORDPRESS_DB_USER: aham
+      WORDPRESS_DB_PASSWORD: aham
+      WORDPRESS_DB_NAME: aham
+      WORDPRESS_TABLE_PREFIX: aham_
+      WORDPRESS_DEBUG: 0
+    volumes:
+      - ../../../wp/theme/aham:/var/www/html/wp-content/themes/aham
+    networks:
+      aham:
+        ipv4_address: 10.5.0.11
 networks:
   aham:
     driver: bridge
