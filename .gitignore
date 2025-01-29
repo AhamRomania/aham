@@ -4,6 +4,7 @@ bin/*
 data/*
 !data/cdn/.gitkeep
 !data/db/api/.gitkeep
+!data/db/redis/.gitkeep
 !data/db/wp/.gitkeep
 !data/wp/.gitkeep
 !data/.gitkeep
