@@ -34,22 +34,13 @@ test:
 	@echo "\033[0;32m> Docker Down...\033[0m"
 	@docker compose --progress=quiet -f ./setup/composer-test.yml -p aham-test down
 
-setup:
-	cd ./setup && ./nginx.sh
-
-nic:
-	go run backend/service/nic/main.go
-
 clean:
 	rm  -rf data/wp
 	rm  -rf data/db/wp
 	mkdir -rf data/wp
 	mkdir -rf data/db/wp
 
-start-docker:
-	docker compose -f ./setup/composer.yml -p aham up -d
-stop-docker:
-	docker compose -f ./setup/composer.yml -p aham down
-
-images:
-	./setup/build-images.sh
+prod:
+	./setup/provision.sh
+	./setup/docker.sh
+	./setup/nginx.sh
