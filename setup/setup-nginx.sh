@@ -21,20 +21,6 @@ mkdir -p /var/www/aham.ro/certs
 
 chmod 775 /var/www/aham.ro
 
-cp -f conf/web.aham.service /etc/systemd/system/
-cp -f conf/api.aham.service /etc/systemd/system/
-cp -f conf/cdn.aham.service /etc/systemd/system/
-
-systemctl daemon-reload
-
-systemctl enable web.aham.service
-systemctl enable api.aham.service
-systemctl enable cdn.aham.service
-
-systemctl start web.aham.service
-systemctl start api.aham.service
-systemctl start cdn.aham.service
-
 cp -f conf/acme-aham.conf /etc/nginx/sites-enabled/acme-aham.conf
 
 service nginx restart
