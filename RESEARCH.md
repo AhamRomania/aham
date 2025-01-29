@@ -7,8 +7,8 @@
 
 ## Email Addresses
 
-- Mail provided by poste.io -> for admin@aham.ro
-- Administration @ https://mail.aham.ro
+- Mail provided by poste.io with administration pannel at https://mail.aham.ro
+- Email addresses: admin@aham.ro
 
 ## DNS
 - https://brandonrozek.com/blog/coredns/
