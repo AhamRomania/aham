@@ -14,7 +14,7 @@ fi
 
 # CDN
 
-cd $SCRIPT_DIR/../backend/service/cdn/ && env CGO_ENABLED=0 GOOS=linux GARCH=amd64 go build -o $BIN_PATH/cdn -a -ldflags '-extldflags "-static"' main.go
+cd $ROOT_DIR/backend/service/cdn/ && env CGO_ENABLED=0 GOOS=linux GARCH=amd64 go build -o $BIN_PATH/cdn -a -ldflags '-extldflags "-static"' main.go
 
 chmod +x $BIN_PATH/cdn
 
@@ -28,7 +28,7 @@ rm $BIN_PATH/cdn
 
 # API
 
-cd $SCRIPT_DIR/../backend/service/api/ && env CGO_ENABLED=0 GOOS=linux GARCH=amd64 go build -o $BIN_PATH/api -a -ldflags '-extldflags "-static"' main.go
+cd $ROOT_DIR/backend/service/api/ && env CGO_ENABLED=0 GOOS=linux GARCH=amd64 go build -o $BIN_PATH/api -a -ldflags '-extldflags "-static"' main.go
 
 chmod +x $BIN_PATH/api
 
