@@ -46,5 +46,5 @@ fi
 
 rm $BIN_PATH/api
 
-docker compose -f $SCRIPT_DIR/docker/compose/production.yml -p ahamprod down
-docker compose -f $SCRIPT_DIR/docker/compose/production.yml -p ahamprod up -d
+docker compose -f $SCRIPT_DIR/docker/compose/production.yml -p aham_prod down
+docker compose -f $SCRIPT_DIR/docker/compose/production.yml -p aham_prod up -d
