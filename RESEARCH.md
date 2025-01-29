@@ -8,7 +8,7 @@
 ## Email Addresses
 
 - Use docker image for email server https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/ for email `contact@aham.ro`
-- **Resolution:**: Not using custom email server
+- **Resolution:**: Not using custom email server ( or maybe https://mailu.io/2024.06/general.html# )
 
 ## DNS
 - https://brandonrozek.com/blog/coredns/
