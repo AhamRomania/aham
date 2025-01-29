@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(dirname $SCRIPT_DIR)"
+
 if (( $EUID != 0 )) ; then
 echo "Please run as root"
 exit
@@ -21,7 +24,7 @@ mkdir -p /var/www/aham.ro/certs
 
 chmod 775 /var/www/aham.ro
 
-cp -f conf/acme-aham.conf /etc/nginx/sites-enabled/acme-aham.conf
+cp -f $SCRIPT_DIR/conf/acme-aham.conf /etc/nginx/sites-enabled/acme-aham.conf
 
 service nginx restart
 
@@ -30,7 +33,7 @@ certbot certonly --webroot -w /var/www/aham.ro/certs -d api.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d cdn.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d blog.aham.ro
 
-cp ../web/src/app/favicon.ico /var/www/aham.ro
+cp $ROOT_DIR/web/src/app/favicon.ico /var/www/aham.ro
 
 chown -R www-data:www-data /var/www/aham.ro
 
@@ -42,6 +45,6 @@ rm -rf /var/www/aham.ro/certs
 
 echo 'aham:$apr1$gc45tm9p$fo6DJ1rh5c4XHfMw1IU7h0' > /var/www/aham.ro/.htpasswd
 
-cp -f conf/aham.conf /etc/nginx/sites-enabled/aham.conf
+cp -f $SCRIPT_DIR/conf/aham.conf /etc/nginx/sites-enabled/aham.conf
 
 service nginx restart

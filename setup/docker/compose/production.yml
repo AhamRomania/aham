@@ -111,6 +111,9 @@ services:
       WORDPRESS_DB_NAME: aham
       WORDPRESS_TABLE_PREFIX: aham_
       WORDPRESS_DEBUG: 0
+      WORDPRESS_CONFIG_EXTRA: |
+          define('WP_HOME', 'https://blog.aham.ro');
+          define('WP_SITEURL', 'https://blog.aham.ro');
     volumes:
       - ../../../wp/theme/aham:/var/www/html/wp-content/themes/aham
     networks:
