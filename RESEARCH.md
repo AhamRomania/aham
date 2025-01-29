@@ -6,7 +6,7 @@
 - Using custom length of level deepth: https://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
 
 ## Email Addresses
-- contact@aham.ro
+Use docker image for email server https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/ for email `contact@aham.ro`
 
 ## Inspiration
 
