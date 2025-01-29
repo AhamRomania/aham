@@ -7,25 +7,8 @@
 
 ## Email Addresses
 
-- Use docker image for email server https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/ for email `contact@aham.ro`
-- **Resolution:**: Not using custom email server ( or maybe https://mailu.io/2024.06/general.html# )
-
-```
-docker run \
-    -p 25:25 \
-    -p 80:80 \
-    -p 443:443 \
-    -p 110:110 \
-    -p 143:143 \
-    -p 465:465 \
-    -p 587:587 \
-    -p 993:993 \
-    -p 995:995 \
-    -e TZ=Europe/Bucharest \
-    -e SSL=OFF \
-    -v /usr/local/aham/data/mail:/data \
-    -t analogic/poste.io
-```
+- Mail provided by poste.io -> for admin@aham.ro
+- Administration @ https://mail.aham.ro
 
 ## DNS
 - https://brandonrozek.com/blog/coredns/
