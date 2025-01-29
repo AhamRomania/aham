@@ -6,6 +6,7 @@ services:
       - 8080:3000
     environment:
       LISTEN: :8080
+    restart: always
     depends_on:
       api:
         restart: true
@@ -21,6 +22,7 @@ services:
     container_name: aham_prod_api
     ports:
       - 8081:8081
+    restart: always
     environment:    
       LISTEN: :8081
       DB: postgres://aham:aham@10.5.0.8:5432/aham
@@ -40,6 +42,7 @@ services:
     container_name: aham_prod_cdn
     ports:
       - 8082:8082
+    restart: always
     environment:
       LISTEN: :8082
       FILES: /usr/local/cdn
@@ -60,6 +63,7 @@ services:
       POSTGRES_USER: aham
       POSTGRES_PASSWORD: aham
       POSTGRES_DB: aham
+    restart: always
     volumes:
       - ../../db:/docker-entrypoint-initdb.d
       - ../../../data/db/api:/var/lib/postgresql/data
