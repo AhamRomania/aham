@@ -1,0 +1,4 @@
+FROM alpine
+WORKDIR /usr/local/cdn
+COPY bin/cdn /usr/local/bin
+ENTRYPOINT ["cdn"]

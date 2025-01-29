@@ -14,9 +14,7 @@ import (
 
 func main() {
 
-	if err := godotenv.Load(); err != nil {
-		panic(err)
-	}
+	godotenv.Load()
 
 	rest := chi.NewMux()
 

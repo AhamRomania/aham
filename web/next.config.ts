@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   compiler: {
     emotion: true,
   },
+  output: 'standalone',
   images: {
     remotePatterns: [
       {hostname: 'cdn.aham.ro'},

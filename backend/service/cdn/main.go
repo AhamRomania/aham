@@ -45,9 +45,7 @@ var redisc *redis.Client
 
 func init() {
 
-	if err := godotenv.Load(); err != nil {
-		panic(err)
-	}
+	godotenv.Load()
 
 	if s, err := os.Stat(os.Getenv("FILES")); err != nil || !s.IsDir() {
 		panic("FILES must be a directory: " + os.Getenv("FILES"))
@@ -66,7 +64,8 @@ func init() {
 	redisc = redis.NewClient(opts)
 
 	if cmd := redisc.ConfigSet(context.TODO(), "notify-keyspace-events", "AKE"); cmd.Err() != nil {
-		panic("set notify keyspace events failed")
+		c.Log().Error(cmd.Err())
+		os.Exit(1)
 	}
 
 }

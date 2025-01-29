@@ -169,7 +169,7 @@ INSERT
         (99, 'Amperi', 'amperi', '', 92, 0, true, false),
         (100, 'Radiouri', 'radiouri', '', 92, 0, true, false),
         (101, 'CD, casetă și radio (separate)', 'cd-caseta-si-radio-separate', '', 92, 0, true, false),
-        (102, 'Playere de discuri/plate turnante', 'playere-de-discuriplate-turnante', '', 92, 0, true, false),
+        (102, 'Playere de discuri plate sau turnante', 'playere-de-discuri-plate-sau-turnante', '', 92, 0, true, false),
         (103, 'Stereo compacte', 'stereo-compacte', '', 92, 0, true, false),
         (104, 'Alte', 'alte', '', 92, 0, true, false),
 

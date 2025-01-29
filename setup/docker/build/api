@@ -1,0 +1,4 @@
+FROM alpine
+WORKDIR /usr/local/api
+COPY bin/api /usr/local/bin
+ENTRYPOINT ["api"]

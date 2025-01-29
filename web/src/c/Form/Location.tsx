@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 
 const Location: FC = () => {
 
-    const [empty, setEmpty] = useState(true);
+    const [empty] = useState(true);
 
     return (
         <div

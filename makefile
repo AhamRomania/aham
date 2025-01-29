@@ -50,3 +50,6 @@ start-docker:
 	docker compose -f ./setup/composer.yml -p aham up -d
 stop-docker:
 	docker compose -f ./setup/composer.yml -p aham down
+
+images:
+	./setup/build-images.sh

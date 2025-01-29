@@ -4,7 +4,7 @@ import Pictures, { ImageData } from "@/c/Form/Pictures";
 import Location from "@/c/Form/Location";
 import { Centred, PageName } from "@/c/Layout";
 import { css } from "@emotion/react";
-import { Close, Edit } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { Button, FormHelperText, Grid, IconButton, Input, Textarea } from "@mui/joy";
 import { FormControl, FormLabel } from '@mui/joy';
 import { useState } from "react";

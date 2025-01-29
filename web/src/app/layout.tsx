@@ -14,7 +14,7 @@ const cache = createCache({ key: "aham" });
 
 import "./globals.css";
 
-const interFont = Inter();
+const interFont = Inter({subsets:["latin"]});
 
 import {
   extendTheme as materialExtendTheme,

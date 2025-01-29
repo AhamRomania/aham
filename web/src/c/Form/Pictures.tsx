@@ -2,7 +2,6 @@ import { css } from "@emotion/react";
 import { Delete } from "@mui/icons-material";
 import { Button, CircularProgress, Stack } from "@mui/joy";
 import { IconButton } from "@mui/material";
-import Image from "next/image";
 import { FC, useEffect, useRef, useState } from "react";
 import Tip from "../tooltip";
 import useDomain, { Domain } from "@/hooks/domain";
@@ -170,7 +169,7 @@ const Picture: FC<PictureProps> = ({image, onDelete}) => {
     const [progressComputable, setProgressComputable] = useState(true);
 
     useEffect(() => {
-        getAccessToken().then(setToken);
+        getAccessToken().then((t) => setToken(t as string));
     }, []);
 
     useEffect(() => {
@@ -222,6 +221,7 @@ const Picture: FC<PictureProps> = ({image, onDelete}) => {
         xhr.setRequestHeader('Authorization', 'Bearer ' + token);
         xhr.send(fd);
 
+        // eslint-disable-next-line
     }, [cdnURL, token, image.file]);
 
     return (
