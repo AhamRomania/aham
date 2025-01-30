@@ -53,10 +53,6 @@ body {
     padding: 0;
 }
 
-main {
-    font-size: 22px;
-}
-
 body header {
     border-top: 10px solid var(--main-color);
     background: #F0F0F0;
@@ -77,6 +73,11 @@ header > .wrapper {
     height: 80px;
 }
 
+.reading-container {
+    margin-top: 30px;
+    font-size: 22px;
+}
+
 @media only screen and (min-width : 1200px) { 
 
     .wrapper {
@@ -84,9 +85,27 @@ header > .wrapper {
         margin: 0 auto;
     }
 
+    .reading-container {
+        width: 800px;
+        margin: 0 auto;
+        margin-top: 100px;
+        margin-bottom: 100px;
+    }
+
     .footer .wrapper {
         margin: 0px auto;
     }
+}
+
+.posts article {
+    margin-bottom: 70px;
+}
+
+.posts article h3 {
+    margin-top: 20px;
+    margin-bottom: 0;
+    font-size: 48px;
+    font-weight: 500;
 }
 
 header nav {
@@ -256,12 +275,49 @@ header nav {
     }
 }
 
+.post-title {
+    font-size: 52px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.post-image {
+    position: relative;
+    width: 100%;               /* Set width to 100% or a fixed width */
+    padding-top: 56.25%;    
+}
+
+.post-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
 .post-navigation {
     display: flex;
     justify-content: space-between;
-    margin: 20px 0;
-    padding: 10px 0;
+    padding: 30px 0;
     border-top: 1px solid #ddd;
+}
+
+.post-navigation div:first-child {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.post-navigation div:last-child {
+    flex: 1;
+    text-align: right;
+    margin-left: 10px;
+}
+
+.recent-posts-container {
+    margin-top: 30px;
+    margin-bottom: 70px;
 }
 
 .recent-posts-title {
@@ -274,7 +330,17 @@ header nav {
 }
 
 .recent-posts li {
-    margin-bottom: 10px;
+    padding: 20px 0;
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+.recent-posts li:last-child {
+    border-bottom: 1px solid #ddd;
+}
+
+.recent-posts li a {
+    flex: 1;
 }
 
 .pagination {

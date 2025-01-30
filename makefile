@@ -43,3 +43,6 @@ clean:
 prod:
 	./setup/provision.sh
 	./setup/docker.sh
+
+backup:
+	sudo ./scripts/backup.py /media/cosmin/DataStorage/Backup/Aham/Data

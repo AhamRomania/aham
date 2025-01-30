@@ -4,24 +4,55 @@
 
 <main>
     <div class="wrapper">
+        
+        <div class="reading-container">
+            <article>
 
-        <article>
+                <div class="post-title">
+                    <?php the_title(); ?>
+                </div>
 
-            <h3><?php the_title(); ?></h3>
+                <div class="post-image">
+                    <?php
+                    if (has_post_thumbnail()) :
+                        // Get the post's featured image (set custom size)
+                        the_post_thumbnail('large'); // You can change the size (e.g., 'medium', 'full', or custom size)
+                    endif;
+                    ?>
+                </div>
 
-            <div class="post-content">
-                <?php the_content(); ?>
-            </div>
+                <div class="post-content">
+                    <?php the_content(); ?>
+                </div>
 
-            <div class="post-tags">
-                <?php the_tags('', ', ', ''); ?>
-            </div>
+                <div class="post-tags">
+                    <?php the_tags('', ', ', ''); ?>
+                </div>
 
-        </article>
+            </article>
+        </div>
 
         <div class="post-navigation">
-            <div class="prev-post"><?php previous_post_link('%link', '← %title'); ?></div>
-            <div class="next-post"><?php next_post_link('%link', '%title →'); ?></div>
+            <div class="prev-post">
+                <?php
+                    $previous_post = get_previous_post();
+                    if ($previous_post) {
+                        $title = get_the_title($previous_post->ID); // Get the title of the previous post
+                        $trimmed_title = wp_trim_words($title, 10, '...'); // Trim the title to 10 words
+                        echo '<a title="'.$title.'" href="' . get_permalink($previous_post->ID) . '">← ' . $trimmed_title . '</a>';
+                    }
+                ?>
+            </div>
+            <div class="next-post">
+                <?php
+                    $next_post = get_next_post();
+                    if ($next_post) {
+                        $title = get_the_title($next_post->ID); // Get the title of the previous post
+                        $trimmed_title = wp_trim_words($title, 10, '...'); // Trim the title to 10 words
+                        echo '<a title="'.$title.'" href="' . get_permalink($next_post->ID) . '">' . $trimmed_title . ' →</a>';
+                    }
+                ?>
+            </div>
         </div>
 
         <div class="recent-posts-container">
@@ -44,6 +75,7 @@
             echo '</ul>';
             ?>
         </div>
+        
     </div>
 </main>
 

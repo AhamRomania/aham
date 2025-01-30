@@ -2,22 +2,36 @@
 
 <main>
     <div class="wrapper">
-        <h2>Latest Posts</h2>
-        <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-            <article>
-                <?php if ( has_post_thumbnail() ) : ?>
-                    <div class="post-thumbnail">
-                        <?php the_post_thumbnail('full'); ?>
+        
+        <?php
+            if (have_posts()) :
+            
+            echo '<div class="reading-container posts">';
+            while (have_posts()) : the_post();
+        ?>
+
+            <a href="<?php the_permalink(); ?>">
+                <article>
+                    <div class="post-image">
+                        <?php
+                        if (has_post_thumbnail()) :
+                            // Get the post's featured image (set custom size)
+                            the_post_thumbnail('large'); // You can change the size (e.g., 'medium', 'full', or custom size)
+                        endif;
+                        ?>
                     </div>
-                <?php endif; ?>
-                <h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
-                <p><?php echo get_the_date(); ?></p>
-            </article>
+                    <h3><?php the_title(); ?></h3>
+                </article>
+            </a>
+
         <?php endwhile;
+
+        echo '</div>';
+
         the_posts_pagination(array(
             'mid_size'  => 2,
-            'prev_text' => '← Pagina precedentă',
-            'next_text' => 'Următoarea pagină →',
+            'prev_text' => '[ ← ]',
+            'next_text' => '[ → ]',
         ));
         else : ?>
             <p>No posts found.</p>
