@@ -192,5 +192,62 @@ INSERT
         (116, 'Balance pentru copii, balansoare și leagăne', 'balance-pentru-copii-balansoare-si-leagane', '', 31, 0, true, false),
         (117, 'Hrănire', 'hranire', '', 31, 0, true, false),
         (118, 'Siguranța bebelușilor și copiilor', 'siguranta-bebelusilor-si-copiilor', '', 31, 0, true, false),
-        (119, 'Schimbarea', 'schimbarea', '', 31, 0, true, false),
-        (120, 'Alte', 'alte', '', 31, 0, true, false);
+        (119, 'De schimbat', 'de-schimbat', '', 31, 0, true, false),
+        (120, 'Alte', 'alte', '', 31, 0, true, false),
+
+        /* PATH 2/31/110 - De vânzare/Lucruri pentru bebeluși și copii/Haine, pantofi și accesorii pentru copii */
+
+        (121, 'Pantofi și ghete', 'pantofi-si-ghete', '', 110, 0, true, false),
+        (122, 'Alte haine pentru copii', 'alte-haine-pentru-copii', '', 110, 0, true, false),
+        (123, 'Pachet de haine', 'pachet-de-haine', '', 110, 0, true, false),
+        (124, 'Paltoane și jachete pentru copii', 'paltoane-si-jachete-pentru-copii', '', 110, 0, true, false),
+        (125, 'Topuri și cămăși', 'topuri-si-camasi', '', 110, 0, true, false),
+        (126, 'Rochii', 'rochii', '', 110, 0, true, false),
+        (127, 'Accesorii pentru copii', 'accesorii-pentru-copii', '', 110, 0, true, false),
+        (128, 'Blugi și pantaloni', 'blugi-si-pantaloni', '', 110, 0, true, false),
+        (129, 'Îmbrăcăminte de noapte și pijamale', 'imbracaminte-de-noapte-si-pijamale', '', 110, 0, true, false),
+        (130, 'Costume de baie și costume de baie', 'costume-de-baie-si-costume-de-baie', '', 110, 0, true, false),
+
+        /* PATH 2/31/111 - De vânzare/Lucruri pentru bebeluși și copii/Mobilier pentru creșă și copii */
+
+        (131, 'Lămpi, lumini și abajururi', 'lampi-lumini-si-abajururi', '', 111, 0, true, false),
+        (132, 'Pătuțuri și paturi', 'patuturi-si-paturi', '', 111, 0, true, false),
+        (133, 'Mobila pentru cresa', 'mobila-pentru-cresa', '', 111, 0, true, false),
+        (134, 'Pătuțuri și căsuțe', 'patuturi-si-casute', '', 111, 0, true, false),
+        (135, 'Scaune înalte', 'scaune-inalte', '', 111, 0, true, false),
+        (136, 'Alte', 'alte', '', 111, 0, true, false),
+        (137, 'Căzi de baie', 'cazi-de-baie', '', 111, 0, true, false),
+        (138, 'Depozitare', 'depozitare', '', 111, 0, true, false),
+        (139, 'Mese de schimbare', 'mese-de-schimbare', '', 111, 0, true, false),
+
+        /* PATH 2/31/111 - De vânzare/Lucruri pentru bebeluși și copii/Jucării de exterior */
+
+        (140, 'Scutere', 'scutere', '', 115, 0, true, false),
+        (141, 'Alte jucării de exterior', 'alte-jucarii-de-exterior', '', 115, 0, true, false),
+        (142, 'Trambuline', 'trambuline', '', 115, 0, true, false),
+        (143, 'Skateboard-uri', 'skateboard-uri', '', 115, 0, true, false),
+        (144, 'Leagăne', 'leagane', '', 115, 0, true, false),
+        (145, 'Jocuri cu nisip și jucării cu apă', 'jocuri-cu-nisip-si-jucarii-cu-apa', '', 115, 0, true, false),
+        (146, 'Căsuțe și corturi de joacă', 'casute-si-corturi-de-joaca', '', 115, 0, true, false),
+        (147, 'Diapozitive', 'diapozitive', '', 115, 0, true, false);
+
+
+CREATE OR REPLACE FUNCTION get_category_path(category_id INT)  
+RETURNS TEXT AS $$  
+WITH RECURSIVE category_path AS (  
+    SELECT "id", "name", "slug", "parent", name::TEXT AS path  
+    FROM categories  
+    WHERE id = category_id  
+
+    UNION ALL  
+
+    SELECT c.id, c.name, c.slug, c.parent, c.name || ' > ' || cp.path  
+    FROM categories c  
+    JOIN category_path cp ON c.id = cp.parent
+)  
+SELECT path FROM category_path  
+WHERE parent IS NULL  
+LIMIT 1;  
+$$ LANGUAGE SQL;
+
+-- select name, get_category_path(id) as path from categories;
