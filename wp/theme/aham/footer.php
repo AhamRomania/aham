@@ -12,7 +12,7 @@
                         <a href="https://aham.ro/contact">Contact</a>
                     </nav>
                     <nav class="menu">
-                        <a href="https://blog.aham.ro">Blog</a>
+                        <a href="/">Blog</a>
                         <a href="https://aham.ro/ajutor">Ajutor</a>
                         <a href="https://aham.ro/afla">Află</a>
                         <a href="https://aham.ro/developeri">Developeri</a>
@@ -29,18 +29,27 @@
                 <h4>Aplicații Mobile</h4>
                 <main>
                     <a href="/">
-                        <img src="<?php echo get_template_directory_uri(); ?>/ios.svg" width="186" height="55" alt="Aham pe IOS"/>
+                        <img class="mobile_app_button" src="<?php echo get_template_directory_uri(); ?>/assets/ios.svg" width="186" height="55" alt="Aham pe IOS"/>
                     </a>
                     <a href="/">
-                        <img src="<?php echo get_template_directory_uri(); ?>/android.svg" width="186" height="55" alt="Aham pe Android"/>
+                        <img class="mobile_app_button" src="<?php echo get_template_directory_uri(); ?>/assets/android.svg" width="186" height="55" alt="Aham pe Android"/>
                     </a>
+                    <script>
+                        const links = document.querySelectorAll('.mobile_app_button');
+                        links.forEach(function(link) {
+                            link.addEventListener('click', function(event) {
+                                event.preventDefault(); 
+                                alert('Ne cerem scuze, aplicația mobilă pentru mobil nu este disponibilă deocamdată.');
+                            });
+                        });
+                    </script>
                 </main>
             </section>
         </div>
 
         <div class="socials">
 
-            <a href="/nav?social=x">
+            <a href="https://x.com/AhamRomania" target="_blank">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">
                     <path
                         fill="#000"
@@ -50,7 +59,7 @@
                 </svg>
             </a>
 
-            <a href="/nav?social=facebook">
+            <a href="https://www.facebook.com/AhamRomania" target="_blank">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">
                     <path
                     fill="#000"
@@ -60,7 +69,7 @@
                 </svg>
             </a>
 
-            <a href="/nav?social=instagram">
+            <a href="https://www.instagram.com/AhamRomania" target="_blank">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">
                     <path
                     fill="#000"
@@ -70,7 +79,7 @@
                 </svg>
             </a>
 
-            <a href="/nav?social=pinterest">
+            <a href="https://www.pinterest.com/AhamRomania" target="_blank">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">
                     <path
                     fill="#000"
@@ -80,7 +89,6 @@
                 </svg>
             </a>
         </div>
-
         <div class="bottom">
             <div class="bottomMenu">
                 <em>© Aham <?php echo date('Y'); ?></em>
@@ -98,21 +106,18 @@
                         2.4.2
                     </a>
                 </div>
-                <Tip title="Navighează la pagina principală">
-                    <a href="/">
-                        <img 
-                            src="<?php echo get_template_directory_uri(); ?>/logo.svg"
-                            width="32"
-                            height="32"
-                            alt="Aham Logo"
-                        />
-                    </a>
-                </Tip>
+                <a title="Navighează la pagina principală" href="https://aham.ro?uiref=bottom_logo">
+                    <img 
+                        src="<?php echo get_template_directory_uri(); ?>/assets/logo.svg"
+                        width="32"
+                        height="32"
+                        alt="Aham Logo"
+                    />
+                </a>
             </div>
         </div>
     </div>
 </footer>
-
 <?php wp_footer(); ?>
 </body>
 </html>
