@@ -8,6 +8,8 @@ License: GNU General Public License v3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 */
 
+@import url("footer.css");
+
 :root {
     --main-color: #1F79B8;
     font-family: 'Inter', sans-serif;
@@ -15,6 +17,35 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 * {
     box-sizing: border-box;
+}
+
+.flex {
+    flex: 1;
+}
+
+a {
+    cursor: pointer;
+    color: #6c177b;
+    font-size: inherit;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration: underline;
+    text-decoration-thickness: max(1px, .0625rem);
+    text-underline-offset: .1578em;
+}
+
+a:visited {
+    color: #9540a4;
+}
+
+a:hover {
+    color: #4e0c5a;
+    text-decoration-thickness: max(3px, .1875rem, .12em);
+    -webkit-text-decoration-skip-ink: none;
+    text-decoration-skip-ink: none;
+    -webkit-text-decoration-skip: none;
+    text-decoration-skip: none;
 }
 
 body {
@@ -26,5 +57,29 @@ body {
 body header {
     border-top: 10px solid var(--main-color);
     background: #F0F0F0;
+    height: 90px;
+}
+
+.wrapper {
+    margin: 0 20px;
+}
+
+header > .wrapper {
+    display: flex;
+    align-items: center;
     height: 80px;
+}
+
+@media only screen and (min-width : 1200px) { 
+    .wrapper {
+        width: 1024px;
+        margin: 0 auto;
+        display: flex;
+    }
+}
+
+header nav {
+    list-style-type: none;
+    display: flex;
+    gap: 10px;
 }

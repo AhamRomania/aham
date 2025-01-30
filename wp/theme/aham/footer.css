@@ -1,0 +1,160 @@
+.footer {
+    background-color: #F0F0F0;
+    border-top: 7px solid var(--main-color);
+}
+
+.footer > div {
+    flex-direction: column;
+}
+
+.menus {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+}
+
+.menus section main {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    line-height: 28px;
+}
+
+.menus section:first-child {
+    flex: 1;
+}
+
+.menus section:first-child main {
+    flex: 1;
+    display: flex;
+}
+
+.menus section:last-child main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.menus section h4 {
+    border-bottom: 1px solid #BBBBBB;
+    font-weight: 700;
+    padding: 20px;
+}
+
+.socials {
+    border-top: 1px solid #BBBBBB;
+    border-bottom: 1px solid #BBBBBB;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    width: 100%;
+}
+
+.socials a {
+    margin-right: 10px;
+}
+
+.bottom {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.bottomMenu {
+    display: flex;
+}
+
+.bottomMenu em {
+    font-style: normal;
+}
+
+.bottomMenu i {
+    display: none;
+    font-style: normal;
+    margin: 0 20px;
+}
+
+.bottomMenu nav {
+    display: none;
+    gap: 15px;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.version {
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 10px;
+    margin-top:-3px;
+}
+
+.version a {
+    color: #888888;
+    font-size: 14px;
+}
+
+@media only screen and (min-width : 1200px) {
+    
+    .menus {
+        flex-direction: row;
+    }
+
+
+    .menus {
+        flex-direction: row;
+    }
+
+    .menus section main {
+        flex-direction: row;
+        text-align: left;
+    }
+
+
+    .menus section:first-child {
+        margin-right: 50px;
+    }
+
+    .menus section:first-child main {
+        margin-right: 50px;
+    }
+
+    .menus section:last-child {
+        width: 330px;
+    }
+
+    .menus section:last-child main {
+        margin-bottom: 30px;
+    }
+
+    .hideOnDesktop {
+        display: none;
+    }
+
+    .bottomMenu nav {
+        display: flex;
+    }
+
+    .bottomMenu i {
+        display: block;
+    }
+
+    .socials {
+        justify-content: flex-start;
+    }
+}
