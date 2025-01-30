@@ -5,23 +5,23 @@
                 <h4>Aham</h4>
                 <main>
                     <nav class="menu">
-                        <a href="/despre">Despre</a>
-                        <a href="/promovare">Promovează</a>
-                        <a href="/categorii">Categorii</a>
-                        <a href="/curiozitati">Curiozitati</a>
-                        <a href="/contact">Contact</a>
+                        <a href="https://aham.ro/despre">Despre</a>
+                        <a href="https://aham.ro/promovare">Promovează</a>
+                        <a href="https://aham.ro/categorii">Categorii</a>
+                        <a href="https://aham.ro/curiozitati">Curiozitati</a>
+                        <a href="https://aham.ro/contact">Contact</a>
                     </nav>
                     <nav class="menu">
                         <a href="https://blog.aham.ro">Blog</a>
-                        <a href="/ajutor">Ajutor</a>
-                        <a href="/afla">Află</a>
-                        <a href="/developeri">Developeri</a>
+                        <a href="https://aham.ro/ajutor">Ajutor</a>
+                        <a href="https://aham.ro/afla">Află</a>
+                        <a href="https://aham.ro/developeri">Developeri</a>
                     </nav>
                     <nav class="hideOnDesktop menu">
-                        <a href="/ajutor">Ajutor</a>
-                        <a href="/cookies">Cookies</a>
-                        <a href="/termeni-si-conditii">Termeni și condiții</a>
-                        <a href="/contact">Contact</a>
+                        <a href="https://aham.ro/ajutor">Ajutor</a>
+                        <a href="https://aham.ro/cookies">Cookies</a>
+                        <a href="https://aham.ro/termeni-si-conditii">Termeni și condiții</a>
+                        <a href="https://aham.ro/contact">Contact</a>
                     </nav>
                 </main>
             </section>
@@ -86,15 +86,15 @@
                 <em>© Aham <?php echo date('Y'); ?></em>
                 <i>㆐</i>
                 <nav>
-                    <a href="/confidentialitate">Confidentialitate</a>
-                    <a href="/cookies">Cookies</a>
-                    <a href="/termeni-si-conditii">Termeni și condiții</a>
+                    <a href="https://aham.ro/confidentialitate">Confidentialitate</a>
+                    <a href="https://aham.ro/cookies">Cookies</a>
+                    <a href="https://aham.ro/termeni-si-conditii">Termeni și condiții</a>
                 </nav>
             </div>
             <div class="flex"></div>
             <div class="right">
                 <div class="version">
-                    <a href="/status">
+                    <a href="https://aham.ro/status">
                         2.4.2
                     </a>
                 </div>
