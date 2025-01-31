@@ -12,13 +12,13 @@ const useDomain = (context:Domain = Domain.Web, path: string = ''): string => {
 
     switch (context) {
         case Domain.Api:
-            domain = dev ? 'http://localhost:8080' : 'https://api.aham.ro';
+            domain = dev ? 'http://localhost:8081' : 'https://api.aham.ro';
             break;
         case Domain.Cdn:
-            domain = dev ? 'http://localhost:8081' : 'https://cdn.aham.ro';
+            domain = dev ? 'http://localhost:8082' : 'https://cdn.aham.ro';
             break;
         case Domain.Web: default:
-            domain = dev ? 'http://localhost:3000' : 'https://aham.ro';
+            domain = dev ? 'http://localhost:8080' : 'https://aham.ro';
             break;
     }
 
