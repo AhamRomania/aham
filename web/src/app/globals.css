@@ -34,7 +34,7 @@ body {
 
 a {
   cursor: pointer;
-  color: #6c177b;
+  color: #1F70B8;
   font-size: inherit;
   font-weight: 500;
   -webkit-font-smoothing: antialiased;
@@ -45,11 +45,11 @@ a {
 }
 
 a:visited {
-  color: #9540a4;
+  color: #4D2B92;
 }
 
 a:hover {
-  color: #4e0c5a;
+  color: #4D2B92;
   text-decoration-thickness: max(3px, .1875rem, .12em);
   -webkit-text-decoration-skip-ink: none;
   text-decoration-skip-ink: none;

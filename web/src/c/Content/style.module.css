@@ -1,0 +1,12 @@
+.markdown {
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+
+.markdown h1 {
+    margin-bottom: 15px;
+}
+
+.markdown p {
+    line-height: 25px;
+}
