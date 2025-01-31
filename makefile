@@ -1,19 +1,3 @@
-env PATH=$PATH:/usr/local/go/bin
-
-start-api:
-	docker compose -f ./setup/composer.yml -p aham up -d
-	cd "backend/service/api" && \
-	go run ./main.go
-
-start-cdn:
-	pwd
-	docker compose -f ./setup/composer.yml -p aham up -d
-	cd "backend/service/cdn" && \
-	go run ./main.go
-
-start-web:
-	cd web/ && npm run start
-
 test:
 	
 	@echo "\033[0;32m> Docker Up...\033[0m"
@@ -40,9 +24,20 @@ clean:
 	mkdir -rf data/wp
 	mkdir -rf data/db/wp
 
+backup:
+	sudo ./scripts/backup.py /media/cosmin/DataStorage/Backup/Aham/Data
+
 prod:
 	./setup/provision.sh
 	./setup/docker.sh
 
-backup:
-	sudo ./scripts/backup.py /media/cosmin/DataStorage/Backup/Aham/Data
+run:
+	gnome-terminal --tab --title="CDN" -- bash -c "cd backend/service/cdn; go run ./main.go; read -p 'Waiting'"
+	gnome-terminal --tab --title="API" -- bash -c "cd backend/service/api; go run ./main.go; read -p 'Waiting'"
+	gnome-terminal --tab --title="WEB" -- bash -c "cd web/; npm run dev; read -p 'Waiting'"
+
+dev:
+	docker compose -f setup/docker/compose/development.yml -p aham_dev down
+	docker compose -f setup/docker/compose/development.yml -p aham_dev up -d
+	@read -p "Run the project? (y/n) " ans; \
+	if [ "$$ans" = "y" ]; then make run; else echo "Run from IDE."; fi

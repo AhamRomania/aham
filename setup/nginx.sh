@@ -26,6 +26,7 @@ mkdir -p /var/www/aham.ro/certs
 chmod 775 /var/www/aham.ro
 
 cp -f $SCRIPT_DIR/conf/acme-aham.conf /etc/nginx/sites-enabled/acme-aham.conf
+cp -f $SCRIPT_DIR/conf/maintenance.html /var/www/aham.ro/maintenance.html
 
 service nginx restart
 

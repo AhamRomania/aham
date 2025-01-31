@@ -1,5 +1,5 @@
 import Content from "@/c/Content";
-import { Centred, MainLayout } from "@/c/Layout";
+import { MainLayout } from "@/c/Layout";
 
 export default async function Page() {
     return (

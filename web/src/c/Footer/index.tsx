@@ -12,7 +12,11 @@ import { Paper } from "@mui/material";
 import { getLoggedInState } from "../Auth";
 import { Check } from '@mui/icons-material';
 
-const Footer: FC = () => {
+export interface FooterProps {
+    version?: string;
+}
+
+const Footer: FC<FooterProps> = ({version}) => {
 
     const [isLoggedIn,  setIsLoggedIn] = useState(false);
     const [showMobInfo, setShowMobInfo] = useState(false);
@@ -135,7 +139,7 @@ const Footer: FC = () => {
                         <div className={style.right}>
                             <div className={style.version}>
                                 <Link href="/status">
-                                    2.4.2
+                                    {version}
                                 </Link>
                             </div>
                             <Tip title="Navighează la pagina principală">

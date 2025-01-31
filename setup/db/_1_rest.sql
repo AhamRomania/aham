@@ -1,3 +1,5 @@
+create type role as enum ('root', 'admin', 'moderator', 'user');
+
 create type currency as enum ('LEI', 'EUR', 'USD');
 
 create type metatype as enum (
@@ -51,6 +53,7 @@ create table users (
     city integer default 0 references cities(id),
     picture varchar(255),
     source varchar(20) default 'native',
+    "role" role default 'user',
     third_pary_access_token text,
     settled boolean default false,
     email_activation_token varchar(255),
