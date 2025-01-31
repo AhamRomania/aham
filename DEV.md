@@ -1,0 +1,5 @@
+# Development Manual
+
+```
+make dev
+```
