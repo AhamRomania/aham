@@ -15,3 +15,11 @@
 .markdown p {
     line-height: 25px;
 }
+
+.markdown ul {
+    padding: 20px 40px;
+}
+
+.markdown ul li{
+    padding-bottom: 10px;
+}

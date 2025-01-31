@@ -2,7 +2,6 @@ services:
   web:
     image: 'cosminalbu/aham:web'
     container_name: aham_prod_web
-    hostname: aham.ro
     ports:
       - 8080:3000
     environment:
@@ -21,7 +20,6 @@ services:
   api:
     image: 'cosminalbu/aham:api'
     container_name: aham_prod_api
-    hostname: api.aham.ro
     ports:
       - 8081:8081
     restart: always
@@ -42,7 +40,6 @@ services:
   cdn:
     image: 'cosminalbu/aham:cdn'
     container_name: aham_prod_cdn
-    hostname: cdn.aham.ro
     ports:
       - 8082:8082
     restart: always
@@ -104,7 +101,6 @@ services:
   wp:
     image: 'wordpress:latest'
     container_name: aham_prod_wp
-    hostname: blog.aham.ro
     restart: always
     ports:
       - 8083:80
