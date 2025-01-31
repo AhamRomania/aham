@@ -11,7 +11,7 @@ import HeadMenu from "../HeadMenu";
 const Header: FC = () => {
   
   return (
-    <div
+    <header
       css={css`
         height: 60px;
         background: var(--main-color);
@@ -37,7 +37,7 @@ const Header: FC = () => {
         <Space/>
         <HeadMenu />
       </Centred>
-    </div>
+    </header>
   );
 };
 

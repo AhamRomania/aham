@@ -6,13 +6,13 @@ import { Centred } from "./common";
 const MainLayout = ({children}: React.PropsWithChildren) => {
 
     return (
-        <div>
+        <main>
             <Header />
             <Centred>
                 {children}
             </Centred>
             <Footer/>
-        </div>
+        </main>
     )
 }
 
