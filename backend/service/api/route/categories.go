@@ -5,8 +5,10 @@ import (
 	"aham/service/api/db"
 	"aham/service/api/sam"
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -16,24 +18,111 @@ import (
 func CategoriesRoutes(r chi.Router) {
 	r.Get("/", c.Guard(GetCategories))
 	r.Get("/search", SearchCategory)
-	r.Get("/{id}", GetCategory)
+	r.Get("/{id}", c.Guard(GetCategory))
+	r.Put("/{id}", c.Guard(updateCategory))
+	r.Delete("/{id}", c.Guard(deleteCategory))
 	r.Get("/{id}/props", GetCategoryProps)
 	r.Post("/", createCategory)
 }
 
+type updateCategoryRequest struct {
+	Name   *string `json:"name"`
+	Slug   *string `json:"slug"`
+	Parent *int64  `json:"parent"`
+}
+
+func updateCategory(w http.ResponseWriter, r *http.Request) {
+
+	uid, _ := c.UserID(r)
+
+	user := db.GetUserByID(uid)
+
+	if !user.SamVerify(sam.CATEGORIES, sam.PermWrite) {
+		http.Error(w, "Can't write categories", http.StatusUnauthorized)
+		return
+	}
+
+	payload := updateCategoryRequest{}
+
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		http.Error(w, "invalid payload", http.StatusBadRequest)
+		return
+	}
+
+	if payload.Name == nil || *payload.Name == "" {
+		http.Error(w, "invalid name", http.StatusBadRequest)
+		return
+	}
+
+	var slugv = payload.Slug
+
+	if slugv == nil {
+		s := slug.Make(*payload.Name)
+		slugv = &s
+	}
+
+	if !slug.IsSlug(*slugv) {
+		v := slug.Make(*slugv)
+		slugv = &v
+	}
+
+	c.DB().Exec(
+		r.Context(),
+		`
+			update categories set name = $1, slug = $2, parent = $3 where id = $4
+		`,
+		payload.Name,
+		slugv,
+		payload.Parent,
+		chi.URLParam(r, "id"),
+	)
+
+	category := db.GetCategoryByID(c.ID(r, "id"))
+
+	if category == nil {
+		http.Error(w, "failed to add category", http.StatusBadRequest)
+		return
+	}
+
+	render.JSON(w, r, category)
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func deleteCategory(w http.ResponseWriter, r *http.Request) {
+	c.DB().Exec(
+		context.TODO(),
+		`delete from categories where id = $1`,
+		chi.URLParam(r, "id"),
+	)
+}
+
 type createCategoryRequest struct {
-	Name      string  `json:"name"`
-	Translate bool    `json:"translate"`
-	Slug      *string `json:"slug"`
-	Parent    *int64  `json:"parent"`
+	Name   string  `json:"name"`
+	Slug   *string `json:"slug"`
+	Parent *int64  `json:"parent"`
 }
 
 func createCategory(w http.ResponseWriter, r *http.Request) {
+
+	uid, _ := c.UserID(r)
+
+	user := db.GetUserByID(uid)
+
+	if !user.SamVerify(sam.CATEGORIES, sam.PermWrite) {
+		http.Error(w, "Can't write categories", http.StatusUnauthorized)
+		return
+	}
 
 	payload := createCategoryRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, "invalid payload", http.StatusBadRequest)
+		return
+	}
+
+	if payload.Name == "" {
+		http.Error(w, "invalid name", http.StatusBadRequest)
 		return
 	}
 
@@ -77,6 +166,8 @@ func createCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.JSON(w, r, category)
+
+	w.WriteHeader(http.StatusCreated)
 }
 
 func SearchCategory(w http.ResponseWriter, r *http.Request) {
@@ -119,8 +210,16 @@ func GetCategories(w http.ResponseWriter, r *http.Request) {
 
 	flat := db.GetCategoriesFlat()
 
+	var parent *int64
+
+	n, err := strconv.ParseInt(r.URL.Query().Get("p"), 10, 64)
+
+	if err == nil {
+		parent = &n
+	}
+
 	if r.URL.Query().Get("tree") == "true" {
-		render.JSON(w, r, db.GetCategoryTree(flat))
+		render.JSON(w, r, db.GetCategoryTree(flat, parent))
 		return
 	}
 

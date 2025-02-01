@@ -28,14 +28,18 @@ type SearchCategory struct {
 }
 
 func (category *Category) WithID(id int64) *Category {
+
 	for _, c := range category.Children {
+
 		if c.ID == id {
 			return c
 		}
+
 		if found := c.WithID(id); found != nil {
 			return found
 		}
 	}
+
 	return nil
 }
 
@@ -161,7 +165,7 @@ func GetCategory(id int64) *Category {
 func SearchCategoryTree(keyword string) (categories []*Category) {
 
 	root := Category{
-		Children: GetCategoryTree(GetCategoriesFlat()),
+		Children: GetCategoryTree(GetCategoriesFlat(), nil),
 	}
 
 	return root.Search(keyword)
@@ -273,11 +277,15 @@ func GetCategoriesFlat() (categories []*Category) {
 	return
 }
 
-func GetCategoryTree(flat []*Category) (categories []*Category) {
+func GetCategoryTree(flat []*Category, parent *int64) (categories []*Category) {
 
 	root := &Category{
 		Children: make([]*Category, 0),
 	}
+
+	sort.Slice(flat, func(i, j int) bool {
+		return flat[i].ID < flat[j].ID
+	})
 
 	for _, c := range flat {
 
@@ -288,6 +296,13 @@ func GetCategoryTree(flat []*Category) (categories []*Category) {
 
 		if cur := root.WithID(*c.Parent); cur != nil {
 			cur.Children = append(cur.Children, c)
+		}
+	}
+
+	if parent != nil {
+		rc := root.WithID(*parent)
+		if rc != nil {
+			return rc.Children
 		}
 	}
 

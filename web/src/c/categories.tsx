@@ -5,9 +5,10 @@ import Link from "next/link";
 import { FC } from "react";
 
 export type Category = {
-  id: string;
+  id: number;
   name: string;
   slug: string;
+  parent: number;
   children: Category[]
 }
 
