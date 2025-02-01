@@ -66,7 +66,7 @@ create table users (
 
 INSERT INTO counties (id, auto, name) VALUES (0, 'RO', 'Romania');
 INSERT INTO cities (id, county, name, other_name) VALUES (0, 0, 'Undeva', NULL);
-INSERT INTO users (id, email, "password", given_name, family_name, phone, city, "role", email_activated_at) VALUES (2,'admin@aham.ro', '$2a$10$wTisw11KVIc22d/ef.xV.u6MrBKuEOUVcEo.BJJcZUdA11kK1BkBK', 'Cosmin', 'Albulescu', '+40790535355', 0, "root", now());
+INSERT INTO users (id, email, "password", given_name, family_name, phone, city, "role", email_activated_at) VALUES (2,'admin@aham.ro', '$2a$10$wTisw11KVIc22d/ef.xV.u6MrBKuEOUVcEo.BJJcZUdA11kK1BkBK', 'Cosmin', 'Albulescu', '+40790535355', 0, 'root', now());
 
 ALTER SEQUENCE users_id_seq RESTART WITH 1000;
 

@@ -1,6 +1,3 @@
-drop table sam;
-drop table resources;
-
 create table resources (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -15,7 +12,7 @@ create table sam (
     UNIQUE(user_id, resource_id, permission)
 );
 
-CREATE INDEX sam_index ON users (user_id,resource_id,permission);
+CREATE INDEX sam_index ON sam (user_id,resource_id,permission);
 
 insert into resources values 
     (1, 'cities', 'platform'),

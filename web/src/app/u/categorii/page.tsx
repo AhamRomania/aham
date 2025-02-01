@@ -7,24 +7,21 @@ import { Button, IconButton, Stack, Table } from "@mui/joy";
 export default async function Page() {
 
     const api = useApiFetch();
-    const categories = await api<Category[]>('/categories');
-
+    const categories = await api<Category[]>('/categories?tree=true');
     return (
         <>
             <Table>
                 <thead>
                     <tr>
-                        <th style={{ width: '40%' }}>Nume Categorie</th>
-                        <th>Subcategorii</th>
-                        <th>Anunturi</th>
-                        <th></th>
+                        <th style={{ width: '70%' }}>Nume Categorie</th>
+                        <th style={{ width: '15%' }}>Subcategorii</th>
+                        <th style={{ width: '15%' }}></th>
                     </tr>
                 </thead>
                 <tbody>
                     {categories.map(c => <tr>
                         <td>{c.name}</td>
-                        <td>159</td>
-                        <td>6</td>
+                        <td>{c.children && c.children.length}</td>
                         <td>
                             <Stack direction="row" gap={1}>
                                 <Tip title="Adaugă subcategorii"><IconButton variant="soft"><Add/></IconButton></Tip>

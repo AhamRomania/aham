@@ -65,6 +65,45 @@ func (c *Category) LastModified() string {
 	return time.Now().Format("2006-01-02")
 }
 
+func GetCategoryByID(id int64) *Category {
+
+	row := c.DB().QueryRow(
+		context.Background(),
+		`
+		select
+			id,
+			name,
+			slug,
+			description,
+			parent,
+			sort,
+			pricing
+		from categories
+		where hidden=false and id = $1
+		`,
+		id,
+	)
+
+	category := &Category{}
+
+	err := row.Scan(
+		&category.ID,
+		&category.Name,
+		&category.Slug,
+		&category.Description,
+		&category.Parent,
+		&category.Sort,
+		&category.Pricing,
+	)
+
+	if err != nil {
+		c.Log().Error(err)
+		return nil
+	}
+
+	return category
+}
+
 func GetCategoryBySlug(slug string) *Category {
 
 	row := c.DB().QueryRow(

@@ -37,6 +37,12 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 
 	user, err := db.GetUserByEmail(req.Email)
 
+	if err != nil {
+		c.Log().Error(err)
+		http.Error(w, "User account is not activated", http.StatusUnauthorized)
+		return
+	}
+
 	if !user.Activated() {
 		http.Error(w, "User account is not activated", http.StatusUnauthorized)
 		return
