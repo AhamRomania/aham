@@ -13,8 +13,8 @@ func Sitemap(res http.ResponseWriter, req *http.Request) {
 	b := bytes.NewBufferString(`<?xml version="1.0" encoding="UTF-8"?>`)
 	b.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`)
 
-	for _, cat := range db.GetCategories() {
-		writeLoc(b, fmt.Sprintf("https://aham.ro/%s", cat.Slug), time.Now().Format("2006-01-02"))
+	for _, c := range db.GetCategoriesFlat() {
+		writeLoc(b, fmt.Sprintf("https://aham.ro/%s", c.Link()), time.Now().Format("2006-01-02"))
 	}
 
 	/*

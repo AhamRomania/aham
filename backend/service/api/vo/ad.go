@@ -23,9 +23,17 @@ type Ad struct {
 }
 
 func NewAd(src *db.Ad) Ad {
+
+	c := *db.GetCategory(src.CategoryID)
+
 	return Ad{
-		ID:          src.ID,
-		Category:    Category(*db.GetCategory(src.CategoryID)),
+		ID: src.ID,
+		Category: Category{
+			ID:          c.ID,
+			Name:        c.Name,
+			Description: c.Description,
+			Pricing:     c.Pricing,
+		},
 		Owner:       NewUser(*db.GetUserByID(src.Owner)),
 		Title:       src.Title,
 		Description: src.Description,

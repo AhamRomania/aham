@@ -3,65 +3,73 @@ package db
 import (
 	"aham/common/c"
 	"context"
+	"sort"
+	"strings"
 	"time"
 
 	"github.com/gosimple/slug"
 )
 
 type Category struct {
-	ID          int64  `json:"id,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Slug        string `json:"slug,omitempty"`
-	Description string `json:"description,omitempty"`
-	Pricing     bool   `json:"pricing,omitempty"`
+	ID          int64       `json:"id,omitempty"`
+	Name        string      `json:"name,omitempty"`
+	Slug        string      `json:"slug,omitempty"`
+	Description string      `json:"description,omitempty"`
+	Parent      *int64      `json:"parent,omitempty"`
+	Sort        int64       `json:"sort,omitempty"`
+	Pricing     bool        `json:"pricing,omitempty"`
+	Hidden      bool        `json:"hidden,omitempty"`
+	Children    []*Category `json:"children,omitempty"`
+}
+
+type SearchCategory struct {
+	ID   int64    `json:"id,omitempty"`
+	Path []string `json:"path,omitempty"`
+}
+
+func (category *Category) WithID(id int64) *Category {
+	for _, c := range category.Children {
+		if c.ID == id {
+			return c
+		}
+		if found := c.WithID(id); found != nil {
+			return found
+		}
+	}
+	return nil
+}
+
+func (category *Category) Search(query string) (results []*Category) {
+
+	results = make([]*Category, 0)
+
+	for _, cat := range category.Children {
+
+		if strings.Contains(c.Normalize(cat.Name), strings.ToLower(query)) {
+			results = append(results, cat)
+		}
+
+		if len(cat.Children) > 0 {
+			results = append(results, cat.Search(query)...)
+		}
+	}
+
+	return
 }
 
 func (category *Category) Link() string {
-	return c.URLF("/category/%s", slug.Make(category.Slug))
+	return c.URLF("/%s", slug.Make(category.Slug))
 }
 
 func (c *Category) LastModified() string {
 	return time.Now().Format("2006-01-02")
 }
 
-func SearchCategory(q string) (categories []*Category, err error) {
-
-	rows, err := c.DB().Query(
-		context.Background(),
-		"select id,name,slug,description from categories where hidden=false and slug LIKE '%' || $1 || '%' OR name LIKE '%' || $1 || '%'",
-		q,
-	)
-
-	if err != nil {
-		return categories, err
-	}
-
-	for rows.Next() {
-
-		category := Category{}
-
-		err = rows.Scan(
-			&category.ID,
-			&category.Name,
-			&category.Slug,
-			&category.Description,
-		)
-
-		if err != nil {
-			return categories, err
-		}
-
-		categories = append(categories, &category)
-	}
-
-	return categories, nil
-}
-
 func GetCategoryBySlug(slug string) *Category {
 
 	row := c.DB().QueryRow(
 		context.Background(),
-		"select id,name,slug,description from categories where hidden=false and slug = $1",
+		"select id,name,slug,description,parent,sort,pricing from categories where hidden=false and slug = $1",
 		slug,
 	)
 
@@ -72,6 +80,9 @@ func GetCategoryBySlug(slug string) *Category {
 		&c.Name,
 		&c.Slug,
 		&c.Description,
+		&c.Parent,
+		&c.Sort,
+		&c.Pricing,
 	)
 
 	if err != nil {
@@ -85,7 +96,7 @@ func GetCategory(id int64) *Category {
 
 	row := c.DB().QueryRow(
 		context.Background(),
-		"select id,name,slug,description,pricing from categories where hidden=false and id = $1",
+		"select id,name,slug,description,parent,sort,pricing from categories where hidden=false and id = $1",
 		id,
 	)
 
@@ -96,6 +107,8 @@ func GetCategory(id int64) *Category {
 		&c.Name,
 		&c.Slug,
 		&c.Description,
+		&c.Parent,
+		&c.Sort,
 		&c.Pricing,
 	)
 
@@ -106,11 +119,89 @@ func GetCategory(id int64) *Category {
 	return &c
 }
 
-func GetCategories() (categories []*Category) {
+func SearchCategoryTree(keyword string) (categories []*Category) {
+
+	root := Category{
+		Children: GetCategoryTree(GetCategoriesFlat()),
+	}
+
+	return root.Search(keyword)
+}
+
+func SearchCategoryPaths(keyword string) (categories []*SearchCategory) {
+
+	keyword = c.Normalize(keyword)
+
+	categories = make([]*SearchCategory, 0)
 
 	rows, err := c.DB().Query(
 		context.Background(),
-		"select id,name,slug,description from categories where hidden=false",
+		`
+		SELECT * FROM (
+			SELECT
+				id,
+				get_category_path(id)::text AS path
+			FROM
+				categories
+		) subquery
+		WHERE lower(path) LIKE '%' || $1 || '%'
+		`,
+		keyword,
+	)
+
+	if err != nil {
+		c.Log().Error(err)
+		return categories
+	}
+
+	for rows.Next() {
+
+		category := SearchCategory{}
+
+		var path string
+
+		err = rows.Scan(
+			&category.ID,
+			&path,
+		)
+
+		category.Path = strings.Split(path, " > ")
+
+		if err != nil {
+			c.Log().Error(err)
+			return categories
+		}
+
+		categories = append(categories, &category)
+	}
+
+	sort.Slice(categories, func(i, j int) bool {
+		return len(categories[i].Path) > len(categories[j].Path)
+	})
+
+	if len(categories) > 5 {
+		return categories[:5]
+	}
+
+	return categories
+}
+
+func GetCategoriesFlat() (categories []*Category) {
+
+	rows, err := c.DB().Query(
+		context.Background(),
+		`select
+			id,
+			name,
+			slug,
+			description,
+			parent,
+			sort,
+			pricing
+		from
+			categories
+		where hidden=false
+		`,
 	)
 
 	if err != nil {
@@ -127,9 +218,13 @@ func GetCategories() (categories []*Category) {
 			&category.Name,
 			&category.Slug,
 			&category.Description,
+			&category.Parent,
+			&category.Sort,
+			&category.Pricing,
 		)
 
 		if err != nil {
+			c.Log().Error(err)
 			return categories
 		}
 
@@ -137,6 +232,27 @@ func GetCategories() (categories []*Category) {
 	}
 
 	return
+}
+
+func GetCategoryTree(flat []*Category) (categories []*Category) {
+
+	root := &Category{
+		Children: make([]*Category, 0),
+	}
+
+	for _, c := range flat {
+
+		if c.Parent == nil {
+			root.Children = append(root.Children, c)
+			continue
+		}
+
+		if cur := root.WithID(*c.Parent); cur != nil {
+			cur.Children = append(cur.Children, c)
+		}
+	}
+
+	return root.Children
 }
 
 func GetCategoryProps(category int64) (metaProps []*MetaProp) {

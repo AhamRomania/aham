@@ -35,14 +35,12 @@ func main() {
 
 		r.Route("/sam", route.SecureAccessMap)
 
+		r.Route("/categories", route.CategoriesRoutes)
+
 		r.Get("/counties", route.GetCounties)
 		r.Get("/counties/{county}", route.GetCounty)
 		r.Get("/cities/{city}", route.GetCity)
 		r.Get("/cities", route.GetCities)
-
-		r.Get("/categories", route.GetCategories)
-		r.Get("/categories/{id}", route.GetCategory)
-		r.Get("/categories/{id}/props", route.GetCategoryProps)
 
 		r.Post("/ads", c.Guard(route.CreateAd))
 		r.Get("/ads/{id}", route.GetAd)

@@ -8,8 +8,13 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
+	"unicode"
 
 	"github.com/go-chi/chi/v5"
+	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
 )
 
 type D map[string]any
@@ -113,4 +118,13 @@ func Copy(dst, from any) error {
 	}
 
 	return json.Unmarshal(data, dst)
+}
+
+func Normalize(s string) string {
+	t := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
+	result, _, err := transform.String(t, s)
+	if err != nil {
+		return ""
+	}
+	return strings.ToLower(result)
 }

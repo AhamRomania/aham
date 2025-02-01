@@ -1,3 +1,6 @@
+drop table sam;
+drop table resources;
+
 create table resources (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,

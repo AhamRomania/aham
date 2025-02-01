@@ -3,6 +3,7 @@ package db
 import (
 	"aham/common/c"
 	"aham/common/emails"
+	"aham/service/api/sam"
 	"context"
 	"time"
 )
@@ -27,7 +28,7 @@ type User struct {
 	CreatedAt             time.Time  `json:"created_at"`
 }
 
-func (user *User) SamVerify(resource, permission int64) bool {
+func (user *User) SamVerify(resource sam.Resource, permission sam.Perm) bool {
 
 	row := c.DB().QueryRow(
 		context.TODO(),
@@ -46,7 +47,7 @@ func (user *User) SamVerify(resource, permission int64) bool {
 	)
 
 	var count int64
-	var can int64
+	var can sam.Perm
 
 	if err := row.Scan(&count, &can); err != nil || count == 0 {
 		return false

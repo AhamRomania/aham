@@ -3,12 +3,13 @@ package route
 import (
 	"aham/common/c"
 	"aham/service/api/db"
+	"aham/service/api/sam"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 )
 
-var sam = make(map[int64]map[int64]int)
+var sam_cache = make(map[int64]map[sam.Resource]sam.Perm)
 
 func SecureAccessMap(r chi.Router) {
 	r.Get("/flush", flush)
@@ -16,13 +17,13 @@ func SecureAccessMap(r chi.Router) {
 }
 
 func flush(w http.ResponseWriter, r *http.Request) {
-	sam = make(map[int64]map[int64]int)
+	sam_cache = make(map[int64]map[sam.Resource]sam.Perm)
 }
 
 func verifyResource(w http.ResponseWriter, r *http.Request) {
 
-	resource := c.ID(r, "resource")
-	permission := c.ID(r, "permission")
+	resource := sam.Resource(c.ID(r, "resource"))
+	permission := sam.Perm(c.ID(r, "permission"))
 
 	id, err := c.UserID(r)
 
@@ -32,8 +33,8 @@ func verifyResource(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if perm, cached := sam[id]; cached {
-		if perm[resource] == int(permission) {
+	if perm, cached := sam_cache[id]; cached {
+		if perm[resource] == permission {
 			w.WriteHeader(http.StatusAccepted)
 			return
 		}
@@ -52,11 +53,11 @@ func verifyResource(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, cached := sam[user.ID]; !cached {
-		sam[user.ID] = make(map[int64]int)
+	if _, cached := sam_cache[user.ID]; !cached {
+		sam_cache[user.ID] = make(map[sam.Resource]sam.Perm)
 	}
 
-	sam[user.ID][resource] = int(permission)
+	sam_cache[user.ID][resource] = permission
 
 	w.WriteHeader(http.StatusAccepted)
 }
