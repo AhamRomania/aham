@@ -4,9 +4,9 @@ import { Category } from "@/c";
 import Tip from "@/c/tooltip";
 import useApiFetch from "@/hooks/api";
 import { Add, Delete, Edit, Home, Preview } from "@mui/icons-material";
-import { Button, IconButton, Stack, Table } from "@mui/joy";
+import { IconButton, Stack, Table } from "@mui/joy";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page({params}) {
@@ -17,6 +17,7 @@ export default function Page({params}) {
     const [id, setID] = useState(-1)
 
     params.then(
+        // eslint-disable-next-line
         (d:any) => {
             if (d.id) {
                 api<Category[]>('/categories/' + id).then(

@@ -221,7 +221,6 @@ const Picture: FC<PictureProps> = ({image, onDelete}) => {
         xhr.setRequestHeader('Authorization', 'Bearer ' + token);
         xhr.send(fd);
 
-        // eslint-disable-next-line
     }, [cdnURL, token, image.file]);
 
     return (

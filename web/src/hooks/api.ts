@@ -52,7 +52,7 @@ const useApiFetch = (props?:ApiFetchProps) => {
                             (obj) => resolve(obj),
                         ).catch(
                             (err) => {
-                                reject('err')
+                                reject(err)
                             }
                         );
                     }

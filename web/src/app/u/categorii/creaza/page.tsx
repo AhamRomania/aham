@@ -3,8 +3,8 @@
 import { Category } from "@/c";
 import Tip from "@/c/tooltip";
 import useApiFetch from "@/hooks/api";
-import { Add, ArrowRight, Delete, Edit, Home, Save } from "@mui/icons-material";
-import { Button, CircularProgress, FormControl, FormHelperText, FormLabel, IconButton, Input, Stack, Table } from "@mui/joy";
+import { Add, ArrowRight, Delete, Home, Save } from "@mui/icons-material";
+import { CircularProgress, IconButton, Input, Stack, Table } from "@mui/joy";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useState } from "react";
@@ -37,7 +37,7 @@ export default function Page() {
         setData([...data]);
     }
 
-    const onCreateNew = (item: Category, index: number) => {
+    const onCreateNew = () => {
         setData([...data, {} as Item]);
     }
 
@@ -94,7 +94,9 @@ const RowItem: FC<RowItemProps> = ({index, parent, data, onItemRemove, onDataCha
     const [loading, setLoading] = useState(false);
     const [vo, setVo] = useState(data);
 
+    // eslint-disable-next-line
     const onPropChange = (name: string, e: any) => {
+        // eslint-disable-next-line
         (vo as any)[name] = e.target.value;
         setVo(vo);
     }
@@ -109,10 +111,12 @@ const RowItem: FC<RowItemProps> = ({index, parent, data, onItemRemove, onDataCha
         api('/categories', {method:'POST', body: JSON.stringify(vo)}).then(
             (response) => {
                 setLoading(false);
-                setVo(response as Category);
-                onDataChange && onDataChange(data, index);
+                setVo(response);
+                if (onDataChange) {
+                    onDataChange(data, index);
+                }
             },
-            (err) => {
+            () => {
                 alert('Nu am putut adauga. UNIQUE(name,slug,parent)')
                 setLoading(false)
             }
@@ -137,7 +141,9 @@ const RowItem: FC<RowItemProps> = ({index, parent, data, onItemRemove, onDataCha
             (response) => {
                 setLoading(false);
                 setVo(response as Category);
-                onDataChange && onDataChange(data, index);
+                if (onDataChange) {
+                    onDataChange(data, index);
+                }
             },
             (err) => {
                 alert(err)

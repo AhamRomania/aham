@@ -12,6 +12,8 @@ create table sam (
     UNIQUE(user_id, resource_id, permission)
 );
 
+-- todo: use a different table for roles sam_users, sam_roles?
+
 CREATE INDEX sam_index ON sam (user_id,resource_id,permission);
 
 insert into resources values 
