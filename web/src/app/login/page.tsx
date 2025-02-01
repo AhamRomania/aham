@@ -166,7 +166,7 @@ export default function Page() {
         >
           <Stack spacing={1}>
             <Input
-              data-test-id="login-email-input"
+              data-test="login-email-input"
               name="email"
               type="text"
               placeholder="Email"
@@ -174,14 +174,14 @@ export default function Page() {
               required
             />
             <Input
-              data-test-id="login-password-input"
+              data-test="login-password-input"
               name="password"
               type="password"
               placeholder="Parolă"
               size="lg"
               required
             />
-            <Button size="lg" type="submit" data-test-id="login-submit">
+            <Button size="lg" type="submit" data-test="login-submit">
               Intră
             </Button>
           </Stack>

@@ -6,7 +6,7 @@ describe('Navigation', () => {
       cy.visit(Cypress.env('URL')+'/vehicule')
    
       // Find a link with an href attribute containing "about" and click it
-      cy.get('[data-test-id="logo"]').click({multiple: true})
+      cy.get('[data-test="logo"]').click({multiple: true})
    
       // The new url should include "/about"
       cy.url().should('include', '/')

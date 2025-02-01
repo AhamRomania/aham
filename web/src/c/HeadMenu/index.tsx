@@ -68,7 +68,7 @@ const HeadMenu: FC = () => {
             <div className={styles.headMenu}>
                 <Link href="/u/anunturi/creaza">
                     <Button
-                        data-test-id="add-button"
+                        data-test="add-button"
                         startIcon={<Add/>}
                         variant="contained"
                         color="secondary"

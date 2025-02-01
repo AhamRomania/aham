@@ -12,6 +12,8 @@ create table sam (
     UNIQUE(user_id, resource_id, permission)
 );
 
+CREATE INDEX sam_index ON users (user_id,resource_id,permission);
+
 insert into resources values 
     (1, 'cities', 'platform'),
     (2, 'categories', 'platform'),

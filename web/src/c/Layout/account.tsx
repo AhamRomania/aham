@@ -39,6 +39,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
       `}
     >
       <div
+        data-test="account-aside"
         css={css`
           background: var(--main-color);
           transition: width 0.6s;
@@ -50,10 +51,13 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           @media only screen and (min-width : 1200px) {
             width: ${open ? '270px' : '80px'};
           }
+          a {
+            color: #FFF;
+          }
         `}
       >
         <div
-            data-test-id="account-aside-header"
+            data-test="account-aside-header"
             css={css`
                 max-height: 80px;
                 display: flex;
@@ -98,11 +102,14 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           MENU
           {userLoaded && isPrivilegedUser(me) && (
             <div
-              data-testid="privileged-user"
+              data-test="privileged-user"
             >
               <div>Priviledged user MENU</div>
               <Sam resource={SamResource.CATEGORIES} permission={SamPermission.READ}>
-                <div>Categories</div>
+                <Link href="/u/categorii">Categorii</Link>
+              </Sam>
+              <Sam resource={SamResource.ADS} permission={SamPermission.READ}>
+                <Link href="/u/anunturi">Ads</Link>
               </Sam>
             </div>
           )}
@@ -126,7 +133,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             `}
         >
             <div
-                data-test-id="account-header-breadcrumbs"
+                data-test="account-header-breadcrumbs"
                 css={css`
                     height: 80px;
                     display: flex;

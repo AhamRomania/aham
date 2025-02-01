@@ -144,7 +144,7 @@ export default function Page() {
         <Grid container gap={2}>
           <Grid>
             <Button
-              data-test-id="add-button"
+              data-test="add-button"
               variant="solid"
               size="lg"
               onClick={() => save()}

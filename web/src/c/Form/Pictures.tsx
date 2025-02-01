@@ -226,7 +226,7 @@ const Picture: FC<PictureProps> = ({image, onDelete}) => {
 
     return (
         <div
-            data-testid="image-item"
+            data-test="image-item"
             css={css`
                 width: 226px;
                 height: 173px;
@@ -261,7 +261,7 @@ const Picture: FC<PictureProps> = ({image, onDelete}) => {
                 />
             }
             {uploading && <div
-                data-testid="image-upload-progress"
+                data-test="image-upload-progress"
                 css={css`
                     position: absolute;
                     left: 10px;
@@ -282,7 +282,7 @@ const Picture: FC<PictureProps> = ({image, onDelete}) => {
                 />
             </div>}
             {!uploading && <div
-                data-testid="image-delete-container"
+                data-test="image-delete-container"
                 css={css`
                     position: absolute;
                     right: 5px;
