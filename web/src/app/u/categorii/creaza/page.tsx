@@ -3,7 +3,7 @@
 import { Category } from "@/c";
 import Tip from "@/c/tooltip";
 import useApiFetch from "@/hooks/api";
-import { Add, ArrowRight, Delete, Edit, Save } from "@mui/icons-material";
+import { Add, ArrowRight, Delete, Edit, Home, Save } from "@mui/icons-material";
 import { Button, CircularProgress, FormControl, FormHelperText, FormLabel, IconButton, Input, Stack, Table } from "@mui/joy";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -43,9 +43,15 @@ export default function Page() {
 
     return (
         <>
-            <div>
-                Părinte: {category ? category.name : '...'}
-            </div>
+            <Stack direction="row" gap={1} alignItems="center">
+                <Link href={{pathname: `/u/categorii`}}>
+                    <Tip title="Către categoriile principale"><IconButton variant="soft"><Home/></IconButton></Tip>
+                </Link>
+                <div>
+                    Părinte: {category ? category.name : '...'}
+                </div>
+            </Stack>
+            
             <Table>
                 <thead>
                     <tr>

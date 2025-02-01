@@ -6,19 +6,27 @@ import useApiFetch from "@/hooks/api";
 import { Add, Delete, Edit, Home, Preview } from "@mui/icons-material";
 import { Button, IconButton, Stack, Table } from "@mui/joy";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page({params}) {
 
+    const router = useRouter()
     const [categories, setCategories] = useState<Category[]>([]);
     const api = useApiFetch();
-    const [id, setID] = useState(0)
+    const [id, setID] = useState(-1)
 
     params.then(
         (d:any) => {
             if (d.id) {
-                setID(d.id);
+                api<Category[]>('/categories/' + id).then(
+                    () => {
+                        setID(d.id);
+                    },
+                    () => {
+                        router.push(`/u/categorii`)
+                    }
+                )
             }
         }
     )
@@ -26,14 +34,18 @@ export default function Page({params}) {
     const update = () => {
         api<Category[]>('/categories?tree=true&p=' + id).then(
             (response) => {
-                setCategories(response);
+                if (!response) {
+                    router.push(`/u/categorii`)
+                    return
+                }
+                setCategories(response || []);
             }
         )
     }
 
-    const removeCategory = (id: number) => {
+    const removeCategory = (category: Category) => {
         if(confirm("Ștergi categoria?")) {
-            api<Category[]>('/categories/' + id, {method:'DELETE', success:true}).then(
+            api<Category[]>('/categories/' + category.id, {method:'DELETE', success:true}).then(
                 () => {
                     update();
                 }
@@ -41,7 +53,11 @@ export default function Page({params}) {
         }
     };
 
-    useEffect(() => update(),[id]);
+    useEffect(() => {
+        if (id !== -1) {
+            update();
+        }
+    }, [id]);
 
     return (
         <>
@@ -78,7 +94,7 @@ export default function Page({params}) {
                                     <Tip title="Adaugă subcategorii"><IconButton variant="soft"><Add/></IconButton></Tip>
                                 </Link>
                                 <Tip title="Editează"><IconButton variant="soft"><Edit/></IconButton></Tip>
-                                <Tip title="Șterge"><IconButton onClick={() => removeCategory(category.id)} variant="soft"><Delete/></IconButton></Tip>
+                                <Tip title="Șterge"><IconButton onClick={() => removeCategory(category)} variant="soft"><Delete/></IconButton></Tip>
                             </Stack>
                         </td>
                     </tr>)}
