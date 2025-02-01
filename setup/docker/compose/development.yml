@@ -11,7 +11,6 @@ services:
       - 15432:5432
     volumes:
       - ../../db:/docker-entrypoint-initdb.d
-      - ../../../data/db/api:/var/lib/postgresql/data
   redis:
     image: redis/redis-stack:latest
     container_name: aham_dev_redis
@@ -23,8 +22,6 @@ services:
       - REDIS_PASSWORD=aham
       - REDIS_PORT=6379
       - REDIS_DATABASES=16
-    volumes:
-      - ../../../data/db/redis:/data
 networks:
   aham:
     driver: bridge

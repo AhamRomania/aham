@@ -33,6 +33,8 @@ func main() {
 
 		r.Get("/config", route.Setup)
 
+		r.Route("/sam", route.SecureAccessMap)
+
 		r.Get("/counties", route.GetCounties)
 		r.Get("/counties/{county}", route.GetCounty)
 		r.Get("/cities/{city}", route.GetCity)

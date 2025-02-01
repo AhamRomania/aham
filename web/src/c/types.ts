@@ -1,3 +1,10 @@
+export type User = {
+    id: number;
+    given_name: string;
+    family_name: string;
+    role: string;
+}
+
 export type Category = {
     id: number;
     name: string;

@@ -17,6 +17,7 @@ type User struct {
 	City                  int64      `json:"city"`
 	Picture               *string    `json:"picture"`
 	Source                string     `json:"source"`
+	Role                  string     `json:"role"`
 	ThirdPartyAccessToken string     `json:"third_pary_access_token"`
 	Settled               bool       `json:"settled"`
 	EmailActivationToken  *string    `json:"email_activation_token"`
@@ -24,6 +25,38 @@ type User struct {
 	EmailActivatedAt      *time.Time `json:"email_activated_at"`
 	PhoneActivatedAt      *time.Time `json:"phone_activated_at"`
 	CreatedAt             time.Time  `json:"created_at"`
+}
+
+func (user *User) SamVerify(resource, permission int64) bool {
+
+	row := c.DB().QueryRow(
+		context.TODO(),
+		`
+			select
+				count(*),
+				(permission & $3) as can
+			from sam
+				where user_id = $1 
+				and resource_id = $2
+			group by permission;
+		`,
+		user.ID,
+		resource,
+		permission,
+	)
+
+	var count int64
+	var can int64
+
+	if err := row.Scan(&count, &can); err != nil || count == 0 {
+		return false
+	}
+
+	if can != permission {
+		return false
+	}
+
+	return true
 }
 
 func (user *User) Activated() bool {
@@ -149,6 +182,7 @@ func GetUserByID(id int64) *User {
 			family_name,
 			phone,
 			city,
+			role,
 			email_activation_token,
 			phone_activation_token,
 			created_at,
@@ -168,6 +202,7 @@ func GetUserByID(id int64) *User {
 		&user.FamilyName,
 		&user.Phone,
 		&user.City,
+		&user.Role,
 		&user.EmailActivationToken,
 		&user.PhoneActivationToken,
 		&user.CreatedAt,

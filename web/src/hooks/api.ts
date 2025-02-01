@@ -5,6 +5,10 @@ export interface ApiFetchProps {
     version?: string
 }
 
+export interface RequestInitEnhanced {
+    success?: boolean
+}
+
 const useApiFetch = (props?:ApiFetchProps) => {
 
     const version = props?.version || 'v1';
@@ -13,7 +17,7 @@ const useApiFetch = (props?:ApiFetchProps) => {
 
     return async <T>(
         input: string | URL | globalThis.Request,
-        init?: RequestInit,
+        init?: RequestInit & RequestInitEnhanced,
     ): Promise<T> => {
 
         const token = await getAccessToken();
@@ -37,6 +41,11 @@ const useApiFetch = (props?:ApiFetchProps) => {
                         if (response.status === 401) {
                             reject('unauthorized');
                             return;
+                        }
+
+                        if (init.success && response.status >= 200 && response.status <= 205) {
+                            resolve(null as T)
+                            return
                         }
 
                         response.json().then(

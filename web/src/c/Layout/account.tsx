@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useEffect } from "react";
 import { css } from "@emotion/react";
 import Logo from "../logo";
 import Link from "next/link";
@@ -10,9 +10,23 @@ import Tip from "../tooltip";
 import HeadMenu from "../HeadMenu";
 import { Breadcrumbs, IconButton } from "@mui/joy";
 import { Space } from "./common";
+import { getUser } from "../Auth";
+import { User } from "../types";
+import { isPrivilegedUser } from "../funcs";
+import Sam, { SamPermission, SamResource } from "../Sam";
+
 
 const AccountLayout = ({ children }: React.PropsWithChildren) => {
+
   const [open, setOpen] = useState(true);
+  const [me, setMe] = useState<User>({} as User);
+  const [userLoaded, setUserLoaded] = useState(false);
+
+  useEffect(() => {
+    getUser().then(setMe);
+    setUserLoaded(true);
+  }, []);
+
   return (
     <div
       css={css`
@@ -31,6 +45,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           color: #fff;
           position:relative;
           justify-content: center;
+          flex-direction: column;
           display: flex;
           @media only screen and (min-width : 1200px) {
             width: ${open ? '270px' : '80px'};
@@ -40,7 +55,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         <div
             data-test-id="account-aside-header"
             css={css`
-                height: 80px;
+                max-height: 80px;
                 display: flex;
                 align-items: center;
                 justify-content: flex-start;
@@ -57,7 +72,6 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         <button
             onClick={() => setOpen(!open)}
             css={css`
-                background: var(--main-color);
                 width: 7px;
                 border: none;
                 height: 100%;
@@ -66,14 +80,33 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 right: 0px; 
                 cursor: e-resize;
                 display: none;
+                background: transparent;
                 @media only screen and (min-width : 1200px) {
                     display: block;
                 }
                 &:hover {
+                    background: var(--main-color);
                     filter: brightness(85%);
                 }
             `}
         />
+        <div
+          css={css`
+            flex: 1;  
+          `}
+        >
+          MENU
+          {userLoaded && isPrivilegedUser(me) && (
+            <div
+              data-testid="privileged-user"
+            >
+              <div>Priviledged user MENU</div>
+              <Sam resource={SamResource.CATEGORIES} permission={SamPermission.READ}>
+                <div>Categories</div>
+              </Sam>
+            </div>
+          )}
+        </div>
       </div>
       <div
         css={css`

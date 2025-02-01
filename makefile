@@ -32,9 +32,9 @@ prod:
 	./setup/docker.sh
 
 run:
-	gnome-terminal --tab --title="CDN" -- bash -c "cd backend/service/cdn; go run ./main.go; read -p 'Waiting'"
-	gnome-terminal --tab --title="API" -- bash -c "cd backend/service/api; go run ./main.go; read -p 'Waiting'"
-	gnome-terminal --tab --title="WEB" -- bash -c "cd web/; npm run dev; read -p 'Waiting'"
+	gnome-terminal --tab --title="CDN" -- bash -c "cd backend/service/cdn; ~/go/bin/air;"
+	gnome-terminal --tab --title="API" -- bash -c "cd backend/service/api; ~/go/bin/air;"
+	gnome-terminal --tab --title="WEB" -- bash -c "cd web/; npm run dev;"
 
 dev:
 	docker compose -f setup/docker/compose/development.yml -p aham_dev down
