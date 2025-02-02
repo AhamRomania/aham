@@ -1,4 +1,3 @@
-import { Category, CategoryList } from "@/c";
 import { Ad } from "@/c/Ad";
 import { HomepageLayout } from "@/c/Layout";
 import Section from "@/c/section";
@@ -7,7 +6,8 @@ import { ArrowRight } from "@mui/icons-material";
 import { Button } from "@mui/joy";
 import style from './page.module.css';
 import { Metadata } from "next";
-import { Ad as AdType } from "@/c/types";
+import { Ad as AdType, Category } from "@/c/types";
+import { CategoryListSection } from "@/c/Categories";
 
 export const metadata: Metadata = {
   title: 'Aham: Bazarul tău',
@@ -27,9 +27,8 @@ export default async function Home () {
   const recomandations = await api<AdType[]>('/ads?filter=recomandations');
   return (
     <HomepageLayout>
-      <Section title="Categorii" after={<Button size="lg" variant="plain" endDecorator={<ArrowRight/>}>Categorii</Button>}>
-        <CategoryList categories={categories} />
-      </Section>
+      <CategoryListSection id={1} count={20} />
+      <CategoryListSection id={3} count={20} />
       <Section
         title="Promovate"
         className={style.listing}

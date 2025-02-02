@@ -1,19 +1,19 @@
-import { Breadcrumbs, IconButton, Input, Stack, Table, Link as JoyLink, CircularProgress } from "@mui/joy";
-import { ChangeEvent, FC, useEffect, useReducer, useState } from "react";
-import { Category } from "../types";
-import { Add, ArrowRight, Delete, Home, KeyboardDoubleArrowRight, Preview, Save } from "@mui/icons-material";
-import Link from "next/link";
-import Tip from "@/c/tooltip";
+'use client';
+
 import useApiFetch from "@/hooks/api";
+import { Add, Delete, Home, KeyboardDoubleArrowRight, Preview } from "@mui/icons-material";
+import { Breadcrumbs, CircularProgress, IconButton, Input, Link as JoyLink, Stack, Table } from "@mui/joy";
+import { FC, useEffect, useReducer, useState } from "react";
+import { Category } from "../types";
 
 class Node {
     
     category: Category;
-    parent: Node;
+    parent: Node | null;
     children: Node[];
     saving: boolean;
 
-    constructor(category: Category, parent: Node = null) {
+    constructor(category: Category, parent: Node | null = null) {
         this.category = category;
         this.parent = parent;
         this.saving = false;
@@ -34,7 +34,7 @@ class Node {
 
     get path(): Node[] {
 
-        const items = [];
+        let items = [];
 
         items.push(this);
 
@@ -45,7 +45,11 @@ class Node {
             parent = parent.parent
         }
 
-        return items.reverse();
+        items = items.reverse();
+
+        items.shift();
+
+        return items;
     }
 
     get root(): Node {
@@ -75,25 +79,30 @@ class Node {
     }
 
     findByID(id: number): Node | null {
-
-        if (id == -1) {
-            return this.root
+        
+        if (id === -1) {
+            return this.root;
         }
-
-        if (!this.children) {
+    
+        if (!this.children || this.children.length === 0) {
             return null;
         }
-
-        for(let i=0; i<this.children?.length; i++) {
+    
+        for (let i = 0; i < this.children.length; i++) {
             
             if (this.children[i].id === id) {
                 return this.children[i];
             }
+    
+            // Recursive call to search in child nodes
+            const foundNode = this.children[i].findByID(id);
 
-            return this.children[i].findByID(id)
+            if (foundNode) {
+                return foundNode; // Return only if a node is found
+            }
         }
-
-        return null;
+    
+        return null; // Return null if no node is found
     }
 
     create() {
@@ -103,15 +112,13 @@ class Node {
     }
 }
 
-const CategoriesEditor:FC<ListEditProps> = ({parent}) => {
+const CategoriesEditor:FC = () => {
     
     const api = useApiFetch();
 
     const [root, setRoot] = useState<Node>();
     const [node, setNode] = useState<Node>();
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-
-    const save = () => {};
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const update = () => {
         api<Category[]>('/categories?tree=true').then(
@@ -131,11 +138,11 @@ const CategoriesEditor:FC<ListEditProps> = ({parent}) => {
     };
 
     const setNodeByCategoryID = (id: number) => {
-        if (node) {
-            const found = node.root.findByID(id);
-            if (found) {
-                setNode(found);
-            }
+        const found = root?.findByID(id);
+        if (found) {
+            setNode(found);
+        } else {
+            console.error(`Node with id ${id} not found from root`);
         }
     }
 
@@ -190,7 +197,7 @@ const CategoriesEditor:FC<ListEditProps> = ({parent}) => {
                 body: JSON.stringify({
                     name: item.name,
                     slug: item.slug,
-                    parent: item.parent.id
+                    parent: item.parent?.id !== -1 ? item.parent?.id : undefined
                 })
             }).then(
                 (response)=> {
@@ -208,7 +215,7 @@ const CategoriesEditor:FC<ListEditProps> = ({parent}) => {
             body: JSON.stringify({
                 name: item.name,
                 slug: item.slug,
-                parent: node?.id
+                parent: node?.id !== -1 ? node?.id : undefined
             })
         }).then(
             (response)=> {
@@ -231,9 +238,9 @@ const CategoriesEditor:FC<ListEditProps> = ({parent}) => {
         <div>
             <Stack gap={1}>
                 <Breadcrumbs separator="›" aria-label="breadcrumbs">
-                    <Home onClick={() => window.location.href = '/'} style={{cursor: 'pointer'}} sx={{ mr: 0.5 }} />
-                    {node?.path.map((node, index) => <JoyLink key={index} onClick={() => setNodeByCategoryID(node.id)}>
-                        {node.name}
+                    <Home onClick={() => root?.id !== undefined && setNodeByCategoryID(root.id)} style={{cursor: 'pointer'}} sx={{ mr: 0.5 }} />
+                    {node?.path.map((item, index) => <JoyLink key={index} onClick={() => setNodeByCategoryID(item.id)}>
+                        {item.name}
                     </JoyLink>)}
                     <Add onClick={() => createNewNodes()} style={{cursor: 'pointer'}} sx={{ mr: 0.5 }} />
                 </Breadcrumbs>
@@ -263,21 +270,21 @@ const CategoriesEditor:FC<ListEditProps> = ({parent}) => {
                                         item.category.name = e.target.value;
                                         forceUpdate();
                                     }}
-                                    onBlur={(e) => saveCurrentNodeData(item)}
+                                    onBlur={() => saveCurrentNodeData(item)}
                                 />
                             </td>
                             <td>
                                 <Input
                                     size="lg"
-                                    startDecorator={<Tip title="Generează">
-                                        <IconButton
-                                            size="lg"
-                                            variant="soft"
-                                            onClick={() => makeSlugFromName(item)}
-                                        >
-                                            <KeyboardDoubleArrowRight/>
-                                        </IconButton>
-                                        </Tip>}
+                                    startDecorator={(
+                                            <IconButton
+                                                size="lg"
+                                                variant="soft"
+                                                onClick={() => makeSlugFromName(item)}
+                                            >
+                                                <KeyboardDoubleArrowRight/>
+                                            </IconButton>
+                                        )}
                                     value={item.slug}
                                     onChange={(e) => {
                                         item.category.slug = e.target.value
@@ -291,7 +298,7 @@ const CategoriesEditor:FC<ListEditProps> = ({parent}) => {
                             </td>
                             <td>
                                 <Stack direction="row" gap={1}>
-                                    {(item.children||[]) && <Tip title="Subcategorii">
+                                    {(item.children||[]) && (
                                         <IconButton
                                             size="lg"
                                             variant="soft"
@@ -299,16 +306,14 @@ const CategoriesEditor:FC<ListEditProps> = ({parent}) => {
                                         >
                                             <Preview/>
                                         </IconButton>
-                                    </Tip>}
-                                    <Tip title="Șterge">
-                                        <IconButton
-                                            size="lg"
-                                            variant="soft"
-                                            onClick={() => deleteCurrentNode(item)}
-                                        >
-                                            <Delete/>
-                                        </IconButton>
-                                    </Tip>
+                                    )}
+                                    <IconButton
+                                        size="lg"
+                                        variant="soft"
+                                        onClick={() => deleteCurrentNode(item)}
+                                    >
+                                        <Delete/>
+                                    </IconButton>
                                 </Stack>
                             </td>
                         </tr>))}
