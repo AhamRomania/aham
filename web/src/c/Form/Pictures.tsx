@@ -22,7 +22,6 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
     const input = useRef<HTMLInputElement>(null);
     const [dropHighlighted, setDropHighlighted] = useState(false);
 
-    // eslint-disable-next-line 
     const onFilesChange = (event: any) => {
         
         const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;

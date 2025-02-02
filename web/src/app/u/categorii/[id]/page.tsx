@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Page({params}) {
+export default function Page({params}:{params:any}) {
 
     const router = useRouter()
     const [categories, setCategories] = useState<Category[]>([]);
@@ -17,7 +17,6 @@ export default function Page({params}) {
     const [id, setID] = useState(-1)
 
     params.then(
-        // eslint-disable-next-line
         (d:any) => {
             if (d.id) {
                 api<Category[]>('/categories/' + id).then(

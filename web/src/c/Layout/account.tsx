@@ -99,13 +99,13 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             flex: 1;  
           `}
         >
-          MENU
+          OTHER MENU UNPRIVILIEDGED
           {userLoaded && isPrivilegedUser(me) && (
             <div
               data-test="privileged-user"
             >
               <div>Priviledged user MENU</div>
-              <Sam resource={SamResource.CATEGORIES} permission={SamPermission.READ}>
+              <Sam resource={SamResource.CATEGORIES} permission={SamPermission.WRITE}>
                 <Link href="/u/categorii">Categorii</Link>
               </Sam>
               <Sam resource={SamResource.ADS} permission={SamPermission.READ}>

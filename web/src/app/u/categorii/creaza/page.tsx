@@ -6,26 +6,29 @@ import useApiFetch from "@/hooks/api";
 import { Add, ArrowRight, Delete, Home, Save } from "@mui/icons-material";
 import { CircularProgress, IconButton, Input, Stack, Table } from "@mui/joy";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 
 type Item = Category
 
 export default function Page() {
-
-    const params = useSearchParams();
-
+    
     const api = useApiFetch();
+    const [categoryID, setCategoryID] = useState<string>()
     const [category, setCategory] = useState<Category | null>(null);
     const [data, setData] = useState<Item[]>([{} as Item]);
 
     useEffect(() => {
-        api<Category>('/categories/' + params.get('p')).then(
+        api<Category>('/categories/' + categoryID).then(
             response => {
                 setCategory(response);
             }
         )
-    }, []);
+    }, [categoryID]);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        setCategoryID(params.get('p') as string);
+    }, [])
 
     const onItemRemove = (index: number) => {
         data.splice(index, 1)
@@ -92,11 +95,9 @@ const RowItem: FC<RowItemProps> = ({index, parent, data, onItemRemove, onDataCha
 
     const api = useApiFetch();
     const [loading, setLoading] = useState(false);
-    const [vo, setVo] = useState(data);
+    const [vo, setVo] = useState<Category>(data);
 
-    // eslint-disable-next-line
     const onPropChange = (name: string, e: any) => {
-        // eslint-disable-next-line
         (vo as any)[name] = e.target.value;
         setVo(vo);
     }
@@ -109,7 +110,7 @@ const RowItem: FC<RowItemProps> = ({index, parent, data, onItemRemove, onDataCha
         }
 
         api('/categories', {method:'POST', body: JSON.stringify(vo)}).then(
-            (response) => {
+            (response:any) => {
                 setLoading(false);
                 setVo(response);
                 if (onDataChange) {
@@ -169,7 +170,7 @@ const RowItem: FC<RowItemProps> = ({index, parent, data, onItemRemove, onDataCha
             <td>
                 <Stack direction="row" gap={1}>
                     <Tip title="Salvează"><IconButton onClick={() => save()} variant="soft"><Save/></IconButton></Tip>
-                    <Tip title="Adaugă"><IconButton onClick={() => onCreateNew && onCreateNew()} variant="soft"><Add/></IconButton></Tip>
+                    <Tip title="Adaugă"><IconButton onClick={() => onCreateNew(vo, index)} variant="soft"><Add/></IconButton></Tip>
                     <Tip title="Șterge"><IconButton onClick={() => onItemRemove(index)} variant="soft"><Delete/></IconButton></Tip>
                 </Stack>
             </td>

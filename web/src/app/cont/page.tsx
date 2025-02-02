@@ -143,7 +143,6 @@ export default function Page() {
             required
             size="lg"
             onChange={(event, value) => {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               setCity(value as any);
             }}
             options={counties}

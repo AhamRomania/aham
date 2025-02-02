@@ -231,6 +231,8 @@ func SearchCategoryPaths(keyword string) (categories []*SearchCategory) {
 
 func GetCategoriesFlat() (categories []*Category) {
 
+	categories = make([]*Category, 0)
+
 	rows, err := c.DB().Query(
 		context.Background(),
 		`select
