@@ -9,6 +9,8 @@ export type Category = {
     id: number;
     name: string;
     slug: string;
+    price?: boolean;
+    children?: Category[];
 }
 
 export type County = {

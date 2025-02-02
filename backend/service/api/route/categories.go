@@ -18,7 +18,7 @@ import (
 func CategoriesRoutes(r chi.Router) {
 	r.Get("/", GetCategories)
 	r.Get("/search", SearchCategory)
-	r.Get("/{id}", c.Guard(GetCategory))
+	r.Get("/{id}", GetCategory)
 	r.Put("/{id}", c.Guard(updateCategory))
 	r.Delete("/{id}", c.Guard(deleteCategory))
 	r.Get("/{id}/props", GetCategoryProps)
@@ -128,7 +128,7 @@ func createCategory(w http.ResponseWriter, r *http.Request) {
 
 	var slugv = payload.Slug
 
-	if slugv == nil {
+	if slugv == nil || *slugv == "" {
 		s := slug.Make(payload.Name)
 		slugv = &s
 	}

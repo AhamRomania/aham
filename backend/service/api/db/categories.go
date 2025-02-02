@@ -137,29 +137,11 @@ func GetCategoryBySlug(slug string) *Category {
 
 func GetCategory(id int64) *Category {
 
-	row := c.DB().QueryRow(
-		context.Background(),
-		"select id,name,slug,description,parent,sort,pricing from categories where hidden=false and id = $1",
-		id,
-	)
-
-	c := Category{}
-
-	err := row.Scan(
-		&c.ID,
-		&c.Name,
-		&c.Slug,
-		&c.Description,
-		&c.Parent,
-		&c.Sort,
-		&c.Pricing,
-	)
-
-	if err != nil {
-		return nil
+	root := Category{
+		Children: GetCategoryTree(GetCategoriesFlat(), nil),
 	}
 
-	return &c
+	return root.WithID(id)
 }
 
 func SearchCategoryTree(keyword string) (categories []*Category) {
