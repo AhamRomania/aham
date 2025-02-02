@@ -16,7 +16,7 @@ import (
 )
 
 func CategoriesRoutes(r chi.Router) {
-	r.Get("/", c.Guard(GetCategories))
+	r.Get("/", GetCategories)
 	r.Get("/search", SearchCategory)
 	r.Get("/{id}", c.Guard(GetCategory))
 	r.Put("/{id}", c.Guard(updateCategory))
@@ -198,15 +198,6 @@ func GetCategoryProps(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCategories(w http.ResponseWriter, r *http.Request) {
-
-	uid, _ := c.UserID(r)
-
-	user := db.GetUserByID(uid)
-
-	if !user.SamVerify(sam.CATEGORIES, sam.PermRead) {
-		http.Error(w, "Can't read categories", http.StatusUnauthorized)
-		return
-	}
 
 	flat := db.GetCategoriesFlat()
 

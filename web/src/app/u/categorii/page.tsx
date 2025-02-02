@@ -36,6 +36,12 @@ export default function Page() {
 
     return (
         <>
+            <Stack direction="row" gap={1} alignItems="center">
+                <Link href={{pathname: `/u/categorii/creaza`}}>
+                    <Tip title="Către categoriile principale"><IconButton variant="soft"><Add/></IconButton></Tip>
+                </Link>
+            </Stack>
+
             <Table>
                 <thead>
                     <tr>

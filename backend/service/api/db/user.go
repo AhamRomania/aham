@@ -30,6 +30,10 @@ type User struct {
 
 func (user *User) SamVerify(resource sam.Resource, permission sam.Perm) bool {
 
+	if user == nil {
+		panic("Expected User")
+	}
+
 	row := c.DB().QueryRow(
 		context.TODO(),
 		`

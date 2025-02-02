@@ -2,45 +2,32 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch API",
+            "name": "Launch API - USE AIR INSTEAD",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "env": {
-                "LISTEN": ":8080",
+                "LISTEN": ":8001",
                 "DEV": "true",
-                "DB": "postgres://aham:aham@localhost:5432/aham",
-                "CDN": "https://cdn.aham.ro"
+                "DB": "postgres://aham:aham@localhost:15432/aham",
+                "CDN": "https://localhost:8002"
             },
             "program": "${workspaceFolder}/backend/service/api/main.go",
             "output": "${workspaceFolder}/bin/api"
         },
         {
-            "name": "Launch CDN",
+            "name": "Launch CDN - USE AIR INSTEAD",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "env": {
-                "LISTEN": ":8081",
+                "LISTEN": ":8002",
                 "FILES": "${workspaceFolder}/data/cdn",
                 "DEV": "true",
-                "REDIS": "redis://:aham@localhost:6379/0?protocol=3"
+                "REDIS": "redis://:aham@localhost:16379/0?protocol=3"
             },
             "program": "${workspaceFolder}/backend/service/cdn/main.go",
             "output": "${workspaceFolder}/bin/cdn"
         },
-        {
-            "name": "Launch test CDN",
-            "type": "go",
-            "request": "launch",
-            "mode": "test",
-            "program": "${workspaceFolder}/backend/service/cdn",
-            "env": {
-                "LISTEN": ":8081",
-                "FILES": "${workspaceFolder}/data",
-                "REDIS": "redis://:aham@localhost:6379/0?protocol=3"
-            },
-            "args": []
-        }
     ],
 }

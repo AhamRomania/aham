@@ -3,13 +3,13 @@
   "version": "0.1.2",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' NODE_ENV=development next dev -p 8080 --turbopack",
+    "dev": "NODE_OPTIONS='--inspect' NODE_ENV=development next dev -p 3000 --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "e2e:chrome": "URL=http://localhost:8080 cypress run --browser chrome",
-    "e2e:firefox": "URL=http://localhost:8080 cypress run --browser firefox",
-    "e2e:open": "URL=http://localhost:8080 cypress open --browser chrome",
+    "e2e:chrome": "URL=http://localhost:3000 cypress run --browser chrome",
+    "e2e:firefox": "URL=http://localhost:3000 cypress run --browser firefox",
+    "e2e:open": "URL=http://localhost:3000 cypress open --browser chrome",
     "prod:e2e:chrome": "URL=https://aham.ro cypress run --browser chrome",
     "prod:e2e:firefox": "URL=https://aham.ro cypress run --browser firefox"
   },

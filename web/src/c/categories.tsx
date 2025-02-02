@@ -54,7 +54,7 @@ export const CategoryList: FC<CategoriesProps> = ({ categories }) => {
             }
         `)}
     >
-      {categories.map((c, i) => (
+      {(categories || []).map((c, i) => (
         <Item key={i} category={c} />
       ))}
     </div>
