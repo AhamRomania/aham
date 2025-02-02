@@ -363,3 +363,17 @@ header nav {
     position: absolute;
     right: 0;
 }
+
+pre {
+    background-color: #f5f5f5; /* Light grey background */
+    border: 1px solid #ccc; /* Light grey border */
+    padding: 10px; /* Some padding around the text */
+    overflow-x: auto; /* Adds a horizontal scrollbar if needed */
+    border-radius: 6px;
+    font-size: 19px;
+}
+
+pre code {
+    font-family: 'Courier New', Courier, monospace; /* Monospace font for code */
+    color: #d63384; /* Stylish magenta text color */
+}
