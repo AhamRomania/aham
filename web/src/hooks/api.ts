@@ -1,5 +1,5 @@
 import { getAccessToken } from "@/c/Auth";
-import useDomain, { Domain } from "./domain";
+import getDomain, { Domain } from "./domain";
 
 export interface ApiFetchProps {
     version?: string
@@ -13,7 +13,7 @@ const useApiFetch = (props?:ApiFetchProps) => {
 
     const version = props?.version || 'v1';
     
-    const api = useDomain(Domain.Api, '/' + version)
+    const api = getDomain(Domain.Api, '/' + version)
 
     return async <T>(
         input: string | URL | globalThis.Request,

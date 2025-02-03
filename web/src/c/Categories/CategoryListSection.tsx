@@ -2,11 +2,11 @@
 
 import useApiFetch from "@/hooks/api";
 import { css } from "@emotion/react";
+import { ArrowRight } from "@mui/icons-material";
+import { Button, CircularProgress, Stack, Typography } from "@mui/joy";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 import Section from "../section";
-import { Button, CircularProgress, Grid, Stack, Typography } from "@mui/joy";
-import { ArrowRight } from "@mui/icons-material";
 
 export type Category = {
   id: number;
@@ -46,7 +46,7 @@ export const Item: FC<CategoryProps> = ({ category }) => {
   );
 };
 
-const CategoryListSection: FC<CategoryListSectionProps> = ({ id, count }) => {
+const CategoryListSection: FC<CategoryListSectionProps> = ({ id }) => {
 
   const api = useApiFetch();
   const [category, setCategory] = useState<Category>();

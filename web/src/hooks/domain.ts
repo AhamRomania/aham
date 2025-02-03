@@ -4,7 +4,7 @@ export enum Domain {
     Cdn,
 }
 
-const useDomain = (context:Domain = Domain.Web, path: string = ''): string => {
+const getDomain = (context:Domain = Domain.Web, path: string = ''): string => {
 
     const dev = (process.env.NODE_ENV === 'development')
     
@@ -25,4 +25,4 @@ const useDomain = (context:Domain = Domain.Web, path: string = ''): string => {
     return domain + path;
 }
 
-export default useDomain;
+export default getDomain;

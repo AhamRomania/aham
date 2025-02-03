@@ -1,4 +1,4 @@
-import useDomain, { Domain } from "@/hooks/domain";
+import getDomain, { Domain } from "@/hooks/domain";
 
 export abstract class GenericPicture {
     abstract getURL(): string;
@@ -18,7 +18,7 @@ export class FilePicture extends GenericPicture {
     getURL(): string {
 
         if(this.uuid !== '') {
-            return useDomain(Domain.Cdn,'/' + this.uuid);
+            return getDomain(Domain.Cdn,'/' + this.uuid);
         }
 
         return URL.createObjectURL(this.file);
@@ -43,7 +43,7 @@ export class UploadedPicture extends GenericPicture {
     }
 
     getURL(): string {
-        return useDomain(Domain.Cdn,'/' + this.uuid);
+        return getDomain(Domain.Cdn,'/' + this.uuid);
     }
 
     getUUID(): string {

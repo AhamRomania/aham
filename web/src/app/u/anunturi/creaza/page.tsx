@@ -1,6 +1,7 @@
 "use client"
 
-import Pictures, { ImageData } from "@/c/Form/Pictures/Pictures";
+import Pictures from "@/c/Form/Pictures/Pictures";
+import { GenericPicture } from "@/c/Form/Pictures/types";
 import Location from "@/c/Form/Location";
 import { Centred, PageName } from "@/c/Layout";
 import { css } from "@emotion/react";
@@ -12,17 +13,17 @@ import { useRouter } from "next/navigation";
 import { Backdrop } from "@mui/material";
 import { BouncingLogo } from "@/c/logo";
 import Tip from "@/c/tooltip";
+import CategorySelector from "@/c/Form/CategorySelector";
 
 export default function Page() {
 
   const router = useRouter();
 
-  const [showSlugEditor, setShowSlugEditor] = useState(false);
   const [descriptionCharCount, setDescriptionCharCount] = useState(0);
   const [imagesCount, setImagesCount] = useState(0)
   const [savingAd, setSavingAd] = useState(false);
 
-  const onImagesChange = (images:ImageData[]) => {
+  const onImagesChange = (images:GenericPicture[]) => {
     setImagesCount(images.length);
   }
 
@@ -56,6 +57,12 @@ export default function Page() {
             }    
         `}
       >
+
+        <FormControl size="lg" required>
+            <FormLabel>Categorie</FormLabel>
+            <CategorySelector/>
+        </FormControl>
+
         <FormControl size="lg" required>
             <FormLabel>Imagini</FormLabel>
             <Pictures onChange={onImagesChange}/>
@@ -73,26 +80,7 @@ export default function Page() {
         <FormControl size="lg" required>
             <FormLabel>Titlu</FormLabel>
             <Input value="Minge de baschet culoare portocalie"/>
-            <FormHelperText>
-              <span style={{color:'#999'}}>aham.ro/categorie/</span>
-              <a onClick={() => setShowSlugEditor(true)} style={{fontWeight:500}}>minge-de-baschet-culoare-portocalie</a>
-            </FormHelperText>
         </FormControl>
-
-        {showSlugEditor && (
-          <FormControl size="lg" required>
-            <FormLabel>URL</FormLabel>
-            <Input
-              startDecorator={<span style={{color:'#999'}}>aham.ro/categorie/</span>}
-              endDecorator={(
-                <Tip title="Folosește valoarea prestabilită">
-                  <IconButton onClick={() => setShowSlugEditor(false)}><Close/></IconButton>
-                </Tip>
-              )}
-              value="minge-de-baschet-culoare-portocalie"
-            />
-        </FormControl>
-        )}
 
         <FormControl size="lg" required>
             <FormLabel>Descriere</FormLabel>
@@ -125,21 +113,6 @@ export default function Page() {
                 </FormControl>
             </Grid>
         </Grid>
-
-        <FormControl size="lg" required>
-            <FormLabel>Promovează</FormLabel>
-            Promovează
-        </FormControl>
-
-        <FormControl size="lg" required>
-            <FormLabel>Contact</FormLabel>
-            Contact
-        </FormControl>
-
-        <FormControl size="lg" required>
-            <FormLabel>Location</FormLabel>
-            <Location/>
-        </FormControl>
 
         <Grid container gap={2}>
           <Grid>

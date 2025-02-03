@@ -1,9 +1,11 @@
+"use client";
+
+import getDomain, { Domain } from "@/hooks/domain";
 import { css } from "@emotion/react";
 import { Button, Stack } from "@mui/joy";
-import { FC, useReducer, useRef, useState } from "react";
-import { FilePicture, GenericPicture } from "./types";
+import { FC, useRef, useState } from "react";
 import Picture from "./Picture";
-import useDomain, { Domain } from "@/hooks/domain";
+import { FilePicture, GenericPicture } from "./types";
 
 export interface PicturesProps {
     onChange?: (pictures:GenericPicture[]) => void;
@@ -14,7 +16,7 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
     const [images, setImages] = useState<GenericPicture[]>([] as GenericPicture[]);
     const input = useRef<HTMLInputElement>(null);
     const [dropHighlighted, setDropHighlighted] = useState(false);
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
+
 
     const onFilesChange = (event: any) => {
         
@@ -39,11 +41,10 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
 
         if (uuid !== '') {
 
-            fetch(useDomain(Domain.Cdn,'/' + uuid), {method:'DELETE'}).then(
+            fetch(getDomain(Domain.Cdn,'/' + uuid), {method:'DELETE'}).then(
                 () => {
                     images.splice(index, 1);       
                     setImages([...images]);
-                    forceUpdate();
                 }
             )
 
@@ -53,6 +54,27 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
         images.splice(index, 1);       
         setImages([...images]);
 
+    }
+
+    const onPicturePositionShift = (picture: GenericPicture, shift: string) => {
+        const index = images.indexOf(picture);
+        if (shift === 'left') {
+            shiftLeft(index);
+        } else if(shift === 'right') {
+            shiftRight(index);
+        }
+    }
+
+    const shiftLeft = (index: number) => {
+        if (index <= 0 || index >= images.length) return images; // Invalid index check
+        [images[index], images[index - 1]] = [images[index - 1], images[index]]; // Swap elements      
+        setImages([...images]);
+    }
+
+    const shiftRight = (index: number) => {
+        if (index < 0 || index >= images.length - 1) return images; // Invalid index check
+        [images[index], images[index + 1]] = [images[index + 1], images[index]]; // Swap elements
+        setImages([...images]);
     }
 
     const select = () => {
@@ -76,15 +98,17 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
             css={css`
                 --variant-borderWidth:1px;
                 position:relative;
-                height: 250px;
+                height: 240px;
                 border-radius: var(--joy-radius-sm);
                 box-sizing: border-box;
                 box-shadow: var(--joy-shadowRing, 0 0 #000),0px 1px 2px 0px rgba(var(--joy-shadowChannel, 21 21 21) / var(--joy-shadowOpacity, 0.08));    
                 border: var(--variant-borderWidth) ${dropHighlighted ? 'dashed':'solid'};
                 border-color: ${dropHighlighted ? 'var(--main-color)' : 'var(--variant-outlinedBorder, var(--joy-palette-neutral-outlinedBorder, var(--joy-palette-neutral-300, #CDD7E1)))'};
                 background-color: var(--joy-palette-background-surface);
-                overflow: auto;
-                padding: 10px 0px;
+                padding: 10px;
+                @media only screen and (min-width : 1200px) {
+
+                }
             `}
         >
 
@@ -118,7 +142,7 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
                                     <Button
                                         onClick={() => select()}
                                     >
-                                        Dialog încărcare imagini
+                                        Încarcă imagini
                                     </Button>
                                     <div>
                                         <span>sau</span>
@@ -134,18 +158,60 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
             ) : (
                 <div
                     css={css`
-                        display: grid; 
-                        grid-template-columns: 1fr 1fr 1fr; 
-                        gap: 10px 10px;
-                        margin: 5px 10px;
+                        height: 100%;
+                        display: block; 
+                        white-space: nowrap;
+                        overflow-x: auto;
+                        padding: 10px;
+                        max-width: 100%;
                     `}
                 >
+                    
                     {images.map((image, index) => (
                         <Picture
                             onDelete={() => onPictureDelete(index)}
+                            onPositionShift={onPicturePositionShift}
                             src={image} key={index}
                         />
                     ))}
+
+                    <div
+                        css={css`
+                            width: 226px;
+                            height: 173px;
+                            border: 4px solid var(--main-color);
+                            position: relative;
+                            background: #ddd;
+                            display: inline-block;
+                            border-radius: 8px;
+                            font-size: 12px;
+                            margin-right: 10px;
+                            position: relative;
+                            div {
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                button {
+                                    background: #FFF;
+                                }
+                            }
+                        `}
+                    >
+                        <div>
+                            <Button
+                                color="success"
+                                variant="plain"
+                                onClick={() => select()}
+                            >
+                                Încarcă imagini
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             )}
 

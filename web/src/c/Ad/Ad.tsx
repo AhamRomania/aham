@@ -7,7 +7,7 @@ import { Ad as Vo } from "../types";
 import Link from "next/link";
 import { format } from 'timeago.js';
 import { adHref } from "../formatter";
-import useDomain, { Domain } from "@/hooks/domain";
+import getDomain, { Domain } from "@/hooks/domain";
 
 export interface AdProps {
     vo: Vo;
@@ -45,7 +45,7 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
                         height: 242px;
                     `)}
                 >
-                    <Image src={useDomain(Domain.Web) + '/' + vo.pictures[0]} width={312} height={242} alt={vo.title}/>
+                    <Image src={getDomain(Domain.Web) + '/' + vo.pictures[0]} width={312} height={242} alt={vo.title}/>
                 </div>
                 
                 <div

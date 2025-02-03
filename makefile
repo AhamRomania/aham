@@ -30,6 +30,7 @@ backup:
 prod:
 	./setup/provision.sh
 	./setup/docker.sh
+	docker system prune
 
 run:
 	gnome-terminal --tab --title="CDN" -- bash -c "cd backend/service/cdn; ~/go/bin/air"

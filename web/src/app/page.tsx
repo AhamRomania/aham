@@ -1,13 +1,11 @@
 import { Ad } from "@/c/Ad";
+import { CategoryListSection } from "@/c/Categories";
 import { HomepageLayout } from "@/c/Layout";
 import Section from "@/c/section";
+import { Ad as AdType } from "@/c/types";
 import useApiFetch from "@/hooks/api";
-import { ArrowRight } from "@mui/icons-material";
-import { Button } from "@mui/joy";
-import style from './page.module.css';
 import { Metadata } from "next";
-import { Ad as AdType, Category } from "@/c/types";
-import { CategoryListSection } from "@/c/Categories";
+import style from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Aham: Bazarul tău',
@@ -20,9 +18,8 @@ const NoItems = ({text}:{text:string}) => (
 )
 
 export default async function Home () {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // eslint-disable-next-line
   const api = useApiFetch();
-  const categories = await api<Category[]>('/categories');
   const promovations = await api<AdType[]>('/ads?filter=promovations');
   const recomandations = await api<AdType[]>('/ads?filter=recomandations');
   return (

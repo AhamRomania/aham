@@ -1,25 +1,31 @@
 import { getAccessToken } from "@/c/Auth";
-import useDomain, { Domain } from "@/hooks/domain";
+import getDomain, { Domain } from "@/hooks/domain";
 import { FC, useEffect, useReducer, useRef, useState } from "react";
 import { css } from "@emotion/react";
 import { CircularProgress, IconButton } from "@mui/joy";
-import { Delete } from "@mui/icons-material";
+import { Delete, KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { FilePicture, GenericPicture } from "./types";
+import { Stack } from "@mui/material";
 
 export interface PictureProps {
     src: GenericPicture;
     onDelete?: () => void;
+    onPositionShift?: (picture: GenericPicture, dir: string) => void;
 }
 
-const Picture: FC<PictureProps> = ({src, onDelete}) => {
+const Picture: FC<PictureProps> = ({src, onDelete, onPositionShift}) => {
 
-    const cdnURL = useDomain(Domain.Cdn);
+    if (!onPositionShift) {
+        onPositionShift = () => {};
+    }
+
+    const cdnURL = getDomain(Domain.Cdn);
 
     const [token, setToken] = useState('');
     const imgref = useRef(null);
     const [uploading, setUploading] = useState(true);
     const [progress, setProgress] = useState(0);
-    const [progressComputable, setProgressComputable] = useState(true);
+    const [progressComputable, setProgressComputable] = useState(false);
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     useEffect(() => {
@@ -42,13 +48,12 @@ const Picture: FC<PictureProps> = ({src, onDelete}) => {
             const xhr = new XMLHttpRequest();
 
             xhr.addEventListener("progress", (event) => {
-                
                 if (event.lengthComputable) {
+                    setProgressComputable(true);
                     setProgress((event.loaded / event.total) * 100);
                 } else {
                     setProgressComputable(false);
                 }
-
                 forceUpdate();
             });
 
@@ -76,13 +81,13 @@ const Picture: FC<PictureProps> = ({src, onDelete}) => {
                 border: 4px solid var(--main-color);
                 position: relative;
                 background: #ddd;
-                display: flex;
+                display: inline-block;
                 align-items: center;
                 justify-content: center;
                 border-radius: 8px;
-                overflow: hidden;
                 display: inline-block;
                 font-size: 12px;
+                margin-right: 10px;
                 button {
                     background: #FFF;
                 }
@@ -103,6 +108,7 @@ const Picture: FC<PictureProps> = ({src, onDelete}) => {
                     alt="Upload Image"
                 />
             }
+            
             {uploading && <div
                 data-test="image-upload-progress"
                 css={css`
@@ -120,17 +126,36 @@ const Picture: FC<PictureProps> = ({src, onDelete}) => {
                     size="sm"
                     variant="solid"
                     thickness={3}
-                    value={progress}
+                    value={progressComputable ? progress : 50}
                     determinate={!progressComputable}
                 />
             </div>}
+            {
+                !uploading && (
+                    <Stack
+                        flexDirection="row"
+                        gap={1}
+                        css={css`
+                            position: absolute;
+                            left: 5px;
+                            bottom: 5px;
+                        `}
+                    >
+                        <IconButton onClick={() => onPositionShift(src, 'left')} variant="outlined" size="sm">
+                            <KeyboardArrowLeft/>
+                        </IconButton>
+                        <IconButton onClick={() => onPositionShift(src, 'right')} variant="outlined" size="sm">
+                            <KeyboardArrowRight/>
+                        </IconButton>
+                    </Stack>
+                )
+            }
             {!uploading && <div
                 data-test="image-delete-container"
                 css={css`
                     position: absolute;
                     right: 5px;
                     top: 5px;   
-                    
                     button svg {
                         fill: #000;
                     }
