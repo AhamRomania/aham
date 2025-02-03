@@ -11,5 +11,5 @@ data/*
 !data/test.png
 .env
 web/cypress/screenshots/*
-bakend/service/api/tmp
-bakend/service/cdn/tmp
+backend/service/api/tmp
+backend/service/cdn/tmp

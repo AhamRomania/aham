@@ -63,6 +63,10 @@ SET row_security = off;
 -- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: aham
 --
 
+BEGIN;
+
+ALTER TABLE public.categories DISABLE TRIGGER ALL;
+
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (1, 'Mașini și vehicule', 'masini-si-vehicule', '', NULL, 0, true, false);
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (2, 'De vânzare', 'de-vanzare', '', NULL, 0, true, false);
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (181, 'Mănuși pentru bărbați', 'manusi-pentru-barbati', '', 109, 0, true, false);
@@ -1129,7 +1133,8 @@ INSERT INTO public.categories (id, name, slug, description, parent, sort, pricin
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (1079, 'Animale de companie de vânzare', 'animale-de-companie-de-vanzare', '', 1070, 0, true, false);
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (1080, 'Mici blanuri', 'mici-blanuri', '', 1070, 0, true, false);
 
-
+ALTER TABLE public.categories ENABLE TRIGGER ALL;
+COMMIT;
 --
 -- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: aham
 --
