@@ -2,32 +2,39 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch API - USE AIR INSTEAD",
+            "name": "WEB",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev"],
+            "cwd": "${workspaceFolder}/web",
+            "console": "integratedTerminal",
+            "sourceMaps": true
+        },
+        {
+            "name": "API",
             "type": "go",
             "request": "launch",
             "mode": "auto",
+            "program": "${workspaceFolder}/backend/service/api",
             "env": {
                 "LISTEN": ":8001",
                 "DEV": "true",
                 "DB": "postgres://aham:aham@localhost:15432/aham",
                 "CDN": "https://localhost:8002"
             },
-            "program": "${workspaceFolder}/backend/service/api/main.go",
-            "output": "${workspaceFolder}/bin/api"
         },
         {
-            "name": "Launch CDN - USE AIR INSTEAD",
+            "name": "CDN",
             "type": "go",
             "request": "launch",
-            "mode": "auto",
+            "program": "${workspaceFolder}/backend/service/cdn",
             "env": {
                 "LISTEN": ":8002",
                 "FILES": "${workspaceFolder}/data/cdn",
                 "DEV": "true",
                 "REDIS": "redis://:aham@localhost:16379/0?protocol=3"
             },
-            "program": "${workspaceFolder}/backend/service/cdn/main.go",
-            "output": "${workspaceFolder}/bin/cdn"
-        },
+        }
     ],
 }

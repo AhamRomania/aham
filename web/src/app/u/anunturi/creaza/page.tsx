@@ -1,6 +1,6 @@
 "use client"
 
-import Pictures, { ImageData } from "@/c/Form/Pictures";
+import Pictures, { ImageData } from "@/c/Form/Pictures/Pictures";
 import Location from "@/c/Form/Location";
 import { Centred, PageName } from "@/c/Layout";
 import { css } from "@emotion/react";

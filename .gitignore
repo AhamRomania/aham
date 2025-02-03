@@ -13,3 +13,4 @@ data/*
 web/cypress/screenshots/*
 backend/service/api/tmp
 backend/service/cdn/tmp
+__debug*

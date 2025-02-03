@@ -86,6 +86,8 @@ func main() {
 
 	mux.Put("/{uuid}", persist)
 
+	mux.Delete("/{uuid}", remove)
+
 	listen := os.Getenv("LISTEN")
 
 	c.Log().Infof("Server is listening on: %s", color.Ize(color.Yellow, listen))
@@ -198,6 +200,43 @@ func persist(w http.ResponseWriter, r *http.Request) {
 
 	redisc.Persist(context.TODO(), uuid[1])
 	redisc.Del(context.TODO(), "shadow:"+uuid[1])
+}
+
+func remove(w http.ResponseWriter, r *http.Request) {
+
+	uuid := strings.Split(r.URL.Path, "/")
+
+	if len(uuid) != 2 {
+		http.Error(w, "Nu am găsit resursa căutată. Eroare 400.", http.StatusBadRequest)
+		return
+	}
+
+	cmd := redisc.Get(
+		context.Background(),
+		uuid[1],
+	)
+
+	if cmd.Err() != nil {
+		http.Error(w, "Nu am găsit resursa căutată. Eroare 404.", http.StatusNotFound)
+		return
+	}
+
+	var u = &Upload{}
+
+	if err := json.Unmarshal([]byte(cmd.Val()), u); err != nil {
+		http.Error(w, "Invalid json", http.StatusInternalServerError)
+		return
+	}
+
+	path := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), u.UUID.String())
+
+	if err := os.RemoveAll(path); err != nil {
+		http.Error(w, "Can't remove", http.StatusInternalServerError)
+		return
+	}
+
+	redisc.Del(context.TODO(), u.UUID.String())
+	redisc.Del(context.TODO(), "shadow:"+u.UUID.String())
 }
 
 func serve(w http.ResponseWriter, r *http.Request) {
