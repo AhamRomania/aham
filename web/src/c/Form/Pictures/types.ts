@@ -1,4 +1,4 @@
-import getDomain, { Domain } from "@/hooks/domain";
+import getDomain, { Domain } from "@/c/domain";
 
 export abstract class GenericPicture {
     abstract getURL(): string;

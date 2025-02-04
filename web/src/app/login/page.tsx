@@ -5,7 +5,7 @@ import Logo from "@/c/logo";
 import OrSection from "@/c/orsection";
 import Tip from "@/c/tooltip";
 import getApiFetch from "@/api/api";
-import getConfig, { Config } from "@/hooks/config";
+import getConfig, { Config } from "@/c/config";
 import { css } from "@emotion/react";
 import { Google, Facebook } from "@mui/icons-material";
 import { Button, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Input, Modal, ModalDialog, Stack } from "@mui/joy";

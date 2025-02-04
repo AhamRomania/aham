@@ -31,6 +31,13 @@ func init() {
 	c.Log().Infof("Connected to redis: %s", color.Ize(color.Yellow, opts.Addr))
 
 	redisc = redis.NewClient(opts)
+
+	redisc.Set(
+		context.Background(),
+		"URL_aham",
+		"https://aham.ro",
+		0,
+	)
 }
 
 func storeURL(url string) (id string, err error) {

@@ -1,6 +1,6 @@
 "use client";
 
-import getDomain, { Domain } from "@/hooks/domain";
+import getDomain, { Domain } from "@/c/domain";
 import { css } from "@emotion/react";
 import { Button, Stack } from "@mui/joy";
 import { FC, useRef, useState } from "react";

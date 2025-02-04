@@ -1,5 +1,5 @@
 import { getAccessToken } from "@/c/Auth";
-import getDomain, { Domain } from "@/hooks/domain";
+import getDomain, { Domain } from "@/c/domain";
 import { FC, useEffect, useReducer, useRef, useState } from "react";
 import { css } from "@emotion/react";
 import { CircularProgress, IconButton } from "@mui/joy";

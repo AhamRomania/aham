@@ -5,21 +5,24 @@ import { GenericPicture } from "@/c/Form/Pictures/types";
 import { Centred, PageName } from "@/c/Layout";
 import { css } from "@emotion/react";
 import { Close } from "@mui/icons-material";
-import { Button, Checkbox, Divider, FormHelperText, Grid, IconButton, Input, Stack, Textarea } from "@mui/joy";
+import { Button, Checkbox, Divider, FormHelperText, Grid, IconButton, Input, Option, Select, Stack, Textarea } from "@mui/joy";
 import { FormControl, FormLabel } from '@mui/joy';
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Backdrop } from "@mui/material";
 import { BouncingLogo } from "@/c/logo";
 import CategorySelector from "@/c/Categories/CategorySelector";
 import { Category } from "@/c/types";
 import getApiFetch from "@/api/api";
+import NumericFormatAdapter from "@/c/Form/NumericFormatAdapter";
+import { toCents } from "@/c/formatter";
 
 export default function Page() {
 
   const api = getApiFetch();
   const router = useRouter();
 
+  const [currency, setCurrency] = useState('LEI');
   const [, setCategory] = useState<Category | null>(null);
   const [descriptionCharCount, setDescriptionCharCount] = useState(0);
   const [imagesCount, setImagesCount] = useState(0)
@@ -70,7 +73,7 @@ export default function Page() {
               show_phone: (data.phone === 'on'),
               phone: (data.phone || ''),
               pictures: (data.pictures||'').split(','),
-              price: parseInt(data.price),
+              price: toCents(data.price),
               title: data.title,
             }),
           }).then((response: any) => {
@@ -142,8 +145,31 @@ export default function Page() {
                     <FormLabel>Preț</FormLabel>
                     <Input
                         name="price"
-                        type="number"
-                        endDecorator={<div>LEI</div>}
+                        slotProps={{
+                          input: {
+                            component: NumericFormatAdapter,
+                          },
+                        }}
+                        sx={{ width: 300 }}
+                        endDecorator={
+                          <Fragment>
+                            <Divider orientation="vertical" />
+                            <Select
+                              variant="plain"
+                              value={currency}
+                              onChange={(_, value) => setCurrency(value!)}
+                              slotProps={{
+                                listbox: {
+                                  variant: 'outlined',
+                                },
+                              }}
+                              sx={{ mr: -1.5, '&:hover': { bgcolor: 'transparent' } }}
+                            >
+                              <Option value="EURO">EURO</Option>
+                              <Option value="LEI">LEI</Option>
+                            </Select>
+                          </Fragment>
+                        }
                     />
                 </FormControl>
             </Grid>
@@ -162,13 +188,6 @@ export default function Page() {
             <Stack gap={2} flexDirection="column">
             <Checkbox name="phone" size="md" label="Afișează numărul de telefon"/>
             </Stack>
-        </FormControl>
-
-        <Divider/>
-
-        <FormControl size="lg" required>
-            <FormLabel>Locație</FormLabel>
-            <Input/>
         </FormControl>
 
         <Grid

@@ -17,6 +17,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -267,9 +268,34 @@ func serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), u.UUID.String(), "png")
+	var width uint
 
-	file, err := os.Open(path)
+	if n, err := strconv.ParseInt(r.URL.Query().Get("w"), 10, 32); err == nil {
+		width = uint(n)
+	}
+
+	rawPath := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), u.UUID.String(), "raw")
+	path := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), u.UUID.String(), fmt.Sprint(width))
+
+	duration := redisc.TTL(context.TODO(), u.UUID.String())
+
+	w.Header().Add("Content-Type", "image/png")
+	w.Header().Add("Created-At", u.CreatedTime)
+	w.Header().Add("Expire-In", duration.Val().String())
+
+	if _, err := os.Stat(path); err == nil {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			c.Log().Error(err)
+			http.Error(w, "Invalid file path", http.StatusInternalServerError)
+			return
+		}
+		w.Write(data)
+		return
+	}
+
+	file, err := os.Open(rawPath)
+
 	if err != nil {
 		c.Log().Error(err)
 		http.Error(w, "Invalid file path", http.StatusInternalServerError)
@@ -286,18 +312,29 @@ func serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m := resize.Resize(226, 0, img, resize.Lanczos3)
+	m := resize.Resize(width, 0, img, resize.Lanczos3)
 
-	duration := redisc.TTL(context.TODO(), u.UUID.String())
+	buf := &bytes.Buffer{}
 
-	w.Header().Add("Content-Type", "image/png")
-	w.Header().Add("Created-At", u.CreatedTime)
-	w.Header().Add("Expire-In", duration.Val().String())
-
-	if err := png.Encode(w, m); err != nil {
+	if err := png.Encode(buf, m); err != nil {
 		http.Error(w, "Encode png failed", http.StatusInternalServerError)
 		return
 	}
+
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	if err != nil {
+		http.Error(w, "Open for caching failed", http.StatusInternalServerError)
+		return
+	}
+
+	if _, err := f.Write(buf.Bytes()); err != nil {
+		http.Error(w, "Failed to write bytes to sized image", http.StatusInternalServerError)
+		return
+	}
+
+	f.Close()
+
+	w.Write(buf.Bytes())
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {

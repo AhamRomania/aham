@@ -60,7 +60,7 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 		Messages:    p.Messages,
 		ShowPhone:   p.ShowPhone,
 		Phone:       p.Phone,
-		Price:       p.Price * 100,
+		Price:       p.Price,
 		Currency:    p.Currency,
 		CityID:      user.City,
 	}

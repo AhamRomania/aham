@@ -5,8 +5,8 @@ import Image from "next/image";
 import { FC } from "react";
 import { Ad as Vo } from "../types";
 import Link from "next/link";
-import { format } from 'timeago.js';
-import getDomain, { Domain } from "@/hooks/domain";
+import getDomain, { Domain } from "@/c/domain";
+import { ago, toMoney } from "../formatter";
 
 export interface AdProps {
     vo: Vo;
@@ -44,7 +44,13 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
                         height: 242px;
                     `)}
                 >
-                    <Image src={getDomain(Domain.Cdn) + '/' + vo.pictures[0]} width={312} height={242} alt={vo.title}/>
+                    {/*eslint-disable-next-line @next/next/no-img-element*/}
+                    <img
+                        src={getDomain(Domain.Cdn) + `/${vo.pictures[0]}?w=${width}&q=75`}
+                        width={312}
+                        height={242}
+                        alt={vo.title}
+                    />
                 </div>
                 
                 <div
@@ -90,7 +96,7 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
                             d="M9 18c-2.3 0-4.304-.762-6.013-2.288C1.28 14.188.3 12.283.05 10H2.1c.233 1.733 1.004 3.167 2.312 4.3C5.721 15.433 7.25 16 9 16c1.95 0 3.604-.68 4.963-2.037C15.32 12.604 16 10.95 16 9c0-1.95-.68-3.604-2.037-4.963C12.604 2.68 10.95 2 9 2a6.75 6.75 0 0 0-3.225.8A7.431 7.431 0 0 0 3.25 5H6v2H0V1h2v2.35A8.732 8.732 0 0 1 5.112.875 8.93 8.93 0 0 1 9 0c1.25 0 2.42.238 3.512.712a9.148 9.148 0 0 1 2.85 1.926 9.148 9.148 0 0 1 1.926 2.85A8.707 8.707 0 0 1 18 9c0 1.25-.238 2.42-.712 3.512a9.148 9.148 0 0 1-1.925 2.85 9.148 9.148 0 0 1-2.85 1.926A8.707 8.707 0 0 1 9 18Zm2.8-4.8L8 9.4V4h2v4.6l3.2 3.2-1.4 1.4Z"
                             />
                         </svg>
-                        {format(vo.created, 'ro')}
+                        {ago(vo.created)}
                     </div>
                 </div>
                 <div
@@ -99,9 +105,9 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
                         font-weight: bold;
                         position: absolute;
                         right: 20px;
-                        bottom: 20px;
+                        bottom: 15px;
                     `}
-                >{vo.price/100} {vo.currency}</div>
+                >{toMoney(vo.price)} {vo.currency}</div>
             </article>
         </Link>
     )

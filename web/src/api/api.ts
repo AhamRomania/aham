@@ -1,5 +1,5 @@
 import { getAccessToken } from "@/c/Auth";
-import getDomain, { Domain } from "../hooks/domain";
+import getDomain, { Domain } from "../c/domain";
 
 export interface ApiFetchProps {
     version?: string
