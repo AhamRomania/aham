@@ -3,7 +3,7 @@
 import Logo from "@/c/logo";
 import OrSection from "@/c/orsection";
 import { City, CreateUserRequest, CreateUserResponse } from "@/c/types";
-import useApiFetch from "@/hooks/api";
+import getApiFetch from "@/api/api";
 import { css } from "@emotion/react";
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import {
@@ -24,7 +24,7 @@ import { useEffect, useState } from "react";
 import { IMaskInput } from "react-imask";
 
 export default function Page() {
-  const api = useApiFetch();
+  const api = getApiFetch();
 
   const [counties, setCounties] = useState<City[]>([]);
   const [city, setCity] = useState<City>({} as City);

@@ -6,7 +6,6 @@ import { FC } from "react";
 import { Ad as Vo } from "../types";
 import Link from "next/link";
 import { format } from 'timeago.js';
-import { adHref } from "../formatter";
 import getDomain, { Domain } from "@/hooks/domain";
 
 export interface AdProps {

@@ -1,4 +1,4 @@
-import useApiFetch from "@/hooks/api";
+import getApiFetch from "@/api/api";
 import { FC, useEffect, useReducer, useState } from "react";
 import { Category } from "../types";
 import { css } from "@emotion/react";
@@ -23,7 +23,7 @@ export interface CategorySelectorProps {
 
 const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) => {
 
-    const api = useApiFetch();
+    const api = getApiFetch();
     const [categoryID, setCategoryID] = useState(0);
     const [categories, setCategories] = useState<Category[]>([]); // top root childs
     const [mainCategory, setMainCategory] = useState(-1); // top items selected item

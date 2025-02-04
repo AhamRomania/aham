@@ -1,6 +1,6 @@
 'use client';
 
-import useApiFetch from "@/hooks/api";
+import getApiFetch from "@/api/api";
 import { Add, Delete, Home, KeyboardDoubleArrowRight, Preview } from "@mui/icons-material";
 import { Breadcrumbs, CircularProgress, IconButton, Input, Link as JoyLink, Stack, Table } from "@mui/joy";
 import { FC, useEffect, useReducer, useState } from "react";
@@ -114,7 +114,7 @@ class Node {
 
 const CategoriesEditor:FC = () => {
     
-    const api = useApiFetch();
+    const api = getApiFetch();
 
     const [root, setRoot] = useState<Node>();
     const [node, setNode] = useState<Node>();
@@ -128,6 +128,7 @@ const CategoriesEditor:FC = () => {
                     id: -1,
                     name: 'root',
                     slug: 'root',
+                    href: 'root',
                     children: categories,
                 });
 

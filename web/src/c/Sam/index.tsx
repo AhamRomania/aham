@@ -1,4 +1,4 @@
-import useApiFetch from "@/hooks/api";
+import getApiFetch from "@/api/api";
 import { FC, useState, PropsWithChildren, useEffect } from "react";
 
 export enum SamResource {
@@ -21,7 +21,7 @@ export interface SamProps {
 
 const Sam:FC<SamProps & PropsWithChildren> = ({resource, permission, children}) => {
 
-    const api = useApiFetch();
+    const api = getApiFetch();
     const [ok, setOK] = useState(false);
 
 

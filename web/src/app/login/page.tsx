@@ -4,7 +4,7 @@ import { ACCESS_TOKEN_COOKIE_NAME } from "@/c/Auth";
 import Logo from "@/c/logo";
 import OrSection from "@/c/orsection";
 import Tip from "@/c/tooltip";
-import useApiFetch from "@/hooks/api";
+import getApiFetch from "@/api/api";
 import getConfig, { Config } from "@/hooks/config";
 import { css } from "@emotion/react";
 import { Google, Facebook } from "@mui/icons-material";
@@ -20,7 +20,7 @@ declare const FB: any;
 declare const gapi: any;
 
 export default function Page() {
-  const api = useApiFetch();
+  const api = getApiFetch();
   const [config, setConfig] = useState<Config>({} as Config);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState<string>('');

@@ -1,6 +1,5 @@
 "use client";
 
-import useApiFetch from "@/hooks/api";
 import { css } from "@emotion/react";
 import { ArrowRight } from "@mui/icons-material";
 import { Button, CircularProgress, Stack, Typography } from "@mui/joy";
@@ -42,7 +41,6 @@ export const Item: FC<CategoryProps> = ({ category }) => {
 
 const CategoryListSection: FC<CategoryListSectionProps> = ({ id }) => {
 
-  const api = useApiFetch();
   const [category, setCategory] = useState<Category>();
 
   useEffect(() => {

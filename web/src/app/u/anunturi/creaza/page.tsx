@@ -13,11 +13,11 @@ import { Backdrop } from "@mui/material";
 import { BouncingLogo } from "@/c/logo";
 import CategorySelector from "@/c/Categories/CategorySelector";
 import { Category } from "@/c/types";
-import useApiFetch from "@/hooks/api";
+import getApiFetch from "@/api/api";
 
 export default function Page() {
 
-  const api = useApiFetch();
+  const api = getApiFetch();
   const router = useRouter();
 
   const [, setCategory] = useState<Category | null>(null);

@@ -1,5 +1,5 @@
 import { getAccessToken } from "@/c/Auth";
-import getDomain, { Domain } from "./domain";
+import getDomain, { Domain } from "../hooks/domain";
 
 export interface ApiFetchProps {
     version?: string
@@ -9,7 +9,7 @@ export interface RequestInitEnhanced {
     success?: boolean
 }
 
-const useApiFetch = (props?:ApiFetchProps) => {
+const getApiFetch = (props?:ApiFetchProps) => {
 
     const version = props?.version || 'v1';
     
@@ -68,4 +68,4 @@ const useApiFetch = (props?:ApiFetchProps) => {
     }
 }
 
-export default useApiFetch;
+export default getApiFetch;

@@ -3,7 +3,7 @@ import { CategoryListSection } from "@/c/Categories";
 import { HomepageLayout } from "@/c/Layout";
 import Section from "@/c/section";
 import { Ad as AdType } from "@/c/types";
-import useApiFetch from "@/hooks/api";
+import getApiFetch from "@/api/api";
 import { Metadata } from "next";
 import style from './page.module.css';
 
@@ -18,8 +18,7 @@ const NoItems = ({text}:{text:string}) => (
 )
 
 export default async function Home () {
-  // eslint-disable-next-line
-  const api = useApiFetch();
+  const api = getApiFetch();
   const promovations = await api<AdType[]>('/ads?filter=promovations');
   const recomandations = await api<AdType[]>('/ads?filter=recomandations');
   return (
