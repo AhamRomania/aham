@@ -123,7 +123,11 @@ func Has(uuid string) bool {
 
 func Persist(uuid string) error {
 
-	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/%s", os.Getenv("CDN"), uuid), nil)
+	url := fmt.Sprintf("%s/%s", os.Getenv("CDN"), uuid)
+
+	c.Log().Infof("Persisting CDN URL: %s", url)
+
+	req, err := http.NewRequest("PUT", url, nil)
 
 	if err != nil {
 		c.Log().Error(err)
