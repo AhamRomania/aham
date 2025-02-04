@@ -48,7 +48,7 @@ services:
       FILES: /var/aham/cdn
       REDIS: redis://:aham@10.5.0.9:6379/0?protocol=3
     volumes:
-      - /var/aham/cdn:/usr/local/cdn
+      - /var/aham/cdn:/var/aham/cdn
     depends_on:
       redis:
         restart: true

@@ -116,7 +116,6 @@ const CategorySelector: FC<CategorySelectorProps> = ({onCategorySelect}) => {
         <div data-testid="category-selector">
             <div
                 css={css`
-                    margin-top: 50px;
                     padding: 20px;
                     border: 1px solid #eee;
                     border-radius: 10px;

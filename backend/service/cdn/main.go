@@ -48,6 +48,7 @@ func init() {
 	godotenv.Load()
 
 	if s, err := os.Stat(os.Getenv("FILES")); err != nil || !s.IsDir() {
+		c.Log().Error(err)
 		panic("FILES must be a directory: " + os.Getenv("FILES"))
 	}
 
