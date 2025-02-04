@@ -1,0 +1,4 @@
+FROM alpine
+WORKDIR /usr/local/url
+COPY bin/url /usr/local/bin
+ENTRYPOINT ["url"]
