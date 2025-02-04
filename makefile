@@ -42,3 +42,7 @@ dev:
 	docker compose -f setup/docker/compose/development.yml -p aham_dev up -d
 	@read -p "Run the project? (y/n) " ans; \
 	if [ "$$ans" = "y" ]; then make run; else echo "Run from IDE."; fi
+
+stop:
+	docker compose -f setup/docker/compose/development.yml -p aham_dev down
+

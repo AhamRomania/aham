@@ -117,14 +117,14 @@ const CategorySelector: FC<CategorySelectorProps> = ({onCategorySelect}) => {
             <div
                 css={css`
                     padding: 20px;
-                    border: 1px solid #eee;
+                    border: 1px solid #CDD7E1;
                     border-radius: 10px;
                 `}
             >
                 <div
                     data-testid="category-toplevel"
                     css={css`
-                        border-bottom: 1px solid #eee;
+                        border-bottom: 1px solid #CDD7E1;
                         padding-bottom: 20px;
                         white-space: nowrap;
                         overflow-x: auto;
@@ -141,7 +141,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({onCategorySelect}) => {
                                 margin-right: 10px;
                                 justify-content:center;
                                 flex-direction: column;  
-                                border: 1px solid #eee;
+                                border: 1px solid #CDD7E1;
                                 background: ${selected == index ? '#eee' : 'transparent'};
                                 align-items: center;  
                                 border-radius: 10px;
@@ -198,7 +198,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({onCategorySelect}) => {
                             css={css`
                                 padding: 20px;
                                 text-align: center;
-                                border-right: 1px solid #eee;
+                                border-right: 1px solid #CDD7E1;
                                 overflow-y: auto;
                                 height: 400px;
                                 &:last-child {
