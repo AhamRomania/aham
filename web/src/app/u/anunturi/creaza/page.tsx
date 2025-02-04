@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { Backdrop } from "@mui/material";
 import { BouncingLogo } from "@/c/logo";
 import Tip from "@/c/tooltip";
-import CategorySelector from "@/c/Form/CategorySelector";
+import CategorySelector from "@/c/Categories/CategorySelector";
 
 export default function Page() {
 
@@ -35,6 +35,14 @@ export default function Page() {
 
   const save = () => {
     setSavingAd(true);
+  }
+
+  if (true) {
+    return (
+      <Centred>
+        <CategorySelector/>
+      </Centred>
+    )
   }
 
   return (

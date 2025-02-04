@@ -203,16 +203,11 @@ func GetCategories(w http.ResponseWriter, r *http.Request) {
 
 	var parent *int64
 
-	n, err := strconv.ParseInt(r.URL.Query().Get("p"), 10, 64)
+	n, err := strconv.ParseInt(r.URL.Query().Get("parent"), 10, 64)
 
 	if err == nil {
 		parent = &n
 	}
 
-	if r.URL.Query().Get("tree") == "true" {
-		render.JSON(w, r, db.GetCategoryTree(flat, parent))
-		return
-	}
-
-	render.JSON(w, r, flat)
+	render.JSON(w, r, db.GetCategoryTree(flat, parent))
 }
