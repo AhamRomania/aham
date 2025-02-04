@@ -26,7 +26,7 @@ services:
     environment:    
       LISTEN: :8081
       DB: postgres://aham:aham@10.5.0.8:5432/aham
-      CDN: https://10.5.0.7:8082
+      CDN: http://10.5.0.7:8082
     depends_on:
       db:
         restart: true
