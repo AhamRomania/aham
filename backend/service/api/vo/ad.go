@@ -34,7 +34,7 @@ func NewAd(src *db.Ad) Ad {
 			Description: c.Description,
 			Pricing:     c.Pricing,
 		},
-		Owner:       NewUser(*db.GetUserByID(src.Owner)),
+		Owner:       NewUser(db.GetUserByID(src.Owner)),
 		Title:       src.Title,
 		Description: src.Description,
 		Pictures:    src.Pictures,

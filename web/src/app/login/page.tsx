@@ -8,7 +8,7 @@ import getApiFetch from "@/api/api";
 import getConfig, { Config } from "@/c/config";
 import { css } from "@emotion/react";
 import { Google, Facebook } from "@mui/icons-material";
-import { Button, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Input, Modal, ModalDialog, Stack } from "@mui/joy";
+import { Button, CircularProgress, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Input, Modal, ModalDialog, Stack } from "@mui/joy";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -20,7 +20,10 @@ declare const FB: any;
 declare const gapi: any;
 
 export default function Page() {
+  
   const api = getApiFetch();
+
+  const [loggingIn, setLoggingIn] = useState(false);
   const [config, setConfig] = useState<Config>({} as Config);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState<string>('');
@@ -148,7 +151,7 @@ export default function Page() {
             event.preventDefault();
             const formData = new FormData(event.currentTarget);
             const formJson = Object.fromEntries(formData.entries());
-
+            setLoggingIn(true);
             api<{ token: string }>("/auth", {
               method: "POST",
               body: JSON.stringify(formJson),
@@ -159,8 +162,10 @@ export default function Page() {
                 //secure: true,
                 //domain: "localhost",
               });
-
+              setLoggingIn(false);
               window.location.href = "/u/anunturi/creaza";
+            }).catch(() => {
+              alert('Nu m-am putut loga');
             });
           }}
         >
@@ -182,7 +187,7 @@ export default function Page() {
               required
             />
             <Button size="lg" type="submit" data-test="login-submit">
-              Intră
+              {loggingIn ? <CircularProgress size="sm"/> : 'Intră'}
             </Button>
           </Stack>
         </form>

@@ -19,10 +19,17 @@ test:
 	@docker compose --progress=quiet -f ./setup/composer-test.yml -p aham-test down
 
 clean:
-	rm  -rf data/wp
+	rm  -rf data/cdn
 	rm  -rf data/db/wp
-	mkdir -rf data/wp
-	mkdir -rf data/db/wp
+	rm  -rf data/db/api
+	rm  -rf data/db/redis
+
+	mkdir -p data/cdn
+	mkdir -p data/db/wp
+	mkdir -p data/db/api
+	mkdir -p data/db/redis
+	
+	chmod -R 750 data/
 
 backup:
 	sudo ./scripts/backup.py /media/cosmin/DataStorage/Backup/Aham/Data

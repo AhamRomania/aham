@@ -4,6 +4,7 @@ import (
 	"aham/common/c"
 	"aham/common/emails"
 	"aham/service/api/db"
+	"aham/service/api/vo"
 	"context"
 	"net/http"
 	"unicode"
@@ -59,7 +60,8 @@ func ActivateUser(w http.ResponseWriter, r *http.Request) {
 
 func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 	if id, err := c.UserID(r); err == nil {
-		render.JSON(w, r, db.GetUserByID(id))
+		me := db.GetUserByID(id)
+		render.JSON(w, r, vo.NewUser(me))
 	}
 }
 

@@ -10,22 +10,22 @@ import (
 
 type User struct {
 	ID                    int64      `json:"id"`
-	Email                 string     `json:"email"`
+	Email                 string     `json:"email,omitempty"`
 	Password              string     `json:"-"`
 	GivenName             string     `json:"given_name"`
 	FamilyName            string     `json:"family_name"`
-	Phone                 string     `json:"phone"`
-	City                  int64      `json:"city"`
-	Picture               *string    `json:"picture"`
-	Source                string     `json:"source"`
-	Role                  string     `json:"role"`
-	ThirdPartyAccessToken string     `json:"third_pary_access_token"`
-	Settled               bool       `json:"settled"`
-	EmailActivationToken  *string    `json:"email_activation_token"`
-	PhoneActivationToken  *string    `json:"phone_activation_token"`
-	EmailActivatedAt      *time.Time `json:"email_activated_at"`
-	PhoneActivatedAt      *time.Time `json:"phone_activated_at"`
-	CreatedAt             time.Time  `json:"created_at"`
+	Phone                 string     `json:"phone,omitempty"`
+	City                  int64      `json:"city,omitempty"`
+	Picture               *string    `json:"picture,omitempty"`
+	Source                string     `json:"source,omitempty"`
+	Role                  string     `json:"role,omitempty"`
+	ThirdPartyAccessToken string     `json:"third_pary_access_token,omitempty"`
+	Settled               bool       `json:"settled,omitempty"`
+	EmailActivationToken  *string    `json:"email_activation_token,omitempty"`
+	PhoneActivationToken  *string    `json:"phone_activation_token,omitempty"`
+	EmailActivatedAt      *time.Time `json:"email_activated_at,omitempty"`
+	PhoneActivatedAt      *time.Time `json:"phone_activated_at,omitempty"`
+	CreatedAt             time.Time  `json:"created_at,omitempty"`
 }
 
 func (user *User) SamVerify(resource sam.Resource, permission sam.Perm) bool {

@@ -1,7 +1,6 @@
 "use client"
 
 import { css } from "@emotion/react";
-import Image from "next/image";
 import { FC } from "react";
 import { Ad as Vo } from "../types";
 import Link from "next/link";

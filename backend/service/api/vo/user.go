@@ -4,18 +4,18 @@ import "aham/service/api/db"
 
 type User struct {
 	ID         int64   `json:"id"`
-	Email      string  `json:"email"`
+	Email      string  `json:"email,omitempty"`
 	GivenName  string  `json:"given_name,omitempty"`
 	FamilyName string  `json:"family_name,omitempty"`
 	Picture    *string `json:"picture,omitempty"`
 }
 
-func NewUser(db db.User) User {
+func NewUser(u *db.User) User {
 	return User{
-		ID:         db.ID,
-		Email:      db.Email,
-		GivenName:  db.GivenName,
-		FamilyName: db.FamilyName,
-		Picture:    db.Picture,
+		ID: u.ID,
+		//Email:      u.Email,
+		GivenName:  u.GivenName,
+		FamilyName: u.FamilyName,
+		Picture:    u.Picture,
 	}
 }
