@@ -26,3 +26,6 @@ mkdir -p /var/data/db/redis
 mkdir -p /var/data/mail
 sudo chmod -R 750 /var/data
 ```
+
+## Third Party Integrations
+- Google Map Key
