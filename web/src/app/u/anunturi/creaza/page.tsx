@@ -2,7 +2,6 @@
 
 import Pictures from "@/c/Form/Pictures/Pictures";
 import { GenericPicture } from "@/c/Form/Pictures/types";
-import Location from "@/c/Form/Location";
 import { Centred, PageName } from "@/c/Layout";
 import { css } from "@emotion/react";
 import { Close } from "@mui/icons-material";
@@ -12,13 +11,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Backdrop } from "@mui/material";
 import { BouncingLogo } from "@/c/logo";
-import Tip from "@/c/tooltip";
 import CategorySelector from "@/c/Categories/CategorySelector";
+import { Category } from "@/c/types";
 
 export default function Page() {
 
   const router = useRouter();
 
+  const [, setCategory] = useState<Category | null>(null);
   const [descriptionCharCount, setDescriptionCharCount] = useState(0);
   const [imagesCount, setImagesCount] = useState(0)
   const [savingAd, setSavingAd] = useState(false);
@@ -35,14 +35,6 @@ export default function Page() {
 
   const save = () => {
     setSavingAd(true);
-  }
-
-  if (true) {
-    return (
-      <Centred>
-        <CategorySelector/>
-      </Centred>
-    )
   }
 
   return (
@@ -68,7 +60,7 @@ export default function Page() {
 
         <FormControl size="lg" required>
             <FormLabel>Categorie</FormLabel>
-            <CategorySelector/>
+            <CategorySelector onCategorySelect={setCategory}/>
         </FormControl>
 
         <FormControl size="lg" required>

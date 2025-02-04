@@ -4,6 +4,7 @@ import { Category } from "../types";
 import { css } from "@emotion/react";
 import { Button } from "@mui/joy";
 import { Check, KeyboardArrowRightOutlined } from "@mui/icons-material";
+import Image from "next/image";
 
 const icon:{[key: number]: string} = {
     1: 'cars.svg',
@@ -15,7 +16,11 @@ const icon:{[key: number]: string} = {
     7: 'pets.svg',
 }
 
-const CategorySelector: FC = () => {
+export interface CategorySelectorProps {
+    onCategorySelect: (category: Category) => void;
+}
+
+const CategorySelector: FC<CategorySelectorProps> = ({onCategorySelect}) => {
 
     const api = useApiFetch();
     const [categories, setCategories] = useState<Category[]>([]); // top root childs
@@ -54,8 +59,17 @@ const CategorySelector: FC = () => {
     };
 
     const renderDeepthColumn = (column: number): React.ReactNode => {
-        return sortListByName(nodeOfCurrentPath(column)?.children!).map((node,index) => (
-            <div onClick={() => selectTreeBranch(column, index)} key={node.id}>
+
+        const columnCategory = nodeOfCurrentPath(column)
+
+        if (!columnCategory || !columnCategory.children) {
+            return [];
+        }
+
+        const columnCategories = sortListByName(columnCategory.children) || [];
+
+        return columnCategories.map((node,index) => (
+            <div onClick={() => selectTreeBranch(node, column, index)} key={node.id}>
                 <Button
                     variant="plain"
                     endDecorator={path[column] == index ? (node.children ? <KeyboardArrowRightOutlined/> : <Check/>) : []}>
@@ -76,7 +90,12 @@ const CategorySelector: FC = () => {
         );
     };
 
-    const selectTreeBranch = (level: number, index: number) => {
+    const selectTreeBranch = (category: Category, level: number, index: number) => {
+        
+        if (!category.children) {
+            onCategorySelect(category);
+        }
+
         setPath([...path.slice(0, level), index]);
     };
 
@@ -147,7 +166,7 @@ const CategorySelector: FC = () => {
                                     background:#eee;
                                 }
                             `}
-                            onClick={(e) => setCurrentCategory(index)}
+                            onClick={() => setCurrentCategory(index)}
                         >
                             <div
                                 css={css`
@@ -157,7 +176,7 @@ const CategorySelector: FC = () => {
                                     flex-direction: column;    
                                 `}
                             >
-                                <img width={20} height={20} src={'/categories/'+icon[c.id]} alt=""/>
+                                <Image width={20} height={20} src={'/categories/'+icon[c.id]} alt=""/>
                                 <span>{c.name}</span>
                             </div>
                         </div>
@@ -168,7 +187,8 @@ const CategorySelector: FC = () => {
                     css={css`
                         padding: 20px;
                         display: grid;
-                        grid-template-columns: ${determineColumnLength().map(v => '1fr').join(' ')}
+                        overflow-x: auto;
+                        grid-template-columns: ${determineColumnLength().map(() => '1fr').join(' ')}
                     `}
                 >
                     {(determineColumnLength().map((v, index) => (
@@ -180,6 +200,8 @@ const CategorySelector: FC = () => {
                                 padding: 20px;
                                 text-align: center;
                                 border-right: 1px solid #eee;
+                                overflow-y: auto;
+                                height: 400px;
                                 &:last-child {
                                     border-right: none;
                                 }
