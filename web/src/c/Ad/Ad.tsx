@@ -18,7 +18,7 @@ export interface AdProps {
 const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
     return (
         <Link
-            href={adHref(vo)}
+            href={getDomain(Domain.Web) + `/${vo.href}`}
             css={css(`
                 display: inline-block;
                 width: ${width}px;
@@ -45,7 +45,7 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
                         height: 242px;
                     `)}
                 >
-                    <Image src={getDomain(Domain.Web) + '/' + vo.pictures[0]} width={312} height={242} alt={vo.title}/>
+                    <Image src={getDomain(Domain.Cdn) + '/' + vo.pictures[0]} width={312} height={242} alt={vo.title}/>
                 </div>
                 
                 <div

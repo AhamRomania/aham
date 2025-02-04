@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/gosimple/slug"
 )
@@ -18,15 +19,21 @@ type CreateAdRequest struct {
 	Price       int64    `json:"price"`
 	Currency    string   `json:"currency"`
 	Pictures    []string `json:"pictures"`
-	URL         string   `json:"url"`
+	URL         *string  `json:"url"`
 	Messages    bool     `json:"messages"`
 	ShowPhone   bool     `json:"show_phone"`
-	Phone       string   `json:"phone"`
+	Phone       *string  `json:"phone"`
+}
+
+func AdsRoutes(r chi.Router) {
+	r.Post("/", c.Guard(CreateAd))
+	r.Get("/", GetAds)
+	r.Get("/{id}", GetAd)
 }
 
 func CreateAd(w http.ResponseWriter, r *http.Request) {
 
-	user, err := c.UserID(r)
+	userID, err := c.UserID(r)
 
 	if err != nil {
 		http.Error(w, "unauthorized", http.StatusUnauthorized)
@@ -37,25 +44,33 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, "can't parse payload", http.StatusBadRequest)
+		c.Log().Error(err)
 		return
 	}
 
+	user := db.GetUserByID(userID)
+
 	ad := db.Ad{
-		CategoryID:  1,
-		Owner:       user,
+		Owner:       userID,
+		CategoryID:  p.Category,
 		Slug:        slug.Make(p.Title),
 		Title:       p.Title,
 		Description: p.Description,
 		Pictures:    p.Pictures,
+		Messages:    p.Messages,
+		ShowPhone:   p.ShowPhone,
+		Phone:       p.Phone,
 		Price:       p.Price,
 		Currency:    p.Currency,
-		CityID:      1,
+		CityID:      user.City,
 	}
 
 	if err := ad.Save(); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	render.JSON(w, r, ad)
 }
 
 func GetAd(w http.ResponseWriter, r *http.Request) {

@@ -7,14 +7,8 @@ import { Button, CircularProgress, Stack, Typography } from "@mui/joy";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 import Section from "../section";
-
-export type Category = {
-  id: number;
-  name: string;
-  slug: string;
-  parent: number;
-  children: Category[]
-}
+import { fetchCategory } from "@/api/categories";
+import { Category } from "../types";
 
 export interface CategoryListSectionProps {
   id: number;
@@ -52,11 +46,7 @@ const CategoryListSection: FC<CategoryListSectionProps> = ({ id }) => {
   const [category, setCategory] = useState<Category>();
 
   useEffect(() => {
-    api<Category>(`/categories/${id}`).then(
-        (category: Category) => {
-          setCategory(category);
-        }
-    )
+    fetchCategory(id).then(c => setCategory(c));
   }, []);
 
   if (!category) {

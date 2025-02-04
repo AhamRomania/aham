@@ -40,6 +40,24 @@ WHERE parent IS NULL
 LIMIT 1;  
 $$ LANGUAGE SQL;
 
+CREATE OR REPLACE FUNCTION get_category_href(category_id INT)  
+RETURNS TEXT AS $$  
+WITH RECURSIVE category_path AS (  
+    SELECT "id", "name", "slug", "parent", slug::TEXT AS path  
+    FROM categories  
+    WHERE id = category_id  
+
+    UNION ALL  
+
+    SELECT c.id, c.name, c.slug, c.parent, c.slug || '/' || cp.path  
+    FROM categories c  
+    JOIN category_path cp ON c.id = cp.parent
+)  
+SELECT path FROM category_path  
+WHERE parent IS NULL  
+LIMIT 1;  
+$$ LANGUAGE SQL;
+
 --
 -- PostgreSQL database dump
 --

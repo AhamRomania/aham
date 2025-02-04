@@ -17,14 +17,16 @@ const icon:{[key: number]: string} = {
 }
 
 export interface CategorySelectorProps {
+    name: string;
     onCategorySelect: (category: Category) => void;
 }
 
-const CategorySelector: FC<CategorySelectorProps> = ({onCategorySelect}) => {
+const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) => {
 
     const api = useApiFetch();
+    const [categoryID, setCategoryID] = useState(0);
     const [categories, setCategories] = useState<Category[]>([]); // top root childs
-    const [selected, setSelected] = useState(-1); // top items selected item
+    const [mainCategory, setMainCategory] = useState(-1); // top items selected item
     const [tree, setTree] = useState<Category>(); // root is selected category
     const [path, setPath] = useState<number[]>([]); // index 0 is from selected category children
     const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -38,7 +40,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({onCategorySelect}) => {
     },[])
 
     const setCurrentCategory = (index:number) => {
-        setSelected(index);
+        setMainCategory(index);
         setTree(categories[index]);
         setPath([]);
         forceUpdate();
@@ -93,6 +95,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({onCategorySelect}) => {
     const selectTreeBranch = (category: Category, level: number, index: number) => {
         
         if (!category.children) {
+            setCategoryID(category.id);
             onCategorySelect(category);
         }
 
@@ -142,7 +145,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({onCategorySelect}) => {
                                 justify-content:center;
                                 flex-direction: column;  
                                 border: 1px solid #CDD7E1;
-                                background: ${selected == index ? '#eee' : 'transparent'};
+                                background: ${mainCategory == index ? '#eee' : 'transparent'};
                                 align-items: center;  
                                 border-radius: 10px;
                                 padding: 10px 15px;
@@ -210,8 +213,8 @@ const CategorySelector: FC<CategorySelectorProps> = ({onCategorySelect}) => {
                         </div>
                     )))}
                 </div>
-
             </div>
+            <input type="hidden" name={name} value={categoryID}/>
         </div>
     )
 }

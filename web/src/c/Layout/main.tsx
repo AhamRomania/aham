@@ -6,7 +6,7 @@ import getConfig from "next/config";
 
 const MainLayout = ({children}: React.PropsWithChildren) => {
 
-    const { publicRuntimeConfig } = getConfig();
+    const config = getConfig()
 
     return (
         <main>
@@ -14,7 +14,7 @@ const MainLayout = ({children}: React.PropsWithChildren) => {
             <Centred>
                 {children}
             </Centred>
-            <Footer version={publicRuntimeConfig.version}/>
+            <Footer version={"0.1.0"}/>
         </main>
     )
 }

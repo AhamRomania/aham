@@ -12,6 +12,7 @@ const Tip = ({title, children}: TooltipProps & React.PropsWithChildren) => {
     <JoyTooltip
       title={title}
       color="primary"
+      enterDelay={2500}
       size="lg"
       variant="outlined"
     >

@@ -8,10 +8,11 @@ import Picture from "./Picture";
 import { FilePicture, GenericPicture } from "./types";
 
 export interface PicturesProps {
+    name: string;
     onChange?: (pictures:GenericPicture[]) => void;
 }
 
-const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
+const Pictures: FC<PicturesProps> = ({name, onChange}: PicturesProps) => {
 
     const [images, setImages] = useState<GenericPicture[]>([] as GenericPicture[]);
     const input = useRef<HTMLInputElement>(null);
@@ -224,6 +225,12 @@ const Pictures: FC<PicturesProps> = ({onChange}: PicturesProps) => {
                 css={css`                  
                     opacity: 0;
                 `}
+            />
+
+            <input
+                type="hidden"
+                name={name}
+                value={images.map(image => image.getUUID()).join(',')}
             />
         </div>
     )

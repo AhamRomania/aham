@@ -36,16 +36,14 @@ func main() {
 		r.Route("/sam", route.SecureAccessMap)
 
 		r.Route("/categories", route.CategoriesRoutes)
+		r.Route("/ads", route.AdsRoutes)
+
+		r.Post("/report", route.Report)
 
 		r.Get("/counties", route.GetCounties)
 		r.Get("/counties/{county}", route.GetCounty)
 		r.Get("/cities/{city}", route.GetCity)
 		r.Get("/cities", route.GetCities)
-
-		r.Post("/ads", c.Guard(route.CreateAd))
-		r.Get("/ads/{id}", route.GetAd)
-		r.Get("/ads", route.GetAds)
-		r.Post("/report", route.Report)
 
 		r.Post("/qa", c.Todo("create a question"))
 		r.Post("/qa/{id}", c.Todo("post an answer"))

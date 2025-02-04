@@ -21,7 +21,7 @@
                 "LISTEN": ":8001",
                 "DEV": "true",
                 "DB": "postgres://aham:aham@localhost:15432/aham",
-                "CDN": "https://localhost:8002"
+                "CDN": "http://localhost:8002"
             },
         },
         {

@@ -8,7 +8,7 @@ export interface ContentProps {
 
 const Content: FC<ContentProps> = async ({from}) => {
 
-    const content = await (await fetch(from + '?r=' + (1000 * Math.random()), {cache:'no-cache'})).text()
+    const content = await (await fetch(from, {cache:'no-cache'})).text()
 
     return (
         <div className={style.markdown}>

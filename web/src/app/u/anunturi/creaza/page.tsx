@@ -5,7 +5,7 @@ import { GenericPicture } from "@/c/Form/Pictures/types";
 import { Centred, PageName } from "@/c/Layout";
 import { css } from "@emotion/react";
 import { Close } from "@mui/icons-material";
-import { Button, FormHelperText, Grid, IconButton, Input, Textarea } from "@mui/joy";
+import { Button, Checkbox, Divider, FormHelperText, Grid, IconButton, Input, Stack, Textarea } from "@mui/joy";
 import { FormControl, FormLabel } from '@mui/joy';
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,9 +13,11 @@ import { Backdrop } from "@mui/material";
 import { BouncingLogo } from "@/c/logo";
 import CategorySelector from "@/c/Categories/CategorySelector";
 import { Category } from "@/c/types";
+import useApiFetch from "@/hooks/api";
 
 export default function Page() {
 
+  const api = useApiFetch();
   const router = useRouter();
 
   const [, setCategory] = useState<Category | null>(null);
@@ -33,12 +35,15 @@ export default function Page() {
       }
   }
 
-  const save = () => {
-    setSavingAd(true);
-  }
-
   return (
-    <Centred width={720}>
+    <Centred
+      width={720}
+      css={css`
+        hr {
+          margin: 30px 0px;
+        }  
+      `}
+    >
       <PageName right={(
         <IconButton
           variant="plain"
@@ -49,7 +54,32 @@ export default function Page() {
       )}>
         Crează anunț
       </PageName>
-      <div
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const formData = new FormData(event.currentTarget);
+          const data = Object.fromEntries((formData as any).entries());
+          setSavingAd(true);
+          api(`/ads`, {
+            method: 'POST',
+            body: JSON.stringify({
+              currency: 'LEI',
+              category: parseInt(data.category),
+              description: data.description,
+              messages: (data.messages === 'on'),
+              show_phone: (data.phone === 'on'),
+              phone: (data.phone || ''),
+              pictures: (data.pictures||'').split(','),
+              price: parseInt(data.price),
+              title: data.title,
+            }),
+          }).then((response: any) => {
+            window.location.href = '/u/anunturi/creaza?id=' + response.id;
+          }).catch(e => {
+            setSavingAd(false);
+            console.log(e);
+          });
+        }}
         css={css`
             margin-bottom:50px;
             .MuiFormControl-root {
@@ -57,15 +87,16 @@ export default function Page() {
             }    
         `}
       >
-
-        <FormControl size="lg" required>
+        <FormControl size="lg">
             <FormLabel>Categorie</FormLabel>
-            <CategorySelector onCategorySelect={setCategory}/>
+            <CategorySelector name="category" onCategorySelect={setCategory}/>
         </FormControl>
+
+        <Divider/>
 
         <FormControl size="lg" required>
             <FormLabel>Imagini</FormLabel>
-            <Pictures onChange={onImagesChange}/>
+            <Pictures name="pictures" onChange={onImagesChange}/>
             <FormHelperText>
                 <Grid flex="1" container flexDirection="row">
                   <Grid></Grid>
@@ -77,14 +108,17 @@ export default function Page() {
             </FormHelperText>
         </FormControl>
 
+        <Divider/>
+
         <FormControl size="lg" required>
             <FormLabel>Titlu</FormLabel>
-            <Input value="Minge de baschet culoare portocalie"/>
+            <Input name="title"/>
         </FormControl>
 
         <FormControl size="lg" required>
             <FormLabel>Descriere</FormLabel>
             <Textarea
+              name="description"
               onChange={(e) => {
                 setDescriptionCharCount(e.target.value.length);
               }}
@@ -107,6 +141,7 @@ export default function Page() {
                 <FormControl size="lg" required>
                     <FormLabel>Preț</FormLabel>
                     <Input
+                        name="price"
                         type="number"
                         endDecorator={<div>LEI</div>}
                     />
@@ -114,13 +149,39 @@ export default function Page() {
             </Grid>
         </Grid>
 
-        <Grid container gap={2}>
+        <Divider/>
+
+        <FormControl size="lg">
+            <FormLabel>Contact</FormLabel>
+            <Stack gap={2} flexDirection="column">
+              <Checkbox name="messages" size="md" label="Vreau să primesc mesaje pe platformă"/>
+            </Stack>
+        </FormControl>
+
+        <FormControl size="lg">
+            <Stack gap={2} flexDirection="column">
+            <Checkbox name="phone" size="md" label="Afișează numărul de telefon"/>
+            </Stack>
+        </FormControl>
+
+        <Divider/>
+
+        <FormControl size="lg" required>
+            <FormLabel>Locație</FormLabel>
+            <Input/>
+        </FormControl>
+
+        <Grid
+          css={css`margin-top:100px;`}
+          container
+          gap={2}
+        >
           <Grid>
             <Button
               data-test="add-button"
               variant="solid"
               size="lg"
-              onClick={() => save()}
+              type="submit"
               loading={savingAd}
             >
               Publică anunțul
@@ -138,7 +199,7 @@ export default function Page() {
         >
           <BouncingLogo/>
         </Backdrop>
-      </div>
+      </form>
     </Centred>
   );
 }

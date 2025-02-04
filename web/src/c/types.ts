@@ -9,6 +9,7 @@ export type Category = {
     id: number;
     name: string;
     slug: string;
+    href: string;
     price?: boolean;
     children?: Category[];
 }
@@ -29,11 +30,14 @@ export type Ad = {
     id: number,
     category_id: number,
     category: Category,
+    category_href: string,
     slug: string,
     owner: number,
     title: string,
     description: string,
     pictures: string[],
+    url: string;
+    href: string;
     price: number;
     currency: 'Lei',
     city: number,

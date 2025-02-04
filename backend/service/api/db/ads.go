@@ -22,6 +22,7 @@ type Ad struct {
 	CityID      int64     `json:"city,omitempty"`
 	CityName    string    `json:"city_name,omitempty"`
 	URL         *string   `json:"string,omitempty"`
+	Href        string    `json:"href,omitempty"`
 	Messages    bool      `json:"messages,omitempty"`
 	ShowPhone   bool      `json:"show_phone,omitempty"`
 	Phone       *string   `json:"phone,omitempty"`
@@ -34,10 +35,6 @@ func (ad *Ad) Save() error {
 
 	if ad.CategoryID == 0 {
 		return errors.New("alege o categorie validă")
-	}
-
-	if ad.CityID == 0 {
-		return errors.New("alege un oraș valid")
 	}
 
 	if ad.Title == "" {
@@ -62,9 +59,26 @@ func (ad *Ad) Save() error {
 		}
 	}
 
-	_, err := c.DB().Exec(
+	row := c.DB().QueryRow(
 		context.Background(),
-		`INSERT INTO ads (slug, title, description, category, "owner", city, price, currency, pictures) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+		`
+		INSERT INTO ads 
+			(
+				slug,
+				title,
+				description,
+				category,
+				"owner",
+				city,
+				price,
+				currency,
+				pictures,
+				status
+			) 
+		VALUES
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, 'published')
+		RETURNING id
+		`,
 		ad.Slug,
 		ad.Title,
 		ad.Description,
@@ -76,7 +90,7 @@ func (ad *Ad) Save() error {
 		ad.Pictures,
 	)
 
-	return err
+	return row.Scan(&ad.ID)
 }
 
 func GetAds() (ads []*Ad) {
@@ -92,6 +106,7 @@ func GetAds() (ads []*Ad) {
 			categories.id,
 			categories.name,
 			categories.slug,
+			get_category_href(categories.id),
 			ads.owner,
 			ads.slug,
 			ads.title,
@@ -103,6 +118,7 @@ func GetAds() (ads []*Ad) {
 			ads.currency,
 			ads.created_at,
 			ads.url,
+			concat(get_category_href(categories.id), '/', ads.slug, '-', ads.id),
 			ads.messages,
 			ads.show_phone,
 			ads.phone,
@@ -134,6 +150,7 @@ func GetAds() (ads []*Ad) {
 			&ad.Category.ID,
 			&ad.Category.Name,
 			&ad.Category.Slug,
+			&ad.Category.Href,
 			&ad.Owner,
 			&ad.Slug,
 			&ad.Title,
@@ -145,6 +162,7 @@ func GetAds() (ads []*Ad) {
 			&ad.Currency,
 			&ad.Created,
 			&ad.URL,
+			&ad.Href,
 			&ad.Messages,
 			&ad.ShowPhone,
 			&ad.Phone,

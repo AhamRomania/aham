@@ -14,6 +14,7 @@ type Category struct {
 	ID          int64       `json:"id,omitempty"`
 	Name        string      `json:"name,omitempty"`
 	Slug        string      `json:"slug,omitempty"`
+	Href        string      `json:"href,omitempty"`
 	Description string      `json:"description,omitempty"`
 	Parent      *int64      `json:"parent,omitempty"`
 	Sort        int64       `json:"sort,omitempty"`
