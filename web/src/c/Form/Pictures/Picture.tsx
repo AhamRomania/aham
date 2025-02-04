@@ -126,7 +126,7 @@ const Picture: FC<PictureProps> = ({src, onDelete, onPositionShift}) => {
                     size="sm"
                     variant="solid"
                     thickness={3}
-                    value={progressComputable ? progress : null}
+                    value={progressComputable ? progress : 0}
                     determinate={progressComputable ? true : false}
                 />
             </div>}
