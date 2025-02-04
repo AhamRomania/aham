@@ -35,6 +35,17 @@
                 "DEV": "true",
                 "REDIS": "redis://:aham@localhost:16379/0?protocol=3"
             },
+        },
+        {
+            "name": "URL",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/service/url",
+            "env": {
+                "LISTEN": ":8003",
+                "DOMAIN": "http://localhost:8003",
+                "REDIS": "redis://:aham@localhost:16379/0?protocol=3"
+            },
         }
     ],
 }

@@ -142,6 +142,25 @@ services:
     networks:
       aham:
         ipv4_address: 10.5.0.12
+  url:
+    image: 'cosminalbu/aham:url'
+    container_name: aham_prod_url
+    ports:
+      - 8085:8085
+    restart: always
+    environment:
+      LISTEN: :8085
+      DOMAIN: https://url.aham.ro
+      REDIS: redis://:aham@10.5.0.9:6379/1?protocol=3
+    volumes:
+      - /var/aham/cdn:/var/aham/cdn
+    depends_on:
+      redis:
+        restart: true
+        condition: service_started
+    networks:
+      aham:
+        ipv4_address: 10.5.0.13
 networks:
   aham:
     driver: bridge

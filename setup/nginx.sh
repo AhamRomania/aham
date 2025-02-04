@@ -18,6 +18,7 @@ rm -f /etc/nginx/sites-enabled/aham.conf
 
 mkdir -p /var/www/aham.ro/api
 mkdir -p /var/www/aham.ro/cdn
+mkdir -p /var/www/aham.ro/url
 mkdir -p /var/www/aham.ro/web
 mkdir -p /var/www/aham.ro/blog
 mkdir -p /var/www/aham.ro/mail
@@ -33,6 +34,7 @@ service nginx restart
 certbot certonly --webroot -w /var/www/aham.ro/certs -d aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d api.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d cdn.aham.ro
+certbot certonly --webroot -w /var/www/aham.ro/certs -d url.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d blog.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d mail.aham.ro
 

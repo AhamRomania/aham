@@ -39,6 +39,20 @@ if [ "$answer" == "y" ]; then
 
     rm $BIN_PATH/cdn
 
+    # URL
+
+    cd $ROOT_DIR/backend/service/url/ && env CGO_ENABLED=0 GOOS=linux GARCH=amd64 go build -o $BIN_PATH/url -a -ldflags '-extldflags "-static"' main.go
+
+    chmod +x $BIN_PATH/url
+
+    docker build --no-cache -t cosminalbu/aham:url -f $SCRIPT_DIR/docker/build/url $ROOT_DIR
+
+    if [ "$1" = "publish" ]; then
+        docker push cosminalbu/aham:url
+    fi
+
+    rm $BIN_PATH/url
+
     # API
 
     cd $ROOT_DIR/backend/service/api/ && env CGO_ENABLED=0 GOOS=linux GARCH=amd64 go build -o $BIN_PATH/api -a -ldflags '-extldflags "-static"' main.go
