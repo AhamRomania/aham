@@ -123,6 +123,10 @@ func Has(uuid string) bool {
 
 func Persist(uuid string) error {
 
+	if uuid == "" {
+		return errors.New("uuid is mandatory to persist")
+	}
+
 	url := fmt.Sprintf("%s/%s", os.Getenv("CDN"), uuid)
 
 	c.Log().Infof("Persisting CDN URL: %s", url)
