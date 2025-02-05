@@ -3,12 +3,16 @@ package emails
 import (
 	"aham/common/c"
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"mime/multipart"
 	"net/smtp"
 	"os"
+	"strings"
 )
 
 type Args map[string]any
@@ -41,7 +45,7 @@ func NewUserRecipient(name, email string) *UserRecipient {
 }
 
 type WelcomeParams struct {
-	ActivationURL string `name:"ACTIVATION_URL"`
+	ActivationURL string `json:"ACTIVATION_URL"`
 }
 
 func Welcome(to Recipient, params WelcomeParams) {
@@ -49,6 +53,17 @@ func Welcome(to Recipient, params WelcomeParams) {
 }
 
 func send(recipient Recipient, template string, params any) {
+
+	var parmsChanged map[string]any
+
+	if params != nil {
+		data, _ := json.Marshal(params)
+		_ = json.Unmarshal(data, &parmsChanged)
+	} else {
+		parmsChanged = make(map[string]any)
+	}
+
+	parmsChanged["NAME"] = recipient.Name()
 
 	smtpHost := "mail.aham.ro"
 	smtpPort := "587"
@@ -87,7 +102,15 @@ func send(recipient Recipient, template string, params any) {
 	if err != nil {
 		log.Fatal("Error creating HTML part: ", err)
 	}
-	io.WriteString(part, "<strong>strong text</strong>")
+
+	html := &bytes.Buffer{}
+
+	if err := Render(html, "empty", "emails/"+template, parmsChanged); err != nil {
+		c.Log().Errorf("Failed to send: %s", err.Error())
+		return
+	}
+
+	io.WriteString(part, html.String())
 
 	// Close the writer to finalize the message
 	writer.Close()
@@ -115,5 +138,29 @@ func send(recipient Recipient, template string, params any) {
 		return
 	}
 
-	fmt.Println("Email sent successfully!")
+	fmt.Println("Email sent successfully to ", recipient.Email())
+}
+
+func Render(w io.Writer, layout string, source string, params any) (err error) {
+
+	path := os.Getenv("TEMPLATES")
+
+	parts := strings.Split(source, "/")
+
+	if len(parts) != 2 {
+		return errors.New("expected a/b source value")
+	}
+
+	tmpls := []string{
+		path + "/layouts/" + layout + ".html",
+		path + "/" + parts[0] + "/" + parts[1] + ".html",
+	}
+
+	t, err := template.ParseFiles(tmpls...)
+
+	if err != nil {
+		return err
+	}
+
+	return t.ExecuteTemplate(w, parts[1]+".html", params)
 }

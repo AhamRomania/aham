@@ -34,6 +34,7 @@ func main() {
 		r.Get("/config", route.Setup)
 
 		r.Route("/sam", route.SecureAccessMap)
+		r.Route("/gcm", route.GcmRoutes)
 
 		r.Route("/categories", route.CategoriesRoutes)
 		r.Route("/ads", route.AdsRoutes)

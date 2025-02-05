@@ -73,14 +73,31 @@ func Dev() bool {
 	return os.Getenv("DEV") == "true"
 }
 
-func URLF(s string, a ...any) string {
+type Subdomain string
 
-	xtr := append([]any{DOMAIN}, a...)
+const (
+	Web Subdomain = "web"
+	Api Subdomain = "api"
+	Cdn Subdomain = "cdn"
+)
 
-	return fmt.Sprintf(
-		"https://%s"+s,
-		xtr...,
-	)
+func URLF(sd Subdomain, s string, a ...any) string {
+
+	dev := os.Getenv("DEV") == "true"
+
+	domains := map[Subdomain]string{
+		Web: "https://aham.ro",
+		Api: "https://api.aham.ro",
+		Cdn: "https://cdn.aham.ro",
+	}
+
+	if dev {
+		domains[Web] = "http://localhost:3000"
+		domains[Api] = "http://localhost:8001"
+		domains[Cdn] = "http://localhost:8002"
+	}
+
+	return fmt.Sprintf(domains[sd]+s, a...)
 }
 
 func NilString(s string) *string {

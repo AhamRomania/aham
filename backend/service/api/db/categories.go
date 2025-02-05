@@ -63,7 +63,7 @@ func (category *Category) Search(query string) (results []*Category) {
 }
 
 func (category *Category) Link() string {
-	return c.URLF("/%s", slug.Make(category.Slug))
+	return c.URLF(c.Web, "/%s", slug.Make(category.Slug))
 }
 
 func (c *Category) LastModified() string {

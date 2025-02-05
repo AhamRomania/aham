@@ -1,0 +1,95 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .table {
+            width: 100%;
+            border: none;
+            border-width: 0px;
+        }
+        .line {
+            background: #1F70B8;
+            height: 4px;
+        }
+        .logo {
+            text-align: center;
+            height: 50px;
+        }
+        .contents {
+            background: #FFF;
+            padding: 30px 20px;
+        }
+        .footer {
+            font-size: 11px;
+            height: 30px;
+        }
+        .copy {
+            text-align: left;
+        }
+        .socials {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <table class="table" cellspacing="0" cellpadding="0">
+        <tr>
+            <td>&nbsp;</td>
+            <td style="height:50px; width: 700px;"></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <table class="table" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td class="logo">
+                            <a href="http://aham.ro/?uiref=email_logo">
+                                <img alt="Aham Logo" width="30" height="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAPKADAAQAAAABAAAAPAAAAACL3+lcAAADa0lEQVRoBe2bTWgTQRSA325+TGo0scWfVkxbD0XJobQEBRGlWqxnkV4seLBWPNSfgzcPggcVBBXxIqmCFrx4EA/SghQtClLQIhqRopAUxYtaa6qVpMk6LzUbp/nZbmZIJrMZ2LBvft7MN+/NsNm3o4CeNMV/crRfUeAIyQqQy6MXVefNHBl2WNNgaPpaTwhA0RBDwZ/mUyONANowEfegLF/SxghbX/Tq/i8qASXQMsOi+dCQyKgpxI1HjhI3vimfVXOJiHsPqP/WbG6phDnISlw6vUFJiJcXKWAn2Xl348iVnrwteGW2nB5NqzLqZ+hpFM4/eK93W+e0wbtL3bpc6Cajf0m5By1sqVQDlt3cuIZLTsmUBvPxJNXepirgJutM1MQE/DLyA3qvT1BswVYf3D+xncoTSWACLgeIy6FC/Uqn3pXLybbtCA98aMcmwItXYpsuXqMoo54acBknuyJdMa3hFXYV/A1uauDrvS5KFk1gAm73e2H87C7RmIqOp7aGi06PBIVMLv2KPGn1hyapaUA3vz3QSeWJJDABL5Bn6e+/4hRP7E+CklmFu8+n4fKjD7oat8MGL87t1mWzN0zAZjsrpX58QYPZ39lJTDhTpajR29Q2LX0qJL2pWVhSw+pYCgmzpGMueo7kNzWXltzAYDkLF3zwMIoIsHpCJjJg1A/nyIP1LGw5l7YccME1vJw1mkim4GuM/reEr33qPdn3yMvRU846TMCT0dmqizwI79Ikak8lZWkGVWosCA98INgETWuyb0IH9202pipSQ3hgX50DbhxuB7tNga6ta+FYV2sRHOMipjVsrJ5PjY5mH1zsDcDewDpg9GioCmCctoPbNnKZPSbg1W477GxroAbStiHvNzJUnUoKTMBbGlfB8PFgJcdvum/hNy3TRAYNLAfM5NLliDxMfJyBjhYvOGyLtnk29S1n3zAwKlXMZOFM5AGjD5mLd+ThzaefcOHhVHrQn2fm4cy9txSAWYHJwmY7K7X+rfEodJKvg0JPIlQUohR9VQGMYIN3XgP5/BfwW0uWxOTSLB2bbYuwPFLVAPOARR2WA8bIQ4yAi/08yMu8AHNo4TA/fcJrCqt4rkf4YXIaILLiER5068fynlnKzJY2Rs4tdROXxhNbSh8BJ4eZZE2LB7WQ9b9XZNY4ivcXQ73SKCtG5z4AAAAASUVORK5CYII=" />
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="line"></td>
+                    </tr>
+                    <tr>
+                        <td class="contents">
+                            {{template "contents" .}}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="footer">
+                <table class="table" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td class="copy">
+                            &nbsp;© <a href="http://aham.ro/?uiref=email_footer_copyr">AHAM</a> 2025
+                        </td>
+                        <td class="socials">
+                            <a title="Facebook" href="https://www.facebook.com/AhamRomania"><img width="14" height="14" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAHKADAAQAAAABAAAAHAAAAABkvfSiAAABTElEQVRIDe1WsWoCQRDVRCvBMkjQMlWstDHkGwJp7O8v8hf5hZSB/EjsFc7GTn9BhJAz7503y+LthOXmco0ZeO7s7Nx7zty42GqdLMGyAr6BY80gJ7kTILcEn3WLaHzUytW1hLrjqzYEWfIVlRuwjIKsojFrqjJXUMd5NifD42tgA9wAE6ALBM06GEuw3p0xD7DXeNUD7QE/fgDx8ExMtn6e863v8B3sW1GIWa2CbKfYLRzuvwBWFDTr0Ow81hn8sbcPutYKOZ1i1+L8tlb54S9A+FqQfmKVd8jheSjiPaxvhV9a3AThJMb/KDGUA48al7WlZalTZKodVBmaEcjmBaHW0idNkPGYNmo5Ikwe+lqei/9VS/kFgvYvGGyLJXgZLfXvQ0u3Yp7N2NI0JrOmnJQ3/B54rkjIi7sP3AO8uOXyhhu0F4kmcBr5q/8DxTHbzUdl6xUAAAAASUVORK5CYII="/></a>
+                            <a title="Instagram" href="https://www.instagram.com/ahamromania"><img width="14" height="14" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAHKADAAQAAAABAAAAHAAAAABkvfSiAAABtElEQVRIDb2WPU4DMRCFE5BooA9lCloQElwgFSVHSJSSjhIJcQ+aCK6AqEkbKENLT0EaED28L7JXxvHYbLLakV489sy85/UPuNNZtZ6GroWZ8CH81AQ11MIBV9YuFf0W6opY+XDBmbRbjVqFm47D/ceYxaakpfrqS1nnJpfREkajt60flM+EpuxFROcCwqcB6Y78T/qcKGtW64xfQSo7EeJ6tDqLRCBOpP8l3AjHwp4DPmPEfM27fESfgzEfW3TdoJqsTRUdu4yh2iPnz9XeO3+iduD8bOPVrfZJ1VvChZA6XIwRI4dci8ePZxNYqr4AoS+wWnLIDZc3lZslYn8gSX1ZTEYOudTEsarPMuTsQcGRsJtLcjFyhgI1ppUE31R5aFavBjhM1JhWEjQL1w2UBA9E/FqDfK5carJWbaiyYr/xQ8NMYpGwzxHvC61dC8S5zCw9oqnrUevid0UCacmmShi7pJFaf3LZ3zsBmwiDpVf4afqPd7glsc97p/F/T7FI2J+xN4+FFWgyvNRq9YnhZ9/qI8qLtvpM9KJ8aequhRtfx4cLzqztK+qf+v+9MuEkqDGf+r8Yjuom+iyiqgAAAABJRU5ErkJggg==" /></a>
+                            <a title="Pinterest" href="https://www.pinterest.com/AhamRomania"><img width="14" height="14" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAHKADAAQAAAABAAAAHAAAAABkvfSiAAAC20lEQVRIDaWWTYiNURjH3/G1UoyRMqRLRIRkY8GwkIWPMGNNStlYKAvZCPlYKTtrxcpqNgqljI/EQiNfUzTEzMQgHxsTZvz+13luz5x7zjv35l//no/zf57n3vc959zbUjSGNch2wg44D7ZDYRAOwB7YDR/D/0In1S/gWIOUVjVNo0LFfdjooFinWvVoCHpswzBu0mysHupVCglGYLPNc3r1yg6tsNjIN/uM7hl8CPvhH5gbqLx6VmAdyt7ZR9TH4LK6qqKYTW4/LNtc6j0OXUS5T3mFtenj1OlgMukzcBSmemlGDS/xUqKLNUVRTME/DO/CIaiaq3AP9DhKkOqlJ1CFDnVK0Et+6j9JsRj7KKNTrQ79NGi4iZPqqVnFycziLi0CDX0CrcF7/O8utvxZcoZ1OJb39oQEtxKLamjf7ohb1+YQWuEH6Jv9Jp4JDe9w/Lp8zSr6Egu3tRBgj+eGJYK9hI0bbnSa64n1vkkk7SJ22kLHwLAyOHcsEWxq51ac5pvzzW3XQDFGm0vooMdoIbE+ThLr/RpmmePsmIZ9cglzV+PYO7wXkqtsEbsWznGxua/NwS53vrlDGthvkbP6dDtCfA6r60vfyrDVHGcf4L8JsT7w3OB7M6CBOsgpnCep9zQItQO9bilxjNMuccr53u1RoHcR7zaLe1nT7aJYj9HQhWOX9i/8A7aA3QCtPrbVgy/t0xKRin5A3ZUeKwi2wRkuOR//FYwHKa5dbdLvy4isUGfRoF8NDfPQ+90NB6DVxLYzLtBujEUWH3fi5/h6jNfgBXgZvoWmTdm6nyf0xRL4JVO4RQKgnZdqWJYbpqYCk9hM9ieMGywK6oOJtVjr4xH0HaE2azax8hX6wrag1v9Ony/z9c0mHBb6Vh+v7k5r2Iq/3cWWz1m9swpsCtp5e6GOzAKoM5kbYHltfZ3RLNR0Ikije/MQ1KFeCPXHaRTqFtJR0A3SDfXIS/EXwsyL2NCcsmIAAAAASUVORK5CYII=" /></a>
+                            <a title="X" href="https://x.com/AhamRomania"><img width="14" height="14" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAHKADAAQAAAABAAAAHAAAAABkvfSiAAACOUlEQVRIDb2WP0hVURzH7X8WhRQ2VFMg2VAN0lLiolviZtAQgbzFwCUnoZYiGiQlEHS1QfC5ODTm9GhIDKGEdNAGdVBBAntR2b/P93JOnnfeufdd4XJ/8OHc3++c3/d7z73nXa2r24sClyX4Cn8zQlrSlHZFFMmyMonTkUcUco9blHU92qm2nLVwnF7pAGZ6zichjyjLUHeTWxxMcHrAnG7IpSth/S5z7XAFviSsi31/ZZouwwWYhBHQDY5B6B31UG+E5Zh52xNstpNzNB+Bl0ZkgPEELJncrntOfgzeenU7746Jhlr4DI7DAvyEFrgBeoSanwLtfMLkrnjouqbhb4Ra4Tr8gEXQLh/BO6iHJxASD9VSLfyM4GnoN8KjjIfgLNwztZB4qJbKUI3joBM7Yww6GY/ClslD4qFaakM134GLsA0bcA7uQ0g4rravxTLSo+02Jq8ZFTo4cQZ+PfVCNb4A/Uz0aPWIVeuFM7Bmct/Az1MbTiOo4/8KHsIpWIFv0Awd8Ad8Az+vuUAN70Ef+MdG8DvjNbgFv0Dz2vkQ+AZ+XnPBKiLn4S64O/hIrq/LU5Co/dp8MLlvZPNEwx2a9YO/CdqVbbLjMLXDMAv6QLTBVQittT1VInZCj+o2XIJNsHV31I717pqgCIOg0Dt217nXsRN9NDXAp4RmCa2DTqkbOsVvwDWKrjWhi9xCx1x/9/KKsgzn83KTlwz1xcgr/nvphFW94Ixr8qiIAlkJ9G9jVubSkqa0o/gHozn78T6UR8kAAAAASUVORK5CYII=" /></a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+</body>
+</html>
+{{end}}

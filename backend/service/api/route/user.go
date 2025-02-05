@@ -32,7 +32,7 @@ func ActivateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := c.DB().Query(
+	row := c.DB().QueryRow(
 		context.Background(),
 		`UPDATE
 			users
@@ -40,22 +40,27 @@ func ActivateUser(w http.ResponseWriter, r *http.Request) {
 			email_activation_token = NULL,
 			email_activated_at = now()
 		WHERE
-			email_activation_token = $1`,
+			email_activation_token = $1
+		RETURNING id`,
 		ref,
 	)
 
-	if err != nil {
-		c.Log().Error(err.Error())
-		http.Error(w, "Failed to activate user", http.StatusInternalServerError)
+	var id int64
+
+	if err := row.Scan(&id); err != nil {
+		http.Error(w, "E01: nu am putut activa contul", http.StatusInternalServerError)
+		c.Log().Error(err)
 		return
 	}
 
-	defer rows.Close()
+	user := db.GetUserByID(id)
 
-	if rows.CommandTag().RowsAffected() == 0 {
-		http.Error(w, "Invalid activation token", http.StatusBadRequest)
+	if user == nil {
+		http.Error(w, "E02: nu am putut activa contul", http.StatusInternalServerError)
 		return
 	}
+
+	http.Redirect(w, r, c.URLF(c.Web, "/cont/creat?name=%s", user.GivenName), http.StatusTemporaryRedirect)
 }
 
 func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
@@ -125,7 +130,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	emails.Welcome(
 		user.Recipient(),
 		emails.WelcomeParams{
-			ActivationURL: c.URLF("/activare?ref=%s", *user.EmailActivationToken),
+			ActivationURL: c.URLF(c.Api, "/v1/activate?ref=%s", *user.EmailActivationToken),
 		},
 	)
 

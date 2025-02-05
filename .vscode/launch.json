@@ -20,6 +20,7 @@
             "env": {
                 "LISTEN": ":8001",
                 "DEV": "true",
+                "TEMPLATES": "${workspaceFolder}/gcm/templates",
                 "DB": "postgres://aham:aham@localhost:15432/aham",
                 "CDN": "http://localhost:8002"
             },
