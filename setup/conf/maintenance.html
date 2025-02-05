@@ -1,1 +1,60 @@
-Această pagină este în mentenanță pentru aproximativ 2 minute.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentenanță | aham.ro</title>
+    <script>
+        function refreshPage() {
+            window.location.reload();
+        }  
+        setInterval(refreshPage, 5000); 
+    </script>
+    <style>
+        body {
+            text-align: center;
+            padding: 50px;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 48px;
+            color: #1F70B8;
+        }
+        p {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .loader {
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #ddd;
+            border-top: 5px solid #1F70B8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Revenim într-o clipă!</h1>
+        <div class="loader"></div>
+        <p>Ne cerem scuze pentru neplăceri, aham.ro este în mentenanță. V-om fi online în câteva momente!</p>
+        <p>&mdash; Echipa aham.ro</p>
+    </div>
+</body>
+</html>
