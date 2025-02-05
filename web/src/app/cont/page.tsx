@@ -34,7 +34,16 @@ export default function Page() {
 
   useEffect(() => {
     api<City[]>("/cities").then(setCounties);
-  }, [api]);
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("DOMContentLoaded", function() {
+      const usernameInput = document.querySelector("input[name='email']");
+      if (usernameInput) {
+        usernameInput.setAttribute("autocomplete", "off");
+      }
+    });
+  }, []);
 
   return (
     <div
@@ -86,7 +95,8 @@ export default function Page() {
         <Stack spacing={1}>
           <Input
             name="email"
-            autoComplete="off"
+            aria-autocomplete="none"
+            autoComplete="new-password"
             type="text"
             placeholder="Email"
             size="lg"
