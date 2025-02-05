@@ -112,6 +112,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		FamilyName:           req.FamilyName,
 		Phone:                req.Phone,
 		City:                 req.City,
+		Source:               "native",
 		EmailActivationToken: c.String(uuid.NewString()),
 	}
 

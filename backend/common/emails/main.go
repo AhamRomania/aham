@@ -2,11 +2,13 @@ package emails
 
 import (
 	"aham/common/c"
-	"context"
+	"bytes"
 	"fmt"
-	"reflect"
-
-	"github.com/mailgun/mailgun-go/v4"
+	"io"
+	"log"
+	"mime/multipart"
+	"net/smtp"
+	"os"
 )
 
 type Args map[string]any
@@ -46,33 +48,72 @@ func Welcome(to Recipient, params WelcomeParams) {
 	go send(to, "welcome", params)
 }
 
-func send(to Recipient, template string, params any) {
+func send(recipient Recipient, template string, params any) {
 
-	mg := mailgun.NewMailgun("mail.aham.ro", c.MAILGUN_KEY)
-	mg.SetAPIBase("https://api.eu.mailgun.net/v3")
+	smtpHost := "mail.aham.ro"
+	smtpPort := "587"
+	smtpUser := "info@aham.ro"
+	smtpPassword := os.Getenv("SMTP_PASSWORD")
 
-	m := mailgun.NewMessage("buna@aham.ro", "Bună", "")
+	// Email content
+	from := "info@aham.ro"
+	to := []string{recipient.Email()}
 
-	m.AddRecipient(to.String())
-	m.SetTemplate(template)
-	m.AddTemplateVariable("NAME", to.Name())
+	subject := "Subject: Test Email\n"
+	body := "This is a test email sent from Golang!"
 
-	tof := reflect.TypeOf(params)
-	vof := reflect.ValueOf(params)
+	var buffer bytes.Buffer
 
-	for i := 0; i < tof.NumField(); i++ {
-		m.AddTemplateVariable(
-			tof.Field(i).Tag.Get("name"),
-			vof.Field(i).Elem().String(),
-		)
-	}
+	writer := multipart.NewWriter(&buffer)
 
-	ms, id, err := mg.Send(context.TODO(), m)
+	// Write the plain text part
+
+	part, err := writer.CreatePart(map[string][]string{
+		"Content-Type":              {"text/plain; charset=UTF-8"},
+		"Content-Transfer-Encoding": {"7bit"},
+	})
 
 	if err != nil {
-		c.Log().Error(err)
+		c.Log().Infof("Error creating plain text part: ", err)
+	}
+
+	io.WriteString(part, body)
+
+	// Create the HTML part
+	part, err = writer.CreatePart(map[string][]string{
+		"Content-Type":              {"text/html; charset=UTF-8"},
+		"Content-Transfer-Encoding": {"7bit"},
+	})
+	if err != nil {
+		log.Fatal("Error creating HTML part: ", err)
+	}
+	io.WriteString(part, "<strong>strong text</strong>")
+
+	// Close the writer to finalize the message
+	writer.Close()
+
+	boundary := fmt.Sprintf(`Content-Type: multipart/alternative; boundary="%s"`, writer.Boundary())
+
+	// Set up the message
+	message := []byte(
+		"MIME-Version: 1.0\n" +
+			boundary + "\n" +
+			"From: info@aham.ro\n" +
+			fmt.Sprintf("To: %s\n", recipient.Email()) +
+			subject + "\n" +
+			buffer.String(),
+	)
+
+	// Set up the authentication for SMTP
+	auth := smtp.PlainAuth("", smtpUser, smtpPassword, smtpHost)
+
+	// Send email
+	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
+
+	if err != nil {
+		fmt.Println("Error sending email:", err)
 		return
 	}
 
-	c.Log().Infof("Mail(%s/%s) to %s", ms, id, to.String())
+	fmt.Println("Email sent successfully!")
 }

@@ -2,6 +2,7 @@
 bin/*
 !bin/.gitkeep
 data/*
+!data/templates
 !data/cdn/.gitkeep
 !data/db/api/.gitkeep
 !data/db/redis/.gitkeep
