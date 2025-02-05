@@ -1,6 +1,4 @@
 "use client";
-
-import OrSection from "@/c/orsection";
 import { css } from "@emotion/react";
 import { CheckCircleOutline } from "@mui/icons-material";
 import { Button } from "@mui/joy";
