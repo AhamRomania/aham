@@ -85,7 +85,7 @@ export default function Page() {
             method: "POST",
             body: JSON.stringify(formJson),
           }).then((data:CreateUserResponse) => {
-            window.location.href = `/cont/succes?id=${data.id}&name=${data.given_name}`;
+            window.location.href = `/cont/activeaza?id=${data.id}&name=${data.given_name}`;
           }).catch(e => {
             setFormDialogOpen(true)
             setFormDialogMessage(e);

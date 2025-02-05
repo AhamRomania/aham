@@ -60,7 +60,7 @@ func ActivateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, c.URLF(c.Web, "/cont/creat?name=%s", user.GivenName), http.StatusTemporaryRedirect)
+	http.Redirect(w, r, c.URLF(c.Web, "/cont/succes?name=%s", user.GivenName), http.StatusTemporaryRedirect)
 }
 
 func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
