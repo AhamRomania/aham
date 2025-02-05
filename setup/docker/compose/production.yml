@@ -120,6 +120,7 @@ services:
           define('WP_SITEURL', 'https://blog.aham.ro');
     volumes:
       - ../../../wp/theme/aham:/var/www/html/wp-content/themes/aham
+      - /var/aham/wp/uploads:/var/www/html/wp-content/uploads
     networks:
       aham:
         ipv4_address: 10.5.0.11
