@@ -49,7 +49,7 @@ type WelcomeParams struct {
 }
 
 func Welcome(to Recipient, params WelcomeParams) {
-	go send(to, "welcome", params)
+	send(to, "welcome", params)
 }
 
 func send(recipient Recipient, template string, params any) {
@@ -105,7 +105,7 @@ func send(recipient Recipient, template string, params any) {
 
 	html := &bytes.Buffer{}
 
-	if err := Render(html, "empty", "emails/"+template, parmsChanged); err != nil {
+	if err := Render(html, "aigen", "emails/"+template, parmsChanged); err != nil {
 		c.Log().Errorf("Failed to send: %s", err.Error())
 		return
 	}
@@ -121,7 +121,7 @@ func send(recipient Recipient, template string, params any) {
 	message := []byte(
 		"MIME-Version: 1.0\n" +
 			boundary + "\n" +
-			"From: info@aham.ro\n" +
+			"From: Aham <info@aham.ro>\n" +
 			fmt.Sprintf("To: %s\n", recipient.Email()) +
 			subject + "\n" +
 			buffer.String(),

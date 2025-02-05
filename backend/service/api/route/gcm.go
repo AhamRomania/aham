@@ -14,7 +14,13 @@ func GcmRoutes(r chi.Router) {
 
 func renderTemplate(w http.ResponseWriter, r *http.Request) {
 
-	err := emails.Render(w, "empty", r.URL.Query().Get("source"), map[string]string{
+	layout := r.URL.Query().Get("layout")
+
+	if layout == "" {
+		layout = "empty"
+	}
+
+	err := emails.Render(w, layout, r.URL.Query().Get("source"), map[string]string{
 		"NAME": "Jhon",
 	})
 

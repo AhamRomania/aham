@@ -1,0 +1,85 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        table {
+            border-spacing: 0;
+            width: 100%;
+            background-color: #ffffff;
+        }
+        td {
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            background-color: #1F70B8;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 24px;
+        }
+        .content {
+            font-size: 16px;
+            color: #333333;
+            line-height: 1.5;
+        }
+        .footer {
+            font-size: 12px;
+            color: #aaaaaa;
+            text-align: center;
+            padding: 10px;
+            background-color: #eeeeee;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #ffffff;
+            background-color: #1F70B8;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <table role="presentation" class="container">
+        <tr>
+            <td>
+                <table role="presentation" width="100%">
+                    <tr>
+                        <td class="header">
+                            <a href="http://aham.ro/?uiref=email_logo">
+                                <img alt="Aham Logo" width="30" height="30" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAPKADAAQAAAABAAAAPAAAAACL3+lcAAADa0lEQVRoBe2bTWgTQRSA325+TGo0scWfVkxbD0XJobQEBRGlWqxnkV4seLBWPNSfgzcPggcVBBXxIqmCFrx4EA/SghQtClLQIhqRopAUxYtaa6qVpMk6LzUbp/nZbmZIJrMZ2LBvft7MN+/NsNm3o4CeNMV/crRfUeAIyQqQy6MXVefNHBl2WNNgaPpaTwhA0RBDwZ/mUyONANowEfegLF/SxghbX/Tq/i8qASXQMsOi+dCQyKgpxI1HjhI3vimfVXOJiHsPqP/WbG6phDnISlw6vUFJiJcXKWAn2Xl348iVnrwteGW2nB5NqzLqZ+hpFM4/eK93W+e0wbtL3bpc6Cajf0m5By1sqVQDlt3cuIZLTsmUBvPxJNXepirgJutM1MQE/DLyA3qvT1BswVYf3D+xncoTSWACLgeIy6FC/Uqn3pXLybbtCA98aMcmwItXYpsuXqMoo54acBknuyJdMa3hFXYV/A1uauDrvS5KFk1gAm73e2H87C7RmIqOp7aGi06PBIVMLv2KPGn1hyapaUA3vz3QSeWJJDABL5Bn6e+/4hRP7E+CklmFu8+n4fKjD7oat8MGL87t1mWzN0zAZjsrpX58QYPZ39lJTDhTpajR29Q2LX0qJL2pWVhSw+pYCgmzpGMueo7kNzWXltzAYDkLF3zwMIoIsHpCJjJg1A/nyIP1LGw5l7YccME1vJw1mkim4GuM/reEr33qPdn3yMvRU846TMCT0dmqizwI79Ikak8lZWkGVWosCA98INgETWuyb0IH9202pipSQ3hgX50DbhxuB7tNga6ta+FYV2sRHOMipjVsrJ5PjY5mH1zsDcDewDpg9GioCmCctoPbNnKZPSbg1W477GxroAbStiHvNzJUnUoKTMBbGlfB8PFgJcdvum/hNy3TRAYNLAfM5NLliDxMfJyBjhYvOGyLtnk29S1n3zAwKlXMZOFM5AGjD5mLd+ThzaefcOHhVHrQn2fm4cy9txSAWYHJwmY7K7X+rfEodJKvg0JPIlQUohR9VQGMYIN3XgP5/BfwW0uWxOTSLB2bbYuwPFLVAPOARR2WA8bIQ4yAi/08yMu8AHNo4TA/fcJrCqt4rkf4YXIaILLiER5068fynlnKzJY2Rs4tdROXxhNbSh8BJ4eZZE2LB7WQ9b9XZNY4ivcXQ73SKCtG5z4AAAAASUVORK5CYII=" />
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content">
+                            {{template "contents" .}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="footer">
+                            © 2025 Aham
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+{{end}}
