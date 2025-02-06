@@ -41,13 +41,13 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
                     css={css(`
                         width: 312px;
                         height: 242px;
+                        overflow: hidden;
                     `)}
                 >
                     {/*eslint-disable-next-line @next/next/no-img-element*/}
                     <img
                         src={getDomain(Domain.Cdn) + `/${vo.pictures[0]}?w=${width}&q=75`}
                         width={312}
-                        height={242}
                         alt={vo.title}
                     />
                 </div>
