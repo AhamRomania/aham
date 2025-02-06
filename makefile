@@ -2,8 +2,8 @@ test:
 	
 	@echo "\033[0;32m> Docker Up...\033[0m"
 
-	@docker compose --progress=quiet -f ./setup/composer-test.yml -p aham-test down
-	@docker compose --progress=quiet -f ./setup/composer-test.yml -p aham-test up -d
+	@docker compose --progress=quiet -f ./setup/docker/compose/test.yml -p aham-test down
+	@docker compose --progress=quiet -f ./setup/docker/compose/test.yml -p aham-test up -d
 
 	@echo "\033[0;32m> Test CDN...\033[0m"
 
@@ -16,7 +16,7 @@ test:
 	go test -v ./...
 
 	@echo "\033[0;32m> Docker Down...\033[0m"
-	@docker compose --progress=quiet -f ./setup/composer-test.yml -p aham-test down
+	@docker compose --progress=quiet -f ./setup/docker/compose/test.yml -p aham-test down
 
 clean:
 	rm  -rf data/cdn

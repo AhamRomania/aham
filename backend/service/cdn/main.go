@@ -45,7 +45,7 @@ var uploadRateLimiter = httprate.NewRateLimiter(100, time.Minute)
 
 var redisc *redis.Client
 
-func init() {
+func connectToRedis() {
 
 	godotenv.Load()
 
@@ -74,6 +74,8 @@ func init() {
 }
 
 func main() {
+
+	connectToRedis()
 
 	go deleteAfterExpired()
 
