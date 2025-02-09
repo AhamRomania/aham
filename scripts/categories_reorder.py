@@ -54,8 +54,7 @@ def store(items, parent = None):
 
 
     cursor.close()
-    
-    
+
 store(data)
 
 print("--- %s seconds ---" % (time.time() - st))

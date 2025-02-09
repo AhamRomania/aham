@@ -39,6 +39,8 @@ func main() {
 		r.Route("/categories", route.CategoriesRoutes)
 		r.Route("/ads", route.AdsRoutes)
 
+		r.Route("/shares", route.ShareRoutes)
+
 		r.Post("/report", route.Report)
 
 		r.Get("/counties", route.GetCounties)

@@ -127,7 +127,7 @@ const Footer: FC<FooterProps> = ({version}) => {
 
                     <div className={style.bottom}>
                         <div className={style.bottomMenu}>
-                            <em>© Aham {(new Date()).getFullYear()}</em>
+                            <em>© {(new Date()).getFullYear()} Aham</em>
                             <i>㆐</i>
                             <nav>
                                 <Link href="/confidentialitate">Confidentialitate</Link>
