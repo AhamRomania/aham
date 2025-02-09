@@ -111,6 +111,9 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               <Sam resource={SamResource.ADS} permission={SamPermission.READ}>
                 <Link href="/u/anunturi">Ads</Link>
               </Sam>
+              <Sam resource={SamResource.ADS} permission={SamPermission.PUBLISH}>
+                <Link href="/u/share">Share</Link>
+              </Sam>
             </div>
           )}
         </div>
