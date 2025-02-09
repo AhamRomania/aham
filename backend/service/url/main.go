@@ -31,13 +31,6 @@ func init() {
 	c.Log().Infof("Connected to redis: %s", color.Ize(color.Yellow, opts.Addr))
 
 	redisc = redis.NewClient(opts)
-
-	redisc.Set(
-		context.Background(),
-		"URL_aham",
-		"https://aham.ro",
-		0,
-	)
 }
 
 func storeURL(url string) (id string, err error) {
@@ -104,6 +97,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("%s/%s", os.Getenv("DOMAIN"), shortID)))
 
 	} else if r.Method == http.MethodGet {
+
+		if r.URL.Path == "/" {
+			http.Redirect(w, r, "https://aham.ro", http.StatusFound)
+			return
+		}
+
 		shortID := r.URL.Path[1:] // Obtain the short ID from the path
 		if longURL, exists := getURL(shortID); exists {
 			body := strings.ReplaceAll(redirectPage, "LINK", longURL)
