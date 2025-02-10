@@ -19,9 +19,12 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
             href={getDomain(Domain.Web) + `/a/${vo.href}`}
             css={css(`
                 display: inline-block;
-                width: ${width}px;
-                height: ${height}px;
+                width: 100%;
                 text-decoration: none;
+                @media only screen and (min-width : 1200px) {
+                    width: ${width}px;
+                    height: ${height}px;
+                }
                 &:hover article {
                     background:rgb(230, 230, 230);
                 }
@@ -32,22 +35,26 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
                     background: #F0F0F0;
                     overflow: hidden;
                     border-radius: 10px;
-                    width: ${width}px;
-                    height: ${height}px;
                     position: relative;
+                    @media only screen and (min-width : 1200px) {
+                        width: ${width}px;
+                        height: ${height}px;
+                    }
                 `)}
             >
                 <div
                     css={css(`
-                        width: 312px;
-                        height: 242px;
                         overflow: hidden;
+                        @media only screen and (min-width : 1200px) {
+                            width: 312px;
+                            height: 242px;
+                        }
                     `)}
                 >
                     {/*eslint-disable-next-line @next/next/no-img-element*/}
                     <img
                         src={getDomain(Domain.Cdn) + `/${vo.pictures[0]}?w=${width}&q=75`}
-                        width={312}
+                        width="100%"
                         alt={vo.title}
                     />
                 </div>

@@ -1,50 +1,30 @@
 "use client";
 
+import getApiFetch from "@/api/api";
 import Logo from "@/c/logo";
 import OrSection from "@/c/orsection";
-import { City, CreateUserRequest, CreateUserResponse } from "@/c/types";
-import getApiFetch from "@/api/api";
+import { CreateUserRequest, CreateUserResponse } from "@/c/types";
 import { css } from "@emotion/react";
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import {
-    Autocomplete,
-    Button,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Divider,
-    Input,
-    Modal,
-    ModalDialog,
-    Stack
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Modal,
+  ModalDialog
 } from "@mui/joy";
 
+import RegisterForm from "@/c/Form/Register";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { IMaskInput } from "react-imask";
+import { useState } from "react";
 
 export default function Page() {
   const api = getApiFetch();
-
-  const [counties, setCounties] = useState<City[]>([]);
-  const [city, setCity] = useState<City>({} as City);
-  const [phone,setPhone] = useState('(100) 000-000')
   const [formDialogOpen, setFormDialogOpen] = useState(false);
   const [formDialogMessage, setFormDialogMessage] = useState(false);
-
-  useEffect(() => {
-    api<City[]>("/cities").then(setCounties);
-  }, []);
-
-  useEffect(() => {
-    document.addEventListener("DOMContentLoaded", function() {
-      const usernameInput = document.querySelector("input[name='email']");
-      if (usernameInput) {
-        usernameInput.setAttribute("autocomplete", "off");
-      }
-    });
-  }, []);
-
+  const [saving, setSaving] = useState(false);
   return (
     <div
       css={css`
@@ -73,98 +53,23 @@ export default function Page() {
         <h1>CONT NOU</h1>
       </div>
 
-      <form
-        autoComplete="off"
-        onSubmit={(event) => {
-          event.preventDefault();
-          const formData = new FormData(event.currentTarget);
-          const formJson: CreateUserRequest = (Object.fromEntries((formData).entries()) as unknown) as CreateUserRequest;
-          formJson.city = city.id;
-          formJson.phone = phone;
-          api<CreateUserResponse>("/users", {
-            method: "POST",
-            body: JSON.stringify(formJson),
-          }).then((data:CreateUserResponse) => {
-            window.location.href = `/cont/activeaza?id=${data.id}&name=${data.given_name}`;
-          }).catch(e => {
-            setFormDialogOpen(true)
-            setFormDialogMessage(e);
-          });
-        }}
-      >
-        <Stack spacing={1}>
-          <Input
-            name="email"
-            aria-autocomplete="none"
-            autoComplete="new-password"
-            type="text"
-            placeholder="Email"
-            size="lg"
-            required
-          />
-          <Input
-            name="password"
-            type="password"
-            placeholder="Parolă"
-            size="lg"
-            required
-          />
-          <Input
-            name="given_name"
-            type="text"
-            placeholder="Prenume"
-            size="lg"
-            required
-          />
-          <Input
-            name="family_name"
-            type="text"
-            placeholder="Nume"
-            size="lg"
-            required
-          />
-          <Input
-            name="phone"
-            size="lg"
-            required
-            value={phone}
-            onChange={(event) => setPhone(event.target.value)}
-            slotProps={{ input: { component: ()=>(
-              <IMaskInput
-                mask="+4\0 000 000 000"
-                definitions={{}}
-                placeholder="Număr de telefon"
-                overwrite="shift"
-                css={css`
-                  outline: none;
-                  background: transparent;
-                  border: none;
-                  font-size: 19px;
-                  &::placeholder {
-                    color: #7A7F82;
-                  }
-                `}
-              />
-            ) } }}
-          />
-          <Autocomplete
-            placeholder="Localitate"
-            name="city"
-            required
-            size="lg"
-            onChange={(event, value) => {
-              setCity(value as any);
-            }}
-            options={counties}
-            groupBy={(o) => o.county_name}
-            getOptionLabel={(option) => option.name}
-            getOptionKey={(o) => o.id}
-          ></Autocomplete>
-          <Button size="lg" type="submit">
-            Crează
-          </Button>
-        </Stack>
-      </form>
+      <RegisterForm key="registerForm" saving={saving} onFormSubmit={(formJson: CreateUserRequest) => {
+        setSaving(true);
+        api<CreateUserResponse>("/users", {
+          method: "POST",
+          body: JSON.stringify({
+            ...formJson,
+          })
+        }).then((response) => {
+          setSaving(false);
+          if (!response) {
+            setFormDialogMessage(response);
+            setFormDialogOpen(true);
+          } else {
+            window.location.href = `/cont/activeaza?name=${response.given_name}&id=${response.id}`;
+          }
+        });
+      } } />
 
       <Modal open={formDialogOpen} onClose={() => setFormDialogOpen(false)}>
         <ModalDialog variant="outlined" role="alertdialog">

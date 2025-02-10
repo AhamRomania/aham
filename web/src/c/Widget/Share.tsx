@@ -29,7 +29,7 @@ type Share = {
 };
 
 const Share: FC = () => {
-  const [rows, setRows] = useState<Share[]>([]);
+  const [rows, ] = useState<Share[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
 
@@ -69,7 +69,9 @@ const Share: FC = () => {
     setItems(updatedItems);
   };
 
-  const handleChangePage = (page: number) => {};
+  const handleChangePage = (page: number) => {
+    console.log(page)
+  };
 
   const handleChangeRowsPerPage = (event: any, newValue: number | null) => {
     setRowsPerPage(parseInt(newValue!.toString(), 10));
