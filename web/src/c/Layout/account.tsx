@@ -19,7 +19,7 @@ export interface AccountLayoutAPI {
   setPath: (path: React.ReactElement) => void;
 }
 
-export const AccountLayoutContext = React.createContext<AccountLayoutAPI>({});
+export const AccountLayoutContext = React.createContext<AccountLayoutAPI>({} as AccountLayoutAPI);
 
 const AccountLayout = ({ children }: React.PropsWithChildren) => {
   const [open, setOpen] = useState(true);
@@ -160,7 +160,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                   <Home />
                 </IconButton>
               </Link>
-              {path.props ? path.props.children : []}
+              {path.props ? (path.props as any).children : []}
             </Breadcrumbs>
           </div>
           <Space />
