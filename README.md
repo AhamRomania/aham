@@ -3,6 +3,7 @@
 **Essence guide:**
 - See great things
 - Things reveal themselfs so have patience
+- Substitute of innovation is presence as you develop
 
 **Development values:**
 - Keep it simple
