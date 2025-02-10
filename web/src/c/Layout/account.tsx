@@ -1,7 +1,7 @@
 "use client";
 
 import { css } from "@emotion/react";
-import { AdsClickOutlined, ChatOutlined, DashboardOutlined, FavoriteOutlined, FolderOutlined, FolderSpecialOutlined, Home, IosShareOutlined, Notifications, SettingsOutlined } from "@mui/icons-material";
+import { AddTaskOutlined, AdsClickOutlined, ChatOutlined, DashboardOutlined, FavoriteOutlined, FolderOutlined, FolderSpecialOutlined, Home, IosShareOutlined, Notifications, SettingsOutlined } from "@mui/icons-material";
 import { Breadcrumbs, Button, IconButton } from "@mui/joy";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -77,11 +77,11 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               <Logo bg="#9C27B0" color="#FFFFFF" size={42} padding={18} />
             </Tip>
           </Link>
-          <Link href="/">
+          {open && <Link href="/">
             <Button size="md" variant="soft" color="primary" style={{marginLeft:"10px"}}>
               Deschide Aham
             </Button>
-          </Link>
+          </Link>}
         </div>
         <button
           onClick={() => setOpen(!open)}
@@ -111,7 +111,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           `}
         >
           {/* MENU DOWN */}
-          <Menu>
+          <Menu mobile={open}>
             <MenuItem icon={<DashboardOutlined/>} title="Panou Principal" href="/u/"/>
             <MenuItem icon={<ChatOutlined/>} title="Mesaje" href="/u/mesaje"/>
             <MenuItem icon={<AdsClickOutlined/>} title="Anunțuri" href="/u/anunturi"/>
@@ -119,6 +119,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             <MenuItem icon={<SettingsOutlined/>} title="Settings" href="/u/setari"/>
             {userLoaded && isPrivilegedUser(me) && (
               <MenuItem icon={<FolderSpecialOutlined/>} title="Administrare" href="/u/admin">
+                <MenuItem icon={<AddTaskOutlined/>} title="Anunțuri Noi" href="/u/admin/anunturi-noi"/>
                 <Sam resource={SamResource.CATEGORIES} permission={SamPermission.WRITE}>
                   <MenuItem icon={<FolderOutlined/>} title="Categorii" href="/u/categorii"/>
                 </Sam>

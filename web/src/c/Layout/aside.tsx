@@ -1,13 +1,28 @@
 import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import Link from "next/link";
-import { FC, useState } from "react";
+import { createContext, FC, useContext, useState } from "react";
 
-export const Menu = styled.div`
-    display: flex;
-    flex-direction: column;
-`;
+interface MobileProps {
+    mobile?: boolean;
+}
+
+export const MenuContext = createContext<boolean>(false);
+
+export const Menu:FC<MobileProps&React.PropsWithChildren> = ({mobile, children}) => {
+    return (
+        <div
+            css={css`
+                display: flex;
+                flex-direction: column;
+            `}
+        >
+            <MenuContext.Provider value={mobile!}>
+                {children}
+            </MenuContext.Provider>
+        </div>
+    )
+}
 
 interface MenuItemProps {
     icon?: React.ReactNode;
@@ -18,6 +33,7 @@ interface MenuItemProps {
 export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, title, href, children}) => {
 
     const [open, setOpen] = useState(false);
+    const [showIconOnly,] = useState(useContext(MenuContext));
 
     const handle = (e: MouseEvent) => {
         if (children) {
@@ -61,7 +77,7 @@ export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, titl
             <Link href={href!}>
                 <div className="item" onClick={(e) => handle(e as unknown as MouseEvent)}>
                     <div className="icon">{icon && icon}</div>
-                    <span style={{flex: '1'}}>{title}</span>
+                    {!showIconOnly && <span style={{flex: '1'}}>{title}</span>}
                     {children && !open && <span><KeyboardArrowDown/></span>}
                     {children && open && <span><KeyboardArrowUp/></span>}
                 </div>
