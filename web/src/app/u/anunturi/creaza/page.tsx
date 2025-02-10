@@ -4,10 +4,10 @@ import Pictures from "@/c/Form/Pictures/Pictures";
 import { GenericPicture } from "@/c/Form/Pictures/types";
 import { Centred, PageName } from "@/c/Layout";
 import { css } from "@emotion/react";
-import { Close } from "@mui/icons-material";
+import { Add, Close } from "@mui/icons-material";
 import { Button, Checkbox, Divider, FormHelperText, Grid, IconButton, Input, Option, Select, Stack, Textarea } from "@mui/joy";
 import { FormControl, FormLabel } from '@mui/joy';
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Backdrop } from "@mui/material";
 import { BouncingLogo } from "@/c/logo";
@@ -16,9 +16,12 @@ import { Category } from "@/c/types";
 import getApiFetch from "@/api/api";
 import NumericFormatAdapter from "@/c/Form/NumericFormatAdapter";
 import { toCents } from "@/c/formatter";
+import { AccountLayoutContext } from "@/c/Layout/account";
+import Link from "next/link";
 
 export default function Page() {
 
+  const {setPath} = useContext(AccountLayoutContext);
   const api = getApiFetch();
   const router = useRouter();
 
@@ -37,6 +40,17 @@ export default function Page() {
         router.push('/u/anunturi');
       }
   }
+
+  useEffect(() => {
+    setPath(
+      <>
+        <Link href="/u/anunturi">
+          Anunțuri
+        </Link>
+        <span>Crează aunț</span>
+      </>
+    )
+  },[]);
 
   return (
     <Centred

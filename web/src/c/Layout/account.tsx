@@ -1,26 +1,31 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { css } from "@emotion/react";
-import Logo from "../logo";
+import { AdsClickOutlined, ChatOutlined, DashboardOutlined, FavoriteOutlined, FolderOutlined, FolderSpecialOutlined, Home, IosShareOutlined, Notifications, SettingsOutlined } from "@mui/icons-material";
+import { Breadcrumbs, Button, IconButton } from "@mui/joy";
 import Link from "next/link";
-import { useState } from "react";
-import { Add, Home } from "@mui/icons-material";
-import Tip from "../tooltip";
-import HeadMenu from "../HeadMenu";
-import { Breadcrumbs, IconButton } from "@mui/joy";
-import { Space } from "./common";
+import React, { useEffect, useState } from "react";
 import { getUser } from "../Auth";
-import { User } from "../types";
 import { isPrivilegedUser } from "../funcs";
+import HeadMenu from "../HeadMenu";
+import Logo from "../logo";
+import Tip from "../tooltip";
+import { User } from "../types";
+import { Menu, MenuItem } from "./aside";
+import { Space } from "./common";
 import Sam, { SamPermission, SamResource } from "../Sam";
 
+export interface AccountLayoutAPI {
+  setPath: (path: React.ReactElement) => void;
+}
+
+export const AccountLayoutContext = React.createContext<AccountLayoutAPI>({});
 
 const AccountLayout = ({ children }: React.PropsWithChildren) => {
-
   const [open, setOpen] = useState(true);
   const [me, setMe] = useState<User>({} as User);
   const [userLoaded, setUserLoaded] = useState(false);
+  const [path, setPath] = useState<React.ReactElement>(<></>);
 
   useEffect(() => {
     getUser().then(setMe);
@@ -33,8 +38,8 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         display: flex;
         height: 100%;
         flex-direction: column;
-        @media only screen and (min-width : 1200px) {
-            flex-direction: row;
+        @media only screen and (min-width: 1200px) {
+          flex-direction: row;
         }
       `}
     >
@@ -44,78 +49,84 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           background: var(--main-color);
           transition: width 0.6s;
           color: #fff;
-          position:relative;
+          position: relative;
           justify-content: center;
           flex-direction: column;
           display: flex;
-          @media only screen and (min-width : 1200px) {
-            width: ${open ? '270px' : '80px'};
+          @media only screen and (min-width: 1200px) {
+            width: ${open ? "270px" : "80px"};
           }
           a {
-            color: #FFF;
+            color: #fff;
           }
         `}
       >
         <div
-            data-test="account-aside-header"
-            css={css`
-                max-height: 80px;
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                padding: 0 20px; 
-                flex: 1;
-            `}
-        >
-            <Link href="/">
-                <Tip title="Navighează spre pagina principală">
-                    <Logo bg="#9C27B0" color="#FFFFFF" size={42} padding={18} />
-                </Tip>
-            </Link>
-        </div>
-        <button
-            onClick={() => setOpen(!open)}
-            css={css`
-                width: 7px;
-                border: none;
-                height: 100%;
-                position:absolute;
-                top:0;
-                right: 0px; 
-                cursor: e-resize;
-                display: none;
-                background: transparent;
-                @media only screen and (min-width : 1200px) {
-                    display: block;
-                }
-                &:hover {
-                    background: var(--main-color);
-                    filter: brightness(85%);
-                }
-            `}
-        />
-        <div
+          data-test="account-aside-header"
           css={css`
-            flex: 1;  
+            max-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 20px;
+            flex: 1;
           `}
         >
-          OTHER MENU UNPRIVILIEDGED
-          {userLoaded && isPrivilegedUser(me) && (
-            <div
-              data-test="privileged-user"
-            >
-              <div>Priviledged user MENU</div>
-              <Sam resource={SamResource.CATEGORIES} permission={SamPermission.WRITE}>
-                <Link href="/u/categorii">Categorii</Link>
-              </Sam>
-              <Sam resource={SamResource.ADS} permission={SamPermission.READ}>
-                <Link href="/u/anunturi">Ads</Link>
-              </Sam>
-              <Sam resource={SamResource.ADS} permission={SamPermission.PUBLISH}>
-                <Link href="/u/share">Share</Link>
-              </Sam>
-            </div>
-          )}
+          <Link href="/">
+            <Tip title="Navighează spre pagina principală">
+              <Logo bg="#9C27B0" color="#FFFFFF" size={42} padding={18} />
+            </Tip>
+          </Link>
+          <Link href="/">
+            <Button size="md" variant="soft" color="primary" style={{marginLeft:"10px"}}>
+              Deschide Aham
+            </Button>
+          </Link>
+        </div>
+        <button
+          onClick={() => setOpen(!open)}
+          css={css`
+            width: 7px;
+            border: none;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: 0px;
+            cursor: e-resize;
+            display: none;
+            background: transparent;
+            @media only screen and (min-width: 1200px) {
+              display: block;
+            }
+            &:hover {
+              background: var(--main-color);
+              filter: brightness(85%);
+            }
+          `}
+        />
+        <div
+          data-test="account-aside-menu"
+          css={css`
+            flex: 1;
+          `}
+        >
+          {/* MENU DOWN */}
+          <Menu>
+            <MenuItem icon={<DashboardOutlined/>} title="Panou Principal" href="/u/"/>
+            <MenuItem icon={<ChatOutlined/>} title="Mesaje" href="/u/mesaje"/>
+            <MenuItem icon={<AdsClickOutlined/>} title="Anunțuri" href="/u/anunturi"/>
+            <MenuItem icon={<FavoriteOutlined/>} title="Favorite" href="/u/anunturi/favorite"/>
+            <MenuItem icon={<SettingsOutlined/>} title="Settings" href="/u/setari"/>
+            {userLoaded && isPrivilegedUser(me) && (
+              <MenuItem icon={<FolderSpecialOutlined/>} title="Administrare" href="/u/admin">
+                <Sam resource={SamResource.CATEGORIES} permission={SamPermission.WRITE}>
+                  <MenuItem icon={<FolderOutlined/>} title="Categorii" href="/u/categorii"/>
+                </Sam>
+                <MenuItem icon={<IosShareOutlined/>} title="Share" href="/u/share"/>
+              </MenuItem>
+            )}
+          </Menu>
+          {/* MENU UP */}
         </div>
       </div>
       <div
@@ -128,46 +139,82 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         `}
       >
         <div
-            css={css`
-                height: 80px;
-                display: flex;
-                background: #FAFAFA;
-                padding: 0 20px;
-            `}
+          css={css`
+            height: 80px;
+            display: flex;
+            background: #fafafa;
+            padding: 0 20px;
+          `}
         >
+          <div
+            data-test="account-header-breadcrumbs"
+            css={css`
+              height: 80px;
+              display: flex;
+              align-items: center;
+            `}
+          >
+            <Breadcrumbs separator="›" aria-label="breadcrumbs">
+              <Link href="/u/">
+                <IconButton variant="soft" color="primary" size="sm">
+                  <Home />
+                </IconButton>
+              </Link>
+              {path.props ? path.props.children : []}
+            </Breadcrumbs>
+          </div>
+          <Space />
+          <div
+            css={css`
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-right: 20px;
+            `}
+          >
             <div
-                data-test="account-header-breadcrumbs"
-                css={css`
-                    height: 80px;
-                    display: flex;
-                    align-items: center;  
-                `}
+              css={css`
+                cursor: pointer;
+                width: 40px;
+                height: 40px;
+                border-radius: 5px;
+                background: #fff;  
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #BDBDBD;
+                color: #FFF;
+                position: relative;
+              `}
             >
-                <Breadcrumbs separator="›" aria-label="breadcrumbs">
-                    <Home onClick={() => window.location.href = '/'} style={{cursor: 'pointer'}} sx={{ mr: 0.5 }} />
-                    <Link href="/u">
-                        Cont
-                    </Link>
-                    <span style={{fontSize:19}}>Aunțuri</span>
-                </Breadcrumbs>
-
-                <Tip title="Adaugă anunț">
-                    <Link href="/u/anunturi/creaza">
-                        <IconButton variant="soft" color="primary" size="sm">
-                            <Add/>
-                        </IconButton>
-                    </Link>
-                </Tip>
+              <div
+                css={css`
+                  position: absolute;
+                  right: 2px;
+                  top: 2px;
+                  width: 20px;
+                  height: 20px;
+                  background: #F44336;
+                  border-radius: 50%;  
+                  font-size: 12px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                `}
+              >10</div>
+              <Notifications/>
             </div>
-            <Space/>
-            <HeadMenu/>
+          </div>
+          <HeadMenu />
         </div>
         <div
           css={css`
-            overflow: auto;  
+            overflow: auto;
           `}
         >
+          <AccountLayoutContext.Provider value={{ setPath }}>
             {children}
+          </AccountLayoutContext.Provider>
         </div>
       </div>
     </div>
