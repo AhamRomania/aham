@@ -9,7 +9,7 @@ interface MobileProps {
 
 export const MenuContext = createContext<boolean>(false);
 
-export const Menu:FC<MobileProps&React.PropsWithChildren> = ({mobile, children}) => {
+export const Menu:FC<MobileProps&React.PropsWithChildren> = ({mobile = false, children}) => {
     return (
         <div
             css={css`
@@ -17,7 +17,7 @@ export const Menu:FC<MobileProps&React.PropsWithChildren> = ({mobile, children})
                 flex-direction: column;
             `}
         >
-            <MenuContext.Provider value={mobile!}>
+            <MenuContext.Provider value={mobile}>
                 {children}
             </MenuContext.Provider>
         </div>

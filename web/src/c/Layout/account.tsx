@@ -111,7 +111,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           `}
         >
           {/* MENU DOWN */}
-          <Menu mobile={open}>
+          <Menu mobile={!open}>
             <MenuItem icon={<DashboardOutlined/>} title="Panou Principal" href="/u/"/>
             <MenuItem icon={<ChatOutlined/>} title="Mesaje" href="/u/mesaje"/>
             <MenuItem icon={<AdsClickOutlined/>} title="Anunțuri" href="/u/anunturi"/>
