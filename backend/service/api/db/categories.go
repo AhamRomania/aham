@@ -154,6 +154,24 @@ func SearchCategoryTree(keyword string) (categories []*Category) {
 	return root.Search(keyword)
 }
 
+func GetCategoryByPath(path string) (category *Category) {
+
+	row := c.DB().QueryRow(
+		context.Background(),
+		`select id from categories where get_category_href(id) = $1`,
+		path,
+	)
+
+	var id int64
+
+	if err := row.Scan(&id); err != nil {
+		c.Log().Error(err)
+		return
+	}
+
+	return GetCategoryByID(id)
+}
+
 func SearchCategoryPaths(keyword string) (categories []*SearchCategory) {
 
 	keyword = c.Normalize(keyword)

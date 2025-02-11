@@ -1,10 +1,10 @@
-import Content from "@/c/Content";
+import HtmlContent from "@/c/Content";
 import { MainLayout } from "@/c/Layout";
 
 export default async function Page() {
     return (
         <MainLayout>
-            <Content
+            <HtmlContent
                 from="https://raw.githubusercontent.com/AhamRomania/Content/refs/heads/main/confidentialitate.md"
             />
         </MainLayout>

@@ -9,26 +9,28 @@ import (
 )
 
 type Ad struct {
-	ID          int64     `json:"id"`
-	CategoryID  int64     `json:"category_id,omitempty"`
-	Category    *Category `json:"category,omitempty"`
-	Owner       int64     `json:"owner,omitempty"`
-	Slug        string    `json:"slug,omitempty"`
-	Title       string    `json:"title,omitempty"`
-	Description string    `json:"description,omitempty"`
-	Pictures    []string  `json:"pictures,omitempty"`
-	Price       int64     `json:"price,omitempty"`
-	Currency    string    `json:"currency,omitempty"`
-	CityID      int64     `json:"city,omitempty"`
-	CityName    string    `json:"city_name,omitempty"`
-	URL         *string   `json:"string,omitempty"`
-	Href        string    `json:"href,omitempty"`
-	Messages    bool      `json:"messages,omitempty"`
-	ShowPhone   bool      `json:"show_phone,omitempty"`
-	Phone       *string   `json:"phone,omitempty"`
-	Props       *c.D      `json:"props,omitempty"`
-	Status      string    `json:"status,omitempty"`
-	Created     time.Time `json:"created,omitempty"`
+	ID           int64     `json:"id"`
+	CategoryID   int64     `json:"category_id,omitempty"`
+	Category     *Category `json:"category,omitempty"`
+	CategoryPath string    `json:"category_path,omitempty"`
+	CategoryHref string    `json:"category_href,omitempty"`
+	Owner        int64     `json:"owner,omitempty"`
+	Slug         string    `json:"slug,omitempty"`
+	Title        string    `json:"title,omitempty"`
+	Description  string    `json:"description,omitempty"`
+	Pictures     []string  `json:"pictures,omitempty"`
+	Price        int64     `json:"price,omitempty"`
+	Currency     string    `json:"currency,omitempty"`
+	CityID       int64     `json:"city,omitempty"`
+	CityName     string    `json:"city_name,omitempty"`
+	URL          *string   `json:"string,omitempty"`
+	Href         string    `json:"href,omitempty"`
+	Messages     bool      `json:"messages,omitempty"`
+	ShowPhone    bool      `json:"show_phone,omitempty"`
+	Phone        *string   `json:"phone,omitempty"`
+	Props        *c.D      `json:"props,omitempty"`
+	Status       string    `json:"status,omitempty"`
+	Created      time.Time `json:"created,omitempty"`
 }
 
 func (ad *Ad) Save() error {
@@ -188,29 +190,31 @@ func GetAd(id int64) (ad *Ad, err error) {
 		context.TODO(),
 		`
 		SELECT
-			id,
-			category,
-			owner,
-			title,
-			description,
-			pictures,
-			city,
+			ads.id,
+			ads.category,
+			ads.owner,
+			ads.title,
+			ads.description,
+			ads.pictures,
+			ads.city,
 			CONCAT(counties.name, '/', cities.name) as city_name,
-			price,
-			currency,
-			created_at,
-			url,
-			messages,
-			show_phone,
-			phone,
-			status
+			ads.price,
+			ads.currency,
+			ads.created_at,
+			ads.url,
+			ads.messages,
+			ads.show_phone,
+			ads.phone,
+			ads.status,
+			get_category_path(ads.category)::text AS category_path,
+			get_category_href(ads.category)::text AS category_href
 		FROM
 			ads
 		LEFT JOIN cities ON cities.id = ads.city
 		LEFT JOIN counties ON counties.id = cities.county
 		WHERE
-			id = $1 AND
-			status = 'published'
+			ads.id = $1 AND
+			ads.status = 'published'
 		LIMIT 1
 		`,
 		id,
@@ -233,6 +237,8 @@ func GetAd(id int64) (ad *Ad, err error) {
 		&ad.ShowPhone,
 		&ad.Phone,
 		&ad.Status,
+		&ad.CategoryPath,
+		&ad.CategoryHref,
 	)
 
 	return

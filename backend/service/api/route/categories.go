@@ -199,6 +199,19 @@ func GetCategoryProps(w http.ResponseWriter, r *http.Request) {
 
 func GetCategories(w http.ResponseWriter, r *http.Request) {
 
+	if path := r.URL.Query().Get("path"); path != "" {
+
+		category := db.GetCategoryByPath(path)
+
+		if category != nil {
+			render.JSON(w, r, category)
+			return
+		}
+
+		http.Error(w, "category not found", http.StatusNotFound)
+		return
+	}
+
 	flat := db.GetCategoriesFlat()
 
 	var parent *int64

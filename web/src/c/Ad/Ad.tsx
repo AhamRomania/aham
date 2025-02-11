@@ -16,7 +16,7 @@ export interface AdProps {
 const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
     return (
         <Link
-            href={getDomain(Domain.Web) + `/a/${vo.href}`}
+            href={getDomain(Domain.Web) + '/' + vo.href}
             css={css(`
                 display: inline-block;
                 width: 100%;

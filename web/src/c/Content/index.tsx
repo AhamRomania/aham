@@ -6,7 +6,7 @@ export interface ContentProps {
     from: string;
 }
 
-const Content: FC<ContentProps> = async ({from}) => {
+const HtmlContent: FC<ContentProps> = async ({from}) => {
 
     const content = await (await fetch(from, {cache:'no-cache'})).text()
 
@@ -17,4 +17,4 @@ const Content: FC<ContentProps> = async ({from}) => {
     )
 }
 
-export default Content;
+export default HtmlContent;
