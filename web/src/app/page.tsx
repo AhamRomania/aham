@@ -4,14 +4,25 @@ import { HomepageLayout } from "@/c/Layout";
 import Section from "@/c/section";
 import { Ad as AdType } from "@/c/types";
 import getApiFetch from "@/api/api";
-import { Metadata } from "next";
 import style from './page.module.css';
 
-export const metadata: Metadata = {
-  title: 'Aham: Bazarul tău',
-  description:
-    'Începe explorarea în bazarul tău preferat unde găsești și cunoști o grămadă de lucruri.',
+export const metadata = {
+  title: "Aham: Bazarul tău preferat",
+  description: "Începe explorarea în bazarul tău preferat unde găsești și cunoști o grămadă de lucruri.",
+  icons: {
+    icon: [
+      { url: "favicons/favicon-180x180.png", sizes: "180x180", type: "image/png" },
+      { url: "favicons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "favicons/favicon-180x180.png",
+  },
+  manifest: "aham.webmanifest",
+  other: {
+    "msapplication-TileColor": "#1F70B8",
+    "msapplication-TileImage": "favicons/favicon-180x180.png",
+  },
 };
+
 
 const NoItems = ({text}:{text:string}) => (
   <span style={{fontStyle: 'italic', color: '#999'}}>{text}</span>
