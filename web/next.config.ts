@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     version,
     searchDefaultPlaceholder: 'Mașină mâna a 2 sub 3000 euro',
   },
+  experimental: {
+    disableOptimizedLoading: true,
+  },
   reactStrictMode: true,
   linkPrefetch: false,
   compiler: {
