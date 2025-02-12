@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { Backdrop } from "@mui/material";
 import { BouncingLogo } from "@/c/logo";
 import CategorySelector from "@/c/Categories/CategorySelector";
-import { Category } from "@/c/types";
+import { Category, Prop } from "@/c/types";
 import getApiFetch from "@/api/api";
 import NumericFormatAdapter from "@/c/Form/NumericFormatAdapter";
 import { toCents } from "@/c/formatter";
@@ -26,10 +26,11 @@ export default function Page() {
   const router = useRouter();
 
   const [currency, setCurrency] = useState('LEI');
-  const [, setCategory] = useState<Category | null>(null);
+  const [category, setCategory] = useState<Category | null>(null);
   const [descriptionCharCount, setDescriptionCharCount] = useState(0);
   const [imagesCount, setImagesCount] = useState(0)
   const [savingAd, setSavingAd] = useState(false);
+  const [props, setProps] = useState<Prop[]>();
 
   const onImagesChange = (images:GenericPicture[]) => {
     setImagesCount(images.length);
@@ -51,6 +52,10 @@ export default function Page() {
       </>
     )
   },[]);
+
+  useEffect(() => {
+    api<Prop[]>(`/categories/${category?.id}/props`).then(setProps);
+  }, [category]);
 
   return (
     <Centred
@@ -104,7 +109,7 @@ export default function Page() {
             }    
         `}
       >
-        <FormControl size="lg">
+        <FormControl size="lg" required>
             <FormLabel>Categorie</FormLabel>
             <CategorySelector name="category" onCategorySelect={setCategory}/>
         </FormControl>
@@ -131,6 +136,14 @@ export default function Page() {
             <FormLabel>Titlu</FormLabel>
             <Input name="title"/>
         </FormControl>
+
+        {props?.map((prop: Prop) => (
+          <FormControl key={prop.id} size="lg" required>
+              <FormLabel>{prop.title}</FormLabel>
+              <Input name="brand"/>
+          </FormControl>
+        ))}
+        
 
         <FormControl size="lg" required>
             <FormLabel>Descriere</FormLabel>

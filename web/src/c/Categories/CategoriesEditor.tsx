@@ -311,7 +311,7 @@ const CategoriesEditor:FC = () => {
                             </td>
                             <td>
                                 <Input
-                                    size="lg"
+                                    size="sm"
                                     value={item.name}
                                     onChange={(e) => {
                                         item.category.name = e.target.value;
@@ -322,10 +322,10 @@ const CategoriesEditor:FC = () => {
                             </td>
                             <td>
                                 <Input
-                                    size="lg"
+                                    size="sm"
                                     startDecorator={(
                                             <IconButton
-                                                size="lg"
+                                                size="sm"
                                                 variant="soft"
                                                 onClick={() => makeSlugFromName(item)}
                                             >
@@ -347,7 +347,7 @@ const CategoriesEditor:FC = () => {
                                 <Stack direction="row" gap={1}>
                                     {(item.children||[]) && (
                                         <IconButton
-                                            size="lg"
+                                            size="sm"
                                             variant="soft"
                                             onClick={()=>setNode(item)}
                                         >
@@ -355,14 +355,14 @@ const CategoriesEditor:FC = () => {
                                         </IconButton>
                                     )}
                                     <IconButton
-                                        size="lg"
+                                        size="sm"
                                         variant="soft"
                                         onClick={() => showPropAssign(item)}
                                     >
                                         <Style/>
                                     </IconButton>
                                     <IconButton
-                                        size="lg"
+                                        size="sm"
                                         variant="soft"
                                         onClick={() => deleteCurrentNode(item)}
                                     >
@@ -388,10 +388,11 @@ const CategoriesEditor:FC = () => {
                             `}
                         >
                         {props.map((item, index) => (
-                            <Card key={index}>
+                            <Card key={index} size="sm">
                                 <Checkbox
                                     label={item.title +' '+ (item.options ? JSON.stringify(item.options?.values) : '')}
                                     name={item.name}
+                                    size="sm"
                                     checked={assigned[item.id] || false}
                                     onChange={(e) => onPropAssignChange(item, e.target.checked)}
                                 />

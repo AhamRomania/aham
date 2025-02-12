@@ -190,18 +190,11 @@ func removeAssign(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload := categoryPropChangePayload{}
-
-	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-		http.Error(w, `invalid payload`, http.StatusBadRequest)
-		return
-	}
-
 	_, err := c.DB().Exec(
 		context.TODO(),
 		`delete from meta_assign where category = $1 and meta = $2`,
-		payload.CategoryID,
-		payload.PropID,
+		c.ID(r, "category"),
+		c.ID(r, "prop"),
 	)
 
 	if err != nil {
