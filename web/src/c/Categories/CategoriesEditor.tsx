@@ -1,10 +1,11 @@
 'use client';
 
 import getApiFetch from "@/api/api";
-import { Add, Delete, Home, KeyboardDoubleArrowRight, Preview } from "@mui/icons-material";
-import { Breadcrumbs, CircularProgress, IconButton, Input, Link as JoyLink, Stack, Table } from "@mui/joy";
+import { Add, Delete, Home, KeyboardDoubleArrowRight, Preview, Style } from "@mui/icons-material";
+import { Breadcrumbs, Card, Checkbox, CircularProgress, DialogContent, DialogTitle, Divider, IconButton, Input, Link as JoyLink, Modal, ModalClose, ModalDialog, Stack, Table } from "@mui/joy";
 import { FC, useEffect, useReducer, useState } from "react";
-import { Category } from "../types";
+import { Category, Prop } from "../types";
+import { css } from "@emotion/react";
 
 class Node {
     
@@ -118,6 +119,10 @@ const CategoriesEditor:FC = () => {
 
     const [root, setRoot] = useState<Node>();
     const [node, setNode] = useState<Node>();
+    const [props, setProps] = useState<Prop[]>([]);
+    const [assigned, setAssigned] = useState<{[key:string]:boolean}>({});
+    const [assignProps, setAssignProps] = useState<boolean>(false);
+    const [assignTo, setAssignTo] = useState<Node | null>(null);
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const update = () => {
@@ -136,6 +141,8 @@ const CategoriesEditor:FC = () => {
                 setNode(root);
             }
         )
+
+        api<Prop[]>(`/props`).then(setProps);
     };
 
     const setNodeByCategoryID = (id: number) => {
@@ -233,6 +240,45 @@ const CategoriesEditor:FC = () => {
         saveCurrentNodeData(node);
     }
 
+    const showPropAssign = (node: Node) => {
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        api<Prop[]>(`/categories/${node.id}/props`).then((props: any) => {
+            if(props && props.length) {
+                const data: {[key: string]:boolean} = {};
+                props.forEach((item: Prop) => {
+                    data[item.id] = true;
+                })
+                setAssigned(data);
+            } else {
+                setAssigned({});
+            }
+        });
+
+        setAssignProps(true);
+        setAssignTo(node);
+    }
+
+    const onPropAssignChange = (item: Prop, checked:boolean) => {
+        if (assignTo) {
+            if (!checked) {
+                api(`/props/assign/${item.id}/${assignTo?.id}`, {method:'DELETE'}).then(() => {});
+            } else {
+                api(`/props/assign`,{
+                    method: 'POST',
+                    body: JSON.stringify({
+                        category: assignTo?.id,
+                        prop: item.id,
+                    })
+                }).then(() => {});
+            }
+
+            const data = {...assigned};
+            data[item.id] = checked;
+            setAssigned(data);
+        }
+    }
+
     useEffect(() => update(), []);
 
     return (
@@ -311,6 +357,13 @@ const CategoriesEditor:FC = () => {
                                     <IconButton
                                         size="lg"
                                         variant="soft"
+                                        onClick={() => showPropAssign(item)}
+                                    >
+                                        <Style/>
+                                    </IconButton>
+                                    <IconButton
+                                        size="lg"
+                                        variant="soft"
                                         onClick={() => deleteCurrentNode(item)}
                                     >
                                         <Delete/>
@@ -320,6 +373,34 @@ const CategoriesEditor:FC = () => {
                         </tr>))}
                 </tbody>
             </Table>
+
+            <Modal open={assignProps} onClose={() => setAssignProps(false)}>
+                <ModalDialog layout="fullscreen" variant="outlined" role="alertdialog">
+                    <ModalClose />
+                    <DialogTitle>
+                        Atribuire proprietăți dinamice pentru <strong>{assignTo?.name}</strong>
+                    </DialogTitle>
+                    <Divider />
+                    <DialogContent>
+                        <div
+                            css={css`
+                                 > * { float: left; margin: 5px;}
+                            `}
+                        >
+                        {props.map((item, index) => (
+                            <Card key={index}>
+                                <Checkbox
+                                    label={item.title +' '+ (item.options ? JSON.stringify(item.options?.values) : '')}
+                                    name={item.name}
+                                    checked={assigned[item.id] || false}
+                                    onChange={(e) => onPropAssignChange(item, e.target.checked)}
+                                />
+                            </Card>
+                        ))}
+                        </div>
+                    </DialogContent>
+                </ModalDialog>
+            </Modal>
         </div>
     )
 }

@@ -14,6 +14,21 @@ export type Category = {
     children?: Category[];
 }
 
+export type Prop = {
+    id: number;
+    name: string;
+    title: string;
+    group: string;
+    required: boolean;
+    template: string;
+    description: string;
+    help: string;
+    type: string;
+    sort: number;
+    options: any;
+    microdata: any;
+}
+
 export type County = {
     id: number;
     name: string;

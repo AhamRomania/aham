@@ -369,13 +369,13 @@ func GetCategoryProps(category int64) (metaProps []*MetaProp) {
 		)
 
 		if template != nil {
-			metaProp.Template = *template
+			metaProp.Template = template
 		}
 		if description != nil {
-			metaProp.Description = *description
+			metaProp.Description = description
 		}
 		if help != nil {
-			metaProp.Help = *help
+			metaProp.Help = help
 		}
 
 		if err != nil {

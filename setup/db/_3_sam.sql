@@ -18,8 +18,9 @@ CREATE INDEX sam_index ON sam (user_id,resource_id,permission);
 
 insert into resources values 
     (1, 'cities', 'platform'),
-    (2, 'categories', 'platform'),
-    (3, 'ad', 'content');
+    (2, 'props', 'platform'),
+    (3, 'categories', 'platform'),
+    (4, 'ad', 'content');
 
 -- Read = 1 (binary 0001)
 -- Write = 2 (binary 0010)
@@ -28,5 +29,6 @@ insert into resources values
 
 insert into sam values 
     (1, 2, 1, 1|2|4|8), -- allow me edit cities
-    (2, 2, 2, 1|2|4|8), -- allow me edit categories
-    (3, 2, 3, 1|2|4|8); -- allow me edit ads
+    (2, 2, 2, 1|2|4|8), -- allow me edit props
+    (3, 2, 3, 1|2|4|8), -- allow me edit categories
+    (4, 2, 4, 1|2|4|8); -- allow me edit ads

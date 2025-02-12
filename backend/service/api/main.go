@@ -36,6 +36,7 @@ func main() {
 		r.Route("/sam", route.SecureAccessMap)
 		r.Route("/gcm", route.GcmRoutes)
 
+		r.Route("/props", route.PropsRoute)
 		r.Route("/categories", route.CategoriesRoutes)
 		r.Route("/ads", route.AdsRoutes)
 

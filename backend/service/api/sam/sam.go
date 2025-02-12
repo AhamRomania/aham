@@ -5,8 +5,9 @@ type Perm int
 
 const (
 	CITIES     Resource = 1 // cities
-	CATEGORIES Resource = 2 // categories
-	ADS        Resource = 3 // ads
+	PROPS      Resource = 2 // props
+	CATEGORIES Resource = 3 // categories
+	ADS        Resource = 4 // ads
 )
 
 const (

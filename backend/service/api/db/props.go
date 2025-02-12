@@ -7,17 +7,18 @@ import (
 )
 
 type MetaProp struct {
-	ID          int64  `json:"id,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Title       string `json:"title,omitempty"`
-	Group       string `json:"group,omitempty"`
-	Required    bool   `json:"required,omitempty"`
-	Template    string `json:"template,omitempty"`
-	Description string `json:"description,omitempty"`
-	Help        string `json:"help,omitempty"`
-	Type        string `json:"type,omitempty"`
-	Options     *c.D   `json:"options,omitempty"`
-	Microdata   string `json:"microdata,omitempty"`
+	ID          int64   `json:"id,omitempty"`
+	Name        string  `json:"name,omitempty"`
+	Title       string  `json:"title,omitempty"`
+	Group       string  `json:"group,omitempty"`
+	Required    bool    `json:"required,omitempty"`
+	Template    *string `json:"template,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Help        *string `json:"help,omitempty"`
+	Type        string  `json:"type,omitempty"`
+	Sort        *int64  `json:"sort,omitempty"`
+	Options     *c.D    `json:"options,omitempty"`
+	Microdata   string  `json:"microdata,omitempty"`
 }
 
 type AdProp struct {
@@ -70,8 +71,14 @@ func GetPropByName(name string) *MetaProp {
 			id,
 			name,
 			title,
+			"group",
+			description,
+			help,
 			type,
-			options
+			options,
+			sort,
+			microdata,
+			template
 		from
 			meta_props
 		where
@@ -86,8 +93,14 @@ func GetPropByName(name string) *MetaProp {
 		&prop.ID,
 		&prop.Name,
 		&prop.Title,
+		&prop.Group,
+		&prop.Description,
+		&prop.Help,
 		&prop.Type,
 		&prop.Options,
+		&prop.Sort,
+		&prop.Microdata,
+		&prop.Template,
 	)
 
 	if err != nil {
@@ -95,4 +108,107 @@ func GetPropByName(name string) *MetaProp {
 	}
 
 	return prop
+}
+
+func GetPropByID(id int64) *MetaProp {
+
+	sql := `
+		select 
+			id,
+			name,
+			title,
+			"group",
+			description,
+			help,
+			type,
+			options,
+			sort,
+			microdata,
+			template
+		from
+			meta_props
+		where
+			id = $1
+	`
+
+	row := c.DB().QueryRow(context.TODO(), sql, id)
+
+	prop := &MetaProp{}
+
+	err := row.Scan(
+		&prop.ID,
+		&prop.Name,
+		&prop.Title,
+		&prop.Group,
+		&prop.Description,
+		&prop.Help,
+		&prop.Type,
+		&prop.Options,
+		&prop.Sort,
+		&prop.Microdata,
+		&prop.Template,
+	)
+
+	if err != nil {
+		return nil
+	}
+
+	return prop
+}
+
+func GetProps() (props []*MetaProp) {
+
+	props = make([]*MetaProp, 0)
+
+	rows, err := c.DB().Query(
+		context.TODO(),
+		`select 
+			id,
+			name,
+			title,
+			"group",
+			description,
+			help,
+			type,
+			options,
+			sort,
+			microdata,
+			template
+		from meta_props	`,
+	)
+
+	if err != nil {
+		c.Log().Error(err)
+		return
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+
+		prop := &MetaProp{}
+
+		err := rows.Scan(
+			&prop.ID,
+			&prop.Name,
+			&prop.Title,
+			&prop.Group,
+			&prop.Description,
+			&prop.Help,
+			&prop.Type,
+			&prop.Options,
+			&prop.Sort,
+			&prop.Microdata,
+			&prop.Template,
+		)
+
+		if err != nil {
+			c.Log().Error(err)
+			return props
+		}
+
+		props = append(props, prop)
+	}
+
+	return
 }

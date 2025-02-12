@@ -33,7 +33,8 @@ create table meta_assign (
         references categories(id) on update cascade on delete cascade,
     constraint "meta_assign_meta"
         foreign key("meta") 
-        references meta_props(id) on update cascade on delete cascade
+        references meta_props(id) on update cascade on delete cascade,
+        unique("category","meta")
 );
 
 
@@ -68,6 +69,8 @@ INSERT INTO meta_props ("id", "name", "title", "group", "description", "help", "
         (26, 'car_doors_number', 'Numar de usi', 'default', NULL, NULL, 'NUMBER', NULL, 0, 'numberOfDoors', NULL),
         (27, 'car_model_date', 'Data model', 'default', NULL, NULL, 'DATE', NULL, 0, 'modelDate', NULL),
         (28, 'car_fuel_consumption', 'Consum', 'default', NULL, NULL, 'NUMBER', NULL, 0, 'fuelConsumption', '@ l/100km');
+
+SELECT pg_catalog.setval('public.meta_props_id_seq', 28, true);
 
 /*
 INSERT INTO meta_assign (category, meta)

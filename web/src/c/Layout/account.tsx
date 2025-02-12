@@ -12,7 +12,7 @@ import Logo from "../logo";
 import Tip from "../tooltip";
 import { User } from "../types";
 import { Menu, MenuItem } from "./aside";
-import { Space } from "./common";
+import { Centred, Space } from "./common";
 import Sam, { SamPermission, SamResource } from "../Sam";
 
 export interface AccountLayoutAPI {
@@ -120,6 +120,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             {userLoaded && isPrivilegedUser(me) && (
               <MenuItem icon={<FolderSpecialOutlined/>} title="Administrare" href="/u/admin">
                 <MenuItem icon={<AddTaskOutlined/>} title="Anunțuri Noi" href="/u/admin/anunturi-noi"/>
+                <MenuItem icon={<FolderOutlined/>} title="DProps" href="/u/admin/props"/>
                 <Sam resource={SamResource.CATEGORIES} permission={SamPermission.WRITE}>
                   <MenuItem icon={<FolderOutlined/>} title="Categorii" href="/u/categorii"/>
                 </Sam>
@@ -214,7 +215,9 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           `}
         >
           <AccountLayoutContext.Provider value={{ setPath }}>
-            {children}
+            <Centred>
+              {children}
+            </Centred>
           </AccountLayoutContext.Provider>
         </div>
       </div>
