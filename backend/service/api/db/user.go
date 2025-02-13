@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+type UserMin struct {
+	ID         int64  `json:"id"`
+	GivenName  string `json:"given_name"`
+	FamilyName string `json:"family_name"`
+}
+
 type User struct {
 	ID                    int64      `json:"id"`
 	Email                 string     `json:"email,omitempty"`

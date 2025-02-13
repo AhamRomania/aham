@@ -3,8 +3,8 @@ package db
 import (
 	"aham/common/c"
 	"context"
+	"fmt"
 	"slices"
-	"sync"
 )
 
 type MetaProp struct {
@@ -23,19 +23,25 @@ type MetaProp struct {
 	Inherited   bool    `json:"inherited,omitempty"`
 }
 
-type AdProp struct {
-	ID    int64    `json:"id,omitempty"`
-	Prop  MetaProp `json:"prop,omitempty"`
-	Value any      `json:"value,omitempty"`
-}
-
 func GetPropValues(id int64) (values []string) {
 
 	// cache
 
+	mp := GetPropByID(id)
+
 	values = make([]string, 0)
 
-	rows, err := c.DB().Query(context.TODO(), `select meta_value from meta_values where meta_id = $1`, id)
+	if mp == nil {
+		c.Log().Error("expected prop exist")
+		return values
+	}
+
+	sql := fmt.Sprintf(
+		`select distinct props->>'%s' as v from ads`,
+		mp.Name,
+	)
+
+	rows, err := c.DB().Query(context.TODO(), sql)
 
 	if err != nil {
 		c.Log().Error(err)
@@ -43,52 +49,20 @@ func GetPropValues(id int64) (values []string) {
 	}
 
 	for rows.Next() {
-		var v string
+
+		var v *string
+
 		if err := rows.Scan(&v); err != nil {
 			c.Log().Error(err)
 			return
 		}
-		values = append(values, v)
+
+		if v != nil {
+			values = append(values, c.Ucfirst(string(*v)))
+		}
 	}
 
 	return slices.Compact(values)
-}
-
-func GetAdProps(ad *Ad) []AdProp {
-
-	var props = make([]AdProp, 0)
-	wg := sync.WaitGroup{}
-
-	if ad == nil {
-		c.Log().Error("empty ad")
-		return props
-	}
-
-	if ad.Props == nil {
-		return props
-	}
-
-	for k, v := range *ad.Props {
-		wg.Add(1)
-		go func(k string, v any) {
-			full := GetPropByName(k)
-			if full == nil {
-				wg.Done()
-				return
-			}
-			prop := AdProp{
-				ID:    full.ID,
-				Prop:  *full,
-				Value: v,
-			}
-			props = append(props, prop)
-			wg.Done()
-		}(k, v)
-	}
-
-	wg.Wait()
-
-	return props
 }
 
 func GetPropByName(name string) *MetaProp {

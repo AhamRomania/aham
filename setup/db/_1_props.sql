@@ -47,7 +47,7 @@ INSERT INTO meta_props ("id", "name", "title", "group", "description", "help", "
         (4, 'year', 'An fabricație','default', NULL, NULL, 'NUMBER', NULL, 3, '', NULL),
         (5, 'car_engine_capacity', 'Capacitate motor','default', NULL, NULL, 'NUMBER', NULL, NULL, '', NULL),
         (6, 'surface', 'Suprafață','default', NULL, NULL, 'NUMBER', NULL, NULL, '', NULL),
-        (7, 'rooms', 'Numar camere','default', NULL, NULL, 'NUMBER', NULL, NULL, '', NULL),
+        (7, 'rooms', 'Număr camere','default', NULL, NULL, 'NUMBER', NULL, NULL, '', NULL),
         (8, 'floor', 'Etaj','default', NULL, NULL, 'NUMBER', NULL, NULL, '', NULL),
         (9, 'flat_layout', 'Compartimentare','default', NULL, NULL, 'SELECT', '{"values":["Decomandat","Semidecomandat"]}'::json, NULL, '', NULL),
         (10, 'flat_has_heating', 'Are centrală','default', NULL, NULL, 'BOOL', NULL, NULL, '', NULL),
@@ -64,10 +64,10 @@ INSERT INTO meta_props ("id", "name", "title", "group", "description", "help", "
         (21, 'car_power', 'Putere', 'default', NULL, NULL, 'NUMBER', NULL, NULL, '', '@ CP'),
         (22, 'car_cc', 'Capacitate Cilindrică', 'default', NULL, NULL, 'NUMBER', NULL, 0, '', '@ cm3'),
         (23, 'car_shape', 'Tip Caroserie', 'default', NULL, NULL, 'SELECT', '{"values":["Cabrio","Combi","Compacta","Coupe","Masina de oras","Masina mica","Monovolum","Sedan","Suv"]}'::json, NULL, 'bodyType', NULL),
-        (24, 'car_country_origin', 'Tara de origine', 'default', NULL, NULL, 'TEXT', NULL, 0, 'countryOfOrigin', NULL),
+        (24, 'car_country_origin', 'Țară de origine', 'default', NULL, NULL, 'TEXT', NULL, 0, 'countryOfOrigin', NULL),
         (25, 'car_emissions_co2', 'Emisii CO2', 'default', NULL, NULL, 'NUMBER', NULL, 0, 'emissionsCO2', NULL),
-        (26, 'car_doors_number', 'Numar de usi', 'default', NULL, NULL, 'NUMBER', NULL, 0, 'numberOfDoors', NULL),
-        (27, 'car_model_date', 'Data model', 'default', NULL, NULL, 'DATE', NULL, 0, 'modelDate', NULL),
+        (26, 'car_doors_number', 'Număr de uși', 'default', NULL, NULL, 'NUMBER', NULL, 0, 'numberOfDoors', NULL),
+        (27, 'car_model_date', 'Dată model', 'default', NULL, NULL, 'DATE', NULL, 0, 'modelDate', NULL),
         (28, 'car_fuel_consumption', 'Consum', 'default', NULL, NULL, 'NUMBER', NULL, 0, 'fuelConsumption', '@ l/100km');
 
 SELECT pg_catalog.setval('public.meta_props_id_seq', 28, true);

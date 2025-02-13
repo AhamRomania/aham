@@ -3,7 +3,7 @@ package route
 import (
 	"aham/common/c"
 	"aham/service/api/db"
-	"aham/service/api/vo"
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -23,6 +23,7 @@ type CreateAdRequest struct {
 	Messages    bool     `json:"messages"`
 	ShowPhone   bool     `json:"show_phone"`
 	Phone       *string  `json:"phone"`
+	Props       *c.D     `json:"props"`
 }
 
 func AdsRoutes(r chi.Router) {
@@ -48,10 +49,20 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tx, err := c.DB().Begin(
+		context.TODO(),
+	)
+
+	if err != nil {
+		http.Error(w, "nu am putut crea tranzactia", http.StatusBadRequest)
+		c.Log().Error(err)
+		return
+	}
+
 	user := db.GetUserByID(userID)
 
 	ad := db.Ad{
-		Owner:       userID,
+		OwnerID:     userID,
 		CategoryID:  p.Category,
 		Slug:        slug.Make(p.Title),
 		Title:       p.Title,
@@ -63,9 +74,20 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 		Price:       p.Price,
 		Currency:    p.Currency,
 		CityID:      user.City,
+		Props:       p.Props,
 	}
 
-	if err := ad.Save(); err != nil {
+	if err := ad.Save(tx); err != nil {
+		http.Error(w, "nu am putut salva anunțul", http.StatusBadRequest)
+		c.Log().Error(err)
+		return
+	}
+
+	if err := tx.Commit(context.TODO()); err != nil {
+		c.Log().Error(err)
+		if err := tx.Rollback(context.TODO()); err != nil {
+			c.Log().Error(err)
+		}
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -78,11 +100,12 @@ func GetAd(w http.ResponseWriter, r *http.Request) {
 	ad, err := db.GetAd(c.ID(r, "id"))
 
 	if err != nil {
-		http.Error(w, "Eroare 404: anunțul nu a fost găsit.", http.StatusNotFound)
+		http.Error(w, "anunțul nu a fost găsit.", http.StatusNotFound)
+		c.Log().Error(err)
 		return
 	}
 
-	render.JSON(w, r, vo.NewAd(ad))
+	render.JSON(w, r, ad)
 }
 
 func GetAds(w http.ResponseWriter, r *http.Request) {

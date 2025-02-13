@@ -67,6 +67,7 @@ create table ads (
     slug varchar(255) not null,
     title varchar(255) not null,
     description text not null,
+    props json,
     category integer not null references categories(id),
     owner integer not null references users(id),
     city integer references cities(id),
@@ -83,18 +84,6 @@ create table ads (
     list_until timestamp not null default current_timestamp,
     status varchar(20) not null default 'pending',
     check (status in ('pending', 'published', 'completed', 'dropped'))
-);
-
-create table meta_values (
-    "ad_id" bigint NOT NULL,
-    "meta_id" int NOT NULL,
-    "meta_value" json NOT NULL,
-    CONSTRAINT "meta_values_ad_id"
-        FOREIGN KEY("ad_id") 
-        REFERENCES ads(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT "meta_values_meta_id"
-        FOREIGN KEY("meta_id") 
-        REFERENCES meta_props(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 create table favourites (

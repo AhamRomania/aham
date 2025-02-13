@@ -18,6 +18,7 @@ import NumericFormatAdapter from "@/c/Form/NumericFormatAdapter";
 import { toCents } from "@/c/formatter";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import Link from "next/link";
+import AutocompletePropValue from "@/c/Form/AutocompletePropValue";
 
 export default function Page() {
 
@@ -60,34 +61,34 @@ export default function Page() {
   const propElementFactory = (prop: Prop) => {
     switch (prop.type) {
       case 'NUMBER':
-        return <FormControl key={prop.id} size="lg" required>
+        return <FormControl key={prop.id} size="lg">
             <FormLabel>{prop.title}</FormLabel>
-            <Input type="number" name={prop.name} endDecorator={prop.template ?? prop.template}/>
+            <Input type="number" name={`prop[${prop.name}]`} endDecorator={prop.template ?? prop.template}/>
             {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
         </FormControl>
       case 'TEXT':
-        return <FormControl key={prop.id} size="lg" required>
+        return <FormControl key={prop.id} size="lg">
             <FormLabel>{prop.title}</FormLabel>
-            <Input name={prop.name} endDecorator={prop.template ?? prop.template}/>
+            <AutocompletePropValue prop={prop} endDecorator={prop.template ?? prop.template}/>
             {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
         </FormControl>
       case 'BOOL':
-        return <FormControl key={prop.id} size="lg" required>
+        return <FormControl key={prop.id} size="lg">
             <FormLabel>{prop.title}</FormLabel>
-            <Checkbox name={prop.name}/>
+            <Checkbox name={`prop[${prop.name}]`}/>
             {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
         </FormControl>
       case 'DATE':
-        return <FormControl key={prop.id} size="lg" required>
+        return <FormControl key={prop.id} size="lg">
             <FormLabel>{prop.title}</FormLabel>
-            <Input type="date" name={prop.name} endDecorator={prop.template ?? prop.template}/>
+            <Input type="date" name={`prop[${prop.name}]`} endDecorator={prop.template ?? prop.template}/>
             {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
         </FormControl>
       case 'SELECT':
         return (
-          <FormControl key={prop.id} size="lg" required>
+          <FormControl key={prop.id} size="lg">
             <FormLabel>{prop.title}</FormLabel>
-            <Select name={prop.name}>
+            <Select name={`prop[${prop.name}]`}>
               <Option value="-1">Alege {prop.title}</Option>
               {prop.options.values.map((v: string,i: number) => <Option key={i} value={i}>{v}</Option>)}
               <Option value="0">Nu este în listă</Option>
@@ -106,6 +107,25 @@ export default function Page() {
           </div>
         )
     })
+  }
+
+  const getFormDataProps = (formData:{[key:string]:any}): {[key:string]:any} => {
+    
+    if (!props || props.length === 0) {
+      throw new Error('here props must be available');
+    }
+
+    const values: {[key:string]:any} = {};
+
+    Object.keys(formData).forEach(formKey => {
+        const reg = new RegExp(/^prop\[(.*)\]$/)
+        if (formData[formKey] !== '' && reg.test(formKey)) {
+          const propKey = formKey.match(reg)![1];
+          values[propKey] = formData[formKey];
+        }
+    });
+
+    return values
   }
 
   return (
@@ -136,15 +156,16 @@ export default function Page() {
           api(`/ads`, {
             method: 'POST',
             body: JSON.stringify({
-              currency: 'LEI',
               category: parseInt(data.category),
               description: data.description,
               messages: (data.messages === 'on'),
               show_phone: (data.phone === 'on'),
               phone: (data.phone || ''),
               pictures: (data.pictures||'').split(','),
+              currency: currency,
               price: toCents(data.price),
               title: data.title,
+              props: getFormDataProps(data)
             }),
           }).then((response: any) => {
             window.location.href = '/u/anunturi/creaza?id=' + response.id;
@@ -247,7 +268,7 @@ export default function Page() {
                               }}
                               sx={{ mr: -1.5, '&:hover': { bgcolor: 'transparent' } }}
                             >
-                              <Option value="EURO">EURO</Option>
+                              <Option value="EUR">EUR</Option>
                               <Option value="LEI">LEI</Option>
                             </Select>
                           </Fragment>

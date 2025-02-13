@@ -2,7 +2,6 @@ package vo
 
 import (
 	"aham/common/c"
-	"aham/service/api/db"
 	"time"
 )
 
@@ -22,32 +21,4 @@ type Ad struct {
 	Props        *c.D      `json:"props,omitempty"`
 	Status       string    `json:"status,omitempty"`
 	Created      time.Time `json:"created,omitempty"`
-}
-
-func NewAd(src *db.Ad) Ad {
-
-	c := *db.GetCategory(src.CategoryID)
-
-	return Ad{
-		ID: src.ID,
-		Category: Category{
-			ID:          c.ID,
-			Name:        c.Name,
-			Description: c.Description,
-			Pricing:     c.Pricing,
-		},
-		Owner:        NewUser(db.GetUserByID(src.Owner)),
-		Title:        src.Title,
-		Description:  src.Description,
-		Pictures:     src.Pictures,
-		Price:        src.Price,
-		Currency:     src.Currency,
-		City:         City(*db.GetCity(src.CityID)),
-		URL:          src.URL,
-		Props:        src.Props,
-		Status:       src.Status,
-		Created:      src.Created,
-		CategoryPath: src.CategoryPath,
-		CategoryHref: src.CategoryHref,
-	}
 }

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/go-chi/chi/v5"
 	"golang.org/x/text/runes"
@@ -148,4 +149,22 @@ func Normalize(s string) string {
 		return ""
 	}
 	return strings.ToLower(result)
+}
+
+func Ucfirst(s string) string {
+	if s == "" {
+		return s
+	}
+
+	// Decode the first rune (character) from the string
+	r, size := utf8.DecodeRuneInString(s)
+	if r == utf8.RuneError {
+		return s
+	}
+
+	// Convert the first rune to uppercase
+	first := unicode.ToUpper(r)
+
+	// Concatenate the uppercase first rune with the rest of the string
+	return string(first) + s[size:]
 }

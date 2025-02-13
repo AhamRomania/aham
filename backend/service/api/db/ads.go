@@ -6,34 +6,35 @@ import (
 	"context"
 	"errors"
 	"time"
+
+	"github.com/jackc/pgx/v5"
 )
 
 type Ad struct {
-	ID           int64     `json:"id"`
-	CategoryID   int64     `json:"category_id,omitempty"`
-	Category     *Category `json:"category,omitempty"`
-	CategoryPath string    `json:"category_path,omitempty"`
-	CategoryHref string    `json:"category_href,omitempty"`
-	Owner        int64     `json:"owner,omitempty"`
-	Slug         string    `json:"slug,omitempty"`
-	Title        string    `json:"title,omitempty"`
-	Description  string    `json:"description,omitempty"`
-	Pictures     []string  `json:"pictures,omitempty"`
-	Price        int64     `json:"price,omitempty"`
-	Currency     string    `json:"currency,omitempty"`
-	CityID       int64     `json:"city,omitempty"`
-	CityName     string    `json:"city_name,omitempty"`
-	URL          *string   `json:"string,omitempty"`
-	Href         string    `json:"href,omitempty"`
-	Messages     bool      `json:"messages,omitempty"`
-	ShowPhone    bool      `json:"show_phone,omitempty"`
-	Phone        *string   `json:"phone,omitempty"`
-	Props        *c.D      `json:"props,omitempty"`
-	Status       string    `json:"status,omitempty"`
-	Created      time.Time `json:"created,omitempty"`
+	ID          int64     `json:"id"`
+	CategoryID  int64     `json:"category_id,omitempty"`
+	Category    *Category `json:"category,omitempty"`
+	OwnerID     int64     `json:"owner_id,omitempty"`
+	Owner       *UserMin  `json:"owner,omitempty"`
+	Slug        string    `json:"slug,omitempty"`
+	Title       string    `json:"title,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Pictures    []string  `json:"pictures,omitempty"`
+	Price       int64     `json:"price,omitempty"`
+	Currency    string    `json:"currency,omitempty"`
+	CityID      int64     `json:"city,omitempty"`
+	CityName    string    `json:"city_name,omitempty"`
+	URL         *string   `json:"string,omitempty"`
+	Href        string    `json:"href,omitempty"`
+	Messages    bool      `json:"messages,omitempty"`
+	ShowPhone   bool      `json:"show_phone,omitempty"`
+	Phone       *string   `json:"phone,omitempty"`
+	Props       *c.D      `json:"props,omitempty"`
+	Status      string    `json:"status,omitempty"`
+	Created     time.Time `json:"created,omitempty"`
 }
 
-func (ad *Ad) Save() error {
+func (ad *Ad) Save(tx pgx.Tx) error {
 
 	if ad.CategoryID == 0 {
 		return errors.New("alege o categorie validă")
@@ -61,7 +62,7 @@ func (ad *Ad) Save() error {
 		}
 	}
 
-	row := c.DB().QueryRow(
+	row := tx.QueryRow(
 		context.Background(),
 		`
 		INSERT INTO ads 
@@ -69,6 +70,7 @@ func (ad *Ad) Save() error {
 				slug,
 				title,
 				description,
+				props,
 				category,
 				"owner",
 				city,
@@ -78,12 +80,13 @@ func (ad *Ad) Save() error {
 				status
 			) 
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, 'published')
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'published')
 		RETURNING id
 		`,
 		ad.Slug,
 		ad.Title,
 		ad.Description,
+		ad.Props,
 		ad.CategoryID,
 		ad.Owner,
 		ad.CityID,
@@ -184,7 +187,10 @@ func GetAds() (ads []*Ad) {
 
 func GetAd(id int64) (ad *Ad, err error) {
 
-	ad = &Ad{}
+	ad = &Ad{
+		Owner:    &UserMin{},
+		Category: &Category{},
+	}
 
 	row := c.DB().QueryRow(
 		context.TODO(),
@@ -195,6 +201,7 @@ func GetAd(id int64) (ad *Ad, err error) {
 			ads.owner,
 			ads.title,
 			ads.description,
+			ads.props,
 			ads.pictures,
 			ads.city,
 			CONCAT(counties.name, '/', cities.name) as city_name,
@@ -206,10 +213,17 @@ func GetAd(id int64) (ad *Ad, err error) {
 			ads.show_phone,
 			ads.phone,
 			ads.status,
+			categories.id,
+			categories.name,
 			get_category_path(ads.category)::text AS category_path,
-			get_category_href(ads.category)::text AS category_href
+			get_category_href(ads.category)::text AS category_href,
+			users.id,
+			users.given_name,
+			users.family_name
 		FROM
 			ads
+		LEFT JOIN users ON users.id = ads.owner
+		LEFT JOIN categories ON categories.id = ads.category
 		LEFT JOIN cities ON cities.id = ads.city
 		LEFT JOIN counties ON counties.id = cities.county
 		WHERE
@@ -223,9 +237,10 @@ func GetAd(id int64) (ad *Ad, err error) {
 	err = row.Scan(
 		&ad.ID,
 		&ad.CategoryID,
-		&ad.Owner,
+		&ad.OwnerID,
 		&ad.Title,
 		&ad.Description,
+		&ad.Props,
 		&ad.Pictures,
 		&ad.CityID,
 		&ad.CityName,
@@ -237,8 +252,13 @@ func GetAd(id int64) (ad *Ad, err error) {
 		&ad.ShowPhone,
 		&ad.Phone,
 		&ad.Status,
-		&ad.CategoryPath,
-		&ad.CategoryHref,
+		&ad.Category.ID,
+		&ad.Category.Name,
+		&ad.Category.Path,
+		&ad.Category.Href,
+		&ad.Owner.ID,
+		&ad.Owner.GivenName,
+		&ad.Owner.FamilyName,
 	)
 
 	return
