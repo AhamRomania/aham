@@ -5,6 +5,8 @@ import { Ad } from "../types";
 import { css } from "@emotion/react";
 import Gallery from "../Widget/Gallery";
 import AdCta from "../Widget/AdCta";
+import Link from "next/link";
+import { Breadcrumbs } from "@mui/joy";
 
 export interface AdPageProps {
     ad: Ad;
@@ -16,8 +18,9 @@ const AdPage:FC<AdPageProps> = ({ad}) => {
             <div
                 data-test="ad-parts"
                 css={css`
+                    margin-top: 30px;
                     display: grid;
-                    gap: 24px;
+                    gap: 10px 24px;
                     grid-template-columns: 700px 300px;
                     grid-template-rows: repeat(3, auto);
                     @media only screen and (max-width : 1200px) {
@@ -36,7 +39,17 @@ const AdPage:FC<AdPageProps> = ({ad}) => {
                         }
                     `}
                 >
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    <Breadcrumbs
+                        css={css`font-size: 14px;padding:0;`}
+                    >
+                        {ad.category.path.split(' > ').map((item,index) => (
+                            <Link key={index} href={'/'+ad.category.href.split('/').slice(0,index + 1).join('/')}>
+                                {item}
+                            </Link>
+                        ))}
+                    </Breadcrumbs>
+                    <h1 css={css`font-size: 36px; font-weight: bold;`}>{ad.title}</h1>
+                    <p css={css`font-size: 16px;`}>{ad.city_name}</p>
                 </div>
                 <div
                     data-test="ad-cta"

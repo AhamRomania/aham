@@ -88,7 +88,7 @@ func (ad *Ad) Save(tx pgx.Tx) error {
 		ad.Description,
 		ad.Props,
 		ad.CategoryID,
-		ad.Owner,
+		ad.OwnerID,
 		ad.CityID,
 		ad.Price,
 		ad.Currency,
@@ -108,14 +108,10 @@ func GetAds() (ads []*Ad) {
 		SELECT
 			ads.id,
 			ads.category,
-			categories.id,
-			categories.name,
-			categories.slug,
-			get_category_href(categories.id),
 			ads.owner,
-			ads.slug,
 			ads.title,
 			ads.description,
+			ads.props,
 			ads.pictures,
 			ads.city,
 			CONCAT(counties.name, '/', cities.name) as city_name,
@@ -123,18 +119,26 @@ func GetAds() (ads []*Ad) {
 			ads.currency,
 			ads.created_at,
 			ads.url,
-			concat(get_category_href(categories.id), '/', ads.slug, '-', ads.id),
 			ads.messages,
 			ads.show_phone,
 			ads.phone,
-			ads.status
+			ads.status,
+			categories.id,
+			categories.name,
+			get_category_path(ads.category)::text AS category_path,
+			get_category_href(ads.category)::text AS category_href,
+			users.id,
+			users.given_name,
+			users.family_name,
+			CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href
 		FROM
 			ads
+		LEFT JOIN users ON users.id = ads.owner
+		LEFT JOIN categories ON categories.id = ads.category
 		LEFT JOIN cities ON cities.id = ads.city
 		LEFT JOIN counties ON counties.id = cities.county
-		LEFT JOIN categories ON categories.id = ads.category
 		WHERE
-			status = 'published'
+			ads.status = 'published'
 		`,
 	)
 
@@ -146,20 +150,17 @@ func GetAds() (ads []*Ad) {
 	for rows.Next() {
 
 		ad := &Ad{
+			Owner:    &UserMin{},
 			Category: &Category{},
 		}
 
 		err = rows.Scan(
 			&ad.ID,
 			&ad.CategoryID,
-			&ad.Category.ID,
-			&ad.Category.Name,
-			&ad.Category.Slug,
-			&ad.Category.Href,
-			&ad.Owner,
-			&ad.Slug,
+			&ad.OwnerID,
 			&ad.Title,
 			&ad.Description,
+			&ad.Props,
 			&ad.Pictures,
 			&ad.CityID,
 			&ad.CityName,
@@ -167,11 +168,18 @@ func GetAds() (ads []*Ad) {
 			&ad.Currency,
 			&ad.Created,
 			&ad.URL,
-			&ad.Href,
 			&ad.Messages,
 			&ad.ShowPhone,
 			&ad.Phone,
 			&ad.Status,
+			&ad.Category.ID,
+			&ad.Category.Name,
+			&ad.Category.Path,
+			&ad.Category.Href,
+			&ad.Owner.ID,
+			&ad.Owner.GivenName,
+			&ad.Owner.FamilyName,
+			&ad.Href,
 		)
 
 		if err != nil {
@@ -219,7 +227,8 @@ func GetAd(id int64) (ad *Ad, err error) {
 			get_category_href(ads.category)::text AS category_href,
 			users.id,
 			users.given_name,
-			users.family_name
+			users.family_name,
+			CONCAT(get_category_href(ads.category)::text, '/', ads.slug,'-',ads.id) as href
 		FROM
 			ads
 		LEFT JOIN users ON users.id = ads.owner
@@ -259,6 +268,7 @@ func GetAd(id int64) (ad *Ad, err error) {
 		&ad.Owner.ID,
 		&ad.Owner.GivenName,
 		&ad.Owner.FamilyName,
+		&ad.Href,
 	)
 
 	return
