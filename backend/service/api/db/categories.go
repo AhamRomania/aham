@@ -3,6 +3,7 @@ package db
 import (
 	"aham/common/c"
 	"context"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -312,6 +313,82 @@ func GetCategoryTree(flat []*Category, parent *int64) (categories []*Category) {
 	return root.Children
 }
 
+func GetCategoryInheritedProps(categoryID int64) (props []*MetaProp) {
+
+	props = make([]*MetaProp, 0)
+
+	var path []*Category = make([]*Category, 0)
+
+	from := GetCategoryByID(categoryID)
+
+	for from != nil {
+
+		path = append(path, from)
+
+		if from.Parent != nil {
+			from = GetCategoryByID(*from.Parent)
+			continue
+		}
+
+		from = nil
+	}
+
+	slices.Reverse(path)
+
+	hasProp := func(search *MetaProp) bool {
+		for _, prop := range props {
+			if prop.Name == search.Name {
+				return true
+			}
+		}
+		return false
+	}
+
+	for _, category := range path {
+		for _, prop := range GetCategoryProps(category.ID) {
+			if !hasProp(prop) {
+				prop.Inherited = category.ID != categoryID
+				if !prop.Inherited && prop.Sort != nil {
+					// show parent props first
+					prop.Sort = c.Int64P(*prop.Sort + 1)
+				}
+				props = append(props, prop)
+			}
+		}
+	}
+
+	slices.SortFunc(props, func(a, b *MetaProp) int {
+
+		if a.Sort == nil && b.Sort == nil {
+			return 0
+		}
+
+		if a.Sort != nil && b.Sort == nil {
+			return 1
+		}
+
+		if a.Sort == nil && b.Sort != nil {
+			return -1
+		}
+
+		if int(*a.Sort) == int(*b.Sort) {
+			return 0
+		}
+
+		if int(*a.Sort) > int(*b.Sort) {
+			return 1
+		}
+
+		if int(*a.Sort) < int(*b.Sort) {
+			return -1
+		}
+
+		return 0
+	})
+
+	return
+}
+
 func GetCategoryProps(category int64) (metaProps []*MetaProp) {
 
 	sql := `
@@ -326,7 +403,8 @@ func GetCategoryProps(category int64) (metaProps []*MetaProp) {
 			mp.help,
 			mp.type,
 			mp.options,
-			mp.microdata
+			mp.microdata,
+			mp.sort
 		from
 			meta_assign as ma
 		left join meta_props as mp on ma.meta = mp.id
@@ -366,6 +444,7 @@ func GetCategoryProps(category int64) (metaProps []*MetaProp) {
 			&metaProp.Type,
 			&metaProp.Options,
 			&metaProp.Microdata,
+			&metaProp.Sort,
 		)
 
 		if template != nil {

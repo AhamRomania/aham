@@ -72,6 +72,7 @@ create table ads (
     city integer references cities(id),
     coordinates point,
     url text,
+    tags text[],
     messages boolean default true,
     show_phone boolean default false,
     phone text,
@@ -79,8 +80,21 @@ create table ads (
     currency currency default 'LEI',
     pictures text[] not null,
     created_at timestamp not null default current_timestamp,
+    list_until timestamp not null default current_timestamp,
     status varchar(20) not null default 'pending',
     check (status in ('pending', 'published', 'completed', 'dropped'))
+);
+
+create table meta_values (
+    "ad_id" bigint NOT NULL,
+    "meta_id" int NOT NULL,
+    "meta_value" json NOT NULL,
+    CONSTRAINT "meta_values_ad_id"
+        FOREIGN KEY("ad_id") 
+        REFERENCES ads(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT "meta_values_meta_id"
+        FOREIGN KEY("meta_id") 
+        REFERENCES meta_props(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 create table favourites (

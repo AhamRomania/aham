@@ -1,8 +1,8 @@
 "use client";
 
 import { css } from "@emotion/react";
-import { AddTaskOutlined, AdsClickOutlined, ChatOutlined, DashboardOutlined, FavoriteOutlined, FolderOutlined, FolderSpecialOutlined, Home, IosShareOutlined, Notifications, SettingsOutlined } from "@mui/icons-material";
-import { Breadcrumbs, Button, IconButton } from "@mui/joy";
+import { Add, AddTaskOutlined, AdsClickOutlined, ChatOutlined, DashboardOutlined, FavoriteOutlined, FolderOutlined, FolderSpecialOutlined, Home, IosShareOutlined, Notifications, SettingsOutlined } from "@mui/icons-material";
+import { Breadcrumbs, IconButton } from "@mui/joy";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { getUser } from "../Auth";
@@ -77,11 +77,20 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               <Logo bg="#9C27B0" color="#FFFFFF" size={42} padding={18} />
             </Tip>
           </Link>
-          {open && <Link href="/">
-            <Button size="md" variant="soft" color="primary" style={{marginLeft:"10px"}}>
-              Deschide Aham
-            </Button>
-          </Link>}
+          {open && (
+            <>
+              <Link href="/">
+                <IconButton size="md" variant="solid" color="primary" style={{marginLeft:"10px"}}>
+                    <Home color="action"/>
+                </IconButton>
+              </Link>
+              <Link href="/u/anunturi/creaza">
+                <IconButton href="/u/anunturi/creaza" size="md" variant="solid" color="primary" style={{marginLeft:"10px"}}>
+                    <Add color="action"/>
+                </IconButton>
+              </Link>
+            </>
+          )}
         </div>
         <button
           onClick={() => setOpen(!open)}

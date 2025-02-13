@@ -3,6 +3,7 @@ package db
 import (
 	"aham/common/c"
 	"context"
+	"slices"
 	"sync"
 )
 
@@ -19,12 +20,38 @@ type MetaProp struct {
 	Sort        *int64  `json:"sort,omitempty"`
 	Options     *c.D    `json:"options,omitempty"`
 	Microdata   string  `json:"microdata,omitempty"`
+	Inherited   bool    `json:"inherited,omitempty"`
 }
 
 type AdProp struct {
 	ID    int64    `json:"id,omitempty"`
 	Prop  MetaProp `json:"prop,omitempty"`
 	Value any      `json:"value,omitempty"`
+}
+
+func GetPropValues(id int64) (values []string) {
+
+	// cache
+
+	values = make([]string, 0)
+
+	rows, err := c.DB().Query(context.TODO(), `select meta_value from meta_values where meta_id = $1`, id)
+
+	if err != nil {
+		c.Log().Error(err)
+		return
+	}
+
+	for rows.Next() {
+		var v string
+		if err := rows.Scan(&v); err != nil {
+			c.Log().Error(err)
+			return
+		}
+		values = append(values, v)
+	}
+
+	return slices.Compact(values)
 }
 
 func GetAdProps(ad *Ad) []AdProp {

@@ -57,6 +57,57 @@ export default function Page() {
     api<Prop[]>(`/categories/${category?.id}/props`).then(setProps);
   }, [category]);
 
+  const propElementFactory = (prop: Prop) => {
+    switch (prop.type) {
+      case 'NUMBER':
+        return <FormControl key={prop.id} size="lg" required>
+            <FormLabel>{prop.title}</FormLabel>
+            <Input type="number" name={prop.name} endDecorator={prop.template ?? prop.template}/>
+            {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
+        </FormControl>
+      case 'TEXT':
+        return <FormControl key={prop.id} size="lg" required>
+            <FormLabel>{prop.title}</FormLabel>
+            <Input name={prop.name} endDecorator={prop.template ?? prop.template}/>
+            {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
+        </FormControl>
+      case 'BOOL':
+        return <FormControl key={prop.id} size="lg" required>
+            <FormLabel>{prop.title}</FormLabel>
+            <Checkbox name={prop.name}/>
+            {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
+        </FormControl>
+      case 'DATE':
+        return <FormControl key={prop.id} size="lg" required>
+            <FormLabel>{prop.title}</FormLabel>
+            <Input type="date" name={prop.name} endDecorator={prop.template ?? prop.template}/>
+            {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
+        </FormControl>
+      case 'SELECT':
+        return (
+          <FormControl key={prop.id} size="lg" required>
+            <FormLabel>{prop.title}</FormLabel>
+            <Select name={prop.name}>
+              <Option value="-1">Alege {prop.title}</Option>
+              {prop.options.values.map((v: string,i: number) => <Option key={i} value={i}>{v}</Option>)}
+              <Option value="0">Nu este în listă</Option>
+            </Select>
+            {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
+          </FormControl>
+        )
+    }
+  }
+
+  const renderProps = () => {
+    return props?.map((prop: Prop, index: number) => {
+        return (
+          <div key={index} data-type={prop.type}>
+            {propElementFactory(prop)}
+          </div>
+        )
+    })
+  }
+
   return (
     <Centred
       width={720}
@@ -137,13 +188,17 @@ export default function Page() {
             <Input name="title"/>
         </FormControl>
 
-        {props?.map((prop: Prop) => (
-          <FormControl key={prop.id} size="lg" required>
-              <FormLabel>{prop.title}</FormLabel>
-              <Input name="brand"/>
-          </FormControl>
-        ))}
-        
+        <div
+          css={css`
+            @media only screen and (min-width : 1200px) {
+              display: grid; 
+              grid-template-columns: 1fr 1fr; 
+              gap: 20px;
+            }
+          `}
+        >
+        {renderProps()}
+        </div>
 
         <FormControl size="lg" required>
             <FormLabel>Descriere</FormLabel>

@@ -27,6 +27,7 @@ export type Prop = {
     sort: number;
     options: any;
     microdata: any;
+    inherited: boolean;
 }
 
 export type County = {

@@ -120,7 +120,7 @@ const CategoriesEditor:FC = () => {
     const [root, setRoot] = useState<Node>();
     const [node, setNode] = useState<Node>();
     const [props, setProps] = useState<Prop[]>([]);
-    const [assigned, setAssigned] = useState<{[key:string]:boolean}>({});
+    const [assigned, setAssigned] = useState<{[key:string]:Prop | undefined}>({});
     const [assignProps, setAssignProps] = useState<boolean>(false);
     const [assignTo, setAssignTo] = useState<Node | null>(null);
     const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -245,9 +245,9 @@ const CategoriesEditor:FC = () => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         api<Prop[]>(`/categories/${node.id}/props`).then((props: any) => {
             if(props && props.length) {
-                const data: {[key: string]:boolean} = {};
+                const data: {[key: string]:Prop} = {};
                 props.forEach((item: Prop) => {
-                    data[item.id] = true;
+                    data[item.id] = item;
                 })
                 setAssigned(data);
             } else {
@@ -274,7 +274,7 @@ const CategoriesEditor:FC = () => {
             }
 
             const data = {...assigned};
-            data[item.id] = checked;
+            data[item.id] = checked ? item : undefined;
             setAssigned(data);
         }
     }
@@ -393,7 +393,8 @@ const CategoriesEditor:FC = () => {
                                     label={item.title +' '+ (item.options ? JSON.stringify(item.options?.values) : '')}
                                     name={item.name}
                                     size="sm"
-                                    checked={assigned[item.id] || false}
+                                    disabled={assigned[item.id]?.inherited}
+                                    checked={assigned[item.id] !== undefined}
                                     onChange={(e) => onPropAssignChange(item, e.target.checked)}
                                 />
                             </Card>

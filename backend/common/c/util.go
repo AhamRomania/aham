@@ -59,10 +59,14 @@ func (a *M) Scan(value interface{}) error {
 }
 
 func NilID(id int64) *int64 {
-	if id == 0 {
+	return Int64P(id)
+}
+
+func Int64P(v int64) *int64 {
+	if v == 0 {
 		return nil
 	}
-	return &id
+	return &v
 }
 
 func String(s string) *string {

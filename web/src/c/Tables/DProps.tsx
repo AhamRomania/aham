@@ -42,6 +42,7 @@ const DProps:FC<DPropsProps> = ({props:rows,onChange}) => {
                         <th>Grup</th>
                         <th>Template</th>
                         <th>Description</th>
+                        <th>Sort</th>
                         <th style={{width:'7%'}}></th>
                     </tr>
                 </thead>
@@ -58,6 +59,7 @@ const DProps:FC<DPropsProps> = ({props:rows,onChange}) => {
                         <td>{row.group}</td>
                         <td>{row.template}</td>
                         <td>{row.description}</td>
+                        <td>{row.sort}</td>
                         <td>
                             <Stack flexDirection="row" gap={1}>
                                 <IconButton onClick={() => setEdit(row)} variant="soft" size="sm">

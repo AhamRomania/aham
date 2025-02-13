@@ -19,6 +19,11 @@ func PropsRoute(r chi.Router) {
 	r.Delete("/{id}", c.Guard(deleteProp))
 	r.Post("/assign", c.Guard(assignProp))
 	r.Delete("/assign/{prop}/{category}", c.Guard(removeAssign))
+	r.Get("/{id}/values", getPropValues)
+}
+
+func getPropValues(w http.ResponseWriter, r *http.Request) {
+	render.JSON(w, r, db.GetPropValues(c.ID(r, "id")))
 }
 
 func createProp(w http.ResponseWriter, r *http.Request) {

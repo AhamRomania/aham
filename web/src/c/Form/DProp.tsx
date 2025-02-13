@@ -58,6 +58,10 @@ const DPropForm:FC<DPropFormProps> = ({prop, formRef, onSubmit}) => {
                 <Input name="template" value={prop?.template}/>
             </FormControl>
             <FormControl>
+                <FormLabel>Sort</FormLabel>
+                <Input name="sort" defaultValue={prop?.sort}/>
+            </FormControl>
+            <FormControl>
                 <FormLabel>Options</FormLabel>
                 <Textarea name="options" minRows={3} value={prop?.options ? JSON.stringify(prop?.options) : ''}></Textarea>
             </FormControl>

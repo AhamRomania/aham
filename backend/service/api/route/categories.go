@@ -194,7 +194,7 @@ func GetCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCategoryProps(w http.ResponseWriter, r *http.Request) {
-	render.JSON(w, r, db.GetCategoryProps(c.ID(r, "id")))
+	render.JSON(w, r, db.GetCategoryInheritedProps(c.ID(r, "id")))
 }
 
 func GetCategories(w http.ResponseWriter, r *http.Request) {
