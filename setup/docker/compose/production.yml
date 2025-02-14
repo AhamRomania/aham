@@ -138,6 +138,8 @@ services:
       LISTEN: :8085
       DOMAIN: https://url.aham.ro
       DBPATH: /var/aham/db/url
+    volumes:
+      - /var/aham/db/url:/var/aham/db/url
     networks:
       aham:
         ipv4_address: 10.5.0.13
