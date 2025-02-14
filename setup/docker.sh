@@ -40,7 +40,7 @@ if [ "$answer" == "y" ]; then
 
     # URL
 
-    cd $ROOT_DIR/backend/service/url/ && env CGO_ENABLED=1 GOOS=linux GARCH=amd64 go build -o $BIN_PATH/url -a -ldflags '-extldflags "-static"' main.go
+    cd $ROOT_DIR/backend/service/url/ && env CGO_ENABLED=1 GOOS=linux GARCH=amd64 go build -o $BIN_PATH/url -tags "libsqlite3 linux" main.go
 
     chmod +x $BIN_PATH/url
 
