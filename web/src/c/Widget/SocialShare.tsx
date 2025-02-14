@@ -14,16 +14,18 @@ export interface SocialShareProps {
 const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
 
   const [showCopiedInfo, setShowCopiedInfo] = useState(false);
-  const [shortURL, setShortURL] = useState<string>();
+  const [shortURL, setShortURL] = useState<string>('');
 
   useEffect(() => {
-    if (shortURL) { return; }
     const data = new FormData();
     data.set("url", url);
-    fetch(getDomain(Domain.Url), { method: "POST", mode: 'no-cors', body: data })
-      .then((response) => response.text())
-      .then((short) => {
-        setShortURL(short);
+    fetch(getDomain(Domain.Url), { method: "POST", body: data })
+      .then((response) => {
+        response.text().then((short) => {
+          if (short != '' && shortURL == '') {
+            setShortURL(short);
+          }
+        })
       });
   }, []);
 
@@ -40,11 +42,15 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
     }
   };
 
+  if (shortURL == '') {
+    return [];
+  }
+
   return (
     <>
       <Stack gap={1} flexDirection="row">
         <Tip delay={100} title="Distribuie pe X">
-          <Link href={`https://x.com/intent/tweet?text=${ad.title}&url=${shortURL}`} target="_blank">
+          <Link suppressHydrationWarning href={`https://x.com/intent/tweet?text=${encodeURIComponent(ad.title)}&url=${shortURL}`} target="_blank">
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
@@ -56,7 +62,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
         </Tip>
 
         <Tip delay={100} title="Distribuie pe Facebook">
-          <Link href={`https://www.facebook.com/sharer/sharer.php?u=${shortURL}`} target="_blank">
+          <Link suppressHydrationWarning href={`https://www.facebook.com/sharer/sharer.php?u=${shortURL}`} target="_blank">
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
@@ -68,7 +74,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
         </Tip>
 
         <Tip delay={100} title="Distribuie pe Pinterest">
-          <Link href={`https://pinterest.com/pin/create/button/?url=${shortURL}&description=${ad.title}`} target="_blank">
+          <Link suppressHydrationWarning href={`https://pinterest.com/pin/create/button/?url=${shortURL}&description=${encodeURIComponent(ad.title)}`} target="_blank">
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
