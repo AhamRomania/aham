@@ -27,7 +27,7 @@ services:
       LISTEN: :8081
       TEMPLATES: /templates
       SMTP_PASSWORD: "@defender@"
-      DB: postgres://aham:aham@10.5.0.8:5432/api
+      DB: postgres://aham:aham@10.5.0.8:5432/aham
       CDN: http://10.5.0.7:8082
     volumes:
       - /usr/local/aham/gcm/templates:/templates
@@ -65,7 +65,7 @@ services:
     environment:
       POSTGRES_USER: aham
       POSTGRES_PASSWORD: aham
-      POSTGRES_DB: api
+      POSTGRES_DB: aham
     restart: always
     volumes:
       - ../../db/api:/docker-entrypoint-initdb.d
