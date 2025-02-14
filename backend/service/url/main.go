@@ -22,10 +22,15 @@ func init() {
 
 	godotenv.Load()
 
+	dbfile := filepath.Join(os.Getenv("DBPATH"), "urls.db")
+
+	c.Log().Infof("Using db %s".dbfile)
+
 	var err error
-	_db, err := sql.Open("sqlite3", filepath.Join(os.Getenv("DBPATH"), "urls.db"))
+	_db, err := sql.Open("sqlite3", dbfile)
 	if err != nil {
-		panic(err)
+		c.Log().Error(err)
+		return
 	}
 
 	createTableSQL := `CREATE TABLE IF NOT EXISTS urls (
@@ -35,7 +40,8 @@ func init() {
 
 	_, err = _db.Exec(createTableSQL)
 	if err != nil {
-		panic(err)
+		c.Log().Error(err)
+		return
 	}
 
 	c.Log().Info(color.Ize(color.Yellow, "Connected to database"))
