@@ -2,6 +2,7 @@ export enum Domain {
     Web = 1,
     Api,
     Cdn,
+    Url,
 }
 
 const getDomain = (context:Domain = Domain.Web, path: string = ''): string => {
@@ -16,6 +17,9 @@ const getDomain = (context:Domain = Domain.Web, path: string = ''): string => {
             break;
         case Domain.Cdn:
             domain = dev ? 'http://localhost:8002' : 'https://cdn.aham.ro';
+            break;
+        case Domain.Url:
+            domain = dev ? 'http://localhost:8003' : 'https://url.aham.ro';
             break;
         case Domain.Web: default:
             domain = dev ? 'http://localhost:3000' : 'https://aham.ro';

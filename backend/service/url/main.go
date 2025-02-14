@@ -89,7 +89,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(fmt.Sprintf("%s/%s", os.Getenv("DOMAIN"), shortID)))
 
 	} else if r.Method == http.MethodGet {
@@ -110,6 +110,22 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		// Handle preflight requests
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	http.HandleFunc("/", handler)
 	listen := os.Getenv("LISTEN")
@@ -118,7 +134,7 @@ func main() {
 		os.Exit(1)
 	}
 	c.Log().Infof("Listen on %s", listen)
-	if err := http.ListenAndServe(listen, nil); err != nil {
+	if err := http.ListenAndServe(listen, corsMiddleware(http.DefaultServeMux)); err != nil {
 		c.Log().Error(err)
 	}
 }

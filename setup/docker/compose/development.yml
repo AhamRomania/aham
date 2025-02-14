@@ -10,7 +10,7 @@ services:
     ports:
       - 15432:5432
     volumes:
-      - ../../db:/docker-entrypoint-initdb.d
+      - ../../db/api:/docker-entrypoint-initdb.d
 networks:
   aham:
     driver: bridge

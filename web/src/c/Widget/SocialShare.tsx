@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Tip from "../tooltip";
 import { IconButton, Snackbar, Stack } from "@mui/joy";
 import { CheckCircle } from "@mui/icons-material";
 import { Ad } from "../types";
+import getDomain, { Domain } from "../domain";
 
 export interface SocialShareProps {
   url: string;
@@ -11,16 +12,33 @@ export interface SocialShareProps {
 }
 
 const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
-  
+
   const [showCopiedInfo, setShowCopiedInfo] = useState(false);
+  const [shortURL, setShortURL] = useState<string>();
+
+  useEffect(() => {
+    if (shortURL) { return; }
+    const data = new FormData();
+    data.set("url", url);
+    fetch(getDomain(Domain.Url), { method: "POST", body: data })
+      .then((response) => response.text())
+      .then((short) => {
+        setShortURL(short);
+      });
+  }, []);
 
   const handleCopyURL = () => {
-    navigator.clipboard.writeText(url).then(
-      () => {
-        setShowCopiedInfo(true);
-      }
-    )
-  }
+    if (shortURL) {
+      navigator.clipboard.writeText(shortURL!).then(
+        () => {
+          setShowCopiedInfo(true);
+        },
+        () => {
+          alert("Nu am putut copia URL");
+        }
+      );
+    }
+  };
 
   return (
     <>
@@ -61,7 +79,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
           </Link>
         </Tip>
         <Tip delay={100} title="Copiază Link">
-          <IconButton onClick={() => handleCopyURL()}>
+          <IconButton onClick={handleCopyURL}>
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
