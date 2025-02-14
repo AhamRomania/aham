@@ -41,23 +41,23 @@ const Footer: FC<FooterProps> = ({version}) => {
                             <h4>Aham</h4>
                             <main>
                                 <nav className={style.menu}>
-                                    <Link href="/despre">Despre</Link>
-                                    <Link href="/promovare">Promovează</Link>
-                                    <Link href="/categorii">Categorii</Link>
-                                    <Link href="/curiozitati">Curiozitati</Link>
-                                    <Link href="/contact">Contact</Link>
+                                    <Link prefetch={false} href="/despre">Despre</Link>
+                                    <Link prefetch={false} href="/promovare">Promovează</Link>
+                                    <Link prefetch={false} href="/categorii">Categorii</Link>
+                                    <Link prefetch={false} href="/curiozitati">Curiozitati</Link>
+                                    <Link prefetch={false} href="/contact">Contact</Link>
                                 </nav>
                                 <nav className={style.menu}>
-                                    <Link href="https://blog.aham.ro">Blog</Link>
-                                    <Link href="/ajutor">Ajutor</Link>
-                                    <Link href="/afla">Află</Link>
-                                    <Link href="/developeri">Developeri</Link>
+                                    <Link prefetch={false} href="https://blog.aham.ro">Blog</Link>
+                                    <Link prefetch={false} href="/ajutor">Ajutor</Link>
+                                    <Link prefetch={false} href="/afla">Află</Link>
+                                    <Link prefetch={false} href="/developeri">Developeri</Link>
                                 </nav>
                                 <nav className={style.hideOnDesktop + ' ' + style.menu}>
-                                    <Link href="/ajutor">Ajutor</Link>
-                                    <Link href="/cookies">Cookies</Link>
-                                    <Link href="/termeni-si-conditii">Termeni și condiții</Link>
-                                    <Link href="/contact">Contact</Link>
+                                    <Link prefetch={false} href="/ajutor">Ajutor</Link>
+                                    <Link prefetch={false} href="/cookies">Cookies</Link>
+                                    <Link prefetch={false} href="/termeni-si-conditii">Termeni și condiții</Link>
+                                    <Link prefetch={false} href="/contact">Contact</Link>
                                 </nav>
                             </main>
                         </section>
@@ -130,9 +130,9 @@ const Footer: FC<FooterProps> = ({version}) => {
                             <em>© {(new Date()).getFullYear()} Aham</em>
                             <i>㆐</i>
                             <nav>
-                                <Link href="/confidentialitate">Confidentialitate</Link>
-                                <Link href="/cookies">Cookies</Link>
-                                <Link href="/termeni-si-conditii">Termeni și condiții</Link>
+                                <Link href="/confidentialitate" prefetch={false}>Confidentialitate</Link>
+                                <Link href="/cookies" prefetch={false}>Cookies</Link>
+                                <Link href="/termeni-si-conditii" prefetch={false}>Termeni și condiții</Link>
                             </nav>
                         </div>
                         <Space/>

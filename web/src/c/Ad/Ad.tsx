@@ -17,6 +17,7 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
     return (
         <Link
             href={getDomain(Domain.Web) + '/' + vo.href}
+            prefetch={false}
             css={css(`
                 display: inline-block;
                 width: 100%;
