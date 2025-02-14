@@ -64,7 +64,7 @@ func TestUploadAndAccess(t *testing.T) {
 		return
 	}
 
-	var u = &Upload{}
+	var u = &MetaInfo{}
 
 	if err := json.Unmarshal(data, u); err != nil {
 		t.Error(err)

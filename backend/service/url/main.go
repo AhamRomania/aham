@@ -2,82 +2,78 @@ package main
 
 import (
 	"aham/common/c"
-	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/TwiN/go-color"
 	"github.com/joho/godotenv"
-	"github.com/redis/go-redis/v9"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/teris-io/shortid"
 )
 
-var redisc *redis.Client
+var db *sql.DB
 
 func init() {
 
 	godotenv.Load()
 
-	opts, err := redis.ParseURL(os.Getenv("REDIS"))
-
+	var err error
+	_db, err := sql.Open("sqlite3", filepath.Join(os.Getenv("DBPATH"), "urls.db"))
 	if err != nil {
 		panic(err)
 	}
 
-	opts.UnstableResp3 = true
+	createTableSQL := `CREATE TABLE IF NOT EXISTS urls (
+        "id" TEXT NOT NULL PRIMARY KEY,
+        "url" TEXT NOT NULL
+    );`
 
-	c.Log().Infof("Connected to redis: %s", color.Ize(color.Yellow, opts.Addr))
+	_, err = _db.Exec(createTableSQL)
+	if err != nil {
+		panic(err)
+	}
 
-	redisc = redis.NewClient(opts)
+	c.Log().Info(color.Ize(color.Yellow, "Connected to database"))
+
+	db = _db
 }
 
 func storeURL(url string) (id string, err error) {
 
-	cmd := redisc.Get(
-		context.Background(),
-		url,
-	)
+	if url == "" {
+		return id, errors.New("url can't be empty")
+	}
 
-	if cmd.Val() != "" {
-		return cmd.Val(), nil
+	var existingID string
+	err = db.QueryRow("SELECT id FROM urls WHERE url = ?", url).Scan(&existingID)
+	if err == nil {
+		return existingID, nil
 	}
 
 	id, err = shortid.Generate()
-
 	if err != nil {
 		return "", err
 	}
 
-	setvCMD := redisc.Set(
-		context.Background(),
-		"URL_"+id,
-		url,
-		0,
-	)
+	_, err = db.Exec("INSERT INTO urls (id, url) VALUES (?, ?)", id, url)
+	if err != nil {
+		return "", err
+	}
 
-	redisc.Set(
-		context.Background(),
-		url,
-		id,
-		0,
-	)
-
-	return id, setvCMD.Err()
+	return id, nil
 }
 
 func getURL(id string) (url string, exists bool) {
-
-	cmd := redisc.Get(
-		context.Background(),
-		"URL_"+id,
-	)
-
-	url = cmd.Val()
-	exists = cmd.Err() == nil
-
-	return
+	err := db.QueryRow("SELECT url FROM urls WHERE id = ?", id).Scan(&url)
+	if err != nil {
+		return "", false
+	}
+	return url, true
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -89,7 +85,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		shortID, err := storeURL(longURL)
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -117,6 +113,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/", handler)
 	listen := os.Getenv("LISTEN")
+	if listen == "" {
+		c.Log().Error("listen env expected")
+		os.Exit(1)
+	}
 	c.Log().Infof("Listen on %s", listen)
 	if err := http.ListenAndServe(listen, nil); err != nil {
 		c.Log().Error(err)

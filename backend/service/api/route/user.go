@@ -66,6 +66,11 @@ func ActivateUser(w http.ResponseWriter, r *http.Request) {
 func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 	if id, err := c.UserID(r); err == nil {
 		me := db.GetUserByID(id)
+		if me == nil {
+			c.Log().Errorf("expected user since jwt has id: %d", id)
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 		render.JSON(w, r, vo.NewUser(me))
 	}
 }

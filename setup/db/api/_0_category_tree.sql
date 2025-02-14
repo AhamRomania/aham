@@ -181,7 +181,7 @@ INSERT INTO public.categories (id, name, slug, description, parent, sort, pricin
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (40, 'Camere, camere video și echipamente de studio', 'camere-camere-video-si-echipamente-de-studio', '', 2, 0, true, false);
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (41, 'Lichidarea casei', 'lichidarea-casei', '', 2, 0, true, false);
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (42, 'Decoratiuni de Craciun', 'decoratiuni-de-craciun', '', 2, 0, true, false);
-INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (43, 'Freebiuri', 'freebiuri', '', 2, 0, true, false);
+INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (43, 'Gratuite', 'gratuite', '', 2, 0, true, false);
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (44, 'Lucruri dorite', 'lucruri-dorite', '', 2, 0, true, false);
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (45, 'Bilete', 'bilete', '', 2, 0, true, false);
 INSERT INTO public.categories (id, name, slug, description, parent, sort, pricing, hidden) VALUES (46, 'Magazin de schimburi', 'magazin-de-schimburi', '', 2, 0, true, false);
