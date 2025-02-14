@@ -30,7 +30,7 @@ func init() {
 	_db, err := sql.Open("sqlite3", dbfile)
 	if err != nil {
 		c.Log().Error(err)
-		return
+		os.Exit(1)
 	}
 
 	createTableSQL := `CREATE TABLE IF NOT EXISTS urls (
@@ -41,7 +41,12 @@ func init() {
 	_, err = _db.Exec(createTableSQL)
 	if err != nil {
 		c.Log().Error(err)
-		return
+		os.Exit(1)
+	}
+
+	if err := _db.Ping(); err != nil {
+		c.Log().Errorf("can't ping db: %s", err.Error())
+		os.Exit(1)
 	}
 
 	c.Log().Info(color.Ize(color.Yellow, "Connected to database"))
