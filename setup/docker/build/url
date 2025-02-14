@@ -1,4 +1,5 @@
 FROM alpine
 WORKDIR /usr/local/url
 COPY bin/url /usr/local/bin
+RUN chmod +x /usr/local/bin/url
 ENTRYPOINT ["url"]
