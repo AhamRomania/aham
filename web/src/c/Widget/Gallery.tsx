@@ -23,7 +23,7 @@ const Gallery: FC<GalleryProps> = ({pictures}) => {
             imgRef.current.addEventListener('load', () => {
                 setLoading(false)
             });
-            setSrc(getDomain(Domain.Cdn) + `/` + pictures[current] + `?w=2048`);
+            setSrc(getDomain(Domain.Cdn) + `/` + pictures[current] + `?w=700`);
         }
     }, [imgRef, current]);
 

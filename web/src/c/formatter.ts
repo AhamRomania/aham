@@ -28,7 +28,7 @@ export function formatMoney(money: number, currency: string) {
 export function toMoney(cents: number): string {
 
     if (typeof cents !== "number" || !Number.isInteger(cents)) {
-        throw new Error("Input must be an integer representing cents");
+        throw new Error("Input must be an integer representing cents: " + typeof(cents));
     }
 
     // Convert cents to dollars
