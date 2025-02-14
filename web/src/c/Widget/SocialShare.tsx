@@ -44,7 +44,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
     <>
       <Stack gap={1} flexDirection="row">
         <Tip delay={100} title="Distribuie pe X">
-          <Link href={`https://x.com/intent/tweet?text=${ad.title}&url=${url}`} target="_blank">
+          <Link href={`https://x.com/intent/tweet?text=${ad.title}&url=${shortURL}`} target="_blank">
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
@@ -56,7 +56,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
         </Tip>
 
         <Tip delay={100} title="Distribuie pe Facebook">
-          <Link href={`https://www.facebook.com/sharer/sharer.php?u=${url}`} target="_blank">
+          <Link href={`https://www.facebook.com/sharer/sharer.php?u=${shortURL}`} target="_blank">
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
@@ -68,7 +68,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
         </Tip>
 
         <Tip delay={100} title="Distribuie pe Pinterest">
-          <Link href={`https://pinterest.com/pin/create/button/?url=${url}&description=${ad.title}`} target="_blank">
+          <Link href={`https://pinterest.com/pin/create/button/?url=${shortURL}&description=${ad.title}`} target="_blank">
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
