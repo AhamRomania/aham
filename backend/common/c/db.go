@@ -16,7 +16,7 @@ func DB() *pgx.Conn {
 	if _conn != nil {
 
 		if err := _conn.Ping(context.Background()); err != nil {
-			Log().Warn("Pg reconnect on ping failed")
+			Log().Warnf("DB ping error: %s", err.Error())
 			return conn()
 		}
 

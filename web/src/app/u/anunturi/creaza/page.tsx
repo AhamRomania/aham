@@ -112,7 +112,7 @@ export default function Page() {
   const getFormDataProps = (formData:{[key:string]:any}): {[key:string]:any} => {
     
     if (!props || props.length === 0) {
-      throw new Error('here props must be available');
+      return {};
     }
 
     const values: {[key:string]:any} = {};

@@ -114,10 +114,11 @@ func NilString(s string) *string {
 
 func ID(r *http.Request, name string) int64 {
 
-	n, err := strconv.ParseInt(chi.URLParam(r, name), 10, 64)
+	p := chi.URLParam(r, name)
+	n, err := strconv.ParseInt(p, 10, 64)
 
 	if err != nil {
-		Log().Error(err)
+		Log().Errorf("getting id from key: %s value: %s", name, p)
 		return -0
 	}
 
