@@ -52,10 +52,6 @@ services:
       FILES: /var/aham/cdn
     volumes:
       - /var/aham/cdn:/var/aham/cdn
-    depends_on:
-      redis:
-        restart: true
-        condition: service_started
     networks:
       aham:
         ipv4_address: 10.5.0.7
@@ -73,20 +69,6 @@ services:
     networks:
       aham:
         ipv4_address: 10.5.0.8
-  redis:
-    image: redis/redis-stack:latest
-    container_name: aham_prod_redis
-    restart: always
-    environment:
-      - REDIS_USER=aham
-      - REDIS_PASSWORD=aham
-      - REDIS_PORT=6379
-      - REDIS_DATABASES=16
-    volumes:
-      - /var/aham/db/redis:/data
-    networks:
-      aham:
-        ipv4_address: 10.5.0.9
   wpdb:
     image: mysql:8.0
     restart: always
@@ -155,13 +137,8 @@ services:
     environment:
       LISTEN: :8085
       DOMAIN: https://url.aham.ro
-      REDIS: redis://:aham@10.5.0.9:6379/1?protocol=3
     volumes:
       - /var/aham/cdn:/var/aham/cdn
-    depends_on:
-      redis:
-        restart: true
-        condition: service_started
     networks:
       aham:
         ipv4_address: 10.5.0.13

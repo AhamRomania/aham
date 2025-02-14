@@ -10,24 +10,6 @@ services:
       POSTGRES_DB: aham
     volumes:
       - ./db:/docker-entrypoint-initdb.d
-  redis:
-    image: redis/redis-stack:latest
-    container_name: cdndb-test
-    restart: always
-    ports:
-      - 6380:6379
-    volumes:
-      - cdndb:/root/redis
-    environment:
-      - REDIS_USER=aham
-      - REDIS_PASSWORD=aham
-      - REDIS_PORT=6379
-      - REDIS_DATABASES=16
-
-volumes:
-  cdndb:
-    external: false
-
 networks:
   aham:
     driver: bridge

@@ -7,7 +7,6 @@ BIN_PATH="$ROOT_DIR/bin"
 mkdir -p $ROOT_DIR/data/cdn
 mkdir -p $ROOT_DIR/data/db/api
 mkdir -p $ROOT_DIR/data/db/wp
-mkdir -p $ROOT_DIR/data/db/redis
 
 # Prompt the user for a yes/no response
 read -p "Do you want to build images? (y/n): " answer

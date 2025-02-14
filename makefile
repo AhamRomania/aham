@@ -22,12 +22,10 @@ clean:
 	rm  -rf data/cdn
 	rm  -rf data/db/wp
 	rm  -rf data/db/api
-	rm  -rf data/db/redis
 
 	mkdir -p data/cdn
 	mkdir -p data/db/wp
 	mkdir -p data/db/api
-	mkdir -p data/db/redis
 	
 	chmod -R 750 data/
 
