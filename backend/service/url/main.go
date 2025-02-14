@@ -126,7 +126,7 @@ func main() {
 
 	mux := chi.NewMux()
 	mux.Use(c.CORS())
-	mux.HandleFunc("/", handler)
+	mux.HandleFunc("/*", handler)
 
 	listen := os.Getenv("LISTEN")
 	if listen == "" {
