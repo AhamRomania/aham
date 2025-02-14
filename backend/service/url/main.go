@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/TwiN/go-color"
+	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/teris-io/shortid"
@@ -121,27 +122,19 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func corsMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "https://aham.ro")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusNoContent)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
 func main() {
-	http.HandleFunc("/", handler)
+
+	mux := chi.NewMux()
+	mux.Use(c.CORS())
+	mux.HandleFunc("/", handler)
+
 	listen := os.Getenv("LISTEN")
 	if listen == "" {
 		c.Log().Error("listen env expected")
 		os.Exit(1)
 	}
 	c.Log().Infof("Listen on %s", listen)
-	if err := http.ListenAndServe(listen, corsMiddleware(http.DefaultServeMux)); err != nil {
+	if err := http.ListenAndServe(listen, mux); err != nil {
 		c.Log().Error(err)
 	}
 }
