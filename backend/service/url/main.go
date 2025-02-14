@@ -24,7 +24,7 @@ func init() {
 
 	dbfile := filepath.Join(os.Getenv("DBPATH"), "urls.db")
 
-	c.Log().Infof("Using db %s".dbfile)
+	c.Log().Infof("Using db %s", dbfile)
 
 	var err error
 	_db, err := sql.Open("sqlite3", dbfile)
