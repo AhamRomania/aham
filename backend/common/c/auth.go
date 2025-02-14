@@ -1,6 +1,7 @@
 package c
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -28,6 +29,10 @@ func UserID(r *http.Request) (id int64, err error) {
 
 	if authHeader == "" {
 		return 0, fmt.Errorf("authorization header is required")
+	}
+
+	if len(authHeader) < 8 {
+		return id, errors.New("invalid authorization")
 	}
 
 	tokenString := authHeader[len("Bearer "):]

@@ -138,12 +138,12 @@ const Footer: FC<FooterProps> = ({version}) => {
                         <Space/>
                         <div className={style.right}>
                             <div className={style.version}>
-                                <Link href="/status">
+                                <Link href="/status" prefetch={false}>
                                     {version}
                                 </Link>
                             </div>
                             <Tip title="Navighează la pagina principală">
-                                <Link href="/">
+                                <Link href="/" prefetch={false}>
                                     <Logo size={32} padding={10} bg="#FFF" color="#000" radius={3} />
                                 </Link>
                             </Tip>

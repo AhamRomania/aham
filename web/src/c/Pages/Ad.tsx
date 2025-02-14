@@ -176,7 +176,7 @@ const AdPage:FC<AdPageProps> = ({ad}) => {
                                 a { color: #999; }
                             `}
                         >
-                            <Link href="/promovare?uiref=ad_page_banner">Vreau acest spațiu de promovare.</Link>
+                            <Link href="/promovare?uiref=ad_page_banner" prefetch={false}>Vreau acest spațiu de promovare.</Link>
                         </div>
                     </div>
                 </div>

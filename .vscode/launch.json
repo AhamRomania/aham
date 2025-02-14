@@ -34,7 +34,6 @@
                 "LISTEN": ":8002",
                 "FILES": "${workspaceFolder}/data/cdn",
                 "DEV": "true",
-                "REDIS": "redis://:aham@localhost:16379/0?protocol=3"
             },
         },
         {

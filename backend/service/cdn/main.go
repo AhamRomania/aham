@@ -3,7 +3,6 @@ package main
 import (
 	"aham/common/c"
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"hash/crc32"
@@ -15,7 +14,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -28,56 +26,23 @@ import (
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"github.com/nfnt/resize"
-	"github.com/redis/go-redis/v9"
 )
 
-type Upload struct {
-	UUID        uuid.UUID `json:"uuid"`
-	UserID      int64     `json:"uid"`
-	Filename    string    `json:"filename"`
-	Size        int64     `json:"size"`
-	CRC         string    `json:"crc"`
-	Mime        string    `json:"mime"`
-	CreatedTime string    `json:"ctime"`
+type MetaInfo struct {
+	UUID     uuid.UUID `json:"uuid"`
+	UID      int64     `json:"uid"`
+	Filename string    `json:"filename"`
+	Size     int64     `json:"size"`
+	CRC      string    `json:"crc"`
+	Mime     string    `json:"mime"`
+	CTime    int64     `json:"ctime"`
 }
 
 var uploadRateLimiter = httprate.NewRateLimiter(100, time.Minute)
 
-var redisc *redis.Client
-
-func connectToRedis() {
-
-	godotenv.Load()
-
-	if s, err := os.Stat(os.Getenv("FILES")); err != nil || !s.IsDir() {
-		c.Log().Error(err)
-		panic("FILES must be a directory: " + os.Getenv("FILES"))
-	}
-
-	opts, err := redis.ParseURL(os.Getenv("REDIS"))
-
-	if err != nil {
-		panic(err)
-	}
-
-	opts.UnstableResp3 = true
-
-	c.Log().Infof("Connected to redis: %s", color.Ize(color.Yellow, opts.Addr))
-
-	redisc = redis.NewClient(opts)
-
-	if cmd := redisc.ConfigSet(context.TODO(), "notify-keyspace-events", "AKE"); cmd.Err() != nil {
-		c.Log().Error(cmd.Err())
-		os.Exit(1)
-	}
-
-}
-
 func main() {
 
-	connectToRedis()
-
-	go deleteAfterExpired()
+	godotenv.Load()
 
 	mux := chi.NewMux()
 
@@ -104,192 +69,127 @@ func main() {
 	}
 }
 
-func deleteAfterExpired() {
-
-	ps := redisc.PSubscribe(
-		context.TODO(),
-		"__key*__:*",
-	)
-
-	reg := regexp.MustCompile("Message<__keyevent@0__:expired: (.*)>")
-
-	for {
-
-		e := <-ps.Channel()
-
-		if strings.Contains(e.String(), "expired") {
-			match := reg.FindSubmatch([]byte(e.String()))
-			if len(match) > 0 {
-
-				rid := string(match[1])
-
-				cmd := redisc.Get(context.Background(), "shadow:"+rid)
-
-				if cmd.Err() != nil {
-					c.Log().Error(cmd.Err())
-					continue
-				}
-
-				var u = &Upload{}
-
-				if err := json.Unmarshal([]byte(cmd.Val()), u); err != nil {
-					c.Log().Error(cmd.Err())
-					continue
-				}
-
-				dataPath := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), rid)
-
-				fi, err := os.Stat(dataPath)
-
-				if err != nil {
-					c.Log().Error(cmd.Err())
-					continue
-				}
-
-				if fi.IsDir() {
-
-					c.Log().Infof("Removing data for expired key %s", rid)
-
-					if err := os.RemoveAll(dataPath); err != nil {
-						redisc.Del(context.TODO(), "shadow:"+rid)
-						c.Log().Error(cmd.Err())
-						continue
-					}
-
-					redisc.Del(context.TODO(), "shadow:"+rid)
-				}
-			}
-		}
-	}
+func storePath(id uuid.UUID) string {
+	return filepath.Join(os.Getenv("FILES"), id.String()[0:2], id.String()[2:4], id.String()[4:6], id.String())
 }
 
 func trace(w http.ResponseWriter, r *http.Request) {
 
-	uuid := strings.Split(r.URL.Path, "/")
+	id, err := uuid.Parse(chi.URLParam(r, "uuid"))
 
-	if len(uuid) != 2 {
-		http.Error(w, "Nu am găsit resursa căutată. Eroare 400.", http.StatusBadRequest)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	cmd := redisc.Get(
-		context.Background(),
-		uuid[1],
-	)
+	path := storePath(id)
 
-	if cmd.Err() != nil {
-		http.Error(w, "Nu am găsit resursa căutată. Eroare 404.", http.StatusNotFound)
+	if fi, err := os.Stat(path); err != nil || !fi.IsDir() {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	meta, err := os.ReadFile(filepath.Join(path, "meta.json"))
+
+	if err != nil {
+		c.Log().Errorf("expected meta.json file on %s", path)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	w.Write([]byte(cmd.Val()))
+	w.Write(meta)
 }
 
 func persist(w http.ResponseWriter, r *http.Request) {
-
-	uuid := strings.Split(r.URL.Path, "/")
-
-	if len(uuid) != 2 {
-		http.Error(w, "Nu am găsit resursa căutată. Eroare 400.", http.StatusBadRequest)
-		return
-	}
-
-	cmd := redisc.Get(
-		context.Background(),
-		uuid[1],
-	)
-
-	if cmd.Err() != nil {
-		http.Error(w, "Nu am găsit resursa căutată. Eroare 404.", http.StatusNotFound)
-		return
-	}
-
-	redisc.Persist(context.TODO(), uuid[1])
-	redisc.Del(context.TODO(), "shadow:"+uuid[1])
+	// todo:
 }
 
 func remove(w http.ResponseWriter, r *http.Request) {
 
-	uuid := strings.Split(r.URL.Path, "/")
+	id, err := uuid.Parse(chi.URLParam(r, "uuid"))
 
-	if len(uuid) != 2 {
-		http.Error(w, "Nu am găsit resursa căutată. Eroare 400.", http.StatusBadRequest)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	cmd := redisc.Get(
-		context.Background(),
-		uuid[1],
-	)
-
-	if cmd.Err() != nil {
-		http.Error(w, "Nu am găsit resursa căutată. Eroare 404.", http.StatusNotFound)
+	if _, err := c.UserID(r); err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	var u = &Upload{}
+	path := storePath(id)
 
-	if err := json.Unmarshal([]byte(cmd.Val()), u); err != nil {
-		http.Error(w, "Invalid json", http.StatusInternalServerError)
+	if fi, err := os.Stat(path); err != nil || !fi.IsDir() {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-
-	path := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), u.UUID.String())
 
 	if err := os.RemoveAll(path); err != nil {
-		http.Error(w, "Can't remove", http.StatusInternalServerError)
+		c.Log().Errorf("can't remove path: %s", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	redisc.Del(context.TODO(), u.UUID.String())
-	redisc.Del(context.TODO(), "shadow:"+u.UUID.String())
 }
 
 func serve(w http.ResponseWriter, r *http.Request) {
 
-	uuid := strings.Split(r.URL.Path, "/")
+	id, err := uuid.Parse(chi.URLParam(r, "uuid"))
 
-	if len(uuid) != 2 {
-		http.Error(w, "Nu am găsit resursa căutată. Eroare 400.", http.StatusBadRequest)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	cmd := redisc.Get(
-		context.Background(),
-		uuid[1],
-	)
+	path := storePath(id)
 
-	if cmd.Err() != nil {
-		c.Log().Error(cmd.Err())
-		http.Error(w, "Nu am găsit resursa căutată. Eroare 404.", http.StatusNotFound)
-		return
-	}
-
-	var u = &Upload{}
-
-	if err := json.Unmarshal([]byte(cmd.Val()), u); err != nil {
-		http.Error(w, "Invalid json", http.StatusInternalServerError)
-		return
-	}
-
-	var width uint
+	var width uint = 624
 
 	if n, err := strconv.ParseInt(r.URL.Query().Get("w"), 10, 32); err == nil {
 		width = uint(n)
 	}
 
-	rawPath := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), u.UUID.String(), "raw")
-	path := filepath.Join(os.Getenv("FILES"), fmt.Sprint(u.UserID), u.UUID.String(), fmt.Sprint(width))
+	if width == 0 {
+		http.Error(w, "width is 0", http.StatusBadRequest)
+		return
+	}
 
-	duration := redisc.TTL(context.TODO(), u.UUID.String())
+	rawPath := filepath.Join(path, "raw")
+	pathSized := filepath.Join(path, fmt.Sprint(width))
+
+	rawFileInfo, err := os.Stat(rawPath)
+
+	if err != nil {
+		c.Log().Errorf("can't stat raw file: %s", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	metaData, err := os.ReadFile(filepath.Join(path, "meta.json"))
+
+	if err != nil {
+		c.Log().Errorf("can't read meta file: %s", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var meta MetaInfo
+
+	if err := json.NewDecoder(bytes.NewBuffer(metaData)).Decode(&meta); err != nil {
+		c.Log().Errorf("can't decode meta file: %s", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Add("Content-Type", "image/png")
-	w.Header().Add("Created-At", u.CreatedTime)
-	w.Header().Add("Expire-In", duration.Val().String())
+	w.Header().Add("Created-At", rawFileInfo.ModTime().String())
+	w.Header().Add("X-Filename", meta.Filename)
+	w.Header().Add("X-Crc", meta.CRC)
+	w.Header().Add("Cache-Control", "public, max-age=3600")
 
-	if _, err := os.Stat(path); err == nil {
-		data, err := os.ReadFile(path)
+	if _, err := os.Stat(pathSized); err == nil {
+		data, err := os.ReadFile(pathSized)
 		if err != nil {
 			c.Log().Error(err)
 			http.Error(w, "Invalid file path", http.StatusInternalServerError)
@@ -326,7 +226,7 @@ func serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	f, err := os.OpenFile(pathSized, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
 		http.Error(w, "Open for caching failed", http.StatusInternalServerError)
 		return
@@ -347,7 +247,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	uid, err := c.UserID(r)
 
 	if err != nil {
-		http.Error(w, "Nu sunteți autentificat. Eroare 401.", http.StatusUnauthorized)
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
@@ -400,9 +300,9 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rid := uuid.New().String()
+	rid := uuid.New()
 
-	fpath := filepath.Join(os.Getenv("FILES"), fmt.Sprint(uid), rid)
+	fpath := storePath(rid)
 
 	if err := os.MkdirAll(fpath, os.ModePerm); err != nil {
 		c.Log().Error(err)
@@ -450,31 +350,37 @@ func upload(w http.ResponseWriter, r *http.Request) {
 
 	dstPNG.Close()
 
-	uinfo := `
-{
-	"uuid":"` + rid + `",
-	"uid":` + fmt.Sprintf("%d", uid) + `,
-	"filename":"` + h.Filename + `",
-	"size":` + fmt.Sprintf("%d", h.Size) + `,
-	"crc":"` + fmt.Sprintf("%08x", checksum) + `",
-	"mime":"` + mime + `",
-	"ctime":"` + fmt.Sprint(time.Now().Unix()) + `"
-}
-	`
+	meta := MetaInfo{
+		UUID:     rid,
+		UID:      uid,
+		Filename: h.Filename,
+		Size:     h.Size,
+		CRC:      fmt.Sprintf("%08x", checksum),
+		Mime:     mime,
+		CTime:    time.Now().Unix(),
+	}
 
-	if cmd := redisc.Set(context.Background(), rid, uinfo, time.Minute*7); cmd.Err() != nil {
-		c.Log().Error(cmd.Err())
-		http.Error(w, "Nu am putut salva metadatele fișierului încărcat. Eroare 500.", http.StatusInternalServerError)
+	metab := &bytes.Buffer{}
+
+	if err := json.NewEncoder(metab).Encode(meta); err != nil {
+		c.Log().Error("failed to encode meta data")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if cmd := redisc.Set(context.Background(), "shadow:"+rid, uinfo, 0); cmd.Err() != nil {
-		c.Log().Error(cmd.Err())
-		http.Error(w, "Nu am putut salva metadatele fișierului încărcat. Eroare 500.", http.StatusInternalServerError)
+	err = os.WriteFile(
+		filepath.Join(fpath, "meta.json"),
+		metab.Bytes(),
+		os.ModePerm,
+	)
+
+	if err != nil {
+		c.Log().Error("failed to store meta file")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Add("Content-Type", "application/json")
-	w.Write([]byte(uinfo))
+	w.Write(metab.Bytes())
 }
