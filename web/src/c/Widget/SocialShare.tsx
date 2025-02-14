@@ -20,7 +20,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
     if (shortURL) { return; }
     const data = new FormData();
     data.set("url", url);
-    fetch(getDomain(Domain.Url), { method: "POST", body: data })
+    fetch(getDomain(Domain.Url), { method: "POST", mode: 'no-cors', body: data })
       .then((response) => response.text())
       .then((short) => {
         setShortURL(short);
