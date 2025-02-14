@@ -1,7 +1,12 @@
 import { css } from "@emotion/react";
 import { FC } from "react";
+import { Ad } from "../types";
 
-const AdCta:FC = () => {
+export interface AdCtaProps {
+    ad: Ad
+}
+
+const AdCta:FC<AdCtaProps> = ({ad}) => {
     return (
         <div
             css={css`
@@ -11,7 +16,7 @@ const AdCta:FC = () => {
                 background: #F0F0F0;    
             `}
         >
-            Ad CTA
+            {ad.owner.given_name}
         </div>
     )
 }

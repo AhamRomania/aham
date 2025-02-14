@@ -62,6 +62,7 @@ export type Ad = {
     messages: boolean,
     status: 'published',
     created: string
+    props:{[key:string]:any}
 }
 
 export type TokenResponse = {

@@ -14,6 +14,17 @@ export function ago(v: string): string {
     return ago
 }
 
+export function formatMoney(money: number, currency: string) {
+    switch(currency) {
+        case 'EUR':
+            return `€${toMoney(money)}`
+        case 'LEI':
+            return `${toMoney(money)}LEI`
+        default:
+            return toMoney(money);
+    }
+}
+
 export function toMoney(cents: number): string {
 
     if (typeof cents !== "number" || !Number.isInteger(cents)) {

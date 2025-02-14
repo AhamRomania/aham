@@ -13,7 +13,7 @@ export interface AdProps {
     height: number;
 }
 
-const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
+const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
     return (
         <Link
             href={getDomain(Domain.Web) + '/' + vo.href}
@@ -119,4 +119,4 @@ const Ad: FC<AdProps> = ({width,height,vo}:AdProps) => {
     )
 }
 
-export default Ad
+export default AdCard

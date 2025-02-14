@@ -5,14 +5,15 @@ import { Tooltip as JoyTooltip } from "@mui/joy";
 
 export type TooltipProps = {
   title: string;
+  delay?: number
 };
 
-const Tip = ({title, children}: TooltipProps & React.PropsWithChildren) => {
+const Tip = ({title, delay, children}: TooltipProps & React.PropsWithChildren) => {
   return (
     <JoyTooltip
       title={title}
       color="primary"
-      enterDelay={2500}
+      enterDelay={delay || 2500}
       size="lg"
       variant="outlined"
     >

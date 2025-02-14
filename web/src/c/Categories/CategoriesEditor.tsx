@@ -134,6 +134,7 @@ const CategoriesEditor:FC = () => {
                     name: 'root',
                     slug: 'root',
                     href: 'root',
+                    path: 'root',
                     children: categories,
                 });
 
@@ -241,8 +242,6 @@ const CategoriesEditor:FC = () => {
     }
 
     const showPropAssign = (node: Node) => {
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         api<Prop[]>(`/categories/${node.id}/props`).then((props: any) => {
             if(props && props.length) {
                 const data: {[key: string]:Prop} = {};

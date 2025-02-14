@@ -1,2 +1,2 @@
-import Ad from './Ad';
-export { Ad };
+import AdCard from './Ad';
+export { AdCard };
