@@ -26,6 +26,11 @@ mkdir -p /var/data/mail
 sudo chmod -R 750 /var/data
 ```
 
+## Dependinces
+```
+sudo apt install libsqlite3-dev
+```
+
 ## Third Party Integrations
 - Google Map Key
 
