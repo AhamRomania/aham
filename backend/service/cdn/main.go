@@ -70,7 +70,14 @@ func main() {
 }
 
 func storePath(id uuid.UUID) string {
-	return filepath.Join(os.Getenv("FILES"), id.String()[0:2], id.String()[2:4], id.String()[4:6], id.String())
+	return filepath.Join(
+		os.Getenv("FILES"),
+		id.String()[0:2],
+		id.String()[2:4],
+		id.String()[4:6],
+		id.String()[6:8],
+		id.String(),
+	)
 }
 
 func trace(w http.ResponseWriter, r *http.Request) {
