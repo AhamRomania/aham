@@ -7,6 +7,7 @@ export interface ApiFetchProps {
 
 export interface RequestInitEnhanced {
     success?: boolean
+    text?:boolean
 }
 
 const getApiFetch = (props?:ApiFetchProps) => {
@@ -45,6 +46,17 @@ const getApiFetch = (props?:ApiFetchProps) => {
 
                         if (init.success && response.status >= 200 && response.status <= 205) {
                             resolve(null as T)
+                            return
+                        }
+
+                        if (init.text) {
+                            response.text().then(
+                                (txt) => resolve(txt as T),
+                            ).catch(
+                                (err) => {
+                                    reject(err)
+                                }
+                            );
                             return
                         }
 

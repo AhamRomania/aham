@@ -10,6 +10,13 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+type Location struct {
+	Href        string    `json:"href,omitempty"`
+	Text        string    `json:"text,omitempty"`
+	Refs        []int64   `json:"refs,omitempty"`
+	Coordinates []float64 `json:"coordinates,omitempty"`
+}
+
 type Ad struct {
 	ID          int64     `json:"id"`
 	CategoryID  int64     `json:"category_id,omitempty"`
@@ -26,6 +33,7 @@ type Ad struct {
 	CityName    string    `json:"city_name,omitempty"`
 	URL         *string   `json:"string,omitempty"`
 	Href        string    `json:"href,omitempty"`
+	Location    *Location `json:"location,omitempty"`
 	Messages    bool      `json:"messages,omitempty"`
 	ShowPhone   bool      `json:"show_phone,omitempty"`
 	Phone       *string   `json:"phone,omitempty"`
@@ -107,14 +115,13 @@ func GetAds() (ads []*Ad) {
 		`
 		SELECT
 			ads.id,
-			ads.category,
-			ads.owner,
 			ads.title,
 			ads.description,
 			ads.props,
 			ads.pictures,
-			ads.city,
-			CONCAT(counties.name, ' / ', cities.name) as city_name,
+			CONCAT(counties.name, ' / ', cities.name) as location_text,
+			lower(unaccent(CONCAT(counties.name, '/', cities.name))) as location_href,
+			ARRAY[counties.id, cities.id] as location_refs,
 			ads.price,
 			ads.currency,
 			ads.created_at,
@@ -152,18 +159,18 @@ func GetAds() (ads []*Ad) {
 		ad := &Ad{
 			Owner:    &UserMin{},
 			Category: &Category{},
+			Location: &Location{},
 		}
 
 		err = rows.Scan(
 			&ad.ID,
-			&ad.CategoryID,
-			&ad.OwnerID,
 			&ad.Title,
 			&ad.Description,
 			&ad.Props,
 			&ad.Pictures,
-			&ad.CityID,
-			&ad.CityName,
+			&ad.Location.Text,
+			&ad.Location.Href,
+			&ad.Location.Refs,
 			&ad.Price,
 			&ad.Currency,
 			&ad.Created,
@@ -198,6 +205,7 @@ func GetAd(id int64) (ad *Ad, err error) {
 	ad = &Ad{
 		Owner:    &UserMin{},
 		Category: &Category{},
+		Location: &Location{},
 	}
 
 	row := c.DB().QueryRow(
@@ -205,14 +213,13 @@ func GetAd(id int64) (ad *Ad, err error) {
 		`
 		SELECT
 			ads.id,
-			ads.category,
-			ads.owner,
 			ads.title,
 			ads.description,
 			ads.props,
 			ads.pictures,
-			ads.city,
-			CONCAT(counties.name, ' / ', cities.name) as city_name,
+			CONCAT(counties.name, ' / ', cities.name) as location_text,
+			lower(unaccent(CONCAT(counties.name, '/', cities.name))) as location_href,
+			ARRAY[counties.id, cities.id] as location_refs,
 			ads.price,
 			ads.currency,
 			ads.created_at,
@@ -245,14 +252,13 @@ func GetAd(id int64) (ad *Ad, err error) {
 
 	err = row.Scan(
 		&ad.ID,
-		&ad.CategoryID,
-		&ad.OwnerID,
 		&ad.Title,
 		&ad.Description,
 		&ad.Props,
 		&ad.Pictures,
-		&ad.CityID,
-		&ad.CityName,
+		&ad.Location.Text,
+		&ad.Location.Href,
+		&ad.Location.Refs,
 		&ad.Price,
 		&ad.Currency,
 		&ad.Created,

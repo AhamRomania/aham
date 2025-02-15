@@ -30,6 +30,30 @@ func AdsRoutes(r chi.Router) {
 	r.Post("/", c.Guard(CreateAd))
 	r.Get("/", GetAds)
 	r.Get("/{id}", GetAd)
+	r.Get("/{id}/contact", c.Guard(getContactDetails))
+}
+
+func getContactDetails(w http.ResponseWriter, r *http.Request) {
+
+	ad, err := db.GetAd(c.ID(r, "id"))
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	var phone = ad.Phone
+
+	if phone == nil {
+		user := db.GetUserByID(ad.Owner.ID)
+		if user == nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		phone = &user.Phone
+	}
+
+	w.Write([]byte(*phone))
 }
 
 func CreateAd(w http.ResponseWriter, r *http.Request) {

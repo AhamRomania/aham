@@ -1,7 +1,9 @@
 export type User = {
     id: number;
+    username?: string;
     given_name: string;
     family_name: string;
+    avatar?: string;
     role: string;
 }
 

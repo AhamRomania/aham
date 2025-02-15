@@ -17,15 +17,13 @@ const Gallery: FC<GalleryProps> = ({pictures}) => {
     const imgRef = useRef<HTMLImageElement | null>(null);
 
     useEffect(() => {
-        if (src === '') {
-            if (imgRef && imgRef.current) {
-                setLoading(true);
-                imgRef.current.addEventListener('load', () => {
-                    setLoading(false)
-                });
-            }
-            setSrc(getDomain(Domain.Cdn) + `/` + pictures[current] + `?w=700`);
+        if (imgRef && imgRef.current) {
+            setLoading(true);
+            imgRef.current.addEventListener('load', () => {
+                setLoading(false)
+            });
         }
+        setSrc(getDomain(Domain.Cdn) + `/` + pictures[current] + `?w=700`);
     }, [imgRef, current]);
 
     return (

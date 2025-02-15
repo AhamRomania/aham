@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+import { useRouter } from "next/navigation";
 
 
 declare const FB: any;
@@ -21,6 +22,7 @@ declare const gapi: any;
 
 export default function Page() {
   
+  const router = useRouter();
   const api = getApiFetch();
 
   const [loggingIn, setLoggingIn] = useState(false);
@@ -163,8 +165,14 @@ export default function Page() {
                 //domain: "localhost",
               });
               setLoggingIn(false);
-              window.location.href = "/u/anunturi/creaza";
+              const query = new URLSearchParams(window.location.search);
+              if (query.get('then')) {
+                router.push(query.get('then') as string);
+              } else {
+                router.push(`/u/anunturi/creaza`);
+              }
             }).catch(() => {
+              setLoggingIn(false);
               alert('Nu m-am putut loga');
             });
           }}
