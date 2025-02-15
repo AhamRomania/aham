@@ -2,11 +2,11 @@
 
 import getApiFetch from "@/api/api";
 import { css } from "@emotion/react";
-import { Breadcrumbs, Stack } from "@mui/joy";
+import { Breadcrumbs, Grid, Stack } from "@mui/joy";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 import { formatMoney } from "../formatter";
-import { Ad } from "../types";
+import { Ad, Prop } from "../types";
 import AdCta from "../Widget/AdCta";
 import Gallery from "../Widget/Gallery";
 import MoreAds from "../Widget/MoreAds";
@@ -19,10 +19,12 @@ export interface AdPageProps {
 const AdPage:FC<AdPageProps> = ({ad}) => {
     const api = getApiFetch();
     const [extra, setExtra] = useState<Ad[]>();
+    const [props, setProps] = useState<Prop[]>();
 
     useEffect(() => {
         // todo: `/ads/${ad.id}/extra`
         api<Ad[]>(`/ads`).then(setExtra);
+        api<Prop[]>(`/categories/${ad.category_id}/props`).then(setProps);
     }, []);
 
     return (
@@ -141,6 +143,14 @@ const AdPage:FC<AdPageProps> = ({ad}) => {
                             @media only screen and (max-width : 1200px) {
                                 order: 3;
                             }
+                            h2 {
+                                font-size: 24px;
+                                font-weight: bold;
+                                margin-bottom: 20px;
+                            }
+                            > div {
+                                margin-bottom: 30px; 
+                            }
                         `}
                     >
                         <div>
@@ -149,7 +159,28 @@ const AdPage:FC<AdPageProps> = ({ad}) => {
                         </div>
                         {ad.props && <div>
                             <h2>Specificații</h2>
-                            <p>{JSON.stringify(ad.props)}</p>
+                            <div
+                                css={css`
+                                    display: grid; 
+                                    grid-template-columns: 50% 50%; 
+                                    gap: 10px 10px;     
+                                `}
+                            >
+                                {props?.sort((a, b) => a.name.localeCompare(b.name, 'ro', { sensitivity: 'base' })).map(prop => ad.props[prop.name] && (
+                                    <Stack
+                                        key={prop.id}
+                                        flexDirection="row"
+                                    >
+                                        <div
+                                            css={css`
+                                                margin-right: 10px;
+                                                font-weight: bold;  
+                                            `}
+                                        >{prop.title}:</div>
+                                        <div>{ad.props[prop.name]}</div>
+                                    </Stack>
+                                ))}
+                            </div>
                         </div>}
                     </div>
                     <div

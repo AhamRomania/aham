@@ -5,6 +5,7 @@ import { IconButton, Snackbar, Stack } from "@mui/joy";
 import { CheckCircle } from "@mui/icons-material";
 import { Ad } from "../types";
 import getDomain, { Domain } from "../domain";
+import { formatMoney } from "../formatter";
 
 export interface SocialShareProps {
   url: string;
@@ -42,6 +43,12 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
     }
   };
 
+  const getShareMessage = () => {
+    return encodeURIComponent(
+      `${ad.title} la ${formatMoney(ad.price, ad.currency)}`
+    )
+  }
+
   if (shortURL == '') {
     return [];
   }
@@ -50,7 +57,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
     <>
       <Stack gap={1} flexDirection="row">
         <Tip delay={100} title="Distribuie pe X">
-          <Link suppressHydrationWarning href={`https://x.com/intent/tweet?text=${encodeURIComponent(ad.title)}&url=${shortURL}`} target="_blank">
+          <Link suppressHydrationWarning href={`https://x.com/intent/tweet?text=${getShareMessage()}&url=${shortURL}`} target="_blank">
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
@@ -74,7 +81,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
         </Tip>
 
         <Tip delay={100} title="Distribuie pe Pinterest">
-          <Link suppressHydrationWarning href={`https://pinterest.com/pin/create/button/?url=${shortURL}&description=${encodeURIComponent(ad.title)}`} target="_blank">
+          <Link suppressHydrationWarning href={`https://pinterest.com/pin/create/button/?url=${shortURL}&description=${getShareMessage()}`} target="_blank">
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
