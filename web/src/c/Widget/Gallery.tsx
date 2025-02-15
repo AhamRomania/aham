@@ -1,9 +1,9 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+import { CircularProgress } from "@mui/joy";
 import { FC, useEffect, useRef, useState } from "react";
 import getDomain, { Domain } from "../domain";
-import { CircularProgress } from "@mui/joy";
 
 export interface GalleryProps {
     pictures: string[];
@@ -13,16 +13,17 @@ const Gallery: FC<GalleryProps> = ({pictures}) => {
 
     const [current, setCurrent] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [src, setSrc] = useState(pictures[0]);
+    const [src, setSrc] = useState('');
     const imgRef = useRef<HTMLImageElement | null>(null);
 
     useEffect(() => {
-        setLoading(true);
-        if (imgRef.current) {
-            setLoading(true)
-            imgRef.current.addEventListener('load', () => {
-                setLoading(false)
-            });
+        if (src === '') {
+            if (imgRef && imgRef.current) {
+                setLoading(true);
+                imgRef.current.addEventListener('load', () => {
+                    setLoading(false)
+                });
+            }
             setSrc(getDomain(Domain.Cdn) + `/` + pictures[current] + `?w=700`);
         }
     }, [imgRef, current]);
@@ -59,10 +60,11 @@ const Gallery: FC<GalleryProps> = ({pictures}) => {
                     `}
                 >
                     {/* eslint-disable-next-line @next/next/no-img-element*/}
-                    <img
+                    {(src !== '') && <img
                         ref={imgRef}
-                        src={src} alt="Gallery Image"
-                    />
+                        src={src}
+                        alt="Gallery Image"
+                    />}
                 </div>
                 <Navigate
                     css={css`

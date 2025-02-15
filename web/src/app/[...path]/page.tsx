@@ -1,8 +1,10 @@
 "use server";
 
+import getApiFetch from "@/api/api";
 import { getAdOrCategory } from "@/c/funcs";
 import { Centred, MainLayout } from "@/c/Layout";
 import AdPage from "@/c/Pages/Ad";
+import { Ad, Prop } from "@/c/types";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -30,9 +32,11 @@ export async function generateMetadata(props: any): Promise<Metadata> {
 }
 
 export default async function Page(props: any) {
-
+    const api = getApiFetch();
     const params = await props.params
     const data = await getAdOrCategory(params.path);
+    const dprops = await api<Prop[]>(`/categories/${data?.vo.category_id}/props`);
+    const extra = await api<Ad[]>(`/ads`)
 
     if (!data) {
         return notFound();
@@ -55,7 +59,7 @@ export default async function Page(props: any) {
     return (
         <>
             <MainLayout>
-                <AdPage ad={data.vo} />
+                <AdPage ad={data.vo} props={dprops} extra={extra} />
             </MainLayout>
         </>
     )

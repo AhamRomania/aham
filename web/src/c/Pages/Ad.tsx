@@ -1,10 +1,9 @@
 "use client";
 
-import getApiFetch from "@/api/api";
 import { css } from "@emotion/react";
-import { Breadcrumbs, Grid, Stack } from "@mui/joy";
+import { Breadcrumbs, Stack } from "@mui/joy";
 import Link from "next/link";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { formatMoney } from "../formatter";
 import { Ad, Prop } from "../types";
 import AdCta from "../Widget/AdCta";
@@ -14,19 +13,11 @@ import SocialShare from "../Widget/SocialShare";
 
 export interface AdPageProps {
     ad: Ad;
+    extra: Ad[];
+    props: Prop[];
 }   
 
-const AdPage:FC<AdPageProps> = ({ad}) => {
-    const api = getApiFetch();
-    const [extra, setExtra] = useState<Ad[]>();
-    const [props, setProps] = useState<Prop[]>();
-
-    useEffect(() => {
-        // todo: `/ads/${ad.id}/extra`
-        api<Ad[]>(`/ads`).then(setExtra);
-        api<Prop[]>(`/categories/${ad.category_id}/props`).then(setProps);
-    }, []);
-
+const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
     return (
         <>
             <main itemScope itemType="https://schema.org/Product">
