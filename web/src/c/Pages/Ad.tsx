@@ -79,7 +79,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                                 </Stack>
                             </Stack>
                             <Stack>
-                                <p css={css`font-size: 16px;`}>{ad.city_name}</p>
+                                <p css={css`font-size: 16px;`}>{ad.location.text}</p>
                             </Stack>
                         </Stack>
                     </div>

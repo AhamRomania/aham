@@ -45,12 +45,16 @@ export type City = {
     county_name: string;
 }
 
+export type Location = {
+    href: string;
+    text: string;
+    refs: number[];
+}
+
 export type Ad = {
     id: number,
-    category_id: number,
     category: Category,
     slug: string,
-    owner_id: number,
     owner: User,
     title: string,
     description: string,
@@ -59,8 +63,7 @@ export type Ad = {
     href: string;
     price: number;
     currency: 'Lei',
-    city: number,
-    city_name: string;
+    location: Location;
     messages: boolean,
     status: 'published',
     created: string
