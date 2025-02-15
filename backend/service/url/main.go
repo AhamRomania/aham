@@ -2,6 +2,7 @@ package main
 
 import (
 	"aham/common/c"
+	"crypto/tls"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -135,8 +136,25 @@ func main() {
 		c.Log().Error("listen env expected")
 		os.Exit(1)
 	}
+
+	// Configure the TLS settings for HTTP/2
+	tlsConfig := &tls.Config{
+		NextProtos: []string{"h2"},
+	}
+
+	server := &http.Server{
+		Addr:      listen,
+		Handler:   mux,
+		TLSConfig: tlsConfig,
+	}
+
+	cert, key := os.Getenv("CERT"), os.Getenv("KEY")
+
 	c.Log().Infof("Listen on %s", listen)
-	if err := http.ListenAndServe(listen, mux); err != nil {
+	c.Log().Infof("Cert %s", cert)
+	c.Log().Infof("Key %s", key)
+
+	if err := server.ListenAndServeTLS(cert, key); err != nil {
 		c.Log().Error(err)
 	}
 }

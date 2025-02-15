@@ -44,7 +44,8 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="180x180" href="favicons/favicon-180x180.png"/>
         <meta name="msapplication-TileColor" content="#1F70B8"/>
         <meta name="msapplication-TileImage" content="favicons/favicon-180x180.png"/>
-        <link rel="manifest" href="aham.webmanifest"/>
+        <link rel="manifest" href="/aham.webmanifest"/>
+        <link rel="dns-prefetch" href="//cdn.aham.ro"/>
       </Head>
       <body className={`${interFont.className}`}>
         <CacheProvider value={cache}>

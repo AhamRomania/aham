@@ -70,7 +70,7 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
                     gap: 10px;
                 `}
             >
-                <Link href={`/u/`+(ad.owner.username || ad.owner.id)}>
+                <Link href={`/u/`+(ad.owner.username || ad.owner.id)} prefetch={false}>
                     <UserAvatar/>
                 </Link>
                 <span>{ad.owner.given_name}</span>

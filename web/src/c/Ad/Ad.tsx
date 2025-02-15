@@ -5,7 +5,7 @@ import { FC } from "react";
 import { Ad as Vo } from "../types";
 import Link from "next/link";
 import getDomain, { Domain } from "@/c/domain";
-import { ago, toMoney } from "../formatter";
+import { ago, formatMoney } from "../formatter";
 
 export interface AdProps {
     vo: Vo;
@@ -56,6 +56,7 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
                     <img
                         src={getDomain(Domain.Cdn) + `/${vo.pictures[0]}?w=${width}&q=75`}
                         width="100%"
+                        loading="lazy"
                         alt={vo.title}
                     />
                 </div>
@@ -114,7 +115,7 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
                         right: 20px;
                         bottom: 15px;
                     `}
-                >{toMoney(vo.price)} {vo.currency}</div>
+                >{formatMoney(vo.price, vo.currency)}</div>
             </article>
         </Link>
     )

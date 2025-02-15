@@ -50,8 +50,11 @@ services:
     environment:
       LISTEN: :8082
       FILES: /var/aham/cdn
+      CERT: /certs/fullchain.pem
+      KEY: /certs/privkey.pem
     volumes:
       - /var/aham/cdn:/var/aham/cdn
+      - /etc/letsencrypt/live/cdn.aham.ro/:/certs/
     networks:
       aham:
         ipv4_address: 10.5.0.7
