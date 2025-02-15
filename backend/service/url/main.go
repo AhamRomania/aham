@@ -112,13 +112,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 		shortID := r.URL.Path[1:]
 
-		fmt.Print(shortID, " -> ")
-
 		if longURL, exists := getURL(shortID); exists {
 			http.Redirect(w, r, longURL, http.StatusPermanentRedirect)
-			fmt.Print(longURL, "\n")
+			c.Log().Info(shortID, " -> ", longURL)
 			return
 		}
+
+		c.Log().Info(shortID, " -> NULL")
 
 		http.Redirect(w, r, "https://aham.ro", http.StatusTemporaryRedirect)
 	}
