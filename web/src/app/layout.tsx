@@ -31,6 +31,8 @@ register('ro', ro);
 
 const materialTheme = materialExtendTheme();
 
+console.info("Salut, scrie la admin@aham.ro pentru curiozități tehnice.");
+
 export default function RootLayout({
   children,
 }: Readonly<{

@@ -44,7 +44,7 @@ INSERT INTO meta_props ("id", "name", "title", "group", "description", "help", "
         (1, 'brand', 'Brand', 'default', NULL, NULL, 'TEXT', NULL, 1, '', NULL),
         (2, 'color', 'Culoare','default', NULL, NULL, 'TEXT', NULL, 1, '', NULL),
         (3, 'state', 'Stare','default', NULL, NULL, 'SELECT', '{"values":["Nou","Folosit"]}'::json, NULL, '', NULL),
-        (4, 'year', 'An fabricație','default', NULL, NULL, 'NUMBER', NULL, 3, '', NULL),
+        (4, 'year', 'An fabricație','default', NULL, NULL, 'DATE', NULL, 3, '', NULL),
         (5, 'car_engine_capacity', 'Capacitate motor','default', NULL, NULL, 'NUMBER', NULL, NULL, '', NULL),
         (6, 'surface', 'Suprafață','default', NULL, NULL, 'NUMBER', NULL, NULL, '', NULL),
         (7, 'rooms', 'Număr camere','default', NULL, NULL, 'NUMBER', NULL, NULL, '', NULL),
