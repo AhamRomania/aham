@@ -148,7 +148,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                             <h2>Descriere</h2>
                             <p>{ad.description}</p>
                         </div>
-                        {ad.props && <div>
+                        {ad.props && Object.keys(ad.props||[]).length > 0 && <div>
                             <h2>Specificații</h2>
                             <div
                                 css={css`
