@@ -44,7 +44,7 @@
             "env": {
                 "LISTEN": ":8003",
                 "DOMAIN": "http://localhost:8003",
-                "DBPATH": "/Users/cosmin/Work/Aham/data/db/url"
+                "DBPATH": "${workspaceFolder}/data/db/url"
             },
         }
     ],

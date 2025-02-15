@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/TwiN/go-color"
 	"github.com/go-chi/chi/v5"
@@ -107,18 +106,21 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodGet {
 
 		if r.URL.Path == "/" {
-			http.Redirect(w, r, "https://aham.ro", http.StatusFound)
+			http.Redirect(w, r, "https://aham.ro", http.StatusPermanentRedirect)
 			return
 		}
 
-		shortID := r.URL.Path[1:] // Obtain the short ID from the path
+		shortID := r.URL.Path[1:]
+
+		fmt.Print(shortID, " -> ")
+
 		if longURL, exists := getURL(shortID); exists {
-			body := strings.ReplaceAll(redirectPage, "LINK", longURL)
-			w.Write([]byte(body))
-			// http.Redirect(w, r, longURL, http.StatusFound)
+			http.Redirect(w, r, longURL, http.StatusPermanentRedirect)
+			fmt.Print(longURL, "\n")
 			return
 		}
-		http.Error(w, "URL not found", http.StatusNotFound)
+
+		http.Redirect(w, r, "https://aham.ro", http.StatusTemporaryRedirect)
 	}
 }
 
@@ -138,48 +140,3 @@ func main() {
 		c.Log().Error(err)
 	}
 }
-
-const redirectPage = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h1>Redirecționare...</h1>
-        <p>Vă rugăm așteptați, ve-ți fi redirecționat într-o clipă.</p>
-        <p>Dacă nu ești redirecționat apasă, <a href="LINK">aici</a>.</p>
-    </div>
-
-    <script>
-        const shortUrl = 'LINK';
-        const delay = 2420;
-        setTimeout(function() {
-            window.location.href = shortUrl;
-        }, delay);
-        document.getElementById('link').href = shortUrl;
-    </script>
-</body>
-</html>
-`
