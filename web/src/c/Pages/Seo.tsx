@@ -61,7 +61,7 @@ const SeoMap:FC = () => {
                 setShowSavedSnack(true);
                 const copy = [...seoMap]
                 copy[index] = entry;
-                setSeoMap(copy);
+                setSeoMap(copy);    
             },
         ).catch(
             () => {
@@ -94,7 +94,7 @@ const SeoMap:FC = () => {
                         <th style={{ width: '15%' }}>URI</th>
                         <th>Title</th>
                         <th>Description</th>
-                        <th style={{ width: '10%' }}>Actiuni</th>
+                        <th style={{ width: '40px' }}></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -128,12 +128,6 @@ const SeoMap:FC = () => {
                             </td>
                             <td>
                                 <Stack direction="row" gap={1}>
-                                    <IconButton
-                                        size="sm"
-                                        variant="soft"
-                                    >
-                                        <Edit/>
-                                    </IconButton>
                                     <IconButton
                                         size="sm"
                                         variant="soft"
