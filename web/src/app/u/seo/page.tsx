@@ -1,9 +1,9 @@
-import Share from "@/c/Widget/Share";
+import SeoMap from "@/c/Pages/Seo";
 
 export default async function Page() {
     return (
         <>
-            <Share/>
+            <SeoMap/>  
         </>
     )
 }

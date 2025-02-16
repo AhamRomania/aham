@@ -1,5 +1,8 @@
 import HtmlContent from "@/c/Content";
+import { seo } from "@/c/funcs";
 import { MainLayout } from "@/c/Layout";
+
+export const metadata = seo('/confidentialitate');
 
 export default async function Page() {
     return (

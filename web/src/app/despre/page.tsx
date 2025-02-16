@@ -1,6 +1,7 @@
 import HtmlContent from "@/c/Content";
+import { seo } from "@/c/funcs";
 import { Centred, MainLayout } from "@/c/Layout";
-
+export const metadata = seo('/despre');
 export default async function Page() {
     return (
         <MainLayout>

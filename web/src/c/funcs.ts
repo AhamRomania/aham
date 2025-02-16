@@ -103,28 +103,27 @@ export async function seo(uri?: string, extra?: Metadata): Promise<Metadata> {
       };
     }
   
-    if (data.title !== '') {
+    if (data.title) {
       meta['title'] = data.title + ' | Aham';
       meta.openGraph.title = meta['title'];
+    } else {
+        meta['title'] = '';
     }
   
-    if (data.description !== '') {
+    if (data.description) {
       meta['description'] = data.description;
       meta.openGraph.description = meta['description'];
+    } else {
+        meta['description'] = '';
     }
   
-    if (data.description !== '') {
-      meta['description'] = data.description;
-      meta.openGraph.description = meta['description'];
-    }
-  
-    if (data.image !== '') {
+    if (data.image) {
       meta.openGraph.images = [
         {
           url: data.image,
           alt: meta.title as string,
         }
-      ]
+      ];
     }
   
     return meta as Metadata;

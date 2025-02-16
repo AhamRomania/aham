@@ -1,5 +1,6 @@
+import { seo } from "@/c/funcs";
 import { MainLayout } from "@/c/Layout";
-
+export const metadata = seo('/contact');
 export default async function Page() {
     return (
         <MainLayout>

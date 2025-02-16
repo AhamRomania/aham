@@ -51,14 +51,19 @@ func seoDelete(w http.ResponseWriter, r *http.Request) {
 
 func seoInfo(w http.ResponseWriter, r *http.Request) {
 
-	if r.URL.Query().Get("uri") != "" {
+	uri := r.URL.Query().Get("uri")
 
-		var entry SeoEntry = SeoEntry{}
+	if uri != "" {
+
+		var entry SeoEntry = SeoEntry{
+			URI:       uri,
+			UpdatedAt: time.Now(),
+		}
 
 		row := c.DB().QueryRow(
 			context.TODO(),
 			`select * from seo where uri = $1 LIMIT 1`,
-			r.URL.Query().Get("uri"),
+			uri,
 		)
 
 		err := row.Scan(
@@ -72,9 +77,26 @@ func seoInfo(w http.ResponseWriter, r *http.Request) {
 		)
 
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			c.Log().Error(err)
-			return
+
+			sql := `
+				insert into seo
+					(uri, title, description, keywords, image, updated_at)
+				values
+					($1, '', '', '', '', now())
+				returning id
+			`
+
+			row := c.DB().QueryRow(
+				context.TODO(),
+				sql,
+				uri,
+			)
+
+			if err := row.Scan(&entry.ID); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				c.Log().Error(err)
+				return
+			}
 		}
 
 		render.JSON(w, r, entry)
@@ -122,7 +144,9 @@ func seoInfo(w http.ResponseWriter, r *http.Request) {
 
 func seoCreate(w http.ResponseWriter, r *http.Request) {
 
-	payload := SeoEntry{}
+	payload := SeoEntry{
+		UpdatedAt: time.Now(),
+	}
 
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -146,7 +170,7 @@ func seoCreate(w http.ResponseWriter, r *http.Request) {
 		payload.Description,
 		payload.Keywords,
 		payload.Image,
-		time.Now(),
+		payload.UpdatedAt,
 	)
 
 	var id int64

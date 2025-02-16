@@ -87,6 +87,8 @@ export type CreateUserResponse = {
 }
 
 export type SeoEntry = {
+    id: number;
+    uri: string;
     title: string;
     description: string;
     keywords: string;
