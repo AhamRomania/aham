@@ -20,7 +20,8 @@ insert into resources values
     (1, 'cities', 'platform'),
     (2, 'props', 'platform'),
     (3, 'categories', 'platform'),
-    (4, 'ad', 'content');
+    (4, 'ad', 'content'),
+    (5, 'seo', 'cms');
 
 -- Read = 1 (binary 0001)
 -- Write = 2 (binary 0010)
@@ -32,3 +33,4 @@ insert into sam values
     (2, 2, 2, 1|2|4|8), -- allow me edit props
     (3, 2, 3, 1|2|4|8), -- allow me edit categories
     (4, 2, 4, 1|2|4|8); -- allow me edit ads
+    (5, 2, 5, 1|2|4|8); -- allow me edit seo

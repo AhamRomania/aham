@@ -2,6 +2,7 @@ package route
 
 import (
 	"aham/common/c"
+	"aham/service/api/sam"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -23,12 +24,17 @@ type SeoEntry struct {
 
 func SeoRotues(r chi.Router) {
 	r.Get("/", seoInfo)
-	r.Post("/", seoCreate)
-	r.Put("/{id}", seoUpdate)
-	r.Delete("/{id}", seoDelete)
+	r.Post("/", c.Guard(seoCreate))
+	r.Put("/{id}", c.Guard(seoUpdate))
+	r.Delete("/{id}", c.Guard(seoDelete))
 }
 
 func seoDelete(w http.ResponseWriter, r *http.Request) {
+
+	if !Can(r, sam.SEO, sam.PermDelete) {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 
 	cmd, err := c.DB().Exec(
 		context.TODO(),
@@ -144,6 +150,11 @@ func seoInfo(w http.ResponseWriter, r *http.Request) {
 
 func seoCreate(w http.ResponseWriter, r *http.Request) {
 
+	if !Can(r, sam.SEO, sam.PermWrite) {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
 	payload := SeoEntry{
 		UpdatedAt: time.Now(),
 	}
@@ -187,6 +198,11 @@ func seoCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func seoUpdate(w http.ResponseWriter, r *http.Request) {
+
+	if !Can(r, sam.SEO, sam.PermWrite) {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 
 	payload := SeoEntry{
 		ID:        c.ID(r, "id"),

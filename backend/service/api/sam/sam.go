@@ -8,6 +8,7 @@ const (
 	PROPS      Resource = 2 // props
 	CATEGORIES Resource = 3 // categories
 	ADS        Resource = 4 // ads
+	SEO        Resource = 5 // seo
 )
 
 const (
