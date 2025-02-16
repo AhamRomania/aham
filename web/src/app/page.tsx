@@ -1,17 +1,14 @@
 import getApiFetch from "@/api/api";
 import { CategoryListSection } from "@/c/Categories";
+import { seo } from "@/c/funcs";
 import { HomepageLayout } from "@/c/Layout";
 import { Ad } from "@/c/types";
 import MoreAds from "@/c/Widget/MoreAds";
 
-export const metadata = {
+export const metadata = seo('/', {
   title: "Aham: Bazarul tău preferat",
   description: "Începe explorarea în bazarul tău preferat unde găsești și cunoști o grămadă de lucruri.",
   icons: {
-    icon: [
-      { url: "favicons/favicon-180x180.png", sizes: "180x180", type: "image/png" },
-      { url: "favicons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
     apple: "favicons/favicon-180x180.png",
   },
   manifest: "aham.webmanifest",
@@ -19,7 +16,7 @@ export const metadata = {
     "msapplication-TileColor": "#1F70B8",
     "msapplication-TileImage": "favicons/favicon-180x180.png",
   },
-};
+});
 
 export default async function Home () {
   const api = getApiFetch();

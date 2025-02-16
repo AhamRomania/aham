@@ -85,3 +85,10 @@ export type CreateUserResponse = {
     id: number;
     given_name: string;
 }
+
+export type SeoEntry = {
+    title: string;
+    description: string;
+    keywords: string;
+    image: string;
+}

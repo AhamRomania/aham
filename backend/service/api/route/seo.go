@@ -25,6 +25,28 @@ func SeoRotues(r chi.Router) {
 	r.Get("/", seoInfo)
 	r.Post("/", seoCreate)
 	r.Put("/{id}", seoUpdate)
+	r.Delete("/{id}", seoDelete)
+}
+
+func seoDelete(w http.ResponseWriter, r *http.Request) {
+
+	cmd, err := c.DB().Exec(
+		context.TODO(),
+		`delete from seo where id = $1`,
+		c.ID(r, "id"),
+	)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.Log().Error(err)
+		return
+	}
+
+	if cmd.RowsAffected() == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		c.Log().Error(err)
+		return
+	}
 }
 
 func seoInfo(w http.ResponseWriter, r *http.Request) {
@@ -113,9 +135,10 @@ func seoCreate(w http.ResponseWriter, r *http.Request) {
 			(uri, title, description, keywords, image, updated_at)
 		values
 			($1, $2, $3, $4, $5, $6)
+		returning id
 	`
 
-	_, err := c.DB().Exec(
+	row := c.DB().QueryRow(
 		context.TODO(),
 		sql,
 		payload.URI,
@@ -126,16 +149,25 @@ func seoCreate(w http.ResponseWriter, r *http.Request) {
 		time.Now(),
 	)
 
-	if err != nil {
+	var id int64
+
+	if err := row.Scan(&id); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		c.Log().Error(err)
 		return
 	}
+
+	payload.ID = id
+
+	render.JSON(w, r, payload)
 }
 
 func seoUpdate(w http.ResponseWriter, r *http.Request) {
 
-	payload := SeoEntry{}
+	payload := SeoEntry{
+		ID:        c.ID(r, "id"),
+		UpdatedAt: time.Now(),
+	}
 
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -153,11 +185,10 @@ func seoUpdate(w http.ResponseWriter, r *http.Request) {
 		where id = $1
 	`
 
-	_, err := c.DB().Exec(
+	cmd, err := c.DB().Exec(
 		context.TODO(),
 		sql,
-		c.ID(r, "id"),
-		payload.URI,
+		payload.ID,
 		payload.Title,
 		payload.Description,
 		payload.Keywords,
@@ -170,4 +201,12 @@ func seoUpdate(w http.ResponseWriter, r *http.Request) {
 		c.Log().Error(err)
 		return
 	}
+
+	if cmd.RowsAffected() == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		c.Log().Error(err)
+		return
+	}
+
+	render.JSON(w, r, payload)
 }

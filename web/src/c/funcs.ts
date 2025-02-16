@@ -1,5 +1,7 @@
 import getApiFetch from "@/api/api";
-import { Ad, User } from "./types"
+import { Ad, SeoEntry, User } from "./types"
+import { Metadata } from "next";
+import getDomain, { Domain } from "./domain";
 
 export const isPrivilegedUser = (user: User): boolean => {
     const roles = ['root','admin','moderator'];
@@ -71,3 +73,60 @@ export const getAdOrCategory = async(path: string[]): Promise<PathDynamicVo | nu
 export function ucfirst(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+
+export async function seo(uri?: string, extra?: Metadata): Promise<Metadata> {
+
+    const response = await fetch(getDomain(Domain.Api) + `/v1/seo?uri=` + uri, {next:{revalidate: 60 * 60}});
+
+    let data: SeoEntry;
+
+    try
+    {
+        data = await response.json();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    catch(error: any) {
+        return extra || {} as Metadata;
+    }
+  
+    const meta = { ...extra };
+  
+    if (!data) {
+        return meta;
+    }
+
+    if (!meta.openGraph) {
+      meta.openGraph = {
+        url: `https://aham.ro${uri}`,
+        siteName: 'Aham'
+      };
+    }
+  
+    if (data.title !== '') {
+      meta['title'] = data.title + ' | Aham';
+      meta.openGraph.title = meta['title'];
+    }
+  
+    if (data.description !== '') {
+      meta['description'] = data.description;
+      meta.openGraph.description = meta['description'];
+    }
+  
+    if (data.description !== '') {
+      meta['description'] = data.description;
+      meta.openGraph.description = meta['description'];
+    }
+  
+    if (data.image !== '') {
+      meta.openGraph.images = [
+        {
+          url: data.image,
+          alt: meta.title as string,
+        }
+      ]
+    }
+  
+    return meta as Metadata;
+  }
+  
