@@ -33,6 +33,8 @@
             "env": {
                 "LISTEN": ":8002",
                 "FILES": "${workspaceFolder}/data/cdn",
+                "CERT": "${workspaceFolder}/certs/cdn/cert.pem",
+                "KEY": "${workspaceFolder}/certs/cdn/key.pem",
                 "DEV": "true",
             },
         },

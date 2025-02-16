@@ -111,6 +111,8 @@ create table seo (
     unique("uri")
 );
 
+CREATE INDEX seo_uri_index ON seo (uri);
+
 create table reports (
     id serial primary key,
     reporter integer references users(id),

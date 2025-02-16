@@ -39,6 +39,7 @@ func main() {
 		r.Route("/props", route.PropsRoute)
 		r.Route("/categories", route.CategoriesRoutes)
 		r.Route("/ads", route.AdsRoutes)
+		r.Route("/seo", route.SeoRotues)
 
 		r.Route("/shares", route.ShareRoutes)
 

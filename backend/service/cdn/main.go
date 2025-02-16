@@ -3,6 +3,7 @@ package main
 import (
 	"aham/common/c"
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"hash/crc32"
@@ -64,7 +65,32 @@ func main() {
 
 	c.Log().Infof("Server is listening on: %s", color.Ize(color.Yellow, listen))
 
-	if err := http.ListenAndServe(listen, mux); err != nil {
+	if os.Getenv("HTTP2") == "" {
+		if err := http.ListenAndServe(listen, mux); err != nil {
+			c.Log().Errorf("Error starting server: %s", color.Ize(color.Red, err.Error()))
+		}
+		return
+	}
+
+	c.Log().Info("Using HTTP2")
+
+	// Configure the TLS settings for HTTP/2
+	tlsConfig := &tls.Config{
+		NextProtos: []string{"h2"},
+	}
+
+	server := &http.Server{
+		Addr:      listen,
+		Handler:   mux,
+		TLSConfig: tlsConfig,
+	}
+
+	cert, key := os.Getenv("CERT"), os.Getenv("KEY")
+
+	c.Log().Infof("Cert %s", cert)
+	c.Log().Infof("Key %s", key)
+
+	if err := server.ListenAndServeTLS(cert, key); err != nil {
 		c.Log().Errorf("Error starting server: %s", color.Ize(color.Red, err.Error()))
 	}
 }
