@@ -112,4 +112,11 @@ export type SeoEntry = {
     image: string;
 }
 
+export type AdMetrics = {
+    views: number;
+    messages: number;
+    favourites: number;
+    week: number[];
+}
+
 export type D = { [key: string]: any };

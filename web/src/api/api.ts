@@ -32,7 +32,6 @@ const getApiFetch = (props?:ApiFetchProps) => {
         init.headers = {
             ...init.headers,
             'Authorization': `Bearer ${token}`,
-            'User-Agent': 'Aham/1.0'
         };
 
         return new Promise((resolve, reject) => {

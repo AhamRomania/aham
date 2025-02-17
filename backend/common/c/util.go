@@ -130,7 +130,7 @@ func ID(r *http.Request, name string) int64 {
 	n, err := strconv.ParseInt(p, 10, 64)
 
 	if err != nil {
-		Log().Errorf("getting id from key: %s value: %s", name, p)
+		Log().Errorf("getting id from key: %s value: %s path: %s", name, p, r.URL.Path)
 		return -0
 	}
 

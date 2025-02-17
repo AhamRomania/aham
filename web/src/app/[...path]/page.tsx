@@ -35,7 +35,7 @@ export default async function Page(props: any) {
     const api = getApiFetch();
     const params = await props.params
     const data = await getAdOrCategory(params.path);
-    const dprops = await api<Prop[]>(`/categories/${data?.vo.category_id}/props`);
+    const dprops = await api<Prop[]>(`/categories/${data?.vo.category.id}/props`);
     const extra = await api<Ad[]>(`/ads`)
 
     if (!data) {

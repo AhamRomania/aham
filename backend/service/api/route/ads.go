@@ -37,9 +37,10 @@ func AdsRoutes(r chi.Router) {
 func getAdMetrics(w http.ResponseWriter, r *http.Request) {
 	// todo
 	render.JSON(w, r, map[string]any{
-		"views":    25,
-		"messages": 20,
-		"week":     []int{2, 4, 7, 7, 5, 5, 2},
+		"views":      25,
+		"messages":   20,
+		"favourites": 5,
+		"week":       []int{2, 4, 7, 7, 5, 5, 2},
 	})
 }
 

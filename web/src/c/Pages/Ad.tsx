@@ -12,6 +12,7 @@ import MoreAds from "../Widget/MoreAds";
 import SocialShare from "../Widget/SocialShare";
 import { track } from "../funcs";
 import { getUser } from "../Auth";
+import AdPanel from "../Widget/AdPanel";
 
 export interface AdPageProps {
     ad: Ad;
@@ -47,9 +48,9 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
             );
         }
 
-        if (ad.owner.id != me?.id) {
+        if (ad.owner.id == me?.id) {
             return (
-                <div>USER AD</div>
+                <AdPanel ad={ad}/>
             );
         }
 

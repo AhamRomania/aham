@@ -24,6 +24,8 @@
     "@next/third-parties": "^15.1.5",
     "@types/facebook-js-sdk": "^3.3.12",
     "@types/gapi": "^0.0.47",
+    "dayjs": "^1.11.13",
+    "echarts": "^5.6.0",
     "js-cookie": "^3.0.5",
     "marked": "^15.0.6",
     "next": "^15.1.5",

@@ -74,6 +74,10 @@ func (c *Category) LastModified() string {
 
 func GetCategoryByID(id int64) *Category {
 
+	if id == 0 {
+		return nil
+	}
+
 	row := c.DB().QueryRow(
 		context.Background(),
 		`

@@ -150,17 +150,7 @@ export async function track(kind: string, metadata?: D) {
         query["metadata"] = JSON.stringify(metadata);
     }
 
-    const img = new Image();
-    
-    img.src = getDomain(Domain.Api) + `/v1/metrics/track` + buildQueryParams(query);
-    
-    img.onload = () => {
-        console.log(`Event ${kind} tracked successfully.`);
-    };
-
-    img.onerror = (error) => {
-        console.error('Failed to track event:', error);
-    };
+    (new Image()).src = getDomain(Domain.Api) + `/v1/metrics/track` + buildQueryParams(query);
 }
 
 export function buildQueryParams(params: {[key: string]:any}):string {
