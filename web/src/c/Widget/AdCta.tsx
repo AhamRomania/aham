@@ -9,17 +9,16 @@ import { Space } from "../Layout";
 import getApiFetch from "@/api/api";
 import { useRouter } from "next/navigation";
 import { track } from "../funcs";
-import { getMe } from "@/api/common";
 
 export interface AdCtaProps {
-    ad: Ad
+    ad: Ad;
+    me: User | null;
     onAdReport: () => void;
 }
 
-const AdCta:FC<AdCtaProps> = ({ad, onAdReport}) => {
+const AdCta:FC<AdCtaProps> = ({ad, me, onAdReport}) => {
     const router = useRouter();
     const api = getApiFetch();
-    const [me, setMe] = useState<User>();
     const [fetchingPhoneNumber, setFetchingPhoneNumber] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState<string|undefined>();
     const [chats, setChats] = useState<Chat[]>([]);
@@ -56,7 +55,6 @@ const AdCta:FC<AdCtaProps> = ({ad, onAdReport}) => {
             fetchPhoneNumber();
         }
         getChats();
-        getMe().then(setMe);
     }, []);
 
     useEffect(() => {
@@ -68,7 +66,9 @@ const AdCta:FC<AdCtaProps> = ({ad, onAdReport}) => {
     }, [chats]);
 
     const getChats = () => {
-        api<Chat[]>(`/chat?reference=${ad.id}`).then(setChats);
+        if (me) {
+            api<Chat[]>(`/chat?reference=${ad.id}`).then(setChats);
+        }
     }
 
     const getLastMessage = () => {

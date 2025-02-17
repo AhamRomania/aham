@@ -23,7 +23,7 @@ export const AccountLayoutContext = React.createContext<AccountLayoutAPI>({} as 
 
 const AccountLayout = ({ children }: React.PropsWithChildren) => {
   const [open, setOpen] = useState(true);
-  const [me, setMe] = useState<User>({} as User);
+  const [me, setMe] = useState<User | null>(null);
   const [userLoaded, setUserLoaded] = useState(false);
   const [path, setPath] = useState<React.ReactElement>(<></>);
 

@@ -5,6 +5,7 @@ import getDomain, { Domain } from "./domain";
 import { getUser } from "./Auth";
 
 export const isPrivilegedUser = (user: User): boolean => {
+    if (user === null) { return false }
     const roles = ['root', 'admin', 'moderator'];
     return roles.includes(user.role);
 }

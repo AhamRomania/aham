@@ -23,7 +23,7 @@ export interface AdPageProps {
 
 const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
 
-    const [me,setMe] = useState<User>();
+    const [me,setMe] = useState<User|null>(null);
     const [fetchingMe, setFetchingMe] = useState(true);
     const [showReportDialog, setShowReportDialog] = useState<boolean>(false);
 
@@ -36,6 +36,9 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                 setFetchingMe(false);
             }
         );
+    }, []);
+
+    useEffect(() => {
         track("ad/view",{"ad":ad.id});
     }, []);
 
@@ -64,7 +67,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
             );
         }
 
-        return <AdCta ad={ad} onAdReport={() => setShowReportDialog(true)}/>;
+        return <AdCta me={me} ad={ad} onAdReport={() => setShowReportDialog(true)}/>;
     }
 
     return (

@@ -41,7 +41,7 @@ const getApiFetch = (props?:ApiFetchProps) => {
 
                         if (response.status === 401) {
                             reject('unauthorized');
-                            return;
+                            return
                         }
 
                         if (init.success && response.status >= 200 && response.status <= 205) {

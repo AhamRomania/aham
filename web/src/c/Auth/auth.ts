@@ -1,9 +1,13 @@
 import getApiFetch from '@/api/api'
 import { User } from '../types';
 
-const getUser = async () => {
+const getUser = async (): Promise<User | null> => {
     const api = getApiFetch();
-    return await api<User>('/me');
+    return new Promise((resolve, reject) => {
+        api<User>('/me').then((me: User) => {
+            resolve(me);
+        }).catch(() => reject());
+    });
 }
 
 const getLoggedInState = async () => {
