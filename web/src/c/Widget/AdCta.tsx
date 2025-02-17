@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { Favorite, LocalOffer, Phone, Report, Send } from "@mui/icons-material";
 import { Button, CircularProgress, Divider, IconButton, Stack, Textarea } from "@mui/joy";
-import { FC, useEffect, useState } from "react";
+import { createRef, FC, useEffect, useState } from "react";
 import { Ad, Chat, Message } from "../types";
 import UserAvatar from "../avatar";
 import Link from "next/link";
@@ -20,15 +20,12 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
     const [phoneNumber, setPhoneNumber] = useState<string|undefined>();
     const [chats, setChats] = useState<Chat[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
-
-    const defaultMessage = () => {
-        if (chats.length > 0) {
-            return '';
-        } 
-        return `Salut ${ad.owner.given_name},\n\n` + 
-               `Sunt interesat de acest anunț. Este încă valabil?\n\n` +
-               `Mulțumesc`;
-    }
+    const [messagesLoaded, setMessagesLoaded] = useState<boolean>();
+    const [messageToSend, setMessageToSend] = useState<string>(
+        `Salut ${ad.owner.given_name},\n\n` + 
+        `Sunt interesat de acest anunț. Este încă valabil?\n\n` +
+        `Mulțumesc`
+    )
 
     const fetchPhoneNumber = () => {
         if (phoneNumber === '') {return;}
@@ -58,9 +55,91 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
 
     useEffect(() => {
         if (chats.length > 0) {
-            api<Message[]>(`/chat/${chats[0].id}`).then(setMessages);
+            getLastMessage();
         }
     }, [chats]);
+
+    const getLastMessage = () => {
+        api<Message[]>(`/chat/${chats[0].id}?offset=0&length=1`).then(
+            (items) => {
+                setMessages(items);
+                if (items.length>0) {
+                    setMessageToSend('');
+                }
+                setMessagesLoaded(true);
+            }
+        );
+    }
+
+    const sendNewMessage = () => {
+        api(`/chat/${chats[0].id}`,{method:'POST',body: JSON.stringify({message: messageToSend})}).then(
+            () => {
+                setMessageToSend('');
+                getLastMessage();
+            }
+        ).catch(
+            () => {
+                alert('Nu am putut trimi mesajul.');
+            }
+        )
+    }
+
+    const renderMessageSending = () => {
+
+        if (!messagesLoaded) {
+            return (
+                <div
+                    css={css`
+                        border: 1px solid #DDD;
+                        border-radius: 8px;
+                        height: 318px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    `}
+                >
+                    <CircularProgress thickness={2} size="sm"/>
+                </div>
+            )
+        }
+
+        return (
+            <>
+                {messages.length > 0 && <div
+                    css={css`
+                            border: 1px solid #DDD;
+                            border-radius: 8px;
+                            padding: 10px;
+                            p {
+                                font-size: 14px;
+                            }   
+                        `}
+                        >
+                    <strong
+                        css={css`
+                            font-weight: bold;
+                            font-size: 14px;
+                            margin-bottom: 10px;
+                            display: block;
+                        `}
+                    >
+                        Mesaj
+                    </strong>
+                    <p>{messages[messages.length - 1].message}</p>
+                </div>}
+                
+                {chats.length > 0 ? <Button>Vizualizează conversație activă</Button> : []}
+                
+                <Textarea
+                    value={messageToSend}
+                    onChange={(e: any) => setMessageToSend(e.target.value)}
+                    placeholder={chats.length > 0?'Mesaj nou':''}
+                />
+
+                <Button onClick={() => sendNewMessage()} startDecorator={<Send fontSize="small"/>}>Trimite</Button>
+            </>
+        )
+    }
 
     return (
         <div
@@ -116,34 +195,7 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
                 `}
                 gap={2}
             >
-                {messages.length && <div
-                    css={css`
-                            border: 1px solid #DDD;
-                            border-radius: 8px;
-                            padding: 10px;
-                            p {
-                                font-size: 14px;
-                            }   
-                        `}
-                        >
-                    <strong
-                        css={css`
-                            font-weight: bold;
-                            font-size: 14px;
-                            margin-bottom: 10px;
-                            display: block;
-                        `}
-                    >Mesaj primit</strong>
-                    <p>{messages[messages.length - 1].message}</p>
-                </div>}
-                
-                {chats.length > 0 ? <Button>Vizualizează conversație activă</Button> : []}
-                
-                <Textarea
-                    value={defaultMessage()}
-                    placeholder={chats.length > 0?'Mesaj nou':''}
-                />
-                <Button startDecorator={<Send fontSize="small"/>}>Trimite</Button>
+                {renderMessageSending()}
                 <Button startDecorator={<LocalOffer fontSize="small"/>}>Ofertă</Button>
                 <Divider/>
                 <Stack flexDirection="row" gap={2}>
