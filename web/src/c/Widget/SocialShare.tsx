@@ -21,7 +21,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
   useEffect(() => {
     const data = new FormData();
     data.set("url", url);
-    fetch(getDomain(Domain.Url), { method: "POST", body: data, cache:'no-store' })
+    fetch(getDomain(Domain.Url), { method: "POST", body: data, cache:'no-cache' })
       .then((response) => {
         response.text().then((short) => {
           if (short != '' && shortURL == '') {
