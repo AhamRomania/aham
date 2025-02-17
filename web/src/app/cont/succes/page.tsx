@@ -1,10 +1,10 @@
 "use client";
-import { seo } from "@/c/funcs";
+
 import { css } from "@emotion/react";
 import { CheckCircleOutline } from "@mui/icons-material";
 import { Button } from "@mui/joy";
 import Link from "next/link";
-export const metadata = seo('/cont/success');
+
 export default function Page() {
   const searchParams = new URLSearchParams(typeof(window) != 'undefined' ? window.location.search  : '');
   return (

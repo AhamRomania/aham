@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { Favorite, LocalOffer, Phone, Report, Send } from "@mui/icons-material";
 import { Button, CircularProgress, Divider, IconButton, Stack, Textarea } from "@mui/joy";
-import { createRef, FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Ad, Chat, Message } from "../types";
 import UserAvatar from "../avatar";
 import Link from "next/link";

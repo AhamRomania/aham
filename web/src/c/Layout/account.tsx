@@ -1,7 +1,7 @@
 "use client";
 
 import { css } from "@emotion/react";
-import { Add, AddTaskOutlined, AdsClickOutlined, ChatOutlined, DashboardOutlined, FavoriteOutlined, FolderOutlined, FolderSpecialOutlined, Home, IosShareOutlined, Notifications, Pages, SettingsOutlined } from "@mui/icons-material";
+import { Add, AddTaskOutlined, AdsClickOutlined, ChatOutlined, DashboardOutlined, FavoriteOutlined, FolderOutlined, FolderSpecialOutlined, Home, Notifications, Pages, SettingsOutlined } from "@mui/icons-material";
 import { Breadcrumbs, IconButton } from "@mui/joy";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";

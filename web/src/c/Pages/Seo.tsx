@@ -3,7 +3,7 @@
 import { FC, useContext, useEffect, useState } from "react"
 import { AccountLayoutContext } from "../Layout/account";
 import { Button, DialogActions, DialogContent, FormControl, FormLabel, IconButton, Input, Snackbar, Stack, Table } from "@mui/joy";
-import { Add, CheckCircle, Delete, Edit, Error } from "@mui/icons-material";
+import { Add, CheckCircle, Delete, Error } from "@mui/icons-material";
 import getApiFetch from "@/api/api";
 import { SeoEntry } from "../types";
 import { Dialog, DialogTitle } from "@mui/material";

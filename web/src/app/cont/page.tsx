@@ -19,9 +19,6 @@ import {
 import RegisterForm from "@/c/Form/Register";
 import Link from "next/link";
 import { useState } from "react";
-import { seo } from "@/c/funcs";
-
-export const metadata = seo('/cont');
 
 export default function Page() {
   const api = getApiFetch();
