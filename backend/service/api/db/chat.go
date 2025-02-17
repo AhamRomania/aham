@@ -27,8 +27,8 @@ type Chat struct {
 
 type Message struct {
 	ID        int64               `json:"id"`
-	ChatID    int64               `json:"chat_id,omitempty"`
-	FromID    int64               `json:"from_id,omitempty"`
+	ChatID    int64               `json:"-"`
+	FromID    int64               `json:"-"`
 	From      UserMin             `json:"from,omitempty"`
 	Message   string              `json:"message,omitempty"`
 	Seen      map[int64]time.Time `json:"seen,omitempty"`

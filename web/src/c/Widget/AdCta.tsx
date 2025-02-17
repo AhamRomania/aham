@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import { Favorite, LocalOffer, Phone, Report, Send } from "@mui/icons-material";
 import { Button, CircularProgress, Divider, IconButton, Stack, Textarea } from "@mui/joy";
 import { FC, useEffect, useState } from "react";
-import { Ad } from "../types";
+import { Ad, Chat, Message } from "../types";
 import UserAvatar from "../avatar";
 import Link from "next/link";
 import { Space } from "../Layout";
@@ -18,8 +18,13 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
     const api = getApiFetch();
     const [fetchingPhoneNumber, setFetchingPhoneNumber] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState<string|undefined>();
+    const [chats, setChats] = useState<Chat[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
 
     const defaultMessage = () => {
+        if (chats.length > 0) {
+            return '';
+        } 
         return `Salut ${ad.owner.given_name},\n\n` + 
                `Sunt interesat de acest anunț. Este încă valabil?\n\n` +
                `Mulțumesc`;
@@ -48,7 +53,14 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
         if (query.get('phone')) {
             fetchPhoneNumber();
         }
+        api<Chat[]>(`/chat?reference=${ad.id}`).then(setChats);
     }, []);
+
+    useEffect(() => {
+        if (chats.length > 0) {
+            api<Message[]>(`/chat/${chats[0].id}`).then(setMessages);
+        }
+    }, [chats]);
 
     return (
         <div
@@ -104,7 +116,33 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
                 `}
                 gap={2}
             >
-                <Textarea defaultValue={defaultMessage()}/>
+                {messages.length && <div
+                    css={css`
+                            border: 1px solid #DDD;
+                            border-radius: 8px;
+                            padding: 10px;
+                            p {
+                                font-size: 14px;
+                            }   
+                        `}
+                        >
+                    <strong
+                        css={css`
+                            font-weight: bold;
+                            font-size: 14px;
+                            margin-bottom: 10px;
+                            display: block;
+                        `}
+                    >Mesaj primit</strong>
+                    <p>{messages[messages.length - 1].message}</p>
+                </div>}
+                
+                {chats.length > 0 ? <Button>Vizualizează conversație activă</Button> : []}
+                
+                <Textarea
+                    value={defaultMessage()}
+                    placeholder={chats.length > 0?'Mesaj nou':''}
+                />
                 <Button startDecorator={<Send fontSize="small"/>}>Trimite</Button>
                 <Button startDecorator={<LocalOffer fontSize="small"/>}>Ofertă</Button>
                 <Divider/>

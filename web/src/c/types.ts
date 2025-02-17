@@ -86,6 +86,23 @@ export type CreateUserResponse = {
     given_name: string;
 }
 
+export type Chat = {
+    id: number;
+    title: string;
+    context: string;
+    reference: string;
+    participants: User[];
+    created_at: string;
+}
+
+export type Message = {
+    id: number;
+    from: User;
+    message: string;
+    seen: {[key: number]: string};
+    created_at: string;
+}
+
 export type SeoEntry = {
     id: number;
     uri: string;
