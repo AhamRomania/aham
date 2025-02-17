@@ -17,7 +17,7 @@ func ChatRoutes(r chi.Router) {
 	r.Post("/", c.Guard(createChat))
 	r.Get("/", c.Guard(getChats))
 	r.Post("/{id}", c.Guard(createChatMessage))
-	r.Get("/{id}", c.Guard(getChatMessage))
+	r.Get("/{id}", c.Guard(getChatMessages))
 }
 
 type createChatRequest struct {
@@ -119,7 +119,7 @@ func createChatMessage(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, message)
 }
 
-func getChatMessage(w http.ResponseWriter, r *http.Request) {
+func getChatMessages(w http.ResponseWriter, r *http.Request) {
 
 	userID, _ := c.UserID(r)
 

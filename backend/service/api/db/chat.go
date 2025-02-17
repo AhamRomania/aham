@@ -198,11 +198,7 @@ func (chat *Chat) CreateMessage(from int64, message string) (msg *Message, err e
 
 	now := time.Now()
 
-	msg = &Message{
-		ID:        0,
-		Message:   message,
-		CreatedAt: now,
-	}
+	msg = &Message{ID: 0}
 
 	row := c.DB().QueryRow(
 		context.TODO(),
