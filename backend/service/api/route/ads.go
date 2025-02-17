@@ -31,6 +31,16 @@ func AdsRoutes(r chi.Router) {
 	r.Get("/", GetAds)
 	r.Get("/{id}", GetAd)
 	r.Get("/{id}/contact", c.Guard(getContactDetails))
+	r.Get("/{id}/metrics", getAdMetrics)
+}
+
+func getAdMetrics(w http.ResponseWriter, r *http.Request) {
+	// todo
+	render.JSON(w, r, map[string]any{
+		"views":    25,
+		"messages": 20,
+		"week":     []int{2, 4, 7, 7, 5, 5, 2},
+	})
 }
 
 func getContactDetails(w http.ResponseWriter, r *http.Request) {
