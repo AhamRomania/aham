@@ -57,10 +57,11 @@ export function formatMoney(money: number, currency: string) {
         case 'EUR':
             return `€${toMoney(money)}`
         case 'LEI':
-            return `${toMoney(money)}LEI`
+	    const v = toMoney(money)
+            return v+((v=="1")?'LEU':'LEI');
         default:
             return toMoney(money);
-    }
+   }
 }
 
 export function toMoney(cents: number): string {
