@@ -59,7 +59,8 @@ func isCommonUserAgent(r *http.Request) bool {
 		"Slurp",       // Yahoo Slurp (for Yahoo search engine crawlers)
 		"DuckDuckBot", // DuckDuckGo bot
 		"YandexBot",   // Yandex bot (for Russian search engine crawlers)
-		"Next",
+		"Aham",
+		"node",
 	}
 
 	// Get the User-Agent string from the request header
