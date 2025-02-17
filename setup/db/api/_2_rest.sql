@@ -127,7 +127,7 @@ create table reports (
     status varchar(20) not null default 'pending',
     foreign key (reporter) references users(id),
     check (status in ('pending', 'approved', 'rejected')),
-    check (reason in ('inappropriate', 'spam', 'other')),
+    check (reason in ('inappropriate', 'copyright', 'spam', 'other')),
     unique (reporter_email,reference,reason,comments,navitator,ip)
 );
 

@@ -13,6 +13,7 @@ import SocialShare from "../Widget/SocialShare";
 import { track } from "../funcs";
 import { getUser } from "../Auth";
 import AdPanel from "../Widget/AdPanel";
+import ReportAdDialog from "../Dialog/ReportAd";
 
 export interface AdPageProps {
     ad: Ad;
@@ -24,6 +25,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
 
     const [me,setMe] = useState<User>();
     const [fetchingMe, setFetchingMe] = useState(true);
+    const [showReportDialog, setShowReportDialog] = useState<boolean>(false);
 
     useEffect(() => {
         getUser().then((me) => {
@@ -62,7 +64,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
             );
         }
 
-        return <AdCta ad={ad}/>;
+        return <AdCta ad={ad} onAdReport={() => setShowReportDialog(true)}/>;
     }
 
     return (
@@ -254,6 +256,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                 </div>
             </main>
             <MoreAds title="Asemănătoare" ads={extra!}/>
+            {showReportDialog && <ReportAdDialog ad={ad} onClose={() => setShowReportDialog(false)}/>}
         </>
     )
 }

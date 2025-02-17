@@ -49,8 +49,8 @@ func Report(w http.ResponseWriter, r *http.Request) {
 		req.Reference,
 		req.Reason,
 		req.Comments,
-		r.Header.Get("User-Agent"),
-		r.RemoteAddr,
+		r.UserAgent(),
+		c.IP(r),
 	)
 
 	if err != nil {

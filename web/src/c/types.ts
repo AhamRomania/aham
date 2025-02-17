@@ -119,4 +119,12 @@ export type AdMetrics = {
     week: number[];
 }
 
+export type ReportData = {
+    name: string
+    email: string
+    reason: string
+    message: string
+    reference: string;
+}
+
 export type D = { [key: string]: any };

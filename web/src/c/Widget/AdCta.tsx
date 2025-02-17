@@ -13,9 +13,10 @@ import { getMe } from "@/api/common";
 
 export interface AdCtaProps {
     ad: Ad
+    onAdReport: () => void;
 }
 
-const AdCta:FC<AdCtaProps> = ({ad}) => {
+const AdCta:FC<AdCtaProps> = ({ad, onAdReport}) => {
     const router = useRouter();
     const api = getApiFetch();
     const [me, setMe] = useState<User>();
@@ -241,7 +242,7 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
                         <Button startDecorator={<Favorite fontSize="small"/>}>Favorite</Button>
                     </Stack>
                     <Stack flex={1}>
-                        <Button startDecorator={<Report fontSize="small"/>}>Raportează</Button>
+                        <Button onClick={onAdReport} startDecorator={<Report fontSize="small"/>}>Raportează</Button>
                     </Stack>
                 </Stack>
             </Stack>
