@@ -30,6 +30,7 @@ func (f *securityFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if _, exists := f.deny[c.IP(r)]; exists && os.Getenv("DEV") != "true" {
 		http.Error(w, "Trimite un mesaj la security@aham.ro dacă consideri că a fost o greșeală.", http.StatusForbidden)
+		c.Log().Warnf("Requests from %s denied.", c.IP(r))
 		return
 	}
 
@@ -58,6 +59,7 @@ func isCommonUserAgent(r *http.Request) bool {
 		"Slurp",       // Yahoo Slurp (for Yahoo search engine crawlers)
 		"DuckDuckBot", // DuckDuckGo bot
 		"YandexBot",   // Yandex bot (for Russian search engine crawlers)
+		"Next",
 	}
 
 	// Get the User-Agent string from the request header
