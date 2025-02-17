@@ -50,14 +50,20 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
         if (query.get('phone')) {
             fetchPhoneNumber();
         }
-        api<Chat[]>(`/chat?reference=${ad.id}`).then(setChats);
+        getChats();
     }, []);
 
     useEffect(() => {
         if (chats.length > 0) {
             getLastMessage();
+        } else {
+            setMessagesLoaded(true);
         }
     }, [chats]);
+
+    const getChats = () => {
+        api<Chat[]>(`/chat?reference=${ad.id}`).then(setChats);
+    }
 
     const getLastMessage = () => {
         api<Message[]>(`/chat/${chats[0].id}?offset=0&length=1`).then(
@@ -72,14 +78,31 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
     }
 
     const sendNewMessage = () => {
-        api(`/chat/${chats[0].id}`,{method:'POST',body: JSON.stringify({message: messageToSend})}).then(
+        
+        if (chats.length > 0) {
+            
+            api(`/chat/${chats[0].id}`,{method:'POST',body: JSON.stringify({message: messageToSend})}).then(
+                () => {
+                    setMessageToSend('');
+                    getLastMessage();
+                }
+            ).catch(
+                () => {
+                    alert('Nu am putut trimite mesajul.');
+                }
+            )
+
+            return;
+        }
+
+        api(`/chat`,{method:'POST',body: JSON.stringify({message: messageToSend, ad: ad.id})}).then(
             () => {
                 setMessageToSend('');
-                getLastMessage();
+                getChats();
             }
         ).catch(
             () => {
-                alert('Nu am putut trimi mesajul.');
+                alert('Nu am putut trimite mesajul.');
             }
         )
     }
