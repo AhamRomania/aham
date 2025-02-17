@@ -25,8 +25,6 @@ const AdPanel:FC<AdPanelProps> = ({ad}) => {
             graph.current,
             null,
             {
-                useDirtyRect: true,
-                width: 280,
                 height: 140
             },
         );
@@ -76,7 +74,7 @@ const AdPanel:FC<AdPanelProps> = ({ad}) => {
         >
             <div
                 css={css`
-                    width: 280px;
+                    width: 100%;
                     height: 140px;
                     background: #EAEAEA;
                     border-radius: 8px;

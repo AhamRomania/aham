@@ -217,6 +217,9 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                         data-test="ad-advertising"
                         css={css`
                             order: 6;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
                             @media only screen and (max-width : 1200px) {
                                 order: 5;
                             }
