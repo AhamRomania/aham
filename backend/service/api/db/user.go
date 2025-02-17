@@ -10,8 +10,8 @@ import (
 
 type UserMin struct {
 	ID         int64  `json:"id"`
-	GivenName  string `json:"given_name"`
-	FamilyName string `json:"family_name"`
+	GivenName  string `json:"given_name,omitempty"`
+	FamilyName string `json:"family_name,omitempty"`
 }
 
 type User struct {

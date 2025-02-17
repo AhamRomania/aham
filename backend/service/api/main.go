@@ -40,6 +40,7 @@ func main() {
 		r.Route("/categories", route.CategoriesRoutes)
 		r.Route("/ads", route.AdsRoutes)
 		r.Route("/seo", route.SeoRotues)
+		r.Route("/chat", route.ChatRoutes)
 
 		r.Route("/shares", route.ShareRoutes)
 

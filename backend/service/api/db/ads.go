@@ -18,9 +18,11 @@ type Location struct {
 }
 
 type Ad struct {
-	ID          int64     `json:"id"`
-	CategoryID  int64     `json:"category_id,omitempty"`
-	Category    *Category `json:"category,omitempty"`
+	ID int64 `json:"id"`
+	// Use Category.ID
+	CategoryID int64     `json:"category_id,omitempty"`
+	Category   *Category `json:"category,omitempty"`
+	// Use Owner.ID
 	OwnerID     int64     `json:"owner_id,omitempty"`
 	Owner       *UserMin  `json:"owner,omitempty"`
 	Slug        string    `json:"slug,omitempty"`

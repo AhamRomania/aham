@@ -112,6 +112,18 @@ func NilString(s string) *string {
 	return &s
 }
 
+func QueryIntParam(r *http.Request, name string, def int64) int64 {
+
+	p := r.URL.Query().Get(name)
+	n, err := strconv.ParseInt(p, 10, 64)
+
+	if err != nil {
+		return def
+	}
+
+	return n
+}
+
 func ID(r *http.Request, name string) int64 {
 
 	p := chi.URLParam(r, name)

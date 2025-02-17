@@ -121,14 +121,14 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         >
           {/* MENU DOWN */}
           <Menu mobile={!open}>
-            <MenuItem icon={<DashboardOutlined/>} title="Panou Principal" href="/u/"/>
+            <MenuItem icon={<DashboardOutlined/>} title="Panou" href="/u/"/>
             <MenuItem icon={<ChatOutlined/>} title="Mesaje" href="/u/mesaje"/>
             <MenuItem icon={<AdsClickOutlined/>} title="Anunțuri" href="/u/anunturi"/>
             <MenuItem icon={<FavoriteOutlined/>} title="Favorite" href="/u/anunturi/favorite"/>
             <MenuItem icon={<SettingsOutlined/>} title="Settings" href="/u/setari"/>
             {userLoaded && isPrivilegedUser(me) && (
               <MenuItem icon={<FolderSpecialOutlined/>} title="Administrare" href="/u/admin">
-                <MenuItem icon={<AddTaskOutlined/>} title="Anunțuri Noi" href="/u/admin/anunturi-noi"/>
+                <MenuItem icon={<AddTaskOutlined/>} title="Anunțuri" href="/u/admin/anunturi-noi"/>
                 <MenuItem icon={<FolderOutlined/>} title="DProps" href="/u/admin/props"/>
                 <Sam resource={SamResource.CATEGORIES} permission={SamPermission.WRITE}>
                   <MenuItem icon={<FolderOutlined/>} title="Categorii" href="/u/categorii"/>
