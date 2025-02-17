@@ -139,7 +139,7 @@ func GetChat(id int64) (chat *Chat) {
 	return
 }
 
-func GetChats(userID int64, archived bool) (chats []*Chat) {
+func GetChats(userID int64, resourceContext resourceContext, reference int64, archived bool) (chats []*Chat) {
 
 	chats = make([]*Chat, 0)
 
@@ -153,13 +153,17 @@ func GetChats(userID int64, archived bool) (chats []*Chat) {
 			created_at
 		from chats
 		where participants @> ARRAY[$1]::int[]
-			and archived = $2
+			and context = $2
+			and (reference = $3 OR $3 = 0)
+			and archived = $4
 	`
 
 	rows, err := c.DB().Query(
 		context.TODO(),
 		sql,
 		userID,
+		resourceContext,
+		reference,
 		archived,
 	)
 

@@ -77,7 +77,9 @@ func createChat(w http.ResponseWriter, r *http.Request) {
 
 func getChats(w http.ResponseWriter, r *http.Request) {
 	userID, _ := c.UserID(r)
-	render.JSON(w, r, db.GetChats(userID, r.URL.Query().Get("archived") == "true"))
+	reference := c.QueryIntParam(r, "reference", 0)
+	archived := r.URL.Query().Get("archived") == "true"
+	render.JSON(w, r, db.GetChats(userID, db.AD, reference, archived))
 }
 
 type createChatMessageRequest struct {

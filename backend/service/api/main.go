@@ -42,8 +42,6 @@ func main() {
 		r.Route("/seo", route.SeoRotues)
 		r.Route("/chat", route.ChatRoutes)
 
-		r.Route("/shares", route.ShareRoutes)
-
 		r.Post("/report", route.Report)
 
 		r.Get("/counties", route.GetCounties)
