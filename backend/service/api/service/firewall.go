@@ -60,6 +60,7 @@ func isCommonUserAgent(r *http.Request) bool {
 		"DuckDuckBot", // DuckDuckGo bot
 		"YandexBot",   // Yandex bot (for Russian search engine crawlers)
 		"Aham",
+		"Next.js",
 		"node",
 	}
 
