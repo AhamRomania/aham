@@ -34,6 +34,14 @@ type User struct {
 	CreatedAt             time.Time  `json:"created_at,omitempty"`
 }
 
+func (u *User) Min() UserMin {
+	return UserMin{
+		ID:         u.ID,
+		GivenName:  u.GivenName,
+		FamilyName: u.FamilyName,
+	}
+}
+
 func (user *User) SamVerify(resource sam.Resource, permission sam.Perm) bool {
 
 	if user == nil {

@@ -16,12 +16,13 @@ const (
 )
 
 type Chat struct {
-	ID           int64           `json:"id"`
-	Title        string          `json:"title,omitempty"`
-	Context      resourceContext `json:"context,omitempty"`
-	Reference    *int64          `json:"reference,omitempty"`
-	Participants []int64         `json:"participants,omitempty"`
-	CreatedAt    time.Time       `json:"created_at,omitempty"`
+	ID              int64           `json:"id"`
+	Title           string          `json:"title,omitempty"`
+	Context         resourceContext `json:"context,omitempty"`
+	Reference       *int64          `json:"reference,omitempty"`
+	ParticipantsIDS []int64         `json:"-"`
+	Participants    []UserMin       `json:"participants,omitempty"`
+	CreatedAt       time.Time       `json:"created_at,omitempty"`
 }
 
 type Message struct {
@@ -68,15 +69,30 @@ func CreateChat(title string, participants []int64, about *ChatAbout) (chat *Cha
 	)
 
 	chat = &Chat{
-		Title:        title,
-		Context:      about.Context,
-		Reference:    about.Reference,
-		Participants: participants,
-		CreatedAt:    now,
+		Title:           title,
+		Context:         about.Context,
+		Reference:       about.Reference,
+		ParticipantsIDS: participants,
+		Participants:    usersmin(participants),
+		CreatedAt:       now,
 	}
 
 	if err := row.Scan(&chat.ID); err != nil {
 		return nil, errors.Wrap(err, "can't create chat")
+	}
+
+	return
+}
+
+func usersmin(users []int64) (items []UserMin) {
+
+	items = make([]UserMin, 0)
+
+	for _, id := range users {
+		user := GetUserByID(id)
+		if user != nil {
+			items = append(items, user.Min())
+		}
 	}
 
 	return
@@ -109,7 +125,7 @@ func GetChat(id int64) (chat *Chat) {
 		&chat.Title,
 		&chat.Context,
 		&chat.Reference,
-		&chat.Participants,
+		&chat.ParticipantsIDS,
 		&chat.CreatedAt,
 	)
 
@@ -117,6 +133,8 @@ func GetChat(id int64) (chat *Chat) {
 		c.Log().Error(err)
 		return nil
 	}
+
+	chat.Participants = usersmin(chat.ParticipantsIDS)
 
 	return
 }
@@ -159,9 +177,11 @@ func GetChats(userID int64, archived bool) (chats []*Chat) {
 			&chat.Title,
 			&chat.Context,
 			&chat.Reference,
-			&chat.Participants,
+			&chat.ParticipantsIDS,
 			&chat.CreatedAt,
 		)
+
+		chat.Participants = usersmin(chat.ParticipantsIDS)
 
 		if err != nil {
 			c.Log().Error(err)

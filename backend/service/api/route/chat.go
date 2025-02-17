@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"slices"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -94,6 +95,11 @@ func createChatMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if slices.Index(chat.ParticipantsIDS, userID) == -1 {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
 	payload := createChatMessageRequest{}
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -115,10 +121,17 @@ func createChatMessage(w http.ResponseWriter, r *http.Request) {
 
 func getChatMessage(w http.ResponseWriter, r *http.Request) {
 
+	userID, _ := c.UserID(r)
+
 	chat := db.GetChat(c.ID(r, "id"))
 
 	if chat == nil {
 		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if slices.Index(chat.ParticipantsIDS, userID) == -1 {
+		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 
