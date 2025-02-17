@@ -62,11 +62,11 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
     const getLastMessage = () => {
         api<Message[]>(`/chat/${chats[0].id}?offset=0&length=1`).then(
             (items) => {
+                setMessagesLoaded(true);
                 setMessages(items);
                 if (items.length>0) {
                     setMessageToSend('');
                 }
-                setMessagesLoaded(true);
             }
         );
     }
@@ -128,7 +128,9 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
                     <p>{messages[messages.length - 1].message}</p>
                 </div>}
                 
-                {chats.length > 0 ? <Button>Vizualizează conversație activă</Button> : []}
+                {chats.length > 0 ? <Link href={`/u/mesaje?id=` + chats[0].id} prefetch={false}>
+                    <Button style={{width:'100%'}}>Vizualizează conversație activă</Button>
+                </Link> : []}
                 
                 <Textarea
                     value={messageToSend}
@@ -136,7 +138,7 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
                     placeholder={chats.length > 0?'Mesaj nou':''}
                 />
 
-                <Button onClick={() => sendNewMessage()} startDecorator={<Send fontSize="small"/>}>Trimite</Button>
+                <Button disabled={messageToSend === ''} onClick={() => sendNewMessage()} startDecorator={<Send fontSize="small"/>}>Trimite</Button>
             </>
         )
     }
