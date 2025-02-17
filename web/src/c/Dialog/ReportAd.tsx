@@ -22,7 +22,7 @@ import { track } from "../funcs";
 
 export interface ReportAdDialog {
   ad: Ad;
-  onClose: (success: boolean) => void;
+  onClose: () => void;
 }
 
 const ReportAdDialog: FC<ReportAdDialog> = ({ ad, onClose }) => {
@@ -54,10 +54,10 @@ const ReportAdDialog: FC<ReportAdDialog> = ({ ad, onClose }) => {
     saveAdReport(ad, data).then(
         () => {
             setSaving(false);
-            onClose(true);
+            onClose();
         }
     ).catch(
-        () => {
+      () => {
             setSaving(false);
             alert('Nu am putut salva. Posibil să fi raportat deja acest anunț, dacă nu te rugăm încearcă mai târziu.');
         }

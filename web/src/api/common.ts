@@ -2,10 +2,10 @@ import { Ad, ReportData, User } from "@/c/types";
 import { getUser } from "@/c/Auth";
 import getApiFetch from "./api";
 
-export async function getMe(fn?: (me: User) => void):Promise<User | undefined> {
+export async function getMe(fn?: (me: User | null) => void):Promise<User | undefined> {
     
     if (fn) {
-        getUser().then(fn)
+    getUser().then(fn)
         return;
     }
 
