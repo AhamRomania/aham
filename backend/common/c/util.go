@@ -181,3 +181,26 @@ func Ucfirst(s string) string {
 	// Concatenate the uppercase first rune with the rest of the string
 	return string(first) + s[size:]
 }
+
+func IP(r *http.Request) string {
+	// First, try to get the IP from X-Forwarded-For header (if behind a proxy)
+	forwarded := r.Header.Get("X-Forwarded-For")
+	if forwarded != "" {
+		// X-Forwarded-For may contain a comma-separated list of IPs
+		parts := strings.Split(forwarded, ",")
+		return strings.TrimSpace(parts[0]) // the first one is usually the client's real IP
+	}
+
+	// Fall back to RemoteAddr if not behind a proxy
+	ip := r.RemoteAddr
+	// Remove port information (if any) from RemoteAddr
+	if idx := strings.LastIndex(ip, ":"); idx != -1 {
+		ip = ip[:idx]
+	}
+
+	if ip == "[::1]" || ip == "::1" {
+		ip = "127.0.0.1"
+	}
+
+	return ip
+}

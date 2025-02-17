@@ -22,6 +22,7 @@
                 "DEV": "true",
                 "TEMPLATES": "${workspaceFolder}/gcm/templates",
                 "DB": "postgres://aham:aham@localhost:15432/aham",
+                "METRICS": "postgres://aham:aham@localhost:15433/aham",
                 "CDN": "http://localhost:8002"
             },
         },

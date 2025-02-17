@@ -28,6 +28,7 @@ services:
       TEMPLATES: /templates
       SMTP_PASSWORD: "@defender@"
       DB: postgres://aham:aham@10.5.0.8:5432/aham
+      METRICS: postgres://aham:aham@10.5.0.9:5432/aham
       CDN: http://10.5.0.7:8082
     volumes:
       - /usr/local/aham/gcm/templates:/templates
@@ -72,6 +73,20 @@ services:
     networks:
       aham:
         ipv4_address: 10.5.0.8
+  metrics:
+    image: 'timescale/timescaledb:latest-pg15'
+    container_name: aham_prod_metrics
+    environment:
+      POSTGRES_USER: aham
+      POSTGRES_PASSWORD: aham
+      POSTGRES_DB: aham
+    restart: always
+    volumes:
+      - ../../db/metrics:/docker-entrypoint-initdb.d
+      - /var/aham/db/metrics:/var/lib/postgresql/data
+    networks:
+      aham:
+        ipv4_address: 10.5.0.9
   wpdb:
     image: mysql:8.0
     restart: always

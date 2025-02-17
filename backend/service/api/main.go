@@ -4,6 +4,7 @@ import (
 	"aham/common/c"
 	"aham/common/ws"
 	"aham/service/api/route"
+	"aham/service/api/service"
 	"net/http"
 	"os"
 
@@ -18,6 +19,7 @@ func main() {
 
 	rest := chi.NewMux()
 
+	rest.Use(service.SecurityFilter)
 	rest.Use(c.CORS())
 	rest.Use(middleware.RealIP)
 	rest.Use(middleware.Logger)
@@ -41,6 +43,7 @@ func main() {
 		r.Route("/ads", route.AdsRoutes)
 		r.Route("/seo", route.SeoRotues)
 		r.Route("/chat", route.ChatRoutes)
+		r.Route("/metrics", route.MetricsRoutes)
 
 		r.Post("/report", route.Report)
 

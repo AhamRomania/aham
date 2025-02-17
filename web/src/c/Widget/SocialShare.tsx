@@ -6,6 +6,7 @@ import { CheckCircle } from "@mui/icons-material";
 import { Ad } from "../types";
 import getDomain, { Domain } from "../domain";
 import { formatMoney } from "../formatter";
+import { track } from "../funcs";
 
 export interface SocialShareProps {
   url: string;
@@ -34,6 +35,7 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
     if (shortURL) {
       navigator.clipboard.writeText(shortURL!).then(
         () => {
+          track('ad/socials/copyUrl',{"ad":ad.id});
           setShowCopiedInfo(true);
         },
         () => {

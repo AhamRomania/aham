@@ -111,3 +111,5 @@ export type SeoEntry = {
     keywords: string;
     image: string;
 }
+
+export type D = { [key: string]: any };

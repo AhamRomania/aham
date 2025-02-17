@@ -1,15 +1,17 @@
 "use client";
 
 import { css } from "@emotion/react";
-import { Breadcrumbs, Stack } from "@mui/joy";
+import { Breadcrumbs, CircularProgress, Stack } from "@mui/joy";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { formatMoney } from "../formatter";
-import { Ad, Prop } from "../types";
+import { Ad, Prop, User } from "../types";
 import AdCta from "../Widget/AdCta";
 import Gallery from "../Widget/Gallery";
 import MoreAds from "../Widget/MoreAds";
 import SocialShare from "../Widget/SocialShare";
+import { track } from "../funcs";
+import { getUser } from "../Auth";
 
 export interface AdPageProps {
     ad: Ad;
@@ -18,6 +20,42 @@ export interface AdPageProps {
 }   
 
 const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
+
+    const [me,setMe] = useState<User>();
+
+    useEffect(() => {
+        getUser().then(setMe);
+        track("ad/view",{"ad":ad.id});
+    }, []);
+
+    const renderGalleryAside = () => {
+        
+        if (!me) {
+            return (
+                <div
+                    css={css`
+                        height: 100%;
+                        background: #EEE;
+                        border-radius: 8px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;    
+                    `}
+                >
+                    <CircularProgress thickness={2} size="sm" variant="plain"/>
+                </div>
+            );
+        }
+
+        if (ad.owner.id != me?.id) {
+            return (
+                <div>USER AD</div>
+            );
+        }
+
+        return <AdCta ad={ad}/>;
+    }
+
     return (
         <>
             <main itemScope itemType="https://schema.org/Product">
@@ -125,7 +163,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                             } 
                         `}
                     >
-                        <AdCta ad={ad}/>
+                        {renderGalleryAside()}
                     </div>
                     <div
                         data-test="ad-details"

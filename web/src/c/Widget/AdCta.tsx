@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Space } from "../Layout";
 import getApiFetch from "@/api/api";
 import { useRouter } from "next/navigation";
+import { track } from "../funcs";
 
 export interface AdCtaProps {
     ad: Ad
@@ -34,6 +35,7 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
             (nr) => {
                 setPhoneNumber(nr);
                 setFetchingPhoneNumber(false);
+                track('ad/cta/phone/reveal',{"ad":ad.id});
             }
         ).catch((err: string) => {
             setFetchingPhoneNumber(false);
@@ -157,6 +159,7 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
                 
                 <Textarea
                     value={messageToSend}
+                    onFocus={() => track('ad/cta/message/focus', {"ad": ad.id})}
                     onChange={(e: any) => setMessageToSend(e.target.value)}
                     placeholder={chats.length > 0?'Mesaj nou':''}
                 />

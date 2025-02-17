@@ -100,6 +100,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		c.Log().Infof("%s <- %s", shortID, longURL)
+
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(fmt.Sprintf("%s/%s", os.Getenv("DOMAIN"), shortID)))
 
