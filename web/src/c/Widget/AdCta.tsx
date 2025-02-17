@@ -2,13 +2,14 @@ import { css } from "@emotion/react";
 import { Favorite, LocalOffer, Phone, Report, Send } from "@mui/icons-material";
 import { Button, CircularProgress, Divider, IconButton, Stack, Textarea } from "@mui/joy";
 import { FC, useEffect, useState } from "react";
-import { Ad, Chat, Message } from "../types";
+import { Ad, Chat, Message, User } from "../types";
 import UserAvatar from "../avatar";
 import Link from "next/link";
 import { Space } from "../Layout";
 import getApiFetch from "@/api/api";
 import { useRouter } from "next/navigation";
 import { track } from "../funcs";
+import { getMe } from "@/api/common";
 
 export interface AdCtaProps {
     ad: Ad
@@ -17,6 +18,7 @@ export interface AdCtaProps {
 const AdCta:FC<AdCtaProps> = ({ad}) => {
     const router = useRouter();
     const api = getApiFetch();
+    const [me, setMe] = useState<User>();
     const [fetchingPhoneNumber, setFetchingPhoneNumber] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState<string|undefined>();
     const [chats, setChats] = useState<Chat[]>([]);
@@ -53,6 +55,7 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
             fetchPhoneNumber();
         }
         getChats();
+        getMe().then(setMe);
     }, []);
 
     useEffect(() => {
@@ -81,6 +84,13 @@ const AdCta:FC<AdCtaProps> = ({ad}) => {
 
     const sendNewMessage = () => {
         
+        if (!me) {
+            router.push(
+                `/login?then=${window.location.href}`
+            )
+            return;
+        }
+
         if (chats.length > 0) {
             
             api(`/chat/${chats[0].id}`,{method:'POST',body: JSON.stringify({message: messageToSend})}).then(

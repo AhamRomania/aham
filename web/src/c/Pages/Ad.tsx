@@ -23,15 +23,23 @@ export interface AdPageProps {
 const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
 
     const [me,setMe] = useState<User>();
+    const [fetchingMe, setFetchingMe] = useState(true);
 
     useEffect(() => {
-        getUser().then(setMe);
+        getUser().then((me) => {
+            setMe(me);
+            setFetchingMe(false);
+        }).catch(
+            () => {
+                setFetchingMe(false);
+            }
+        );
         track("ad/view",{"ad":ad.id});
     }, []);
 
     const renderGalleryAside = () => {
         
-        if (!me) {
+        if (fetchingMe) {
             return (
                 <div
                     css={css`
