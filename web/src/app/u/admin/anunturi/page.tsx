@@ -1,7 +1,8 @@
 "use client";
 
-import { CategoriesEditor } from "@/c/Categories";
+import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
+import AdApproving from "@/c/Pages/AdApproving";
 import { useContext, useEffect } from "react";
 
 export default function Page() {
@@ -9,13 +10,15 @@ export default function Page() {
   useEffect(() => {
     setPath(
       <>
-        <span>Categorii</span>
+        <span>Admin</span>
+        <span>Anunțuri Noi</span>
       </>
     );
   }, []);
   return (
     <>
-      <CategoriesEditor />
+      <PageName>Anunțuri Noi</PageName>
+      <AdApproving />
     </>
   );
 }

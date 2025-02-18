@@ -80,10 +80,12 @@ create table ads (
     price integer not null,
     currency currency default 'LEI',
     pictures text[] not null,
-    created_at timestamp not null default current_timestamp,
-    list_until timestamp not null default current_timestamp,
+    history jsonb, -- [[from,to]]
+    created timestamp not null default current_timestamp,
+    published timestamp,
+    valid_through timestamp,
     status varchar(20) not null default 'pending',
-    check (status in ('pending', 'published', 'completed', 'dropped'))
+    check (status in ('pending', 'rejected', 'approved', 'published', 'completed', 'archived'))
 );
 
 create table favourites (

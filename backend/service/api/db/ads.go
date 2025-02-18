@@ -4,10 +4,21 @@ import (
 	"aham/common/c"
 	"aham/common/cdn"
 	"context"
-	"errors"
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/pkg/errors"
+)
+
+type AdStatus string
+
+const (
+	STATUS_PENDING   AdStatus = "pending"
+	STATUS_APPROVED  AdStatus = "approved"
+	STATUS_REJECTED  AdStatus = "rejected"
+	STATUS_PUBLISHED AdStatus = "published"
+	STATUS_COMPLETED AdStatus = "completed"
+	STATUS_ARCHIVED  AdStatus = "archived"
 )
 
 type Location struct {
@@ -23,25 +34,115 @@ type Ad struct {
 	CategoryID int64     `json:"category_id,omitempty"`
 	Category   *Category `json:"category,omitempty"`
 	// Use Owner.ID
-	OwnerID     int64     `json:"owner_id,omitempty"`
-	Owner       *UserMin  `json:"owner,omitempty"`
-	Slug        string    `json:"slug,omitempty"`
-	Title       string    `json:"title,omitempty"`
-	Description string    `json:"description,omitempty"`
-	Pictures    []string  `json:"pictures,omitempty"`
-	Price       int64     `json:"price,omitempty"`
-	Currency    string    `json:"currency,omitempty"`
-	CityID      int64     `json:"city,omitempty"`
-	CityName    string    `json:"city_name,omitempty"`
-	URL         *string   `json:"string,omitempty"`
-	Href        string    `json:"href,omitempty"`
-	Location    *Location `json:"location,omitempty"`
-	Messages    bool      `json:"messages,omitempty"`
-	ShowPhone   bool      `json:"show_phone,omitempty"`
-	Phone       *string   `json:"phone,omitempty"`
-	Props       *c.D      `json:"props,omitempty"`
-	Status      string    `json:"status,omitempty"`
-	Created     time.Time `json:"created,omitempty"`
+	OwnerID      int64     `json:"owner_id,omitempty"`
+	Owner        *UserMin  `json:"owner,omitempty"`
+	Slug         string    `json:"slug,omitempty"`
+	Title        string    `json:"title,omitempty"`
+	Description  string    `json:"description,omitempty"`
+	Pictures     []string  `json:"pictures,omitempty"`
+	Price        int64     `json:"price,omitempty"`
+	Currency     string    `json:"currency,omitempty"`
+	CityID       int64     `json:"city,omitempty"`
+	CityName     string    `json:"city_name,omitempty"`
+	URL          *string   `json:"string,omitempty"`
+	Href         string    `json:"href,omitempty"`
+	Location     *Location `json:"location,omitempty"`
+	Messages     bool      `json:"messages,omitempty"`
+	ShowPhone    bool      `json:"show_phone,omitempty"`
+	Phone        *string   `json:"phone,omitempty"`
+	Props        *c.D      `json:"props,omitempty"`
+	Status       AdStatus  `json:"status,omitempty"`
+	Created      time.Time `json:"created,omitempty"`
+	Published    time.Time `json:"published,omitempty"`
+	ValidThrough time.Time `json:"valid_through,omitempty"`
+}
+
+func (ad *Ad) Reject() (err error) {
+
+	cmd, err := c.DB().Exec(
+		context.TODO(),
+		`update ads set status = 'rejected' where id = $1`,
+		ad.ID,
+	)
+
+	if err != nil {
+		return errors.Wrap(err, "can't reject ad")
+	}
+
+	if cmd.RowsAffected() == 0 {
+		return errors.Wrap(err, "didn't rejected ad")
+	}
+
+	ad.Status = STATUS_REJECTED
+
+	return
+}
+
+func (ad *Ad) Accept(tx pgx.Tx) (err error) {
+
+	cmd, err := tx.Exec(
+		context.TODO(),
+		`update ads set status = 'approved' where id = $1`,
+		ad.ID,
+	)
+
+	if err != nil {
+		return errors.Wrap(err, "can't accept ad")
+	}
+
+	if cmd.RowsAffected() == 0 {
+		return errors.Wrap(err, "didn't accepted ad")
+	}
+
+	ad.Status = STATUS_APPROVED
+
+	return
+}
+
+func (ad *Ad) Publish(tx pgx.Tx, days int) (err error) {
+
+	if ad.Status == STATUS_PENDING {
+		return errors.New("can't publish before approved")
+	}
+
+	if ad.Status != STATUS_COMPLETED && ad.Status != STATUS_APPROVED {
+		return errors.New("invalid state, only approved|completed -> published is accepted")
+	}
+
+	if ad.Published.After(time.Now()) {
+
+		if ad.Status != STATUS_PUBLISHED {
+			c.Log().Error("Ad is not published still published date is after now")
+		}
+
+		return errors.New("ad publish date is after now")
+	}
+
+	now := time.Now()
+
+	cmd, err := tx.Exec(
+		context.TODO(),
+		`update ads set status = $1, published = $2, valid_through = $3 where id = $4`,
+		STATUS_PUBLISHED,
+		now,
+		now.AddDate(0, 0, days),
+		ad.ID,
+	)
+
+	if err != nil {
+		return errors.Wrap(err, "can't publish ad")
+	}
+
+	if cmd.RowsAffected() == 0 {
+		return errors.New("nothing changed, can't publish ad")
+	}
+
+	return
+}
+
+// Check ad is completed and update
+func (ad *Ad) CheckCompleted() (err error) {
+	return
 }
 
 func (ad *Ad) Save(tx pgx.Tx) error {
@@ -86,11 +187,10 @@ func (ad *Ad) Save(tx pgx.Tx) error {
 				city,
 				price,
 				currency,
-				pictures,
-				status
+				pictures
 			) 
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'published')
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id
 		`,
 		ad.Slug,
@@ -108,7 +208,13 @@ func (ad *Ad) Save(tx pgx.Tx) error {
 	return row.Scan(&ad.ID)
 }
 
-func GetAds() (ads []*Ad) {
+type AdsFilter struct {
+	Status string `json:"status"`
+	Limit  int64  `json:"limit"`
+	Offset int64  `json:"offset"`
+}
+
+func GetAds(filter AdsFilter) (ads []*Ad) {
 
 	ads = make([]*Ad, 0)
 
@@ -126,7 +232,7 @@ func GetAds() (ads []*Ad) {
 			ARRAY[counties.id, cities.id] as location_refs,
 			ads.price,
 			ads.currency,
-			ads.created_at,
+			ads.created,
 			ads.url,
 			ads.messages,
 			ads.show_phone,
@@ -147,8 +253,14 @@ func GetAds() (ads []*Ad) {
 		LEFT JOIN cities ON cities.id = ads.city
 		LEFT JOIN counties ON counties.id = cities.county
 		WHERE
-			ads.status = 'published'
+			ads.status = $1
+		ORDER BY ads.created DESC
+		LIMIT $2
+		OFFSET $3
 		`,
+		filter.Status,
+		filter.Limit,
+		filter.Offset,
 	)
 
 	if err != nil {
@@ -224,7 +336,7 @@ func GetAd(id int64) (ad *Ad, err error) {
 			ARRAY[counties.id, cities.id] as location_refs,
 			ads.price,
 			ads.currency,
-			ads.created_at,
+			ads.created,
 			ads.url,
 			ads.messages,
 			ads.show_phone,
@@ -245,8 +357,7 @@ func GetAd(id int64) (ad *Ad, err error) {
 		LEFT JOIN cities ON cities.id = ads.city
 		LEFT JOIN counties ON counties.id = cities.county
 		WHERE
-			ads.id = $1 AND
-			ads.status = 'published'
+			ads.id = $1
 		LIMIT 1
 		`,
 		id,

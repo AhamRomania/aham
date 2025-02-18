@@ -14,6 +14,7 @@ import { track } from "../funcs";
 import { getUser } from "../Auth";
 import AdPanel from "../Widget/AdPanel";
 import ReportAdDialog from "../Dialog/ReportAd";
+import AdSpectsListing from "../Widget/AdSpecsListing";
 
 export interface AdPageProps {
     ad: Ad;
@@ -202,28 +203,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                         </div>
                         {ad.props && Object.keys(ad.props||[]).length > 0 && <div>
                             <h2>Specificații</h2>
-                            <div
-                                css={css`
-                                    display: grid; 
-                                    grid-template-columns: 50% 50%; 
-                                    gap: 10px 10px;     
-                                `}
-                            >
-                                {props?.sort((a, b) => a.name.localeCompare(b.name, 'ro', { sensitivity: 'base' })).map(prop => ad.props[prop.name] && (
-                                    <Stack
-                                        key={prop.id}
-                                        flexDirection="row"
-                                    >
-                                        <div
-                                            css={css`
-                                                margin-right: 10px;
-                                                font-weight: bold;  
-                                            `}
-                                        >{prop.title}:</div>
-                                        <div>{ad.props[prop.name]}</div>
-                                    </Stack>
-                                ))}
-                            </div>
+                            <AdSpectsListing props={props} ad={ad}/>
                         </div>}
                     </div>
                     <div

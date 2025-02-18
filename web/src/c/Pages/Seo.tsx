@@ -8,6 +8,7 @@ import getApiFetch from "@/api/api";
 import { SeoEntry } from "../types";
 import { Dialog, DialogTitle } from "@mui/material";
 import {css} from '@emotion/react';
+import { PageName } from "../Layout";
 
 const SeoMap:FC = () => {
 
@@ -27,10 +28,8 @@ const SeoMap:FC = () => {
     useEffect(() => {
         setPath(
         <>
+            <span>Admin</span>
             <span>SEO</span>
-            <IconButton onClick={() => setShowAddDialog(true)} size="sm">
-                <Add />
-            </IconButton>
         </>
         );
     }, []);
@@ -87,6 +86,13 @@ const SeoMap:FC = () => {
 
     return (
         <div>
+            <PageName
+                right={(
+                    <IconButton onClick={() => setShowAddDialog(true)} size="sm">
+                        <Add />
+                    </IconButton>
+                )}
+            >SEO</PageName>
             <Table>
                 <thead>
                     <tr>

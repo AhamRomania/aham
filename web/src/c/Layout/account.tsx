@@ -128,12 +128,12 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             <MenuItem icon={<SettingsOutlined/>} title="Settings" href="/u/setari"/>
             {userLoaded && isPrivilegedUser(me) && (
               <MenuItem icon={<FolderSpecialOutlined/>} title="Administrare" href="/u/admin">
-                <MenuItem icon={<AddTaskOutlined/>} title="Anunțuri" href="/u/admin/anunturi-noi"/>
-                <MenuItem icon={<FolderOutlined/>} title="DProps" href="/u/admin/props"/>
+                <MenuItem icon={<AddTaskOutlined/>} title="Anunțuri" href="/u/admin/anunturi"/>
+                <MenuItem icon={<FolderOutlined/>} title="Atribute" href="/u/admin/atribute"/>
                 <Sam resource={SamResource.CATEGORIES} permission={SamPermission.WRITE}>
-                  <MenuItem icon={<FolderOutlined/>} title="Categorii" href="/u/categorii"/>
+                  <MenuItem icon={<FolderOutlined/>} title="Categorii" href="/u/admin/categorii"/>
                 </Sam>
-                <MenuItem icon={<Pages/>} title="SEO" href="/u/seo"/>
+                <MenuItem icon={<Pages/>} title="SEO" href="/u/admin/seo"/>
               </MenuItem>
             )}
           </Menu>

@@ -3,6 +3,7 @@ package route
 import (
 	"aham/common/c"
 	"aham/service/api/db"
+	"aham/service/api/sam"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/gosimple/slug"
+	"github.com/jackc/pgx/v5"
 )
 
 type CreateAdRequest struct {
@@ -30,6 +32,8 @@ func AdsRoutes(r chi.Router) {
 	r.Post("/", c.Guard(CreateAd))
 	r.Get("/", GetAds)
 	r.Get("/{id}", GetAd)
+	r.Post("/{id}/reject", c.Guard(reject))
+	r.Post("/{id}/publish", c.Guard(publishAd))
 	r.Get("/{id}/contact", c.Guard(getContactDetails))
 	r.Get("/{id}/metrics", getAdMetrics)
 }
@@ -42,6 +46,80 @@ func getAdMetrics(w http.ResponseWriter, r *http.Request) {
 		"favourites": 5,
 		"week":       []int{2, 4, 7, 7, 5, 5, 2},
 	})
+}
+
+func reject(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	ad, err := db.GetAd(c.ID(r, "id"))
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if ad.Owner.ID != userID || !Can(r, sam.ADS, sam.PermWrite) {
+		http.Error(w, "forbidden", http.StatusForbidden)
+		return
+	}
+
+	if err := ad.Reject(); err != nil {
+		http.Error(w, "can't reject", http.StatusInternalServerError)
+		return
+	}
+}
+
+func publishAd(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	ad, err := db.GetAd(c.ID(r, "id"))
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if ad.Owner.ID != userID || !Can(r, sam.ADS, sam.PermPublish) {
+		http.Error(w, "forbidden", http.StatusForbidden)
+		return
+	}
+
+	tx, err := c.DB().BeginTx(
+		context.TODO(),
+		pgx.TxOptions{},
+	)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := ad.Accept(tx); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := ad.Publish(tx, 7); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := tx.Commit(context.TODO()); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func getContactDetails(w http.ResponseWriter, r *http.Request) {
@@ -144,5 +222,20 @@ func GetAd(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAds(w http.ResponseWriter, r *http.Request) {
-	render.JSON(w, r, db.GetAds())
+
+	pending := r.URL.Query().Get("pending") == "true"
+	offset := c.QueryIntParam(r, "offset", 0)
+	limit := c.QueryIntParam(r, "limit", 10)
+
+	filter := db.AdsFilter{
+		Status: "published",
+		Offset: offset,
+		Limit:  limit,
+	}
+
+	if pending {
+		filter.Status = "pending"
+	}
+
+	render.JSON(w, r, db.GetAds(filter))
 }

@@ -2,6 +2,7 @@
 
 import getApiFetch from "@/api/api";
 import DPropDialog from "@/c/Dialog/DProp";
+import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import DProps from "@/c/Tables/DProps";
 import { Prop } from "@/c/types";
@@ -18,7 +19,8 @@ export default function Page() {
   useEffect(() => {
     setPath(
       <>
-        <span>Proprietăți dinamice</span>
+        <span>Admin</span>
+        <span>Atribute</span>
         <IconButton onClick={() => setProp({})}>
           <Add />
         </IconButton>
@@ -38,6 +40,9 @@ export default function Page() {
 
   return (
     <>
+      <PageName>
+        Atribute Categorii
+      </PageName>
       <DProps props={props} onChange={onPropsChange} />
       {prop && <DPropDialog onClose={() => onCreateComplete()}/>}
     </>

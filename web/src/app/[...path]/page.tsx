@@ -1,12 +1,14 @@
 "use server";
 
 import getApiFetch from "@/api/api";
+import { toMoney } from "@/c/formatter";
 import { getAdOrCategory } from "@/c/funcs";
 import { Centred, MainLayout } from "@/c/Layout";
 import AdPage from "@/c/Pages/Ad";
 import { Ad, Prop } from "@/c/types";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 
 
 export async function generateMetadata(props: any): Promise<Metadata> {
@@ -56,8 +58,31 @@ export default async function Page(props: any) {
         )
     }
 
+    const offerSchema = {
+        "@context": "https://schema.org",
+        "@type": "Offer",
+        "name": data.vo.title,
+        "description": data.vo.description,
+        "price": toMoney(data.vo.price),
+        "priceCurrency": data.vo.currency,
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2025-02-18",
+        "validThrough": "2025-03-01",
+        "url": `http://aham.ro/${data.vo.href}`,
+        "seller": {
+            "@type": "Organization",
+            "name": data.vo.owner.given_name,
+        }
+    };
+
     return (
         <>
+            <Script
+                id="offer-schema"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(offerSchema) }}
+                strategy="afterInteractive"
+            />
             <MainLayout>
                 <AdPage ad={data.vo} props={dprops} extra={extra} />
             </MainLayout>

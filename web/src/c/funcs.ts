@@ -79,15 +79,17 @@ export function ucfirst(str: string): string {
 
 export async function seo(uri?: string, extra?: Metadata): Promise<Metadata> {
 
-    const response = await fetch(getDomain(Domain.Api) + `/v1/seo?uri=` + uri, { next: { revalidate: 60 * 60 } });
-
     let data: SeoEntry;
 
     try {
+
+        const response = await fetch(getDomain(Domain.Api) + `/v1/seo?uri=` + uri, { next: { revalidate: 60 * 60 } });
+
         data = await response.json();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     catch (error: any) {
+        console.log('Seo fetch error:', error);
         return extra || {} as Metadata;
     }
 
