@@ -3,7 +3,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import styles from './style.module.css';
 import { ListItemIcon, ListItemText, Menu, MenuItem, Button } from '@mui/material';
-import { Sell, Forum, Favorite, ManageAccounts, Logout, Add } from '@mui/icons-material';
+import { Sell, Forum, Favorite, ManageAccounts, Logout, Add, Settings } from '@mui/icons-material';
 import UserAvatar from '../avatar';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -130,7 +130,7 @@ const HeadMenu: FC = () => {
                     </ListItemIcon>
                     <ListItemText>Mesaje</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={() => navigate('/u/favorite')}>
+                <MenuItem onClick={() => navigate('/u/anunturi/favorite')}>
                     <ListItemIcon>
                         <Favorite fontSize="small" />
                     </ListItemIcon>
@@ -141,6 +141,12 @@ const HeadMenu: FC = () => {
                         <ManageAccounts fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Cont</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={() => navigate('/u/setari')}>
+                    <ListItemIcon>
+                        <Settings fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Setări</ListItemText>
                 </MenuItem>
                 <MenuItem onClick={() => logout()}>
                     <ListItemIcon>

@@ -1,7 +1,7 @@
 "use client";
 
 import { css } from "@emotion/react";
-import { Add, AddTaskOutlined, AdsClickOutlined, ChatOutlined, DashboardOutlined, FavoriteOutlined, FolderOutlined, FolderSpecialOutlined, Home, Notifications, Pages, SettingsOutlined } from "@mui/icons-material";
+import { Add, AddTaskOutlined, AdsClickOutlined, ChatOutlined, DashboardOutlined, FavoriteOutlined, FolderOutlined, FolderSpecialOutlined, Home, Notifications, Pages, Person, PersonOffOutlined, SettingsOutlined } from "@mui/icons-material";
 import { Breadcrumbs, IconButton } from "@mui/joy";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -125,6 +125,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             <MenuItem icon={<ChatOutlined/>} title="Mesaje" href="/u/mesaje"/>
             <MenuItem icon={<AdsClickOutlined/>} title="Anunțuri" href="/u/anunturi"/>
             <MenuItem icon={<FavoriteOutlined/>} title="Favorite" href="/u/anunturi/favorite"/>
+            <MenuItem icon={<Person/>} title="Cont" href="/u/cont"/>
             <MenuItem icon={<SettingsOutlined/>} title="Settings" href="/u/setari"/>
             {userLoaded && isPrivilegedUser(me) && (
               <MenuItem icon={<FolderSpecialOutlined/>} title="Administrare" href="/u/admin">
