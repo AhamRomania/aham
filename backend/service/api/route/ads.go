@@ -237,5 +237,10 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 		filter.Status = "pending"
 	}
 
+	if filter.Status != string(db.STATUS_PUBLISHED) && !Can(r, sam.ADS, sam.PermRead) {
+		http.Error(w, "forbidden", http.StatusForbidden)
+		return
+	}
+
 	render.JSON(w, r, db.GetAds(filter))
 }
