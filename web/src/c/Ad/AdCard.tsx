@@ -21,7 +21,6 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
             css={css(`
                 display: inline-block;
                 width: 100%;
-                text-decoration: none;
                 @media only screen and (min-width : 1200px) {
                     width: ${width}px;
                     height: ${height}px;
@@ -33,7 +32,8 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
-                &:hover article {
+                &:hover {
+                    transform: translateY(-5px);
                     .title {
                         -webkit-line-clamp: 5;
                     }
