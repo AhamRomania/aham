@@ -136,7 +136,7 @@ const AdApprovingItem: FC<AdApprovingItemProps> = ({ad, onTouched}) => {
                         <Publish/>
                         <span style={{marginLeft: 20}}>Publish</span>
                     </Button>
-                    {/*<Button
+                    <Button
                         size="lg"
                         variant="solid"
                         color="warning"
@@ -144,7 +144,7 @@ const AdApprovingItem: FC<AdApprovingItemProps> = ({ad, onTouched}) => {
                     >
                         <Assignment/>
                         <span style={{marginLeft: 20}}>Request Update</span>
-                    </Button>*/}
+                    </Button>
                     <Button
                         size="lg"
                         variant="solid"
