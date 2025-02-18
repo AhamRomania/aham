@@ -26,8 +26,17 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
                     width: ${width}px;
                     height: ${height}px;
                 }
+                .title {
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 2;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
                 &:hover article {
-                    background:rgb(230, 230, 230);
+                    .title {
+                        -webkit-line-clamp: 5;
+                    }
                 }
             `)}
         >
@@ -63,10 +72,16 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
                 
                 <div
                     css={css`
+                        background: #F0F0F0;
                         padding: 10px 20px 20px 20px;
+                        position: absolute;
+                        bottom:0;
+                        left: 0;
+                        right: 0;
                     `}
                 >
                     <div
+                        className="title"
                         css={css`
                             font-weight: bold;
                             padding-bottom: 10px;

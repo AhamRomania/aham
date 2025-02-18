@@ -159,7 +159,7 @@ const AdApprovingItem: FC<AdApprovingItemProps> = ({ad, onTouched}) => {
             {desc !== '' && (
                 <Modal open={true} onClose={() => setDesc('')}>
                     <ModalDialog>
-                        <DialogTitle>Request</DialogTitle>
+                        <DialogTitle>Description</DialogTitle>
                         <IconButton
                             aria-label="close"
                             onClick={() => setDesc('')}
@@ -182,7 +182,7 @@ const AdApprovingItem: FC<AdApprovingItemProps> = ({ad, onTouched}) => {
                 <div>
                     <Modal open={true} onClose={() => setRequestingUpdate(false)}>
                         <ModalDialog>
-                            <DialogTitle>Description</DialogTitle>
+                            <DialogTitle>Request Update</DialogTitle>
                             <IconButton
                                 aria-label="close"
                                 onClick={() => setRequestingUpdate(false)}
