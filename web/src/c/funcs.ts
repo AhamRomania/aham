@@ -87,7 +87,6 @@ export async function seo(uri?: string, extra?: Metadata): Promise<Metadata> {
 
         data = await response.json();
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     catch (error: any) {
         console.log('Seo fetch error:', error);
         return extra || {} as Metadata;

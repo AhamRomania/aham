@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { Button, DialogActions, DialogContent, DialogTitle, Modal, ModalClose, ModalDialog } from "@mui/joy";
+import { Button, DialogActions, DialogContent, Modal, ModalClose, ModalDialog } from "@mui/joy";
 import { FC } from "react";
 
 export interface ConfirmProps {
