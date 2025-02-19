@@ -12,5 +12,5 @@ export async function fetchCategories():Promise<Category[]> {
 
 export async function fetchCategory(id: number):Promise<Category> {
     const api = getApiFetch();
-    return await api<Category>(`/categories/${id}`);
+    return await api<Category>(`/categories/${id}`,{cache:'force-cache'});
 }

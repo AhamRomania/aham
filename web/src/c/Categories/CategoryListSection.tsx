@@ -1,17 +1,15 @@
-"use client";
+"use client"
 
 import { css } from "@emotion/react";
 import { ArrowRight } from "@mui/icons-material";
 import { Button, CircularProgress, Stack, Typography } from "@mui/joy";
 import Link from "next/link";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import Section from "../section";
-import { fetchCategory } from "@/api/categories";
 import { Category } from "../types";
 
 export interface CategoryListSectionProps {
-  id: number;
-  count: number;
+  category: Category;
 }
 
 export interface CategoryProps {
@@ -24,7 +22,7 @@ export const Item: FC<CategoryProps> = ({ category }) => {
       css={css(`
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-  nt: flex-start;
             margin-bottom: 20px;
             svg {
                 margin-right: 15px;
@@ -39,13 +37,7 @@ export const Item: FC<CategoryProps> = ({ category }) => {
   );
 };
 
-const CategoryListSection: FC<CategoryListSectionProps> = ({ id }) => {
-
-  const [category, setCategory] = useState<Category>();
-
-  useEffect(() => {
-    fetchCategory(id).then(c => setCategory(c));
-  }, []);
+const CategoryListSection: FC<CategoryListSectionProps> = ({ category }) => {
 
   if (!category) {
     return (

@@ -64,7 +64,7 @@ const Gallery: FC<GalleryProps> = ({pictures}) => {
                         alt="Gallery Image"
                     />}
                 </div>
-                <Navigate
+                {pictures.length>1&&<Navigate
                     css={css`
                         top: 50%;
                         left: 20px;
@@ -73,8 +73,8 @@ const Gallery: FC<GalleryProps> = ({pictures}) => {
                     onClick={() => (current > 0) && setCurrent(current-1)}
                 >
                     <KeyboardArrowLeft/>
-                </Navigate>
-                <Navigate
+                </Navigate>}
+                {pictures.length>1&&<Navigate
                     css={css`
                         top: 50%;
                         right: 20px;
@@ -83,7 +83,7 @@ const Gallery: FC<GalleryProps> = ({pictures}) => {
                     onClick={() => (current < pictures.length-1) && setCurrent(current+1)}
                 >
                     <KeyboardArrowRight/>
-                </Navigate>
+                </Navigate>}
                 {pictures.length>1&&<Info
                     css={css`
                         bottom: 20px;

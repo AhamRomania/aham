@@ -431,7 +431,7 @@ func getAdSqlBuilder() SelectStatement {
 		Ads.Description,
 		Ads.Props,
 		Ads.Pictures,
-		Raw("CONCAT(counties.name,'/',cities.name) as location_text"),
+		Raw("CONCAT(counties.name,' / ',cities.name) as location_text"),
 		Raw("lower(unaccent(CONCAT(counties.name, '/', cities.name))) as location_href"),
 		Raw("ARRAY[counties.id, cities.id] as location_refs"),
 		Ads.Price,
