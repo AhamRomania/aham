@@ -18,16 +18,18 @@ export async function generateMetadata(props: any): Promise<Metadata> {
     const data = await getAdOrCategory(params.path);
 
     if (data?.kind === 'ad') {
+        const vo:Ad = (data.vo as Ad)
         return {
-            title: data.vo.title + ' | Aham',
-            description: data.vo.description,
+            title: vo.title + ' | Aham',
+            description: vo.description,
         };
     }
 
     if (data?.kind === 'category') {
+        const vo:Category = (data.vo as Category)
         return {
-            title: data.vo.name + ' | Aham',
-            description: data.vo.description,
+            title: vo.name + ' | Aham',
+            description: vo.description,
         };
     }
 

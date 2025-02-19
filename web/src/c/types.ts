@@ -10,6 +10,7 @@ export type User = {
 export type Category = {
     id: number;
     name: string;
+    description: string;
     slug: string;
     href: string;
     path: string;
