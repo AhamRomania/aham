@@ -132,6 +132,7 @@ const CategoriesEditor:FC = () => {
                 const root = new Node({
                     id: -1,
                     name: 'root',
+                    description: 'root',
                     slug: 'root',
                     href: 'root',
                     path: 'root',

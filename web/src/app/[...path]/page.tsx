@@ -89,7 +89,7 @@ export default async function Page(props: any) {
                 strategy="afterInteractive"
             />
             <MainLayout>
-                <AdPage ad={data.vo} props={dprops} extra={extra} />
+                <AdPage ad={ad} props={dprops} extra={extra} />
             </MainLayout>
         </>
     )
