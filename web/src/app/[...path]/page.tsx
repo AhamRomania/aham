@@ -50,9 +50,7 @@ export default async function Page(props: any) {
         return (
             <>
                 <MainLayout>
-                    <Centred>
-                        <MoreAds title={(data.vo as Category).path} ads={ads}/>
-                    </Centred>
+                    <MoreAds title={(data.vo as Category).path} ads={ads}/>
                 </MainLayout>
             </>
         )
