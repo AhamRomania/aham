@@ -59,6 +59,7 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
                     css={css(`
                         overflow: hidden;
                         position: relative;
+                        padding-bottom: 100px;
                         @media only screen and (min-width : 1200px) {
                             width: 312px;
                             height: 242px;
