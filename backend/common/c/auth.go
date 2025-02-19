@@ -1,13 +1,13 @@
 package c
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/pkg/errors"
 )
 
 // Create a wrapper for http handler to check if the user is authenticated
@@ -45,7 +45,7 @@ func UserID(r *http.Request) (id int64, err error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "can't parse jwt")
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {

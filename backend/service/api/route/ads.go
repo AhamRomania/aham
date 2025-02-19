@@ -235,11 +235,24 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 	offset := c.QueryIntParam(r, "offset", 0)
 	limit := c.QueryIntParam(r, "limit", 10)
 	from := c.QueryIntParam(r, "from", 0)
+	skipOwner := r.URL.Query().Get("skip-owner") == "true"
+
+	if mode == "" {
+		mode = "published"
+	}
 
 	filter := db.Filter{
-		Mode:   "published",
+		Mode:   mode,
 		Offset: offset,
 		Limit:  limit,
+	}
+
+	userID, errUserID := c.UserID(r)
+
+	if !skipOwner {
+		if errUserID != nil {
+			filter.Owner = &userID
+		}
 	}
 
 	if from != 0 {
@@ -256,9 +269,8 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filter.Mode = mode
-
 	if filter.Mode != string(db.STATUS_PUBLISHED) && !Can(r, sam.ADS, sam.PermRead) {
+		c.Log().Infof("Mode %s requires authorization", filter.Mode)
 		http.Error(w, "forbidden", http.StatusForbidden)
 		return
 	}

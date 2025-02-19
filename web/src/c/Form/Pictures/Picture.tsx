@@ -58,7 +58,15 @@ const Picture: FC<PictureProps> = ({src, onDelete, onPositionShift}) => {
             });
 
             xhr.addEventListener("loadend", () => {
-                const upload = JSON.parse(xhr.responseText);
+                
+                let upload;
+                
+                try {
+                    upload = JSON.parse(xhr.responseText);
+                } catch(e: any) {
+                    console.warn('Picture upload warn:', e);
+                }
+
                 src.setUUID(upload.uuid);
                 setProgress(100);
                 setUploading(false);

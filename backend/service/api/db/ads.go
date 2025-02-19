@@ -286,6 +286,7 @@ type Filter struct {
 	Limit    int64  `json:"limit"`
 	Offset   int64  `json:"offset"`
 	Category *int64 `json:"category"`
+	Owner    *int64 `json:"owner"`
 }
 
 func GetPromotionAds(filter Filter) (ads []*Ad) {
@@ -350,6 +351,12 @@ func GetAds(filter Filter) (ads []*Ad) {
 	).OFFSET(
 		filter.Offset,
 	)
+
+	if filter.Owner != nil {
+		smtp = smtp.WHERE(
+			Ads.Owner.EQ(Int64(*filter.Owner)),
+		)
+	}
 
 	if filter.Category != nil {
 

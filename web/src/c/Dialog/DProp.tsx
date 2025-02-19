@@ -29,7 +29,11 @@ const DPropDialog:FC<DPropDialogProps> = ({prop, onClose}) => {
         if (payload.options == '') {
             payload.options = {};
         } else {
-            payload.options = JSON.parse(payload.options);
+            try {
+                payload.options = JSON.parse(payload.options);
+            } catch(e:any) {
+                console.warn('DProp dialog warn:', e);
+            }
         }
 
         if (prop.id) {
