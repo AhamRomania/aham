@@ -16,6 +16,11 @@ export async function getDraftAds(): Promise<Ad[]> {
     return await api<Ad[]>(`/ads?mode=draft`);
 }
 
+export async function getPendingAds(): Promise<Ad[]> {
+    const api = getApiFetch();
+    return await api<Ad[]>(`/ads?mode=pending`);
+}
+
 export async function getCategoryProps(category: number): Promise<Prop[]> {
     return await getApiFetch()<Prop[]>(`/categories/${category}/props`);
 }

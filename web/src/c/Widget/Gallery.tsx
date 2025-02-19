@@ -84,7 +84,7 @@ const Gallery: FC<GalleryProps> = ({pictures}) => {
                 >
                     <KeyboardArrowRight/>
                 </Navigate>
-                <Info
+                {pictures.length>1&&<Info
                     css={css`
                         bottom: 20px;
                         left: 20px;
@@ -92,7 +92,7 @@ const Gallery: FC<GalleryProps> = ({pictures}) => {
                 >
                     {loading && <CircularProgress determinate={false} size="sm"/>}
                     {!loading && `Poza ${current + 1} din ${pictures.length}`}
-                </Info>
+                </Info>}
             </div>
         </div>
     )

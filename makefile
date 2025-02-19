@@ -42,6 +42,7 @@ run:
 dev:
 	docker compose -f setup/docker/compose/development.yml -p aham_dev down
 	docker compose -f setup/docker/compose/development.yml -p aham_dev up -d
+	jet -dsn=postgresql://aham:aham@localhost:15432/aham?sslmode=disable -schema=public -path=backend/service/api/db
 	@read -p "Run the project? (y/n) " ans; \
 	if [ "$$ans" = "y" ]; then make run; else echo "Run from IDE."; fi
 

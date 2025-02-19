@@ -17,7 +17,7 @@ export default function Page() {
     setPath(
       <>
         <span>Anunțuri</span>
-        <span>Noi</span>
+        <span>Ciorne</span>
         <Link href="/u/anunturi/creaza">
           <IconButton size="sm">
             <Add />
@@ -37,7 +37,7 @@ export default function Page() {
 
   return (
     <>
-      <PageName>Anunțuri Noi</PageName>
+      <PageName>Ciorne</PageName>
       {ads?.map((ad, index) => (
         <AdListItem onRemove={onRemoveAd} key={index} ad={ad} />
       ))}

@@ -1,5 +1,5 @@
 import getApiFetch from "@/api/api";
-import { Ad, D, SeoEntry, User } from "./types"
+import { Ad, Category, D, SeoEntry, User } from "./types"
 import { Metadata } from "next";
 import getDomain, { Domain } from "./domain";
 import { getUser } from "./Auth";
@@ -35,7 +35,7 @@ export const getAdId = (path: string[]): number => {
 
 class PathDynamicVo {
     kind: 'category' | 'ad';
-    vo: any;
+    vo: Category | Ad;
     constructor(kind: 'category' | 'ad', vo: any) {
         this.kind = kind;
         this.vo = vo;

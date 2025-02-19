@@ -1,7 +1,7 @@
 "use client";
 
 import { css } from "@emotion/react";
-import { Add, AddTaskOutlined, AdsClickOutlined, AssignmentTurnedIn, ChatOutlined, DashboardOutlined, FavoriteOutlined, FiberNew, FolderOutlined, FolderSpecialOutlined, Home, Notifications, Pages, Person, Public, SettingsOutlined, ThumbDown } from "@mui/icons-material";
+import { Add, AddTaskOutlined, AdsClickOutlined, AssignmentTurnedIn, Category, ChatOutlined, CheckCircle, DashboardOutlined, FavoriteOutlined, FiberNew, FolderOutlined, FolderSpecialOutlined, Home, Notifications, Pages, Person, Public, SettingsOutlined, ThumbDown } from "@mui/icons-material";
 import { Breadcrumbs, IconButton } from "@mui/joy";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -124,7 +124,9 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             <MenuItem icon={<DashboardOutlined/>} title="Panou" href="/u/"/>
             <MenuItem icon={<ChatOutlined/>} title="Mesaje" href="/u/mesaje"/>
             <MenuItem icon={<AdsClickOutlined/>} title="Anunțuri" href="/u/anunturi">
-              <MenuItem icon={<FiberNew/>} title="Noi" count={10} href="/u/anunturi"/>
+              <MenuItem icon={<FiberNew/>} title="Ciorne" count={10} href="/u/anunturi"/>
+              <MenuItem icon={<Category/>} title="Disponibile" count={10} href="/u/anunturi/disponibile"/>
+              <MenuItem icon={<CheckCircle/>} title="Aprobare" count={10} href="/u/anunturi/aprobare"/>
               <MenuItem icon={<Public/>} title="Publice" href="/u/anunturi/publice"/>
               <MenuItem icon={<AssignmentTurnedIn/>} count={10} title="Modificare" href="/u/anunturi/validare"/>
               <MenuItem icon={<ThumbDown/>} title="Respinse" href="/u/anunturi/respinse"/>

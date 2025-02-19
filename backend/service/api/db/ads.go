@@ -3,9 +3,11 @@ package db
 import (
 	"aham/common/c"
 	"aham/common/cdn"
+	. "aham/service/api/db/aham/public/table"
 	"context"
 	"time"
 
+	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/jackc/pgx/v5"
 	"github.com/pkg/errors"
 )
@@ -280,59 +282,28 @@ func (ad *Ad) Save(tx pgx.Tx) error {
 }
 
 type Filter struct {
-	Mode   string `json:"mode"`
-	Limit  int64  `json:"limit"`
-	Offset int64  `json:"offset"`
+	Mode     string `json:"mode"`
+	Limit    int64  `json:"limit"`
+	Offset   int64  `json:"offset"`
+	Category *int64 `json:"category"`
 }
 
 func GetPromotionAds(filter Filter) (ads []*Ad) {
 	ads = make([]*Ad, 0)
 
-	rows, err := c.DB().Query(
-		context.TODO(),
-		`
-		SELECT
-			ads.id,
-			ads.title,
-			ads.description,
-			ads.props,
-			ads.pictures,
-			CONCAT(counties.name, ' / ', cities.name) as location_text,
-			lower(unaccent(CONCAT(counties.name, '/', cities.name))) as location_href,
-			ARRAY[counties.id, cities.id] as location_refs,
-			ads.price,
-			ads.currency,
-			ads.created,
-			ads.url,
-			ads.messages,
-			ads.show_phone,
-			ads.phone,
-			ads.status,
-			categories.id,
-			categories.name,
-			get_category_path(ads.category)::text AS category_path,
-			get_category_href(ads.category)::text AS category_href,
-			users.id,
-			users.given_name,
-			users.family_name,
-			CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href
-		FROM
-			ads
-		LEFT JOIN users ON users.id = ads.owner
-		LEFT JOIN categories ON categories.id = ads.category
-		LEFT JOIN cities ON cities.id = ads.city
-		LEFT JOIN counties ON counties.id = cities.county
-		LEFT JOIN transactions as t ON t.ad_id = ads.id
-		WHERE
-			ads.status = 'published' AND
-			t.amount > 0
-		ORDER BY ad_promotion_index(t.amount, ads.published, ads.valid_through) DESC
-		LIMIT $1
-		OFFSET $2
-		`,
+	sql, params := getAdSqlBuilder().WHERE(
+		Ads.Status.EQ(String("published")).AND(
+			Transactions.Amount.GT(Float(0)),
+		),
+	).ORDER_BY(
+		Raw("ad_promotion_index(t.amount, ads.published, ads.valid_through) DESC"),
+	).LIMIT(
 		filter.Limit,
+	).OFFSET(
 		filter.Offset,
-	)
+	).Sql()
+
+	rows, err := c.DB().Query(context.TODO(), sql, params...)
 
 	if err != nil {
 		c.Log().Error(err)
@@ -347,32 +318,7 @@ func GetPromotionAds(filter Filter) (ads []*Ad) {
 			Location: &Location{},
 		}
 
-		err = rows.Scan(
-			&ad.ID,
-			&ad.Title,
-			&ad.Description,
-			&ad.Props,
-			&ad.Pictures,
-			&ad.Location.Text,
-			&ad.Location.Href,
-			&ad.Location.Refs,
-			&ad.Price,
-			&ad.Currency,
-			&ad.Created,
-			&ad.URL,
-			&ad.Messages,
-			&ad.ShowPhone,
-			&ad.Phone,
-			&ad.Status,
-			&ad.Category.ID,
-			&ad.Category.Name,
-			&ad.Category.Path,
-			&ad.Category.Href,
-			&ad.Owner.ID,
-			&ad.Owner.GivenName,
-			&ad.Owner.FamilyName,
-			&ad.Href,
-		)
+		err = scanAd(rows, ad)
 
 		ad.Promotion = true
 
@@ -395,49 +341,38 @@ func GetAds(filter Filter) (ads []*Ad) {
 
 	ads = make([]*Ad, 0)
 
-	rows, err := c.DB().Query(
-		context.TODO(),
-		`
-		SELECT
-			ads.id,
-			ads.title,
-			ads.description,
-			ads.props,
-			ads.pictures,
-			CONCAT(counties.name, ' / ', cities.name) as location_text,
-			lower(unaccent(CONCAT(counties.name, '/', cities.name))) as location_href,
-			ARRAY[counties.id, cities.id] as location_refs,
-			ads.price,
-			ads.currency,
-			ads.created,
-			ads.url,
-			ads.messages,
-			ads.show_phone,
-			ads.phone,
-			ads.status,
-			categories.id,
-			categories.name,
-			get_category_path(ads.category)::text AS category_path,
-			get_category_href(ads.category)::text AS category_href,
-			users.id,
-			users.given_name,
-			users.family_name,
-			CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href
-		FROM
-			ads
-		LEFT JOIN users ON users.id = ads.owner
-		LEFT JOIN categories ON categories.id = ads.category
-		LEFT JOIN cities ON cities.id = ads.city
-		LEFT JOIN counties ON counties.id = cities.county
-		WHERE
-			ads.status = $1
-		ORDER BY ads.created DESC
-		LIMIT $2
-		OFFSET $3
-		`,
-		filter.Mode,
+	smtp := getAdSqlBuilder().WHERE(
+		Ads.Status.EQ(String(filter.Mode)),
+	).ORDER_BY(
+		Ads.Created.DESC(),
+	).LIMIT(
 		filter.Limit,
+	).OFFSET(
 		filter.Offset,
+	)
+
+	if filter.Category != nil {
+
+		root := Category{
+			Name:     "root",
+			Children: GetCategoryTree(GetCategoriesFlat(), nil),
+		}
+
+		var ids []Expression = make([]Expression, 0)
+
+		for _, cur := range root.InIDS(*filter.Category) {
+			ids = append(ids, Int64(cur))
+		}
+
+		smtp = smtp.WHERE(Ads.Category.IN(ids...))
+	}
+
+	sql, params := smtp.Sql()
+
+	rows, err := c.DB().Query(
+		context.Background(),
+		sql,
+		params...,
 	)
 
 	if err != nil {
@@ -453,32 +388,7 @@ func GetAds(filter Filter) (ads []*Ad) {
 			Location: &Location{},
 		}
 
-		err = rows.Scan(
-			&ad.ID,
-			&ad.Title,
-			&ad.Description,
-			&ad.Props,
-			&ad.Pictures,
-			&ad.Location.Text,
-			&ad.Location.Href,
-			&ad.Location.Refs,
-			&ad.Price,
-			&ad.Currency,
-			&ad.Created,
-			&ad.URL,
-			&ad.Messages,
-			&ad.ShowPhone,
-			&ad.Phone,
-			&ad.Status,
-			&ad.Category.ID,
-			&ad.Category.Name,
-			&ad.Category.Path,
-			&ad.Category.Href,
-			&ad.Owner.ID,
-			&ad.Owner.GivenName,
-			&ad.Owner.FamilyName,
-			&ad.Href,
-		)
+		err = scanAd(rows, ad)
 
 		if err != nil {
 			c.Log().Error(err)
@@ -499,49 +409,62 @@ func GetAd(id int64) (ad *Ad, err error) {
 		Location: &Location{},
 	}
 
+	sql, params := getAdSqlBuilder().WHERE(
+		Ads.ID.EQ(Int64(id)),
+	).Sql()
+
 	row := c.DB().QueryRow(
 		context.TODO(),
-		`
-		SELECT
-			ads.id,
-			ads.title,
-			ads.description,
-			ads.props,
-			ads.pictures,
-			CONCAT(counties.name, ' / ', cities.name) as location_text,
-			lower(unaccent(CONCAT(counties.name, '/', cities.name))) as location_href,
-			ARRAY[counties.id, cities.id] as location_refs,
-			ads.price,
-			ads.currency,
-			ads.created,
-			ads.url,
-			ads.messages,
-			ads.show_phone,
-			ads.phone,
-			ads.status,
-			categories.id,
-			categories.name,
-			get_category_path(ads.category)::text AS category_path,
-			get_category_href(ads.category)::text AS category_href,
-			users.id,
-			users.given_name,
-			users.family_name,
-			CONCAT(get_category_href(ads.category)::text, '/', ads.slug,'-',ads.id) as href,
-			ads.cycle
-		FROM
-			ads
-		LEFT JOIN users ON users.id = ads.owner
-		LEFT JOIN categories ON categories.id = ads.category
-		LEFT JOIN cities ON cities.id = ads.city
-		LEFT JOIN counties ON counties.id = cities.county
-		WHERE
-			ads.id = $1
-		LIMIT 1
-		`,
-		id,
+		sql,
+		params...,
 	)
 
-	err = row.Scan(
+	err = scanAd(row, ad)
+
+	return
+}
+
+func getAdSqlBuilder() SelectStatement {
+	return Ads.SELECT(
+		Ads.ID,
+		Ads.Title,
+		Ads.Description,
+		Ads.Props,
+		Ads.Pictures,
+		Raw("CONCAT(counties.name,'/',cities.name) as location_text"),
+		Raw("lower(unaccent(CONCAT(counties.name, '/', cities.name))) as location_href"),
+		Raw("ARRAY[counties.id, cities.id] as location_refs"),
+		Ads.Price,
+		Ads.Currency,
+		Ads.Created,
+		Ads.URL,
+		Ads.Messages,
+		Ads.ShowPhone,
+		Ads.Phone,
+		Ads.Status,
+		Categories.ID,
+		Categories.Name,
+		Raw("get_category_path(ads.category)::text AS category_path"),
+		Raw("get_category_href(ads.category)::text AS category_href"),
+		Raw("users.id"),
+		Raw("users.given_name"),
+		Raw("users.family_name"),
+		Raw("CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href"),
+	).FROM(
+		Ads.AS("ads").LEFT_JOIN(Users.AS("users").Table, Users.ID.EQ(Ads.Owner)).
+			LEFT_JOIN(Categories.AS("categories").Table, Categories.ID.EQ(Ads.Category)).
+			LEFT_JOIN(Cities.AS("cities").Table, Cities.ID.EQ(Ads.City)).
+			LEFT_JOIN(Counties.AS("counties").Table, Counties.ID.EQ(Cities.County)).
+			LEFT_JOIN(Transactions.AS("transactions").Table, Transactions.AdID.EQ(Ads.ID)),
+	)
+}
+
+type SQLScanner interface {
+	Scan(dest ...any) error
+}
+
+func scanAd(scanner SQLScanner, ad *Ad) (err error) {
+	return scanner.Scan(
 		&ad.ID,
 		&ad.Title,
 		&ad.Description,
@@ -566,8 +489,5 @@ func GetAd(id int64) (ad *Ad, err error) {
 		&ad.Owner.GivenName,
 		&ad.Owner.FamilyName,
 		&ad.Href,
-		&ad.Cycle,
 	)
-
-	return
 }

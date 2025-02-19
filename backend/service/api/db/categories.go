@@ -30,6 +30,34 @@ type SearchCategory struct {
 	Path []string `json:"path,omitempty"`
 }
 
+func scanCategoryChildren(items []*Category, ids []int64) []int64 {
+	for _, item := range items {
+		ids = append(ids, item.ID)
+		if len(item.Children) > 0 {
+			return scanCategoryChildren(item.Children, ids)
+		}
+	}
+	return ids
+}
+
+func (category *Category) InIDS(to int64) (ids []int64) {
+
+	ids = make([]int64, 0)
+
+	from := category.WithID(to)
+
+	if from == nil {
+		c.Log().Warn("problably a bug")
+		return ids
+	}
+
+	ids = append(ids, from.ID)
+
+	ids = scanCategoryChildren(from.Children, ids)
+
+	return ids
+}
+
 func (category *Category) WithID(id int64) *Category {
 
 	for _, c := range category.Children {
@@ -88,12 +116,15 @@ func GetCategoryByID(id int64) *Category {
 			description,
 			parent,
 			sort,
-			pricing
+			pricing,
+			get_category_href(id)::text AS href,
+			get_category_path(id)::text AS path
 		from categories
 		where hidden=false and id = $1
 		`,
 		id,
 	)
+	//todo: add A > B and a/b
 
 	category := &Category{}
 
@@ -105,6 +136,8 @@ func GetCategoryByID(id int64) *Category {
 		&category.Parent,
 		&category.Sort,
 		&category.Pricing,
+		&category.Href,
+		&category.Path,
 	)
 
 	if err != nil {
@@ -249,7 +282,8 @@ func GetCategoriesFlat() (categories []*Category) {
 			description,
 			parent,
 			sort,
-			pricing
+			pricing,
+			get_category_href(id)
 		from
 			categories
 		where hidden=false
@@ -273,6 +307,7 @@ func GetCategoriesFlat() (categories []*Category) {
 			&category.Parent,
 			&category.Sort,
 			&category.Pricing,
+			&category.Href,
 		)
 
 		if err != nil {

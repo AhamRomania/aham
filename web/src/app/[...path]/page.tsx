@@ -5,7 +5,8 @@ import { toMoney } from "@/c/formatter";
 import { getAdOrCategory } from "@/c/funcs";
 import { Centred, MainLayout } from "@/c/Layout";
 import AdPage from "@/c/Pages/Ad";
-import { Ad, Prop } from "@/c/types";
+import { Ad, Category, Prop } from "@/c/types";
+import MoreAds from "@/c/Widget/MoreAds";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Script from "next/script";
@@ -37,41 +38,43 @@ export default async function Page(props: any) {
     const api = getApiFetch();
     const params = await props.params
     const data = await getAdOrCategory(params.path);
-    const dprops = await api<Prop[]>(`/categories/${data?.vo.category.id}/props`);
-    const extra = await api<Ad[]>(`/ads`)
 
     if (!data) {
         return notFound();
     }
 
     if (data?.kind === 'category') {
+        const ads = await api<Ad[]>(`/ads?from=${data.vo.id}`)
         return (
             <>
                 <MainLayout>
                     <Centred>
-                        <label>
-                            Category Page
-                        </label>
+                        <MoreAds title={(data.vo as Category).path} ads={ads}/>
                     </Centred>
                 </MainLayout>
             </>
         )
     }
 
+    const ad = data.vo as Ad;
+
+    const dprops = await api<Prop[]>(`/categories/${ad.category.id}/props`);
+    const extra = await api<Ad[]>(`/ads`)
+
     const offerSchema = {
         "@context": "https://schema.org",
         "@type": "Offer",
-        "name": data.vo.title,
-        "description": data.vo.description,
-        "price": toMoney(data.vo.price),
-        "priceCurrency": data.vo.currency,
+        "name": ad.title,
+        "description": ad.description,
+        "price": toMoney(ad.price),
+        "priceCurrency": ad.currency,
         "availability": "https://schema.org/InStock",
         "validFrom": "2025-02-18",
         "validThrough": "2025-03-01",
-        "url": `http://aham.ro/${data.vo.href}`,
+        "url": `http://aham.ro/${ad.href}`,
         "seller": {
             "@type": "Organization",
-            "name": data.vo.owner.given_name,
+            "name": ad.owner.given_name,
         }
     };
 

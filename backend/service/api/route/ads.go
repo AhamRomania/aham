@@ -234,11 +234,16 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 	mode := r.URL.Query().Get("mode")
 	offset := c.QueryIntParam(r, "offset", 0)
 	limit := c.QueryIntParam(r, "limit", 10)
+	from := c.QueryIntParam(r, "from", 0)
 
 	filter := db.Filter{
 		Mode:   "published",
 		Offset: offset,
 		Limit:  limit,
+	}
+
+	if from != 0 {
+		filter.Category = &from
 	}
 
 	if mode == "promotion" {
