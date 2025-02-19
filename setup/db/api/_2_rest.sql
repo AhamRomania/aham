@@ -80,14 +80,30 @@ create table ads (
     price integer not null,
     currency currency default 'LEI',
     pictures text[] not null,
-    promotion integer not null default 0,
-    history jsonb, -- [[from,to]]
+    history jsonb, -- [{from,to,transaction}]
+    cycle integer not null default 1,
     created timestamp not null default current_timestamp,
     published timestamp,
     valid_through timestamp,
     status varchar(20) not null default 'draft',
     check (status in ('draft', 'pending', 'rejected', 'approved', 'published', 'completed', 'archived'))
 );
+
+create table transactions (
+    id serial primary key,
+    owner integer not null references users(id),
+    ad_id integer not null references ads(id),
+    ad_cycle integer not null,
+    ad_from timestamp,
+    ad_to timestamp,
+    amount DOUBLE PRECISION,
+    created timestamp not null default current_timestamp,
+    approved timestamp not null default current_timestamp
+);
+
+CREATE INDEX transactions_index_owner ON transactions (owner);
+CREATE INDEX transactions_index_ad_id ON transactions (ad_id);
+CREATE INDEX transactions_index_cycle ON transactions (ad_cycle);
 
 create table favourites (
     "id" bigserial not null primary key,

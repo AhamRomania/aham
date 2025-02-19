@@ -65,7 +65,7 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
                         }
                     `)}
                 >
-                    {vo.promotion>0&&(
+                    {vo.promotion&&(
                         <div
                             className="promotion"
                             css={css(`

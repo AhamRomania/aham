@@ -50,13 +50,14 @@ type Ad struct {
 	Location     *Location `json:"location,omitempty"`
 	Messages     bool      `json:"messages,omitempty"`
 	ShowPhone    bool      `json:"show_phone,omitempty"`
-	Promotion    int       `json:"promotion,omitempty"`
+	Promotion    bool      `json:"promotion,omitempty"`
 	Phone        *string   `json:"phone,omitempty"`
 	Props        *c.D      `json:"props,omitempty"`
 	Status       Status    `json:"status,omitempty"`
 	Created      time.Time `json:"created,omitempty"`
 	Published    time.Time `json:"published,omitempty"`
 	ValidThrough time.Time `json:"valid_through,omitempty"`
+	Cycle        int       `json:"cycle,omitempty"`
 }
 
 func (ad *Ad) Reject() (err error) {
@@ -145,13 +146,14 @@ func (ad *Ad) Publish(tx pgx.Tx, days int) (err error) {
 	}
 
 	now := time.Now()
+	validThrough := now.AddDate(0, 0, days)
 
 	cmd, err := tx.Exec(
 		context.TODO(),
 		`update ads set status = $1, published = $2, valid_through = $3 where id = $4`,
 		STATUS_PUBLISHED,
 		now,
-		now.AddDate(0, 0, days),
+		validThrough,
 		ad.ID,
 	)
 
@@ -161,6 +163,49 @@ func (ad *Ad) Publish(tx pgx.Tx, days int) (err error) {
 
 	if cmd.RowsAffected() == 0 {
 		return errors.New("nothing changed, can't publish ad")
+	}
+
+	row := tx.QueryRow(
+		context.TODO(),
+		`select id from transactions where owner = $1 and ad_id = $2 and ad_cycle = $3`,
+		ad.Owner.ID,
+		ad.ID,
+		ad.Cycle,
+	)
+
+	var transactionID int64
+
+	if err := row.Scan(&transactionID); err != nil {
+		c.Log().Error("can't get transaction for ad:", ad.ID)
+	}
+
+	if transactionID > 0 {
+		cmd, err := tx.Exec(
+			context.TODO(),
+			`
+				update transactions set
+					ad_from = $1,
+					ad_to = $2
+				where
+					owner = $3 and
+					ad_id = $4 and
+					ad_cycle = $5
+			`,
+			now,
+			validThrough,
+			ad.Owner.ID,
+			ad.ID,
+			ad.Cycle,
+		)
+
+		if err != nil {
+			c.Log().Error(err)
+			return err
+		}
+
+		if cmd.RowsAffected() != 1 {
+			return errors.New("can't update transaction for ad")
+		}
 	}
 
 	return
@@ -270,22 +315,21 @@ func GetPromotionAds(filter Filter) (ads []*Ad) {
 			users.id,
 			users.given_name,
 			users.family_name,
-			CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href,
-			ads.promotion
+			CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href
 		FROM
 			ads
 		LEFT JOIN users ON users.id = ads.owner
 		LEFT JOIN categories ON categories.id = ads.category
 		LEFT JOIN cities ON cities.id = ads.city
 		LEFT JOIN counties ON counties.id = cities.county
+		LEFT JOIN transactions as t ON t.ad_id = ads.id
 		WHERE
-			ads.status = $1 and
-			ads.promotion > 0
-		ORDER BY ads.promotion DESC
-		LIMIT $2
-		OFFSET $3
+			ads.status = 'published' AND
+			t.amount > 0
+		ORDER BY ad_promotion_index(t.amount, ads.published, ads.valid_through) DESC
+		LIMIT $1
+		OFFSET $2
 		`,
-		filter.Mode,
 		filter.Limit,
 		filter.Offset,
 	)
@@ -328,8 +372,9 @@ func GetPromotionAds(filter Filter) (ads []*Ad) {
 			&ad.Owner.GivenName,
 			&ad.Owner.FamilyName,
 			&ad.Href,
-			&ad.Promotion,
 		)
+
+		ad.Promotion = true
 
 		if err != nil {
 			c.Log().Error(err)
@@ -481,7 +526,8 @@ func GetAd(id int64) (ad *Ad, err error) {
 			users.id,
 			users.given_name,
 			users.family_name,
-			CONCAT(get_category_href(ads.category)::text, '/', ads.slug,'-',ads.id) as href
+			CONCAT(get_category_href(ads.category)::text, '/', ads.slug,'-',ads.id) as href,
+			ads.cycle
 		FROM
 			ads
 		LEFT JOIN users ON users.id = ads.owner
@@ -520,6 +566,7 @@ func GetAd(id int64) (ad *Ad, err error) {
 		&ad.Owner.GivenName,
 		&ad.Owner.FamilyName,
 		&ad.Href,
+		&ad.Cycle,
 	)
 
 	return
