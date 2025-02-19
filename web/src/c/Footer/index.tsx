@@ -11,6 +11,7 @@ import { Button, Checkbox, Modal, ModalClose, Sheet, Snackbar, Typography } from
 import { Paper } from "@mui/material";
 import { getLoggedInState } from "../Auth";
 import { Check } from '@mui/icons-material';
+import { track } from "../funcs";
 
 export interface FooterProps {
     version?: string;
@@ -28,6 +29,7 @@ const Footer: FC<FooterProps> = ({version}) => {
     }, [mobileOS]);
 
     const openMobileApp = (os: string) => {
+        track(`open/mobile/${os.toLowerCase()}`);
         setMobileOS(os)
         setShowMobInfo(true);
     }

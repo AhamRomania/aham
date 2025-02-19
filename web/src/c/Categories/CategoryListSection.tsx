@@ -49,7 +49,7 @@ const CategoryListSection: FC<CategoryListSectionProps> = ({ category }) => {
   }
 
   return (
-    <Section title={category?.name || "Categorii"} after={<Button size="lg" variant="plain" endDecorator={<ArrowRight/>}>Vezi toate categoriile</Button>}>
+    <Section title={category?.name || "Categorii"} after={<Link href={category.href} prefetch={false}><Button size="lg" variant="plain" endDecorator={<ArrowRight/>}>Vezi toate categoriile</Button></Link>}>
       <div
         css={css(`
               display: grid;
