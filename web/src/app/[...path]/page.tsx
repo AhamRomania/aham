@@ -3,7 +3,7 @@
 import getApiFetch from "@/api/api";
 import { toMoney } from "@/c/formatter";
 import { getAdOrCategory } from "@/c/funcs";
-import { Centred, MainLayout } from "@/c/Layout";
+import { MainLayout } from "@/c/Layout";
 import AdPage from "@/c/Pages/Ad";
 import { Ad, Category, Prop } from "@/c/types";
 import MoreAds from "@/c/Widget/MoreAds";
