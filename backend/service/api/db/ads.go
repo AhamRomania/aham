@@ -10,15 +10,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-type AdStatus string
+type Status string
 
 const (
-	STATUS_PENDING   AdStatus = "pending"
-	STATUS_APPROVED  AdStatus = "approved"
-	STATUS_REJECTED  AdStatus = "rejected"
-	STATUS_PUBLISHED AdStatus = "published"
-	STATUS_COMPLETED AdStatus = "completed"
-	STATUS_ARCHIVED  AdStatus = "archived"
+	STATUS_DRAFT     Status = "draft"
+	STATUS_PENDING   Status = "pending"
+	STATUS_APPROVED  Status = "approved"
+	STATUS_REJECTED  Status = "rejected"
+	STATUS_PUBLISHED Status = "published"
+	STATUS_COMPLETED Status = "completed"
+	STATUS_ARCHIVED  Status = "archived"
 )
 
 type Location struct {
@@ -49,9 +50,10 @@ type Ad struct {
 	Location     *Location `json:"location,omitempty"`
 	Messages     bool      `json:"messages,omitempty"`
 	ShowPhone    bool      `json:"show_phone,omitempty"`
+	Promotion    int       `json:"promotion,omitempty"`
 	Phone        *string   `json:"phone,omitempty"`
 	Props        *c.D      `json:"props,omitempty"`
-	Status       AdStatus  `json:"status,omitempty"`
+	Status       Status    `json:"status,omitempty"`
 	Created      time.Time `json:"created,omitempty"`
 	Published    time.Time `json:"published,omitempty"`
 	ValidThrough time.Time `json:"valid_through,omitempty"`
@@ -95,6 +97,30 @@ func (ad *Ad) Accept(tx pgx.Tx) (err error) {
 	}
 
 	ad.Status = STATUS_APPROVED
+
+	return
+}
+
+func (ad *Ad) PrePublish() (err error) {
+
+	if ad.Status != STATUS_DRAFT {
+		return errors.New("only draft status ads can be published")
+	}
+
+	cmd, err := c.DB().Exec(
+		context.TODO(),
+		`update ads set status = $1 where id = $2`,
+		STATUS_PENDING,
+		ad.ID,
+	)
+
+	if err != nil {
+		return errors.Wrap(err, "can't publish ad")
+	}
+
+	if cmd.RowsAffected() == 0 {
+		return errors.New("nothing changed, can't publish ad")
+	}
 
 	return
 }
@@ -208,13 +234,119 @@ func (ad *Ad) Save(tx pgx.Tx) error {
 	return row.Scan(&ad.ID)
 }
 
-type AdsFilter struct {
-	Status string `json:"status"`
+type Filter struct {
+	Mode   string `json:"mode"`
 	Limit  int64  `json:"limit"`
 	Offset int64  `json:"offset"`
 }
 
-func GetAds(filter AdsFilter) (ads []*Ad) {
+func GetPromotionAds(filter Filter) (ads []*Ad) {
+	ads = make([]*Ad, 0)
+
+	rows, err := c.DB().Query(
+		context.TODO(),
+		`
+		SELECT
+			ads.id,
+			ads.title,
+			ads.description,
+			ads.props,
+			ads.pictures,
+			CONCAT(counties.name, ' / ', cities.name) as location_text,
+			lower(unaccent(CONCAT(counties.name, '/', cities.name))) as location_href,
+			ARRAY[counties.id, cities.id] as location_refs,
+			ads.price,
+			ads.currency,
+			ads.created,
+			ads.url,
+			ads.messages,
+			ads.show_phone,
+			ads.phone,
+			ads.status,
+			categories.id,
+			categories.name,
+			get_category_path(ads.category)::text AS category_path,
+			get_category_href(ads.category)::text AS category_href,
+			users.id,
+			users.given_name,
+			users.family_name,
+			CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href,
+			ads.promotion
+		FROM
+			ads
+		LEFT JOIN users ON users.id = ads.owner
+		LEFT JOIN categories ON categories.id = ads.category
+		LEFT JOIN cities ON cities.id = ads.city
+		LEFT JOIN counties ON counties.id = cities.county
+		WHERE
+			ads.status = $1 and
+			ads.promotion > 0
+		ORDER BY ads.promotion DESC
+		LIMIT $2
+		OFFSET $3
+		`,
+		filter.Mode,
+		filter.Limit,
+		filter.Offset,
+	)
+
+	if err != nil {
+		c.Log().Error(err)
+		return ads
+	}
+
+	for rows.Next() {
+
+		ad := &Ad{
+			Owner:    &UserMin{},
+			Category: &Category{},
+			Location: &Location{},
+		}
+
+		err = rows.Scan(
+			&ad.ID,
+			&ad.Title,
+			&ad.Description,
+			&ad.Props,
+			&ad.Pictures,
+			&ad.Location.Text,
+			&ad.Location.Href,
+			&ad.Location.Refs,
+			&ad.Price,
+			&ad.Currency,
+			&ad.Created,
+			&ad.URL,
+			&ad.Messages,
+			&ad.ShowPhone,
+			&ad.Phone,
+			&ad.Status,
+			&ad.Category.ID,
+			&ad.Category.Name,
+			&ad.Category.Path,
+			&ad.Category.Href,
+			&ad.Owner.ID,
+			&ad.Owner.GivenName,
+			&ad.Owner.FamilyName,
+			&ad.Href,
+			&ad.Promotion,
+		)
+
+		if err != nil {
+			c.Log().Error(err)
+			return ads
+		}
+
+		ads = append(ads, ad)
+	}
+
+	return ads
+}
+
+func GetRecommendedAds(filter Filter) (ads []*Ad) {
+	return
+}
+
+func GetAds(filter Filter) (ads []*Ad) {
 
 	ads = make([]*Ad, 0)
 
@@ -258,7 +390,7 @@ func GetAds(filter AdsFilter) (ads []*Ad) {
 		LIMIT $2
 		OFFSET $3
 		`,
-		filter.Status,
+		filter.Mode,
 		filter.Limit,
 		filter.Offset,
 	)

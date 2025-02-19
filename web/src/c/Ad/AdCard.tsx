@@ -37,6 +37,9 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
                     .title {
                         -webkit-line-clamp: 5;
                     }
+                    .promotion {
+                        opacity: .2;
+                    }
                 }
             `)}
         >
@@ -55,12 +58,29 @@ const AdCard: FC<AdProps> = ({width,height,vo}:AdProps) => {
                 <div
                     css={css(`
                         overflow: hidden;
+                        position: relative;
                         @media only screen and (min-width : 1200px) {
                             width: 312px;
                             height: 242px;
                         }
                     `)}
                 >
+                    {vo.promotion>0&&(
+                        <div
+                            className="promotion"
+                            css={css(`
+                                position: absolute;
+                                font-size: 10px;
+                                padding: 7px;
+                                font-weight: bold;
+                                background: green;
+                                color: #FFF;
+                                border-bottom-right-radius: 8px;
+                            `)}
+                        >
+                            PROMOVAT
+                        </div>
+                    )}
                     {/*eslint-disable-next-line @next/next/no-img-element*/}
                     <img
                         src={getDomain(Domain.Cdn) + `/${vo.pictures[0]}?w=${width}&q=75`}

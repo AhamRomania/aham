@@ -1,4 +1,4 @@
-import { getAdsToApprove } from "@/api/ads";
+import { getAdsToApprove, getCategoryProps } from "@/api/ads";
 import getApiFetch from "@/api/api";
 import { css } from "@emotion/react";
 import { Assignment, Close, InfoOutlined, Publish, Remove } from "@mui/icons-material";
@@ -39,11 +39,7 @@ const AdApprovingItem: FC<AdApprovingItemProps> = ({ad, onTouched}) => {
     const [requestingUpdate, setRequestingUpdate] = useState<boolean>(false);
 
     useEffect(() => {
-        api<Prop[]>(`/categories/${ad.category.id}/props`).then(
-            (data) => {
-                setProps(data);
-            }
-        )
+        getCategoryProps(ad.category.id).then(setProps);
     }, []);
 
     const publish = () => {

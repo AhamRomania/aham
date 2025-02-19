@@ -32,5 +32,5 @@ insert into sam values
     (1, 2, 1, 1|2|4|8), -- allow me edit cities
     (2, 2, 2, 1|2|4|8), -- allow me edit props
     (3, 2, 3, 1|2|4|8), -- allow me edit categories
-    (4, 2, 4, 1|2|4|8); -- allow me edit ads
+    (4, 2, 4, 1|2|4|8), -- allow me edit ads
     (5, 2, 5, 1|2|4|8); -- allow me edit seo

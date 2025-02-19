@@ -1,7 +1,7 @@
 "use client";
 
 import { css } from "@emotion/react";
-import { Add, AddTaskOutlined, AdsClickOutlined, ChatOutlined, DashboardOutlined, FavoriteOutlined, FolderOutlined, FolderSpecialOutlined, Home, Notifications, Pages, Person, PersonOffOutlined, SettingsOutlined } from "@mui/icons-material";
+import { Add, AddTaskOutlined, AdsClickOutlined, Assignment, AssignmentTurnedIn, ChatOutlined, DashboardOutlined, FavoriteOutlined, FiberNew, FolderOutlined, FolderSpecialOutlined, Home, Notifications, Pages, Person, PersonOffOutlined, Public, SettingsOutlined, ThumbDown } from "@mui/icons-material";
 import { Breadcrumbs, IconButton } from "@mui/joy";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -123,8 +123,13 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           <Menu mobile={!open}>
             <MenuItem icon={<DashboardOutlined/>} title="Panou" href="/u/"/>
             <MenuItem icon={<ChatOutlined/>} title="Mesaje" href="/u/mesaje"/>
-            <MenuItem icon={<AdsClickOutlined/>} title="Anunțuri" href="/u/anunturi"/>
-            <MenuItem icon={<FavoriteOutlined/>} title="Favorite" href="/u/anunturi/favorite"/>
+            <MenuItem icon={<AdsClickOutlined/>} title="Anunțuri" href="/u/anunturi">
+              <MenuItem icon={<FiberNew/>} title="Noi" count={10} href="/u/anunturi"/>
+              <MenuItem icon={<Public/>} title="Publice" href="/u/anunturi/publice"/>
+              <MenuItem icon={<AssignmentTurnedIn/>} count={10} title="Modificare" href="/u/anunturi/validare"/>
+              <MenuItem icon={<ThumbDown/>} title="Respinse" href="/u/anunturi/respinse"/>
+              <MenuItem icon={<FavoriteOutlined/>} title="Favorite" href="/u/anunturi/favorite"/>
+            </MenuItem>
             <MenuItem icon={<Person/>} title="Cont" href="/u/cont"/>
             <MenuItem icon={<SettingsOutlined/>} title="Settings" href="/u/setari"/>
             {userLoaded && isPrivilegedUser(me) && (

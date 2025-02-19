@@ -20,14 +20,14 @@ export const metadata = seo('/', {
 
 export default async function Home () {
   const api = getApiFetch();
-  const promovations = await api<Ad[]>('/ads?filter=promovations');
-  const recomandations = await api<Ad[]>('/ads?filter=recomandations');
+  const promotion = await api<Ad[]>('/ads?mode=promotion');
+  const recommended = await api<Ad[]>('/ads?mode=recommended');
   return (
     <HomepageLayout>
       <CategoryListSection id={1} count={20} />
       <CategoryListSection id={3} count={20} />
-      <MoreAds title="Promovate" ads={promovations}/>
-      <MoreAds title="Recomandate" ads={recomandations}/>
+      <MoreAds title="Promovate" ads={promotion}/>
+      <MoreAds title="Recomandate" ads={recommended}/>
     </HomepageLayout>
   );
 }

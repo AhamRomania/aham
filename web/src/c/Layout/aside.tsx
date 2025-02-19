@@ -28,9 +28,10 @@ interface MenuItemProps {
     icon?: React.ReactNode;
     title: string;
     href?: string;
+    count?:number;
 }
 
-export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, title, href, children}) => {
+export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, count = 0, title, href, children}) => {
 
     const [open, setOpen] = useState(false);
     const [showIconOnly,] = useState(useContext(MenuContext));
@@ -80,6 +81,7 @@ export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, titl
                     {!showIconOnly && <span style={{flex: '1'}}>{title}</span>}
                     {children && !open && <span><KeyboardArrowDown/></span>}
                     {children && open && <span><KeyboardArrowUp/></span>}
+                    {count > 0 && <div>{count}</div>}
                 </div>
             </Link>
             {open && children && <div className="children">{children}</div>}

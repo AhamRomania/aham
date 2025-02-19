@@ -1,4 +1,6 @@
 "use client";
+
+import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { useContext, useEffect } from "react";
 
@@ -7,13 +9,16 @@ export default function Page() {
   useEffect(() => {
     setPath(
       <>
-        <span>Mesaje</span>
+        <span>Anunțuri</span>
+        <span>Publice</span>
       </>
     );
   }, []);
+
   return (
     <>
-      <div>Mesaje</div>
+      <PageName>Anunțuri Publice</PageName>
+      <div>Anunturi</div>
     </>
   );
 }

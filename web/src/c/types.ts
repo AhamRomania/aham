@@ -68,6 +68,7 @@ export type Ad = {
     status: 'published',
     created: string
     props:{[key:string]:any}
+    promotion: number;
 }
 
 export type TokenResponse = {

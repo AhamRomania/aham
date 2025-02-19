@@ -298,7 +298,21 @@ export default function Page() {
           container
           gap={2}
         >
-          <Grid>
+          <Grid
+            css={css`
+              gap: 10px;
+              display: flex;  
+            `}
+          >
+            <Button
+              data-test="add-button"
+              variant="outlined"
+              size="lg"
+              type="submit"
+              loading={savingAd}
+            >
+              Salvează
+            </Button>
             <Button
               data-test="add-button"
               variant="solid"

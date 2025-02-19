@@ -1,12 +1,29 @@
-import { Ad, AdMetrics } from "@/c/types";
+import { Ad, AdMetrics, Prop } from "@/c/types";
 import getApiFetch from "./api";
 
-export async function getAdMetrics(id: number):Promise<AdMetrics> {
+export async function getAdMetrics(id: number): Promise<AdMetrics> {
     const api = getApiFetch();
     return await api<AdMetrics>(`/ads/${id}/metrics`);
 }
 
 export async function getAdsToApprove(): Promise<Ad[]> {
     const api = getApiFetch();
-    return await api<Ad[]>(`/ads?pending=true`);
+    return await api<Ad[]>(`/ads?mode=pending`);
+}
+
+export async function getDraftAds(): Promise<Ad[]> {
+    const api = getApiFetch();
+    return await api<Ad[]>(`/ads?mode=draft`);
+}
+
+export async function getCategoryProps(category: number): Promise<Prop[]> {
+    return await getApiFetch()<Prop[]>(`/categories/${category}/props`);
+}
+
+export async function removeAd(id:number): Promise<void> {
+    return await getApiFetch()(`/ads/`+id,{success: true, method: 'DELETE'});
+}
+
+export async function publishAd(id:number): Promise<void> {
+    return await getApiFetch()(`/ads/${id}/publish`,{success: true, method: 'POST'});
 }

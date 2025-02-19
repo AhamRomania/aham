@@ -91,7 +91,15 @@ func publishAd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ad.Owner.ID != userID || !Can(r, sam.ADS, sam.PermPublish) {
+	if ad.Owner.ID == userID && ad.Status == db.STATUS_DRAFT {
+		if err := ad.PrePublish(); err != nil {
+			http.Error(w, "can't publish ad", http.StatusInternalServerError)
+			return
+		}
+		return
+	}
+
+	if !Can(r, sam.ADS, sam.PermPublish) {
 		http.Error(w, "forbidden", http.StatusForbidden)
 		return
 	}
@@ -223,21 +231,29 @@ func GetAd(w http.ResponseWriter, r *http.Request) {
 
 func GetAds(w http.ResponseWriter, r *http.Request) {
 
-	pending := r.URL.Query().Get("pending") == "true"
+	mode := r.URL.Query().Get("mode")
 	offset := c.QueryIntParam(r, "offset", 0)
 	limit := c.QueryIntParam(r, "limit", 10)
 
-	filter := db.AdsFilter{
-		Status: "published",
+	filter := db.Filter{
+		Mode:   "published",
 		Offset: offset,
 		Limit:  limit,
 	}
 
-	if pending {
-		filter.Status = "pending"
+	if mode == "promotion" {
+		render.JSON(w, r, db.GetPromotionAds(filter))
+		return
 	}
 
-	if filter.Status != string(db.STATUS_PUBLISHED) && !Can(r, sam.ADS, sam.PermRead) {
+	if mode == "recommended" {
+		render.JSON(w, r, db.GetRecommendedAds(filter))
+		return
+	}
+
+	filter.Mode = mode
+
+	if filter.Mode != string(db.STATUS_PUBLISHED) && !Can(r, sam.ADS, sam.PermRead) {
 		http.Error(w, "forbidden", http.StatusForbidden)
 		return
 	}
