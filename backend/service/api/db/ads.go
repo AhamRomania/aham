@@ -286,8 +286,8 @@ func (ad *Ad) Save(tx pgx.Tx) error {
 type Filter struct {
 	Query    *string `json:"query"`
 	Mode     string  `json:"mode"`
-	Limit    int64   `json:"limit"`
-	Offset   int64   `json:"offset"`
+	Limit    *int64  `json:"limit"`
+	Offset   *int64  `json:"offset"`
 	Category *int64  `json:"category"`
 	Owner    *int64  `json:"owner"`
 }
@@ -295,17 +295,25 @@ type Filter struct {
 func GetPromotionAds(filter Filter) (ads []*Ad) {
 	ads = make([]*Ad, 0)
 
-	sql, params := getAdSqlBuilder().WHERE(
+	smtp := getAdSqlBuilder().WHERE(
 		Ads.Status.EQ(String("published")).AND(
 			Transactions.Amount.GT(Float(0)),
 		),
 	).ORDER_BY(
-		Raw("ad_promotion_index(t.amount, ads.published, ads.valid_through) DESC"),
-	).LIMIT(
-		filter.Limit,
-	).OFFSET(
-		filter.Offset,
-	).Sql()
+		Raw("ad_promotion_index(transactions.amount, ads.published, ads.valid_through) DESC"),
+	).WHERE(
+		BoolExp(Raw("ad_promotion_index(transactions.amount, ads.published, ads.valid_through) > 0")),
+	)
+
+	if filter.Limit != nil && *filter.Limit > 0 {
+		smtp = smtp.LIMIT(*filter.Limit)
+	}
+
+	if filter.Offset != nil && *filter.Offset >= 0 {
+		smtp = smtp.OFFSET(*filter.Offset)
+	}
+
+	sql, params := smtp.Sql()
 
 	rows, err := c.DB().Query(context.TODO(), sql, params...)
 
@@ -343,13 +351,21 @@ func GetRecommendedAds(filter Filter) (ads []*Ad) {
 
 func GetAds(filter Filter) (ads []*Ad) {
 
+	if filter.Mode == "" {
+		filter.Mode = "published"
+	}
+
 	ads = make([]*Ad, 0)
 
-	smtp := getAdSqlBuilder().LIMIT(
-		filter.Limit,
-	).OFFSET(
-		filter.Offset,
-	)
+	smtp := getAdSqlBuilder()
+
+	if filter.Limit != nil && *filter.Limit > 0 {
+		smtp = smtp.LIMIT(*filter.Limit)
+	}
+
+	if filter.Offset != nil && *filter.Offset >= 0 {
+		smtp = smtp.OFFSET(*filter.Offset)
+	}
 
 	var where []BoolExpression = make([]BoolExpression, 0)
 

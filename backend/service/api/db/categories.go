@@ -7,8 +7,6 @@ import (
 	"sort"
 	"strings"
 	"time"
-
-	"github.com/gosimple/slug"
 )
 
 type Category struct {
@@ -93,7 +91,7 @@ func (category *Category) Search(query string) (results []*Category) {
 }
 
 func (category *Category) Link() string {
-	return c.URLF(c.Web, "/%s", slug.Make(category.Slug))
+	return c.URLF(c.Web, "/%s", category.Href)
 }
 
 func (c *Category) LastModified() string {

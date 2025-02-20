@@ -234,8 +234,8 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 
 	query := r.URL.Query().Get("query")
 	mode := r.URL.Query().Get("mode")
-	offset := c.QueryIntParam(r, "offset", 0)
-	limit := c.QueryIntParam(r, "limit", 10)
+	offset := c.QueryIntParam(r, "offset", -1)
+	limit := c.QueryIntParam(r, "limit", -1)
 	from := c.QueryIntParam(r, "from", 0)
 	skipOwner := r.URL.Query().Get("skip-owner") == "true"
 
@@ -244,9 +244,15 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filter := db.Filter{
-		Mode:   mode,
-		Offset: offset,
-		Limit:  limit,
+		Mode: mode,
+	}
+
+	if offset != -1 {
+		filter.Offset = c.Int64P(offset)
+	}
+
+	if limit != -1 {
+		filter.Limit = c.Int64P(limit)
 	}
 
 	userID, errUserID := c.UserID(r)

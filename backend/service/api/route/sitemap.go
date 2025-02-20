@@ -1,9 +1,9 @@
 package route
 
 import (
+	"aham/common/c"
 	"aham/service/api/db"
 	"bytes"
-	"fmt"
 	"net/http"
 	"time"
 )
@@ -14,14 +14,12 @@ func Sitemap(res http.ResponseWriter, req *http.Request) {
 	b.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`)
 
 	for _, c := range db.GetCategoriesFlat() {
-		writeLoc(b, fmt.Sprintf("https://aham.ro/%s", c.Link()), time.Now().Format("2006-01-02"))
+		writeLoc(b, c.Link(), time.Now().Format("2006-01-02"))
 	}
 
-	/*
-		for _, ad := range service.GetAds().Query(service.AdQuery{}) {
-			writeLoc(b, fmt.Sprintf("https://aham.ro/%s/%s", ad.CategorySlug, ad.Link()), ad.CreatedAt.Format("2006-01-02"))
-		}
-	*/
+	for _, ad := range db.GetAds(db.Filter{}) {
+		writeLoc(b, c.URLF(c.Web, "/"+ad.Href), ad.Created.Format("2006-01-02"))
+	}
 
 	b.WriteString(`</urlset>`)
 	res.Write(b.Bytes())
