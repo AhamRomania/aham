@@ -34,7 +34,7 @@ func scanCategoryChildren(items []*Category, ids []int64) []int64 {
 	for _, item := range items {
 		ids = append(ids, item.ID)
 		if len(item.Children) > 0 {
-			return scanCategoryChildren(item.Children, ids)
+			ids = scanCategoryChildren(item.Children, ids)
 		}
 	}
 	return ids

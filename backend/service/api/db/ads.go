@@ -342,9 +342,7 @@ func GetAds(filter Filter) (ads []*Ad) {
 
 	ads = make([]*Ad, 0)
 
-	smtp := getAdSqlBuilder().WHERE(
-		Ads.Status.EQ(String(filter.Mode)),
-	).LIMIT(
+	smtp := getAdSqlBuilder().LIMIT(
 		filter.Limit,
 	).OFFSET(
 		filter.Offset,
@@ -352,7 +350,7 @@ func GetAds(filter Filter) (ads []*Ad) {
 
 	var where []BoolExpression = make([]BoolExpression, 0)
 
-	if filter.Mode != "" { // todo: check valid status
+	if filter.Mode != "" {
 		where = append(where, Ads.Status.EQ(String(filter.Mode)))
 	}
 
