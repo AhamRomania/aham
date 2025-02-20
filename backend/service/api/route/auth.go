@@ -104,9 +104,5 @@ func authorize(w http.ResponseWriter, r *http.Request, user *db.User) {
 		return
 	}
 
-	if err := user.UpdateBalance("Login Gift", 0, 10); err != nil {
-		c.Log().Error(err)
-	}
-
 	render.JSON(w, r, map[string]string{"token": token})
 }
