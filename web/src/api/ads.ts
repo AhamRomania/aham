@@ -21,6 +21,16 @@ export async function getPendingAds(): Promise<Ad[]> {
     return await api<Ad[]>(`/ads?mode=pending`);
 }
 
+export async function getPublishedAds(): Promise<Ad[]> {
+    const api = getApiFetch();
+    return await api<Ad[]>(`/ads?mode=published`);
+}
+
+export async function getAdsByQuery(query:string): Promise<Ad[]> {
+    const api = getApiFetch();
+    return await api<Ad[]>(`/ads?mode=published&skip-owner=true&query=${query}`);
+}
+
 export async function getCategoryProps(category: number): Promise<Prop[]> {
     if (!category) { throw new Error('Category must a number greather than 0')}
     return await getApiFetch()<Prop[]>(`/categories/${category}/props`);

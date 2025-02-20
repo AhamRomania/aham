@@ -6,6 +6,7 @@ import (
 	"aham/service/api/sam"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -231,6 +232,7 @@ func GetAd(w http.ResponseWriter, r *http.Request) {
 
 func GetAds(w http.ResponseWriter, r *http.Request) {
 
+	query := r.URL.Query().Get("query")
 	mode := r.URL.Query().Get("mode")
 	offset := c.QueryIntParam(r, "offset", 0)
 	limit := c.QueryIntParam(r, "limit", 10)
@@ -255,6 +257,14 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if query != "" {
+		filter.Query = c.String(query)
+		q, err := json.Marshal(query)
+		if err == nil {
+			Track(&userID, "ads/search/query", fmt.Sprintf(`{"query":"%s"}`, string(q)))
+		}
+	}
+
 	if from != 0 {
 		filter.Category = &from
 	}
@@ -269,12 +279,6 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if filter.Mode != string(db.STATUS_PUBLISHED) && !Can(r, sam.ADS, sam.PermRead) {
-		c.Log().Infof("Mode %s requires authorization", filter.Mode)
-		http.Error(w, "forbidden", http.StatusForbidden)
-		return
-	}
-
 	if filter.Mode == string(db.STATUS_DRAFT) {
 
 		userID, errUserID := c.UserID(r)
@@ -284,7 +288,15 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		filter.Owner = &userID
+		if !skipOwner {
+			filter.Owner = &userID
+		}
+	}
+
+	if (skipOwner || filter.Owner == nil) && filter.Mode != string(db.STATUS_PUBLISHED) && !Can(r, sam.ADS, sam.PermRead) {
+		c.Log().Infof("Mode %s requires authorization to read", filter.Mode)
+		http.Error(w, "forbidden", http.StatusForbidden)
+		return
 	}
 
 	render.JSON(w, r, db.GetAds(filter))

@@ -5,6 +5,8 @@ import (
 	"aham/common/cdn"
 	. "aham/service/api/db/aham/public/table"
 	"context"
+	"fmt"
+	"regexp"
 	"time"
 
 	. "github.com/go-jet/jet/v2/postgres"
@@ -282,11 +284,12 @@ func (ad *Ad) Save(tx pgx.Tx) error {
 }
 
 type Filter struct {
-	Mode     string `json:"mode"`
-	Limit    int64  `json:"limit"`
-	Offset   int64  `json:"offset"`
-	Category *int64 `json:"category"`
-	Owner    *int64 `json:"owner"`
+	Query    *string `json:"query"`
+	Mode     string  `json:"mode"`
+	Limit    int64   `json:"limit"`
+	Offset   int64   `json:"offset"`
+	Category *int64  `json:"category"`
+	Owner    *int64  `json:"owner"`
 }
 
 func GetPromotionAds(filter Filter) (ads []*Ad) {
@@ -350,12 +353,23 @@ func GetAds(filter Filter) (ads []*Ad) {
 
 	var where []BoolExpression = make([]BoolExpression, 0)
 
+	if filter.Mode == "published" {
+		where = append(where, Ads.ValidThrough.GT(
+			TimestampT(time.Now()),
+		))
+	}
+
 	if filter.Mode != "" {
 		where = append(where, Ads.Status.EQ(String(filter.Mode)))
 	}
 
 	if filter.Owner != nil {
 		where = append(where, Ads.Owner.EQ(Int64(*filter.Owner)))
+	}
+
+	if filter.Query != nil && *filter.Query != "" {
+		query := StringExp(Raw(fmt.Sprintf("'%s'", regexp.QuoteMeta(*filter.Query))))
+		where = append(where, Ads.Title.REGEXP_LIKE(query).OR(Ads.Description.REGEXP_LIKE(query)))
 	}
 
 	smtp = smtp.WHERE(AND(where...))

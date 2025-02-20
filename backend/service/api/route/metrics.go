@@ -4,7 +4,10 @@ import (
 	"aham/common/c"
 	"aham/service/api/db"
 	"context"
+	"fmt"
 	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"os"
 	"time"
 
@@ -15,6 +18,21 @@ import (
 
 func MetricsRoutes(r chi.Router) {
 	r.Get("/track", track)
+}
+
+func Track(user *int64, kind string, metadata string) (err error) {
+	w := httptest.NewRecorder()
+	u := &url.URL{Path: "/track"}
+	q := u.Query()
+	q.Add("kind", kind)
+	q.Add("metadata", metadata)
+	q.Add("user", fmt.Sprint(user))
+	r, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return err
+	}
+	track(w, r)
+	return
 }
 
 func track(w http.ResponseWriter, r *http.Request) {

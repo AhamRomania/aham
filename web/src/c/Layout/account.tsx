@@ -1,7 +1,7 @@
 "use client";
 
 import { css } from "@emotion/react";
-import { Add, AddTaskOutlined, AdsClickOutlined, AssignmentTurnedIn, Category, ChatOutlined, CheckCircle, DashboardOutlined, FavoriteOutlined, FiberNew, FolderOutlined, FolderSpecialOutlined, Home, Notifications, Pages, Person, Public, SettingsOutlined, ThumbDown } from "@mui/icons-material";
+import { Add, AddTaskOutlined, AdsClickOutlined, Analytics, AssignmentTurnedIn, Category, ChatOutlined, CheckCircle, DashboardOutlined, FavoriteOutlined, FiberNew, FolderOutlined, FolderSpecialOutlined, Home, Notifications, Pages, Person, Public, SettingsOutlined, ThumbDown } from "@mui/icons-material";
 import { Breadcrumbs, IconButton } from "@mui/joy";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -136,6 +136,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               <MenuItem icon={<ThumbDown/>} title="Respinse" href="/u/anunturi/respinse"/>
               <MenuItem icon={<FavoriteOutlined/>} title="Favorite" href="/u/anunturi/favorite"/>
             </MenuItem>
+            <MenuItem icon={<Analytics/>} title="Statistici" href="/u/statistici"/>
             <MenuItem icon={<Person/>} title="Cont" href="/u/cont"/>
             <MenuItem icon={<SettingsOutlined/>} title="Settings" href="/u/setari"/>
             {userLoaded && isPrivilegedUser(me) && (
