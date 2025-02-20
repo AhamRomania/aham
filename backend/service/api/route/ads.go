@@ -275,5 +275,17 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if filter.Mode == string(db.STATUS_DRAFT) {
+
+		userID, errUserID := c.UserID(r)
+
+		if errUserID != nil {
+			http.Error(w, "getting drafs requires user to be logged in", http.StatusBadRequest)
+			return
+		}
+
+		filter.Owner = &userID
+	}
+
 	render.JSON(w, r, db.GetAds(filter))
 }

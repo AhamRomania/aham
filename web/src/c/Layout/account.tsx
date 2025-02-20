@@ -88,8 +88,8 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                     <Home color="action"/>
                 </IconButton>
               </Link>
-              <Link href="/u/anunturi/creaza">
-                <IconButton href="/u/anunturi/creaza" size="md" variant="solid" color="primary" style={{marginLeft:"10px"}}>
+              <Link href="/u/anunturi/creaza" prefetch={false}>
+                <IconButton size="md" variant="solid" color="primary" style={{marginLeft:"10px"}}>
                     <Add color="action"/>
                 </IconButton>
               </Link>

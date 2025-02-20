@@ -58,19 +58,16 @@ const Picture: FC<PictureProps> = ({src, onDelete, onPositionShift}) => {
             });
 
             xhr.addEventListener("loadend", () => {
-                
-                let upload;
-                
                 try {
-                    upload = JSON.parse(xhr.responseText);
+                    const upload = JSON.parse(xhr.responseText);
+                    src.setUUID(upload.uuid);
+                    setProgress(100);
+                    setUploading(false);
+                    forceUpdate();
                 } catch(e: any) {
                     console.warn('Picture upload warn:', e);
+                    alert('Nu am putut încărca fotografia.')
                 }
-
-                src.setUUID(upload.uuid);
-                setProgress(100);
-                setUploading(false);
-                forceUpdate();
             });
 
             xhr.open("POST", cdnURL);
