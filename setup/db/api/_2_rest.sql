@@ -62,6 +62,16 @@ ALTER SEQUENCE users_id_seq RESTART WITH 1000;
 
 CREATE INDEX users_activated_index ON users (email_activated_at);
 
+create table balance (
+    id serial primary key,
+    owner integer not null references users(id),
+    debit real default 0,
+    credit real default 0,
+    balance real not null,
+    description text,
+    date timestamp not null default current_timestamp
+);
+
 create table ads (
     id serial primary key,
     slug varchar(255) not null,

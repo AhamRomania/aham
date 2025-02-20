@@ -132,6 +132,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := user.UpdateBalance("Registration Gift", 0, 100); err != nil {
+		c.Log().Error(err)
+	}
+
 	emails.Welcome(
 		user.Recipient(),
 		emails.WelcomeParams{

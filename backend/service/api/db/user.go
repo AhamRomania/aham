@@ -5,6 +5,7 @@ import (
 	"aham/common/emails"
 	"aham/service/api/sam"
 	"context"
+	"strings"
 	"time"
 )
 
@@ -40,6 +41,47 @@ func (u *User) Min() UserMin {
 		GivenName:  u.GivenName,
 		FamilyName: u.FamilyName,
 	}
+}
+
+func (user *User) Balance() (balance float64, err error) {
+
+	err = c.DB().QueryRow(
+		context.TODO(),
+		"SELECT balance FROM balance WHERE owner = $1 ORDER BY id desc",
+		user.ID,
+	).Scan(&balance)
+
+	if err != nil && !strings.Contains(err.Error(), "no rows") {
+		return balance, err
+	}
+
+	return balance, nil
+}
+
+func (user *User) UpdateBalance(description string, debit float64, credit float64) (err error) {
+
+	balance, err := user.Balance()
+
+	if err != nil {
+		return err
+	}
+
+	_, err = c.DB().Exec(
+		context.Background(),
+		"INSERT INTO balance (owner, date, description, debit, credit, balance) VALUES ($1, $2, $3, $4, $5, $6)",
+		user.ID,
+		time.Now(),
+		description,
+		debit,
+		credit,
+		balance+credit-debit,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (user *User) SamVerify(resource sam.Resource, permission sam.Perm) bool {

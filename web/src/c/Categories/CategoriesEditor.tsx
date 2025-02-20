@@ -181,7 +181,7 @@ const CategoriesEditor:FC = () => {
 
         if (confirm(msg)) {
             const category = node.remove();
-            if (category) {
+            if (category && category.id) {
                 api<Category>(`/categories/${category?.id}`, {
                     method:'DELETE',
                     success: true,
@@ -243,6 +243,12 @@ const CategoriesEditor:FC = () => {
     }
 
     const showPropAssign = (node: Node) => {
+        
+        if (!node) {
+            console.error("node must be non empty");
+            return;
+        }
+
         api<Prop[]>(`/categories/${node.id}/props`).then((props: any) => {
             if(props && props.length) {
                 const data: {[key: string]:Prop} = {};

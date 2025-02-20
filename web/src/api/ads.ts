@@ -22,6 +22,7 @@ export async function getPendingAds(): Promise<Ad[]> {
 }
 
 export async function getCategoryProps(category: number): Promise<Prop[]> {
+    if (!category) { throw new Error('Category must a number greather than 0')}
     return await getApiFetch()<Prop[]>(`/categories/${category}/props`);
 }
 

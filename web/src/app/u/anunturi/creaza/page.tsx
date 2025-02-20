@@ -55,7 +55,9 @@ export default function Page() {
   },[]);
 
   useEffect(() => {
-    api<Prop[]>(`/categories/${category?.id}/props`).then(setProps);
+    if (category && category.id) {
+      api<Prop[]>(`/categories/${category?.id}/props`).then(setProps);
+    }
   }, [category]);
 
   const propElementFactory = (prop: Prop) => {
