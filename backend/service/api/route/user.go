@@ -6,6 +6,7 @@ import (
 	"aham/service/api/db"
 	"aham/service/api/vo"
 	"context"
+	"fmt"
 	"net/http"
 	"unicode"
 
@@ -21,6 +22,33 @@ type CreateUserRequest struct {
 	FamilyName string `json:"family_name"`
 	Phone      string `json:"phone"`
 	City       int64  `json:"city"`
+}
+
+func Balance(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "forbidden", http.StatusForbidden)
+		return
+	}
+
+	user := db.GetUserByID(userID)
+
+	if user == nil {
+		http.Error(w, "forbidden", http.StatusNotFound)
+		return
+	}
+
+	balance, err := user.Balance()
+
+	if err != nil {
+		http.Error(w, "forbidden", http.StatusForbidden)
+		c.Log().Error(err)
+		return
+	}
+
+	w.Write([]byte(fmt.Sprint(balance)))
 }
 
 func ActivateUser(w http.ResponseWriter, r *http.Request) {

@@ -34,6 +34,7 @@ func main() {
 		r.Post("/auth/facebook", route.AuthWithFacebook)
 
 		r.Get("/config", route.Setup)
+		r.Get("/balance", c.Guard(route.Balance))
 
 		r.Route("/sam", route.SecureAccessMap)
 		r.Route("/gcm", route.GcmRoutes)

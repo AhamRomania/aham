@@ -14,6 +14,7 @@ import Tip from "../tooltip";
 import { User } from "../types";
 import { Menu, MenuItem } from "./aside";
 import { Centred, Space } from "./common";
+import { getBalance } from "@/api/common";
 
 export interface AccountLayoutAPI {
   setPath: (path: React.ReactElement) => void;
@@ -22,6 +23,7 @@ export interface AccountLayoutAPI {
 export const AccountLayoutContext = React.createContext<AccountLayoutAPI>({} as AccountLayoutAPI);
 
 const AccountLayout = ({ children }: React.PropsWithChildren) => {
+  const [balance, setBalance] = useState(0)
   const [open, setOpen] = useState(true);
   const [me, setMe] = useState<User | null>(null);
   const [userLoaded, setUserLoaded] = useState(false);
@@ -30,6 +32,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
   useEffect(() => {
     getUser().then(setMe);
     setUserLoaded(true);
+    getBalance().then(setBalance);
   }, []);
 
   return (
@@ -191,6 +194,21 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               margin-right: 20px;
             `}
           >
+            <div
+              css={css`
+                height: 42px;
+                border: 1px solid #DDD;  
+                border-radius: 8px;
+                margin-right: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 20px;
+              `}
+            >
+              <strong>{balance}</strong>
+              <span>LEI</span>
+            </div>
             <div
               css={css`
                 cursor: pointer;
