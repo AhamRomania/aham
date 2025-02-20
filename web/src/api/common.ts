@@ -27,3 +27,7 @@ export async function saveAdReport(ad:Ad, data: ReportData): Promise<void> {
 export async function getBalance(): Promise<number> {
     return await getApiFetch()<string>(`/balance`, {text:true}).then(n => parseInt(n as string));
 }
+
+export async function getSitemap(): Promise<string> {
+    return await getApiFetch()<string>(`/sitemap`, {text:true,cache:'force-cache'});
+}

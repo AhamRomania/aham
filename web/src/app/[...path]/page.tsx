@@ -57,13 +57,9 @@ export default async function Page(props: any) {
     }
 
     const ad = data.vo as Ad;
-    const categoryID = (ad && ad.category) ? ad.category.id : 0;
+    const categoryID = ad.category ? ad.category.id : 0;
     const dprops = await api<Prop[]>(`/categories/${categoryID}/props`);
     const extra = await api<Ad[]>(`/ads`)
-
-    if (categoryID) {
-        console.error("category id must not be 0")
-    }
 
     const offerSchema = {
         "@context": "https://schema.org",
