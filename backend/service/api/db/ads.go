@@ -344,19 +344,23 @@ func GetAds(filter Filter) (ads []*Ad) {
 
 	smtp := getAdSqlBuilder().WHERE(
 		Ads.Status.EQ(String(filter.Mode)),
-	).ORDER_BY(
-		Ads.Created.DESC(),
 	).LIMIT(
 		filter.Limit,
 	).OFFSET(
 		filter.Offset,
 	)
 
-	if filter.Owner != nil {
-		smtp = smtp.WHERE(
-			Ads.Owner.EQ(Int64(*filter.Owner)),
-		)
+	var where []BoolExpression = make([]BoolExpression, 0)
+
+	if filter.Mode != "" { // todo: check valid status
+		where = append(where, Ads.Status.EQ(String(filter.Mode)))
 	}
+
+	if filter.Owner != nil {
+		where = append(where, Ads.Owner.EQ(Int64(*filter.Owner)))
+	}
+
+	smtp = smtp.WHERE(AND(where...))
 
 	if filter.Category != nil {
 
@@ -457,12 +461,15 @@ func getAdSqlBuilder() SelectStatement {
 		Raw("users.given_name"),
 		Raw("users.family_name"),
 		Raw("CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href"),
+		Raw("ad_promotion_index(COALESCE(transactions.amount, 0), ads.published, ads.valid_through) > 0 as promotion"),
 	).FROM(
 		Ads.AS("ads").LEFT_JOIN(Users.AS("users").Table, Users.ID.EQ(Ads.Owner)).
 			LEFT_JOIN(Categories.AS("categories").Table, Categories.ID.EQ(Ads.Category)).
 			LEFT_JOIN(Cities.AS("cities").Table, Cities.ID.EQ(Ads.City)).
 			LEFT_JOIN(Counties.AS("counties").Table, Counties.ID.EQ(Cities.County)).
 			LEFT_JOIN(Transactions.AS("transactions").Table, Transactions.AdID.EQ(Ads.ID)),
+	).ORDER_BY(
+		Raw("ad_promotion_index(COALESCE(transactions.amount, 0), ads.published, ads.valid_through) DESC"),
 	)
 }
 
@@ -471,7 +478,10 @@ type SQLScanner interface {
 }
 
 func scanAd(scanner SQLScanner, ad *Ad) (err error) {
-	return scanner.Scan(
+
+	var promotion *bool
+
+	err = scanner.Scan(
 		&ad.ID,
 		&ad.Title,
 		&ad.Description,
@@ -496,5 +506,12 @@ func scanAd(scanner SQLScanner, ad *Ad) (err error) {
 		&ad.Owner.GivenName,
 		&ad.Owner.FamilyName,
 		&ad.Href,
+		&promotion,
 	)
+
+	if promotion != nil {
+		ad.Promotion = *promotion
+	}
+
+	return
 }

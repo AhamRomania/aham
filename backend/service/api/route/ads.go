@@ -250,7 +250,7 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 	userID, errUserID := c.UserID(r)
 
 	if !skipOwner {
-		if errUserID != nil {
+		if errUserID == nil {
 			filter.Owner = &userID
 		}
 	}
