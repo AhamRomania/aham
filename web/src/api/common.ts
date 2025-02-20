@@ -25,5 +25,5 @@ export async function saveAdReport(ad:Ad, data: ReportData): Promise<void> {
 }
 
 export async function getBalance(): Promise<number> {
-    return await getApiFetch()<number>(`/balance`, {text:true});
+    return await getApiFetch()<string>(`/balance`, {text:true}).then(n => parseInt(n as string));
 }

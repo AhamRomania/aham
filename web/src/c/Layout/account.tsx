@@ -15,6 +15,7 @@ import { User } from "../types";
 import { Menu, MenuItem } from "./aside";
 import { Centred, Space } from "./common";
 import { getBalance } from "@/api/common";
+import { toMoney } from "../formatter";
 
 export interface AccountLayoutAPI {
   setPath: (path: React.ReactElement) => void;
@@ -204,9 +205,10 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 align-items: center;
                 justify-content: center;
                 padding: 0 20px;
+                background: #FFF;
               `}
             >
-              <strong>{balance}</strong>
+              {balance > 0 ? <strong>{toMoney(balance)}</strong> : 0}
               <span>LEI</span>
             </div>
             <div
