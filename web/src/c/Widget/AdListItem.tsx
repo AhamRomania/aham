@@ -47,12 +47,9 @@ const AdListItem: FC<AdListItemProps> = ({ad, onRemove}) => {
                     border:1px solid #ddd;    
                 `}
             >
-                <div
-                    css={css`
-                        width: 400px;    
-                    `}
-                >
+                <div>
                     <Gallery 
+                        width={200}
                         pictures={ad.pictures}
                     />
                 </div>

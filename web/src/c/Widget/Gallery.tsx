@@ -6,35 +6,44 @@ import { FC, useEffect, useRef, useState } from "react";
 import getDomain, { Domain } from "../domain";
 
 export interface GalleryProps {
+    width: number
     pictures: string[];
 }
 
-const Gallery: FC<GalleryProps> = ({pictures}) => {
+const Gallery: FC<GalleryProps> = ({width = 500,pictures}) => {
 
     const [current, setCurrent] = useState(0);
     const [loading, setLoading] = useState(false);
     const [src, setSrc] = useState('');
     const imgRef = useRef<HTMLImageElement | null>(null);
+    const containerRef = useRef<HTMLImageElement | null>(null);
 
     useEffect(() => {
         if (imgRef && imgRef.current) {
             setLoading(true);
             imgRef.current.addEventListener('load', () => {
                 setLoading(false)
+                if (containerRef.current) {
+                    const img:HTMLImageElement = imgRef.current!;
+                    const marging = -((img.naturalHeight-containerRef.current.offsetHeight) / 2);
+                    img.setAttribute('style',`margin-top:${marging}px`);
+                }
             });
         }
-        setSrc(getDomain(Domain.Cdn) + `/` + pictures[current] + `?w=700`);
+        setSrc(getDomain(Domain.Cdn) + `/` + pictures[current] + `?w=`+(width));
     }, [imgRef, current]);
 
     return (
         <div
             data-test="gallery"
+            ref={containerRef}
             css={css`
+                width: ${width}px;
                 background: #F0F0F0;
                 position: relative;
-                width: 100%;
                 padding-bottom: 75%;
                 border-radius: 8px;
+                overflow: hidden;
             `}
         >
             <div
@@ -44,25 +53,22 @@ const Gallery: FC<GalleryProps> = ({pictures}) => {
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    overflow: hidden;
+                    border-radius: 8px;
                 `}
             >
                 <div
                     css={css`
                         img {
-                            width: 100%;
-                            height: 100%;
-                            object-fit: cover; /* Ensures the image covers the container */
-                            border-radius: 8px;
+                            
                         }
                     `}
                 >
                     {/* eslint-disable-next-line @next/next/no-img-element*/}
-                    {(src !== '') && <img
+                    <img
                         ref={imgRef}
-                        src={src}
+                        src={src?src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=='}
                         alt="Gallery Image"
-                    />}
+                    />
                 </div>
                 {pictures.length>1&&<Navigate
                     css={css`

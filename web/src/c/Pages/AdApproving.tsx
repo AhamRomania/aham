@@ -91,7 +91,7 @@ const AdApprovingItem: FC<AdApprovingItemProps> = ({ad, onTouched}) => {
                         }
                     `}
                 >
-                    <Gallery pictures={ad.pictures}/>
+                    <Gallery width={300} pictures={ad.pictures}/>
                 </div>
                 <div
                     css={css`

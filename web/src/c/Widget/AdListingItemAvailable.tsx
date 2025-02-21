@@ -9,7 +9,7 @@ export interface AdListItemProps {
     ad: Ad;
 }
 
-const AdListItemPending: FC<AdListItemProps> = ({ad}) => {
+const AdListItemAvailable: FC<AdListItemProps> = ({ad}) => {
 
     const [props, setProps] = useState<Prop[]>();
 
@@ -30,7 +30,7 @@ const AdListItemPending: FC<AdListItemProps> = ({ad}) => {
             >
                 <div
                     css={css`
-                        width: 400px;    
+                        width: 200px;    
                     `}
                 >
                     <Gallery 
@@ -69,4 +69,4 @@ const AdListItemPending: FC<AdListItemProps> = ({ad}) => {
     )
 }
 
-export default AdListItemPending;
+export default AdListItemAvailable;

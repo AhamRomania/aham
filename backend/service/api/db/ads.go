@@ -139,6 +139,22 @@ func (ad *Ad) GetTransaction(cycle int) (t *Transaction) {
 	return
 }
 
+func (ad *Ad) Clone() (clone *Ad, err error) {
+
+	tx, err := c.DB().BeginTx(
+		context.TODO(),
+		pgx.TxOptions{},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = ad.Save(tx)
+	clone = ad
+	return
+}
+
 func (ad *Ad) Reject() (err error) {
 
 	cmd, err := c.DB().Exec(
@@ -316,7 +332,7 @@ func (ad *Ad) Save(tx pgx.Tx) error {
 
 	for _, upload := range ad.Pictures {
 		if err := cdn.Persist(upload); err != nil {
-			return err
+			c.Log().Error(err)
 		}
 	}
 

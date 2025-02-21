@@ -4,7 +4,7 @@ import { getCompletedAds } from "@/api/ads";
 import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { Ad } from "@/c/types";
-import AdListItemPending from "@/c/Widget/AdListItemPending";
+import AdListItemAvailable from "@/c/Widget/AdListingItemAvailable";
 import { useContext, useEffect, useState } from "react";
 
 export default function Page() {
@@ -27,7 +27,7 @@ export default function Page() {
     <>
       <PageName>Anunțuri Disponibile</PageName>
       {ads?.map((ad, index) => (
-        <AdListItemPending key={index} ad={ad} />
+        <AdListItemAvailable key={index} ad={ad} />
       ))}
     </>
   );
