@@ -5,9 +5,11 @@ import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { Ad } from "@/c/types";
 import AdListItemAvailable from "@/c/Widget/AdListingItemAvailable";
+import useSocket from "@/c/ws";
 import { useContext, useEffect, useState, useReducer } from "react";
 
 export default function Page() {
+  const socket = useSocket();
   const [ads, setAds] = useState<Ad[]>();
   const { setPath } = useContext(AccountLayoutContext);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
@@ -29,6 +31,10 @@ export default function Page() {
 
   useEffect(() => {
     update();
+  }, []);
+
+  useEffect(() => {
+      return socket.on<Ad>("ad.complete", () => update());
   }, []);
 
   return (

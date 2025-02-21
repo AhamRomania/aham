@@ -89,8 +89,16 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
     handleOpenSnackbar(<><CheckCircle color="success"/><strong>{ad.title}</strong>a fost publicat</>, 3000);
   };
 
+  const onAdComplete = (ad: Ad) => {
+    handleOpenSnackbar(<><CheckCircle color="success"/>Afișarea<strong>{ad.title}</strong>este finalizată</>, 3000);
+  };
+
   useEffect(() => {
     return socket.on<Ad>("ad.publish", onAdPublish);
+  }, []);
+
+  useEffect(() => {
+    return socket.on<Ad>("ad.complete", onAdComplete);
   }, []);
 
   return (
