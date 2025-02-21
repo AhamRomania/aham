@@ -393,8 +393,10 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             <HeadMenu />
           </div>
           <div
+            data-test="account-layout"
             css={css`
               overflow: auto;
+              height: 100%;
             `}
           >
             <AccountLayoutContext.Provider value={{ setPath }}>

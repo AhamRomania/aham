@@ -1,19 +1,6 @@
-"use client";
-import { AccountLayoutContext } from "@/c/Layout/account";
-import { useContext, useEffect } from "react";
+"use server";
+import Chat from "@/c/Chat/Chat";
 
-export default function Page() {
-  const { setPath } = useContext(AccountLayoutContext);
-  useEffect(() => {
-    setPath(
-      <>
-        <span>Mesaje</span>
-      </>
-    );
-  }, []);
-  return (
-    <>
-      <div>Mesaje</div>
-    </>
-  );
+export default async function Page() {
+  return <Chat/>;
 }
