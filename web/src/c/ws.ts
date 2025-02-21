@@ -22,10 +22,10 @@ const connectWebSocket = async () => {
             reconnectAttempts = 0; // Reset the reconnect attempts on a successful connection
         });
 
-        ws.addEventListener("message", (event) => {
+        ws.addEventListener("message", (socketEvent) => {
             try {
-                const { name, ...data } = JSON.parse(event.data);
-                handlers[name]?.forEach((fn) => fn(data));
+                const { event, data } = JSON.parse(socketEvent.data);
+                handlers[event]?.forEach((fn) => fn(data));
             } catch (error) {
                 console.error("ws: error parsing message", error);
             }
