@@ -21,6 +21,11 @@ export async function getPendingAds(): Promise<Ad[]> {
     return await api<Ad[]>(`/ads?mode=pending`);
 }
 
+export async function getCompletedAds(): Promise<Ad[]> {
+    const api = getApiFetch();
+    return await api<Ad[]>(`/ads?mode=completed`);
+}
+
 export async function getPublishedAds(): Promise<Ad[]> {
     const api = getApiFetch();
     return await api<Ad[]>(`/ads?mode=published`);
