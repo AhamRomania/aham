@@ -1,6 +1,6 @@
 "use client";
 
-import { getPendingAds } from "@/api/ads";
+import { getCompletedAds } from "@/api/ads";
 import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { Ad } from "@/c/types";
@@ -20,7 +20,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    getPendingAds().then(setAds);
+    getCompletedAds().then(setAds);
   }, []);
 
   return (
