@@ -398,7 +398,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             `}
           >
             <AccountLayoutContext.Provider value={{ setPath }}>
-              <Centred>{children}</Centred>
+              {children}
             </AccountLayoutContext.Provider>
           </div>
         </div>

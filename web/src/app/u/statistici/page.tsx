@@ -1,6 +1,6 @@
 "use client";
 
-import { PageName } from "@/c/Layout";
+import { Centred, PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { useContext, useEffect } from "react";
 
@@ -15,9 +15,9 @@ export default function Page() {
   }, []);
 
   return (
-    <>
+    <Centred>
       <PageName>Statistici</PageName>
       <div></div>
-    </>
+    </Centred>
   );
 }
