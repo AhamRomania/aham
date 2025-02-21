@@ -11,11 +11,12 @@ import HeadMenu from "../HeadMenu";
 import Logo from "../logo";
 import Sam, { SamPermission, SamResource } from "../Sam";
 import Tip from "../tooltip";
-import { User } from "../types";
+import { Ad, User } from "../types";
 import { Menu, MenuItem } from "./aside";
 import { Centred, Space } from "./common";
 import { getBalance } from "@/api/common";
 import { toMoney } from "../formatter";
+import useSocket from "../ws";
 
 export interface AccountLayoutAPI {
   setPath: (path: React.ReactElement) => void;
@@ -29,11 +30,20 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
   const [me, setMe] = useState<User | null>(null);
   const [userLoaded, setUserLoaded] = useState(false);
   const [path, setPath] = useState<React.ReactElement>(<></>);
+  const socket = useSocket();
 
   useEffect(() => {
     getUser().then(setMe);
     setUserLoaded(true);
     getBalance().then(setBalance);
+  }, []);
+
+  const onAdPublish = (data: Ad) => {
+    console.log('Ad published:',data)
+  }
+
+  useEffect(() => {
+    return socket.on<Ad>('ad.publish', onAdPublish);
   }, []);
 
   return (

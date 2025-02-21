@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -23,20 +24,25 @@ func Guard(h http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func UserID(r *http.Request) (id int64, err error) {
-
+func getAccessToken(r *http.Request) string {
+	// Check Authorization header
 	authHeader := r.Header.Get("Authorization")
-
-	if authHeader == "" {
-		return 0, fmt.Errorf("authorization header is required")
+	if strings.HasPrefix(authHeader, "Bearer ") {
+		return strings.TrimPrefix(authHeader, "Bearer ")
 	}
 
-	if len(authHeader) < 8 {
-		return id, errors.New("invalid authorization")
+	// Check query parameter
+	queryToken := r.URL.Query().Get("access_token")
+	if queryToken != "" {
+		return queryToken
 	}
 
-	tokenString := authHeader[len("Bearer "):]
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	// No token found
+	return ""
+}
+
+func UserID(r *http.Request) (id int64, err error) {
+	token, err := jwt.Parse(getAccessToken(r), func(token *jwt.Token) (interface{}, error) {
 		// Validate the algorithm
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])

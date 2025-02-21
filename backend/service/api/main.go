@@ -17,6 +17,8 @@ func main() {
 
 	godotenv.Load()
 
+	go service.ProcessRuntimeUpdates()
+
 	rest := chi.NewMux()
 
 	rest.Use(service.SecurityFilter)
@@ -63,8 +65,6 @@ func main() {
 
 		r.HandleFunc("/ws", ws.GetHandler())
 	})
-
-	go service.ProcessRuntimeUpdates()
 
 	listen := os.Getenv("LISTEN")
 

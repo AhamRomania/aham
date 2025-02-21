@@ -2,6 +2,7 @@ package route
 
 import (
 	"aham/common/c"
+	"aham/common/ws"
 	"aham/service/api/db"
 	"aham/service/api/sam"
 	"context"
@@ -132,6 +133,12 @@ func publishAd(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	ws.Send(userID, ws.NewEvent("ad.publish", &c.D{
+		"id":    ad.ID,
+		"title": ad.Title,
+		"href":  ad.Href,
+	}))
 }
 
 func getContactDetails(w http.ResponseWriter, r *http.Request) {

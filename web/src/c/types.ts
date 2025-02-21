@@ -67,6 +67,7 @@ export type Ad = {
     location: Location;
     messages: boolean,
     status: 'published',
+    published: string;
     created: string
     props:{[key:string]:any}
     promotion: boolean;

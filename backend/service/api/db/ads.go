@@ -3,6 +3,7 @@ package db
 import (
 	"aham/common/c"
 	"aham/common/cdn"
+	"aham/common/ws"
 	. "aham/service/api/db/aham/public/table"
 	"context"
 	"fmt"
@@ -729,6 +730,11 @@ func (ad *Ad) Finish() (err error) {
 	if cmd.RowsAffected() == 0 {
 		return errors.New("nothin updated")
 	}
+
+	ws.Send(ad.Owner.ID, ws.NewEvent("ad.complete", &c.D{
+		"ad":    ad.ID,
+		"title": ad.Title,
+	}))
 
 	return
 }
