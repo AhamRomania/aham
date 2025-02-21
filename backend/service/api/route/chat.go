@@ -2,6 +2,7 @@ package route
 
 import (
 	"aham/common/c"
+	"aham/common/ws"
 	"aham/service/api/db"
 	"encoding/json"
 	"net/http"
@@ -67,9 +68,19 @@ func createChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := chat.CreateMessage(userID, payload.Message); err != nil {
+	message, err := chat.CreateMessage(userID, payload.Message)
+
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	for _, participant := range participants {
+		ws.Send(participant, ws.NewEvent("chat", &c.D{
+			"chat":    chat,
+			"from":    userID,
+			"message": message,
+		}))
 	}
 
 	render.JSON(w, r, chat)
@@ -116,6 +127,14 @@ func createChatMessage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
+	}
+
+	for _, participant := range chat.Participants {
+		ws.Send(participant.ID, ws.NewEvent("chat.message", &c.D{
+			"chat":    chat,
+			"from":    userID,
+			"message": message,
+		}))
 	}
 
 	render.JSON(w, r, message)

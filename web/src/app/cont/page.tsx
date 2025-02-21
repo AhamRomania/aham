@@ -68,7 +68,11 @@ export default function Page() {
           } else {
             window.location.href = `/cont/activeaza?name=${response.given_name}&id=${response.id}`;
           }
-        });
+        }).catch(
+          () => {
+            setSaving(false);
+          }
+        );
       } } />
 
       <Modal open={formDialogOpen} onClose={() => setFormDialogOpen(false)}>
