@@ -82,9 +82,8 @@ func reader(conn *websocket.Conn) {
 		if err != nil {
 
 			if ce, ok := err.(*websocket.CloseError); ok {
-				userID := connections[conn]
+				delete(users, connections[conn])
 				delete(connections, conn)
-				delete(users, userID)
 				c.Log().Infof("Client disconnected with code %d", ce.Code)
 				return
 			}
