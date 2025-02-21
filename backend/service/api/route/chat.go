@@ -35,10 +35,10 @@ func createChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ad, err := db.GetAd(payload.Ad)
+	ad := db.GetAd(payload.Ad)
 
-	if err != nil {
-		http.Error(w, "nu am gasit anuntul", http.StatusNotFound)
+	if ad == nil {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 

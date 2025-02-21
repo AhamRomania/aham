@@ -33,35 +33,110 @@ type Location struct {
 	Coordinates []float64 `json:"coordinates,omitempty"`
 }
 
+type ListingPeriod struct {
+	From        time.Time `json:"from"`
+	To          time.Time `json:"to"`
+	Cycle       int       `json:"cycle"`
+	Transaction *int64    `json:"transaction"`
+}
+
 type Ad struct {
 	ID int64 `json:"id"`
 	// Use Category.ID
 	CategoryID int64     `json:"category_id,omitempty"`
 	Category   *Category `json:"category,omitempty"`
 	// Use Owner.ID
-	OwnerID      int64     `json:"owner_id,omitempty"`
-	Owner        *UserMin  `json:"owner,omitempty"`
-	Slug         string    `json:"slug,omitempty"`
-	Title        string    `json:"title,omitempty"`
-	Description  string    `json:"description,omitempty"`
-	Pictures     []string  `json:"pictures,omitempty"`
-	Price        int64     `json:"price,omitempty"`
-	Currency     string    `json:"currency,omitempty"`
-	CityID       int64     `json:"city,omitempty"`
-	CityName     string    `json:"city_name,omitempty"`
-	URL          *string   `json:"string,omitempty"`
-	Href         string    `json:"href,omitempty"`
-	Location     *Location `json:"location,omitempty"`
-	Messages     bool      `json:"messages,omitempty"`
-	ShowPhone    bool      `json:"show_phone,omitempty"`
-	Promotion    bool      `json:"promotion,omitempty"`
-	Phone        *string   `json:"phone,omitempty"`
-	Props        *c.D      `json:"props,omitempty"`
-	Status       Status    `json:"status,omitempty"`
-	Created      time.Time `json:"created,omitempty"`
-	Published    time.Time `json:"published,omitempty"`
-	ValidThrough time.Time `json:"valid_through,omitempty"`
-	Cycle        int       `json:"cycle,omitempty"`
+	OwnerID      int64           `json:"owner_id,omitempty"`
+	Owner        *UserMin        `json:"owner,omitempty"`
+	Slug         string          `json:"slug,omitempty"`
+	Title        string          `json:"title,omitempty"`
+	Description  string          `json:"description,omitempty"`
+	Pictures     []string        `json:"pictures,omitempty"`
+	Price        int64           `json:"price,omitempty"`
+	Currency     string          `json:"currency,omitempty"`
+	CityID       int64           `json:"city,omitempty"`
+	CityName     string          `json:"city_name,omitempty"`
+	URL          *string         `json:"string,omitempty"`
+	Href         string          `json:"href,omitempty"`
+	Location     *Location       `json:"location,omitempty"`
+	Messages     bool            `json:"messages,omitempty"`
+	ShowPhone    bool            `json:"show_phone,omitempty"`
+	Promotion    bool            `json:"promotion,omitempty"`
+	Phone        *string         `json:"phone,omitempty"`
+	Props        *c.D            `json:"props,omitempty"`
+	Status       Status          `json:"status,omitempty"`
+	History      []ListingPeriod `json:"history,omitempty"`
+	Created      time.Time       `json:"created,omitempty"`
+	Published    *time.Time      `json:"published,omitempty"`
+	ValidThrough *time.Time      `json:"valid_through,omitempty"`
+	Cycle        int             `json:"cycle,omitempty"`
+}
+
+type Transaction struct {
+	ID       int64     `json:"id"`
+	Owner    *UserMin  `json:"owner,omitempty"`
+	Ad       int64     `json:"ad,omitempty"`
+	Cycle    int       `json:"cycle,omitempty"`
+	From     time.Time `json:"from,omitempty"`
+	To       time.Time `json:"to,omitempty"`
+	Amount   int64     `json:"amount,omitempty"`
+	Created  time.Time `json:"created,omitempty"`
+	Approved time.Time `json:"approved,omitempty"`
+}
+
+// Get transaction by the cycle ID from self or history
+func (ad *Ad) GetTransaction(cycle int) (t *Transaction) {
+
+	t = &Transaction{
+		Owner: &UserMin{},
+	}
+
+	row := c.DB().QueryRow(
+		context.TODO(),
+		`select
+			t.id,
+			u.id as user_id,
+			u.given_name as given_name,
+			u.family_name as family_name,
+			t.ad_id,
+			t.ad_cycle,
+			t.ad_from,
+			t.ad_to,
+			t.amount,
+			t.created,
+			t.approved
+		from
+			transactions as t
+		left join users as u on u.id = t.owner
+		where
+			owner = $1 and
+			ad_id = $2 and
+			ad_cycle = $3
+		`,
+		ad.Owner.ID,
+		ad.ID,
+		ad.Cycle,
+	)
+
+	err := row.Scan(
+		&t.ID,
+		&t.Owner.ID,
+		&t.Owner.GivenName,
+		&t.Owner.FamilyName,
+		&t.Ad,
+		&t.Cycle,
+		&t.From,
+		&t.To,
+		&t.Amount,
+		&t.Created,
+		&t.Approved,
+	)
+
+	if err != nil {
+		return nil
+	}
+
+	return
 }
 
 func (ad *Ad) Reject() (err error) {
@@ -130,7 +205,22 @@ func (ad *Ad) PrePublish() (err error) {
 	return
 }
 
-func (ad *Ad) Publish(tx pgx.Tx, days int) (err error) {
+func (ad *Ad) Publish(tx pgx.Tx) (err error) {
+
+	user := GetUserByID(ad.Owner.ID)
+
+	if user == nil {
+		return errors.New("user expected")
+	}
+
+	active := GetAds(Filter{
+		Mode:  "published",
+		Owner: &user.ID,
+	})
+
+	if len(active)+1 > user.Preferences.GetInt(UserPrefActiveAds, 2) {
+		return errors.New("ads limit exceeded")
+	}
 
 	if ad.Status == STATUS_PENDING {
 		return errors.New("can't publish before approved")
@@ -140,17 +230,11 @@ func (ad *Ad) Publish(tx pgx.Tx, days int) (err error) {
 		return errors.New("invalid state, only approved|completed -> published is accepted")
 	}
 
-	if ad.Published.After(time.Now()) {
-
-		if ad.Status != STATUS_PUBLISHED {
-			c.Log().Error("Ad is not published still published date is after now")
-		}
-
-		return errors.New("ad publish date is after now")
-	}
-
 	now := time.Now()
-	validThrough := now.AddDate(0, 0, days)
+
+	adLifetimeMinutes := user.Preferences.GetInt(UserPrefAdLifetime, 24*7)
+
+	validThrough := now.Add(time.Duration(adLifetimeMinutes) * time.Minute)
 
 	cmd, err := tx.Exec(
 		context.TODO(),
@@ -169,21 +253,9 @@ func (ad *Ad) Publish(tx pgx.Tx, days int) (err error) {
 		return errors.New("nothing changed, can't publish ad")
 	}
 
-	row := tx.QueryRow(
-		context.TODO(),
-		`select id from transactions where owner = $1 and ad_id = $2 and ad_cycle = $3`,
-		ad.Owner.ID,
-		ad.ID,
-		ad.Cycle,
-	)
+	transaction := ad.GetTransaction(ad.Cycle)
 
-	var transactionID int64
-
-	if err := row.Scan(&transactionID); err != nil {
-		c.Log().Error("can't get transaction for ad:", ad.ID)
-	}
-
-	if transactionID > 0 {
+	if transaction != nil {
 		cmd, err := tx.Exec(
 			context.TODO(),
 			`
@@ -370,6 +442,11 @@ func GetAds(filter Filter) (ads []*Ad) {
 	var where []BoolExpression = make([]BoolExpression, 0)
 
 	if filter.Mode == "published" {
+
+		where = append(where, Ads.Status.EQ(
+			String(string(STATUS_PUBLISHED)),
+		))
+
 		where = append(where, Ads.ValidThrough.GT(
 			TimestampT(time.Now()),
 		))
@@ -388,8 +465,6 @@ func GetAds(filter Filter) (ads []*Ad) {
 		where = append(where, Ads.Title.REGEXP_LIKE(query).OR(Ads.Description.REGEXP_LIKE(query)))
 	}
 
-	smtp = smtp.WHERE(AND(where...))
-
 	if filter.Category != nil {
 
 		root := Category{
@@ -403,8 +478,10 @@ func GetAds(filter Filter) (ads []*Ad) {
 			ids = append(ids, Int64(cur))
 		}
 
-		smtp = smtp.WHERE(Ads.Category.IN(ids...))
+		where = append(where, Ads.Category.IN(ids...))
 	}
+
+	smtp = smtp.WHERE(AND(where...))
 
 	sql, params := smtp.Sql()
 
@@ -440,7 +517,7 @@ func GetAds(filter Filter) (ads []*Ad) {
 	return ads
 }
 
-func GetAd(id int64) (ad *Ad, err error) {
+func GetAd(id int64) (ad *Ad) {
 
 	ad = &Ad{
 		Owner:    &UserMin{},
@@ -458,7 +535,10 @@ func GetAd(id int64) (ad *Ad, err error) {
 		params...,
 	)
 
-	err = scanAd(row, ad)
+	if err := scanAd(row, ad); err != nil {
+		c.Log().Error(err)
+		return nil
+	}
 
 	return
 }
@@ -490,6 +570,9 @@ func getAdSqlBuilder() SelectStatement {
 		Raw("users.family_name"),
 		Raw("CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href"),
 		Raw("ad_promotion_index(COALESCE(transactions.amount, 0), ads.published, ads.valid_through) > 0 as promotion"),
+		Ads.Cycle,
+		Ads.Published,
+		Ads.ValidThrough,
 	).FROM(
 		Ads.AS("ads").LEFT_JOIN(Users.AS("users").Table, Users.ID.EQ(Ads.Owner)).
 			LEFT_JOIN(Categories.AS("categories").Table, Categories.ID.EQ(Ads.Category)).
@@ -535,10 +618,76 @@ func scanAd(scanner SQLScanner, ad *Ad) (err error) {
 		&ad.Owner.FamilyName,
 		&ad.Href,
 		&promotion,
+		&ad.Cycle,
+		&ad.Published,
+		&ad.ValidThrough,
 	)
 
 	if promotion != nil {
 		ad.Promotion = *promotion
+	}
+
+	return
+}
+
+func (ad *Ad) Finish() (err error) {
+
+	if ad.Status != STATUS_PUBLISHED {
+		return errors.New("ad must be published")
+	}
+
+	if ad.Published == nil {
+		return errors.New("published date can't be null")
+	}
+
+	if ad.ValidThrough == nil {
+		return errors.New("valid_through date can't be null")
+	}
+
+	row := c.DB().QueryRow(
+		context.TODO(),
+		`select history from ads where id = $1`,
+		ad.ID,
+	)
+
+	if err := row.Scan(&ad.History); err != nil {
+		return err
+	}
+
+	historyGap := ListingPeriod{
+		From:  *ad.Published,
+		To:    *ad.ValidThrough,
+		Cycle: ad.Cycle,
+	}
+
+	if transaction := ad.GetTransaction(ad.Cycle); transaction != nil {
+		historyGap.Transaction = &transaction.ID
+	}
+
+	ad.History = append(ad.History, historyGap)
+
+	cmd, err := c.DB().Exec(
+		context.TODO(),
+		`
+		update ads set
+			cycle = cycle + 1,
+			status = 'completed',
+			published = null,
+			valid_through = null,
+			history = $1
+		where
+			id = $2
+		`,
+		ad.History,
+		ad.ID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if cmd.RowsAffected() == 0 {
+		return errors.New("nothin updated")
 	}
 
 	return

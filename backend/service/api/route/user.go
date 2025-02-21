@@ -152,6 +152,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		City:                 req.City,
 		Source:               "native",
 		EmailActivationToken: c.String(uuid.NewString()),
+		Preferences: db.UserPreferences{
+			db.UserPrefActiveAds:  2,
+			db.UserPrefAdLifetime: 60 * 24 * 14,
+		},
 	}
 
 	if err := user.Create(); err != nil {

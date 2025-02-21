@@ -15,24 +15,43 @@ type UserMin struct {
 	FamilyName string `json:"family_name,omitempty"`
 }
 
+type UserPref string
+
+const (
+	// Number of published ads
+	UserPrefActiveAds UserPref = "active_ads"
+	// Ad lifetime in minutes
+	UserPrefAdLifetime UserPref = "ad_lifetime"
+)
+
+type UserPreferences map[UserPref]any
+
+func (up UserPreferences) GetInt(key UserPref, def int) (res int) {
+	if value, exists := up[key]; exists {
+		return int(value.(float64))
+	}
+	return def
+}
+
 type User struct {
-	ID                    int64      `json:"id"`
-	Email                 string     `json:"email,omitempty"`
-	Password              string     `json:"-"`
-	GivenName             string     `json:"given_name"`
-	FamilyName            string     `json:"family_name"`
-	Phone                 string     `json:"phone,omitempty"`
-	City                  int64      `json:"city,omitempty"`
-	Picture               *string    `json:"picture,omitempty"`
-	Source                string     `json:"source,omitempty"`
-	Role                  string     `json:"role,omitempty"`
-	ThirdPartyAccessToken string     `json:"third_pary_access_token,omitempty"`
-	Settled               bool       `json:"settled,omitempty"`
-	EmailActivationToken  *string    `json:"email_activation_token,omitempty"`
-	PhoneActivationToken  *string    `json:"phone_activation_token,omitempty"`
-	EmailActivatedAt      *time.Time `json:"email_activated_at,omitempty"`
-	PhoneActivatedAt      *time.Time `json:"phone_activated_at,omitempty"`
-	CreatedAt             time.Time  `json:"created_at,omitempty"`
+	ID                    int64           `json:"id"`
+	Email                 string          `json:"email,omitempty"`
+	Password              string          `json:"-"`
+	GivenName             string          `json:"given_name"`
+	FamilyName            string          `json:"family_name"`
+	Phone                 string          `json:"phone,omitempty"`
+	City                  int64           `json:"city,omitempty"`
+	Picture               *string         `json:"picture,omitempty"`
+	Source                string          `json:"source,omitempty"`
+	Role                  string          `json:"role,omitempty"`
+	ThirdPartyAccessToken string          `json:"third_pary_access_token,omitempty"`
+	Settled               bool            `json:"settled,omitempty"`
+	EmailActivationToken  *string         `json:"email_activation_token,omitempty"`
+	PhoneActivationToken  *string         `json:"phone_activation_token,omitempty"`
+	EmailActivatedAt      *time.Time      `json:"email_activated_at,omitempty"`
+	PhoneActivatedAt      *time.Time      `json:"phone_activated_at,omitempty"`
+	Preferences           UserPreferences `json:"preferences,omitempty"`
+	CreatedAt             time.Time       `json:"created_at,omitempty"`
 }
 
 func (u *User) Min() UserMin {
@@ -150,7 +169,8 @@ func (u *User) Create() error {
 				city,
 				source,
 				third_pary_access_token,
-				email_activation_token
+				email_activation_token,
+				preferences
 			)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
 		u.Email,
@@ -162,6 +182,7 @@ func (u *User) Create() error {
 		u.Source,
 		u.ThirdPartyAccessToken,
 		u.EmailActivationToken,
+		u.Preferences,
 	)
 
 	err := row.Scan(&u.ID)
@@ -247,7 +268,8 @@ func GetUserByID(id int64) *User {
 			email_activation_token,
 			phone_activation_token,
 			created_at,
-			email_activated_at
+			email_activated_at,
+			preferences
 		FROM
 			users
 		WHERE
@@ -268,6 +290,7 @@ func GetUserByID(id int64) *User {
 		&user.PhoneActivationToken,
 		&user.CreatedAt,
 		&user.EmailActivatedAt,
+		&user.Preferences,
 	)
 
 	if err != nil {

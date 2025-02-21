@@ -23,6 +23,8 @@ func main() {
 	rest.Use(c.CORS())
 	rest.Use(middleware.RealIP)
 	rest.Use(middleware.Logger)
+	rest.Use(middleware.Heartbeat("/status"))
+	rest.Use(middleware.SetHeader("X-Aham-Version", "v1"))
 
 	rest.Route("/v1", func(r chi.Router) {
 
@@ -61,6 +63,8 @@ func main() {
 
 		r.HandleFunc("/ws", ws.GetHandler())
 	})
+
+	go service.ProcessRuntimeUpdates()
 
 	listen := os.Getenv("LISTEN")
 

@@ -58,9 +58,9 @@ func reject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ad, err := db.GetAd(c.ID(r, "id"))
+	ad := db.GetAd(c.ID(r, "id"))
 
-	if err != nil {
+	if ad == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -85,9 +85,9 @@ func publishAd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ad, err := db.GetAd(c.ID(r, "id"))
+	ad := db.GetAd(c.ID(r, "id"))
 
-	if err != nil {
+	if ad == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -120,7 +120,7 @@ func publishAd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := ad.Publish(tx, 7); err != nil {
+	if err := ad.Publish(tx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -133,9 +133,9 @@ func publishAd(w http.ResponseWriter, r *http.Request) {
 
 func getContactDetails(w http.ResponseWriter, r *http.Request) {
 
-	ad, err := db.GetAd(c.ID(r, "id"))
+	ad := db.GetAd(c.ID(r, "id"))
 
-	if err != nil {
+	if ad == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -219,11 +219,17 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 
 func GetAd(w http.ResponseWriter, r *http.Request) {
 
-	ad, err := db.GetAd(c.ID(r, "id"))
+	ad := db.GetAd(c.ID(r, "id"))
 
-	if err != nil {
-		http.Error(w, "anunțul nu a fost găsit.", http.StatusNotFound)
-		c.Log().Error(err)
+	if ad.Status != db.STATUS_PUBLISHED {
+		w.Header().Add("X-Aham-Unpublished", fmt.Sprint(ad.Cycle))
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if ad == nil {
+		// todo check 410 gone is needed or 503
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
