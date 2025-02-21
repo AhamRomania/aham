@@ -41,7 +41,10 @@ func GetPropValues(id int64) (values []string) {
 		mp.Name,
 	)
 
-	rows, err := c.DB().Query(context.TODO(), sql)
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(context.TODO(), sql)
 
 	if err != nil {
 		c.Log().Error(err)
@@ -86,7 +89,10 @@ func GetPropByName(name string) *MetaProp {
 			name = $1
 	`
 
-	row := c.DB().QueryRow(context.TODO(), sql, name)
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(context.TODO(), sql, name)
 
 	prop := &MetaProp{}
 
@@ -132,7 +138,10 @@ func GetPropByID(id int64) *MetaProp {
 			id = $1
 	`
 
-	row := c.DB().QueryRow(context.TODO(), sql, id)
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(context.TODO(), sql, id)
 
 	prop := &MetaProp{}
 
@@ -161,7 +170,10 @@ func GetProps() (props []*MetaProp) {
 
 	props = make([]*MetaProp, 0)
 
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(
 		context.TODO(),
 		`select 
 			id,

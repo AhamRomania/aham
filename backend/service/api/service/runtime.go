@@ -14,7 +14,10 @@ func ProcessRuntimeUpdates() {
 
 	workers.Push("AD Completer", func(worker *c.DeferdWorker) {
 
-		rows, err := c.DB().Query(
+		conn := c.DB()
+		defer conn.Release()
+
+		rows, err := conn.Query(
 			context.TODO(),
 			`select id from ads where status = 'published' and valid_through < $1`,
 			time.Now(),
@@ -43,7 +46,7 @@ func ProcessRuntimeUpdates() {
 			}
 		}
 
-		row := c.DB().QueryRow(
+		row := conn.QueryRow(
 			context.TODO(),
 			`select valid_through from ads where status = 'published' order by valid_through ASC LIMIT 1`,
 		)
@@ -52,9 +55,10 @@ func ProcessRuntimeUpdates() {
 
 		if err := row.Scan(&after); err == nil {
 			worker.RunAfter(after)
-			return
 		}
 	})
 
 	workers.Run()
+
+	c.Log().Info("ProcessRuntimeUpdates Completed")
 }

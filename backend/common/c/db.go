@@ -2,47 +2,54 @@ package c
 
 import (
 	"context"
-	"fmt"
 	"os"
+	"runtime"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var _conn *pgx.Conn
+var _pool *pgxpool.Pool
 
 // DB returns a connection to the database
-func DB() *pgx.Conn {
+func DB() *pgxpool.Conn {
 
-	if _conn != nil {
+	if _pool != nil {
 
-		if err := _conn.Ping(context.Background()); err != nil {
-			Log().Warnf("DB ping error: %s", err.Error())
-			return conn()
+		conn, err := _pool.Acquire(context.Background())
+
+		if err != nil {
+			Log().Error(err)
+			os.Exit(1)
 		}
 
-		if !_conn.IsClosed() {
-			return _conn
-		}
+		return conn
 	}
 
-	return conn()
-}
+	buf := make([]byte, 1024)
+	runtime.Stack(buf, false)
 
-func conn() *pgx.Conn {
+	config, err := pgxpool.ParseConfig(os.Getenv("DB"))
+	if err != nil {
+		Log().Error(err)
+		os.Exit(1)
+	}
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DB"))
+	// Connect to the database
+	pool, err := pgxpool.NewWithConfig(context.Background(), config)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		Log().Error(err)
 		os.Exit(1)
 	}
 
-	if err := conn.Ping(context.Background()); err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to ping database: %v\n", err)
+	_pool = pool
+
+	conn, err := pool.Acquire(context.Background())
+
+	if err != nil {
+		Log().Error(err)
 		os.Exit(1)
 	}
-
-	_conn = conn
 
 	return conn
 }

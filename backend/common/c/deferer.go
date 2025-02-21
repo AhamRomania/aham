@@ -16,16 +16,7 @@ func (worker *DeferdWorker) RunAfter(t time.Time) {
 
 // Run executes the worker's job if the current time has passed the scheduled time
 func (worker *DeferdWorker) Run() {
-	if time.Now().After(worker.after) {
-
-		worker.job(worker)
-
-		if !worker.after.After(time.Now()) {
-			worker.RunAfter(time.Now().Add(time.Minute))
-		}
-
-		Log().Infof("Defered worker %s checking after: %s", worker.name, worker.after.Format("02 Jan 15:04:05 MST"))
-	}
+	worker.job(worker)
 }
 
 type DeferedWorkers struct {

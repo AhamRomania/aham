@@ -5,11 +5,12 @@ import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { Ad } from "@/c/types";
 import AdListItemAvailable from "@/c/Widget/AdListingItemAvailable";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useReducer } from "react";
 
 export default function Page() {
   const [ads, setAds] = useState<Ad[]>();
   const { setPath } = useContext(AccountLayoutContext);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
   useEffect(() => {
     setPath(
       <>
@@ -19,15 +20,22 @@ export default function Page() {
     );
   }, []);
 
+  const update = () => {
+    getCompletedAds().then((ads)=>{
+      setAds(ads);
+      forceUpdate();
+    });
+  }
+
   useEffect(() => {
-    getCompletedAds().then(setAds);
+    update();
   }, []);
 
   return (
     <>
       <PageName>Anunțuri Disponibile</PageName>
       {ads?.map((ad, index) => (
-        <AdListItemAvailable key={index} ad={ad} />
+        <AdListItemAvailable onChange={() => update()} key={index} ad={ad} />
       ))}
     </>
   );

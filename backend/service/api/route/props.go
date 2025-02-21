@@ -41,7 +41,10 @@ func createProp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.TODO(),
 		`
 		insert into meta_props
@@ -89,7 +92,10 @@ func deleteProp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := c.DB().Exec(context.TODO(), `delete from meta_props where id = $1`, c.ID(r, "id"))
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err := conn.Exec(context.TODO(), `delete from meta_props where id = $1`, c.ID(r, "id"))
 
 	if err != nil {
 		http.Error(w, `invalid payload`, http.StatusBadRequest)
@@ -113,7 +119,10 @@ func updateProp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err := conn.Exec(
 		context.TODO(),
 		`
 		update meta_props set
@@ -174,7 +183,10 @@ func assignProp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err := conn.Exec(
 		context.TODO(),
 		`insert into meta_assign (category, meta) values ($1, $2)`,
 		payload.CategoryID,
@@ -195,7 +207,10 @@ func removeAssign(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err := conn.Exec(
 		context.TODO(),
 		`delete from meta_assign where category = $1 and meta = $2`,
 		c.ID(r, "category"),

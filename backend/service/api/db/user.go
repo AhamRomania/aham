@@ -64,7 +64,10 @@ func (u *User) Min() UserMin {
 
 func (user *User) Balance() (balance float64, err error) {
 
-	err = c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	err = conn.QueryRow(
 		context.TODO(),
 		"SELECT balance FROM balance WHERE owner = $1 ORDER BY id desc",
 		user.ID,
@@ -85,7 +88,10 @@ func (user *User) UpdateBalance(description string, debit float64, credit float6
 		return err
 	}
 
-	_, err = c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err = conn.Exec(
 		context.Background(),
 		"INSERT INTO balance (owner, date, description, debit, credit, balance) VALUES ($1, $2, $3, $4, $5, $6)",
 		user.ID,
@@ -109,7 +115,10 @@ func (user *User) SamVerify(resource sam.Resource, permission sam.Perm) bool {
 		panic("Expected User")
 	}
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.TODO(),
 		`
 			select
@@ -148,7 +157,9 @@ func (u *User) Recipient() *emails.UserRecipient {
 }
 
 func (u *User) SetPicture(picture string) (err error) {
-	_, err = c.DB().Exec(context.TODO(), `update users set picture = $1 where id = $2`, picture, u.ID)
+	conn := c.DB()
+	defer conn.Release()
+	_, err = conn.Exec(context.TODO(), `update users set picture = $1 where id = $2`, picture, u.ID)
 	if err != nil {
 		return err
 	}
@@ -157,7 +168,10 @@ func (u *User) SetPicture(picture string) (err error) {
 
 func (u *User) Create() error {
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.Background(),
 		`INSERT INTO users 
 			(
@@ -194,8 +208,10 @@ func (u *User) Create() error {
 func VerifyEmailExists(email string) bool {
 
 	var found int
+	conn := c.DB()
+	defer conn.Release()
 
-	c.DB().QueryRow(
+	conn.QueryRow(
 		context.Background(),
 		"SELECT count(email) FROM users WHERE email = $1",
 		email,
@@ -207,8 +223,10 @@ func VerifyEmailExists(email string) bool {
 func GetUserByEmail(email string) (user *User, err error) {
 
 	user = &User{}
+	conn := c.DB()
+	defer conn.Release()
 
-	err = c.DB().QueryRow(
+	err = conn.QueryRow(
 		context.TODO(),
 		`SELECT
 			id,
@@ -254,7 +272,10 @@ func GetUserByID(id int64) *User {
 
 	var user User = User{}
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.Background(),
 		`SELECT
 			id,

@@ -91,7 +91,10 @@ func (ad *Ad) GetTransaction(cycle int) (t *Transaction) {
 		Owner: &UserMin{},
 	}
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.TODO(),
 		`select
 			t.id,
@@ -141,7 +144,10 @@ func (ad *Ad) GetTransaction(cycle int) (t *Transaction) {
 
 func (ad *Ad) Clone() (clone *Ad, err error) {
 
-	tx, err := c.DB().BeginTx(
+	conn := c.DB()
+	defer conn.Release()
+
+	tx, err := conn.BeginTx(
 		context.TODO(),
 		pgx.TxOptions{},
 	)
@@ -157,7 +163,10 @@ func (ad *Ad) Clone() (clone *Ad, err error) {
 
 func (ad *Ad) Reject() (err error) {
 
-	cmd, err := c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	cmd, err := conn.Exec(
 		context.TODO(),
 		`update ads set status = 'rejected' where id = $1`,
 		ad.ID,
@@ -203,7 +212,10 @@ func (ad *Ad) PrePublish() (err error) {
 		return errors.New("only draft status ads can be published")
 	}
 
-	cmd, err := c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	cmd, err := conn.Exec(
 		context.TODO(),
 		`update ads set status = $1 where id = $2`,
 		STATUS_PENDING,
@@ -403,7 +415,10 @@ func GetPromotionAds(filter Filter) (ads []*Ad) {
 
 	sql, params := smtp.Sql()
 
-	rows, err := c.DB().Query(context.TODO(), sql, params...)
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(context.TODO(), sql, params...)
 
 	if err != nil {
 		c.Log().Error(err)
@@ -501,7 +516,10 @@ func GetAds(filter Filter) (ads []*Ad) {
 
 	sql, params := smtp.Sql()
 
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(
 		context.Background(),
 		sql,
 		params...,
@@ -545,7 +563,10 @@ func GetAd(id int64) (ad *Ad) {
 		Ads.ID.EQ(Int64(id)),
 	).Sql()
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.TODO(),
 		sql,
 		params...,
@@ -660,7 +681,10 @@ func (ad *Ad) Finish() (err error) {
 		return errors.New("valid_through date can't be null")
 	}
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.TODO(),
 		`select history from ads where id = $1`,
 		ad.ID,
@@ -682,7 +706,7 @@ func (ad *Ad) Finish() (err error) {
 
 	ad.History = append(ad.History, historyGap)
 
-	cmd, err := c.DB().Exec(
+	cmd, err := conn.Exec(
 		context.TODO(),
 		`
 		update ads set

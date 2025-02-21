@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { Ad, Prop } from "../types";
 import { css } from "@emotion/react";
-import Gallery from "./Gallery";
+import AdPictures from "./AdPictures";
 import AdSpectsListing from "./AdSpecsListing";
 import { getCategoryProps, publishAd, removeAd } from "@/api/ads";
 import { Button } from "@mui/joy";
@@ -48,9 +48,9 @@ const AdListItem: FC<AdListItemProps> = ({ad, onRemove}) => {
                 `}
             >
                 <div>
-                    <Gallery 
+                    <AdPictures 
                         width={200}
-                        pictures={ad.pictures}
+                        ad={ad}
                     />
                 </div>
                 <div

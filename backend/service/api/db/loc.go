@@ -31,7 +31,10 @@ func GetCity(id int64) *City {
 	where c.id = $1
 	`
 
-	row := c.DB().QueryRow(context.TODO(), sql, id)
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(context.TODO(), sql, id)
 
 	city := City{}
 
@@ -53,7 +56,10 @@ func GetCounties() []County {
 
 	counties := make([]County, 0)
 
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(
 		context.Background(),
 		"select id,auto,name from counties order by name asc",
 	)
@@ -94,7 +100,10 @@ func GetCitiesFlat(query string) (cities []*City) {
 
 	cities = make([]*City, 0)
 
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(
 		context.TODO(),
 		`select
 			cities.id,
@@ -139,8 +148,9 @@ func GetCitiesFlat(query string) (cities []*City) {
 func GetCitiesGroup(query string) (flat []*Group) {
 
 	flat = make([]*Group, 0)
-
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+	rows, err := conn.Query(
 		context.TODO(),
 		`select
 			cities.id,
@@ -197,8 +207,9 @@ func GetCitiesGroup(query string) (flat []*Group) {
 func GetCities(county int64) []City {
 
 	cities := make([]City, 0)
-
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+	rows, err := conn.Query(
 		context.TODO(),
 		"select id,name from cities where county=$1 order by name asc",
 		county,

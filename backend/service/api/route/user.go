@@ -60,7 +60,10 @@ func ActivateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.Background(),
 		`UPDATE
 			users

@@ -104,7 +104,10 @@ func GetCategoryByID(id int64) *Category {
 		return nil
 	}
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.Background(),
 		`
 		select
@@ -148,7 +151,10 @@ func GetCategoryByID(id int64) *Category {
 
 func GetCategoryBySlug(slug string) *Category {
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.Background(),
 		"select id,name,slug,description,parent,sort,pricing from categories where hidden=false and slug = $1",
 		slug,
@@ -193,7 +199,10 @@ func SearchCategoryTree(keyword string) (categories []*Category) {
 
 func GetCategoryByPath(path string) (category *Category) {
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.Background(),
 		`select id from categories where get_category_href(id) = $1`,
 		path,
@@ -215,7 +224,10 @@ func SearchCategoryPaths(keyword string) (categories []*SearchCategory) {
 
 	categories = make([]*SearchCategory, 0)
 
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(
 		context.Background(),
 		`
 		SELECT * FROM (
@@ -271,7 +283,10 @@ func GetCategoriesFlat() (categories []*Category) {
 
 	categories = make([]*Category, 0)
 
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(
 		context.Background(),
 		`select
 			id,
@@ -453,7 +468,10 @@ func GetCategoryProps(category int64) (metaProps []*MetaProp) {
 
 	metaProps = make([]*MetaProp, 0)
 
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(
 		context.Background(),
 		sql,
 		category,

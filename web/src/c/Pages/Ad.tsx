@@ -7,7 +7,7 @@ import { FC, useEffect, useState } from "react";
 import { formatMoney } from "../formatter";
 import { Ad, Prop, User } from "../types";
 import AdCta from "../Widget/AdCta";
-import Gallery from "../Widget/Gallery";
+import AdPictures from "../Widget/AdPictures";
 import MoreAds from "../Widget/MoreAds";
 import SocialShare from "../Widget/SocialShare";
 import { track } from "../funcs";
@@ -167,7 +167,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                             }
                         `}
                     >
-                        <Gallery width={700} pictures={ad.pictures}/>
+                        <AdPictures width={700} ad={ad}/>
                     </div>
                     <div
                         data-test="ad-cta"

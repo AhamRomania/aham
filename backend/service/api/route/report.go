@@ -40,7 +40,10 @@ func Report(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	_, err = c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err = conn.Exec(
 		context.Background(),
 		`INSERT INTO reports (reporter, reporter_name, reporter_email, reference, reason, comments, navitator, ip) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
 		c.NilID(reporter),

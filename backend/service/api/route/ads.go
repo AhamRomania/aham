@@ -105,7 +105,10 @@ func publishAd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := c.DB().BeginTx(
+	conn := c.DB()
+	defer conn.Release()
+
+	tx, err := conn.BeginTx(
 		context.TODO(),
 		pgx.TxOptions{},
 	)
@@ -171,7 +174,10 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := c.DB().Begin(
+	conn := c.DB()
+	defer conn.Release()
+
+	tx, err := conn.Begin(
 		context.TODO(),
 	)
 

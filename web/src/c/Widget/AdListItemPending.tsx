@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import { FC, useEffect, useState } from "react";
 import { Ad, Prop } from "../types";
 import AdSpectsListing from "./AdSpecsListing";
-import Gallery from "./Gallery";
+import AdPictures from "./AdPictures";
 
 export interface AdListItemProps {
     ad: Ad;
@@ -33,9 +33,9 @@ const AdListItemPending: FC<AdListItemProps> = ({ad}) => {
                         width: 400px;    
                     `}
                 >
-                    <Gallery 
-                        width={200}
-                        pictures={ad.pictures}
+                    <AdPictures 
+                        width={400}
+                        ad={ad}
                     />
                 </div>
                 <div

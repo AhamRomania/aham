@@ -4,13 +4,14 @@ import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { CircularProgress } from "@mui/joy";
 import { FC, useEffect, useRef, useState } from "react";
 import getDomain, { Domain } from "../domain";
+import { Ad } from "../types";
 
 export interface GalleryProps {
     width: number
-    pictures: string[];
+    ad: Ad;
 }
 
-const Gallery: FC<GalleryProps> = ({width = 500,pictures}) => {
+const AdPictures: FC<GalleryProps> = ({width = 500, ad}) => {
 
     const [current, setCurrent] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -30,7 +31,7 @@ const Gallery: FC<GalleryProps> = ({width = 500,pictures}) => {
                 }
             });
         }
-        setSrc(getDomain(Domain.Cdn) + `/` + pictures[current] + `?w=`+(width));
+        setSrc(getDomain(Domain.Cdn) + `/` + ad.pictures[current] + `?w=`+(width));
     }, [imgRef, current]);
 
     return (
@@ -70,7 +71,7 @@ const Gallery: FC<GalleryProps> = ({width = 500,pictures}) => {
                         alt="Gallery Image"
                     />
                 </div>
-                {pictures.length>1&&<Navigate
+                {ad.pictures.length>1&&<Navigate
                     css={css`
                         top: 50%;
                         left: 20px;
@@ -80,24 +81,24 @@ const Gallery: FC<GalleryProps> = ({width = 500,pictures}) => {
                 >
                     <KeyboardArrowLeft/>
                 </Navigate>}
-                {pictures.length>1&&<Navigate
+                {ad.pictures.length>1&&<Navigate
                     css={css`
                         top: 50%;
                         right: 20px;
                         transform: translateY(-50%);  
                     `}
-                    onClick={() => (current < pictures.length-1) && setCurrent(current+1)}
+                    onClick={() => (current < ad.pictures.length-1) && setCurrent(current+1)}
                 >
                     <KeyboardArrowRight/>
                 </Navigate>}
-                {pictures.length>1&&<Info
+                {ad.pictures.length>1&&<Info
                     css={css`
                         bottom: 20px;
                         left: 20px;
                     `}
                 >
                     {loading && <CircularProgress determinate={false} size="sm"/>}
-                    {!loading && `Poza ${current + 1} din ${pictures.length}`}
+                    {!loading && `Poza ${current + 1} din ${ad.pictures.length}`}
                 </Info>}
             </div>
         </div>
@@ -140,4 +141,4 @@ const Info = styled(Interaction)`
     }
 `;
 
-export default Gallery;
+export default AdPictures;

@@ -66,7 +66,10 @@ func updateCategory(w http.ResponseWriter, r *http.Request) {
 		slugv = &v
 	}
 
-	c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	conn.Exec(
 		r.Context(),
 		`
 			update categories set name = $1, slug = $2, parent = $3 where id = $4
@@ -90,7 +93,10 @@ func updateCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteCategory(w http.ResponseWriter, r *http.Request) {
-	c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	conn.Exec(
 		context.TODO(),
 		`delete from categories where id = $1`,
 		chi.URLParam(r, "id"),
@@ -138,7 +144,10 @@ func createCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		r.Context(),
 		`
 			insert into categories (name, slug, parent)

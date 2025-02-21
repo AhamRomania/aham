@@ -58,7 +58,10 @@ func CreateChat(title string, participants []int64, about *ChatAbout) (chat *Cha
 		returning id
 	`
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.TODO(),
 		sql,
 		title,
@@ -112,7 +115,10 @@ func GetChat(id int64) (chat *Chat) {
 		where id = $1
 	`
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.TODO(),
 		sql,
 		id,
@@ -158,7 +164,10 @@ func GetChats(userID int64, resourceContext resourceContext, reference int64, ar
 			and archived = $4
 	`
 
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(
 		context.TODO(),
 		sql,
 		userID,
@@ -204,7 +213,10 @@ func (chat *Chat) CreateMessage(from int64, message string) (msg *Message, err e
 
 	msg = &Message{ID: 0}
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.TODO(),
 		`insert into messages (chat,"from",message,created_at)values($1,$2,$3,$4) returning id`,
 		chat.ID,
@@ -242,7 +254,10 @@ func GetMessage(id int64) (message *Message) {
 		where m.id = $1
 	`
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.TODO(),
 		sql,
 		id,
@@ -286,7 +301,10 @@ func (chat *Chat) GetMessages(offset, limit int64) (messages []*Message) {
 		where m.chat = $1
 	`
 
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(
 		context.TODO(),
 		sql,
 		chat.ID,

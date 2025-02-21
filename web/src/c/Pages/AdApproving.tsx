@@ -6,7 +6,7 @@ import { Button, DialogActions, DialogContent, DialogTitle, IconButton, Modal, M
 import { FC, useEffect, useState } from "react";
 import { Ad, Prop } from "../types";
 import AdSpectsListing from "../Widget/AdSpecsListing";
-import Gallery from "../Widget/Gallery";
+import AdPictures from "../Widget/AdPictures";
 
 const AdApproving:FC = ({}) => {
 
@@ -91,7 +91,7 @@ const AdApprovingItem: FC<AdApprovingItemProps> = ({ad, onTouched}) => {
                         }
                     `}
                 >
-                    <Gallery width={300} pictures={ad.pictures}/>
+                    <AdPictures width={300} ad={ad}/>
                 </div>
                 <div
                     css={css`

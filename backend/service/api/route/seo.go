@@ -36,7 +36,10 @@ func seoDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cmd, err := c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	cmd, err := conn.Exec(
 		context.TODO(),
 		`delete from seo where id = $1`,
 		c.ID(r, "id"),
@@ -66,7 +69,10 @@ func seoInfo(w http.ResponseWriter, r *http.Request) {
 			UpdatedAt: time.Now(),
 		}
 
-		row := c.DB().QueryRow(
+		conn := c.DB()
+		defer conn.Release()
+
+		row := conn.QueryRow(
 			context.TODO(),
 			`select * from seo where uri = $1 LIMIT 1`,
 			uri,
@@ -92,7 +98,10 @@ func seoInfo(w http.ResponseWriter, r *http.Request) {
 				returning id
 			`
 
-			row := c.DB().QueryRow(
+			conn := c.DB()
+			defer conn.Release()
+
+			row := conn.QueryRow(
 				context.TODO(),
 				sql,
 				uri,
@@ -109,7 +118,10 @@ func seoInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := c.DB().Query(
+	conn := c.DB()
+	defer conn.Release()
+
+	rows, err := conn.Query(
 		context.TODO(),
 		`select * from seo`,
 	)
@@ -173,7 +185,10 @@ func seoCreate(w http.ResponseWriter, r *http.Request) {
 		returning id
 	`
 
-	row := c.DB().QueryRow(
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
 		context.TODO(),
 		sql,
 		payload.URI,
@@ -225,7 +240,10 @@ func seoUpdate(w http.ResponseWriter, r *http.Request) {
 		where id = $1
 	`
 
-	cmd, err := c.DB().Exec(
+	conn := c.DB()
+	defer conn.Release()
+
+	cmd, err := conn.Exec(
 		context.TODO(),
 		sql,
 		payload.ID,
