@@ -245,8 +245,8 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 <MenuItem
                   icon={<AssignmentTurnedIn />}
                   count={10}
-                  title="Modificare"
-                  href="/u/anunturi/validare"
+                  title="Retușare"
+                  href="/u/anunturi/retusare"
                 />
                 <MenuItem
                   icon={<ThumbDown />}

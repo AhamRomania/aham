@@ -279,9 +279,11 @@ func publish(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// todo use /approve
-	if err := ad.Accept(tx); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if ad.Status == db.STATUS_PENDING {
+		if err := ad.Accept(tx); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	if err := ad.Publish(tx); err != nil {

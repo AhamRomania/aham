@@ -58,7 +58,9 @@ func verifyCompletedAds(ticker *time.Ticker) {
 
 	if err := row.Scan(&nextValidThrough); err == nil {
 		wait := nextValidThrough.Sub(time.Now().Add(time.Hour * 2)) // fix
-		ticker.Reset(wait)
+		if wait > 0 {
+			ticker.Reset(wait)
+		}
 	} else {
 		ticker.Reset(time.Second * 5)
 	}

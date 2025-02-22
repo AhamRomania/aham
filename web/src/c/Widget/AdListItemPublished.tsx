@@ -8,7 +8,7 @@ export interface AdListItemProps {
     ad: Ad;
 }
 
-const AdListItemPending: FC<AdListItemProps> = ({ad}) => {
+const AdListItemPublished: FC<AdListItemProps> = ({ad}) => {
 
     return (
         <>
@@ -21,4 +21,4 @@ const AdListItemPending: FC<AdListItemProps> = ({ad}) => {
     )
 }
 
-export default AdListItemPending;
+export default AdListItemPublished;

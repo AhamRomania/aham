@@ -104,7 +104,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                                     css={css`font-size: 14px;padding:0;`}
                                 >
                                     {ad.category.path.split(' > ').map((item,index) => (
-                                        <Link key={index} href={'/'+ad.category.href.split('/').slice(0,index + 1).join('/')}>
+                                        <Link prefetch={false} key={index} href={'/'+ad.category.href.split('/').slice(0,index + 1).join('/')}>
                                             {item}
                                         </Link>
                                     ))}

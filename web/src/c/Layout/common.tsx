@@ -19,6 +19,7 @@ export const CentredStyle = ({width, mode, padding}:CentredStyleProps) =>
             margin: 0 auto;
             padding: 0px;
         }
+        height: 100%;
         display: flex;
         flex-direction: ${mode ? mode : 'column'};
         padding: 20px ${typeof(padding) === 'number' ? padding + 'px' : '20px'};

@@ -1,24 +1,21 @@
 "use client"
 
+import getApiFetch from "@/api/api";
+import CategorySelector from "@/c/Categories/CategorySelector";
+import AutocompletePropValue from "@/c/Form/AutocompletePropValue";
+import NumericFormatAdapter from "@/c/Form/NumericFormatAdapter";
 import Pictures from "@/c/Form/Pictures/Pictures";
 import { GenericPicture } from "@/c/Form/Pictures/types";
-import { Centred, PageName } from "@/c/Layout";
-import { css } from "@emotion/react";
-import { Close } from "@mui/icons-material";
-import { Button, Checkbox, Divider, FormHelperText, Grid, IconButton, Input, Option, Select, Stack, Textarea } from "@mui/joy";
-import { FormControl, FormLabel } from '@mui/joy';
-import { Fragment, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Backdrop } from "@mui/material";
-import { BouncingLogo } from "@/c/logo";
-import CategorySelector from "@/c/Categories/CategorySelector";
-import { Category, Prop } from "@/c/types";
-import getApiFetch from "@/api/api";
-import NumericFormatAdapter from "@/c/Form/NumericFormatAdapter";
 import { toCents } from "@/c/formatter";
+import { Centred, PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
+import { BouncingLogo } from "@/c/logo";
+import { Category, Prop } from "@/c/types";
+import { css } from "@emotion/react";
+import { Button, Checkbox, Divider, FormControl, FormHelperText, FormLabel, Grid, Input, Option, Select, Stack, Textarea } from "@mui/joy";
+import { Backdrop } from "@mui/material";
 import Link from "next/link";
-import AutocompletePropValue from "@/c/Form/AutocompletePropValue";
+import { Fragment, useContext, useEffect, useState } from "react";
 
 export default function Page() {
 
