@@ -40,6 +40,19 @@ func AdsRoutes(r chi.Router) {
 	r.Get("/{id}/metrics", getAdMetrics)
 	r.Post("/{id}/favourite", c.Guard(favouriteCreate))
 	r.Delete("/{id}/favourite", c.Guard(favouriteDelete))
+	r.Get("/favourites", c.Guard(getMyFavouriteAds))
+}
+
+func getMyFavouriteAds(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	render.JSON(w, r, db.GetFavouriteAds(userID, 0, 0))
 }
 
 func favouriteCreate(w http.ResponseWriter, r *http.Request) {

@@ -25,6 +25,10 @@ export async function removeFavourite(ad:Ad): Promise<void> {
     return getApiFetch()(`/ads/${ad.id}/favourite`,{method:'DELETE', success: true});
 }
 
+export async function getFavouriteAds(): Promise<Ad[]> {
+    return await getApiFetch()<Ad[]>(`/ads/favourites`);
+}
+
 export async function getCompletedAds(): Promise<Ad[]> {
     return await getApiFetch()<Ad[]>(`/ads?mode=completed`);
 }

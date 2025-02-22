@@ -1,11 +1,20 @@
 "use client";
 
+import { getFavouriteAds } from "@/api/ads";
 import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
-import { useContext, useEffect } from "react";
+import { Ad } from "@/c/types";
+import AdListItemAvailable from "@/c/Widget/AdListingItemAvailable";
+import { useContext, useEffect, useState } from "react";
 
 export default function Page() {
   const { setPath } = useContext(AccountLayoutContext);
+  const [ads, setAds] = useState<Ad[]>([]);
+
+  useEffect(() => {
+    getFavouriteAds().then(setAds);
+  }, []);
+
   useEffect(() => {
     setPath(
       <>
@@ -18,7 +27,9 @@ export default function Page() {
   return (
     <>
       <PageName>Anunțuri Favorite</PageName>
-      <div>Anunturi</div>
+      {ads?.map((ad, index) => (
+        <AdListItemAvailable onChange={() => {}} key={index} ad={ad} />
+      ))}
     </>
   );
 }
