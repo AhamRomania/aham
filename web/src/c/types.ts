@@ -134,13 +134,13 @@ export type ReportData = {
 }
 
 export type AdCounts = {
-    "drafts":    number;
-    "available": number;
-    "approving": number;
-    "public":    number;
-    "changing":  number;
-    "rejected":  number;
-    "favourite": number;
+    drafts: number;
+    pending: number;
+    rejected: number;
+    fixing: number;
+    published: number;
+    completed: number;
+    favourite: number;
 }
 
 export type D = { [key: string]: any };

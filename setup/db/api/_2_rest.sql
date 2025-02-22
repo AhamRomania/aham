@@ -97,7 +97,7 @@ create table ads (
     published timestamp,
     valid_through timestamp,
     status varchar(20) not null default 'draft',
-    check (status in ('draft', 'pending', 'rejected', 'approved', 'published', 'completed', 'archived'))
+    check (status in ('draft', 'pending', 'fixing', 'rejected', 'approved', 'published', 'completed', 'archived'))
 );
 
 create table transactions (

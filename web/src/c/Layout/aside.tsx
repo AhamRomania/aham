@@ -31,7 +31,7 @@ interface MenuItemProps {
     count?:number;
 }
 
-export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, count = 0, title, href, children}) => {
+export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, count, title, href, children}) => {
 
     const [open, setOpen] = useState(false);
     const [showIconOnly,] = useState(useContext(MenuContext));
@@ -81,7 +81,7 @@ export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, coun
                     {!showIconOnly && <span style={{flex: '1'}}>{title}</span>}
                     {children && !open && <span><KeyboardArrowDown/></span>}
                     {children && open && <span><KeyboardArrowUp/></span>}
-                    {count > 0 && <div>{count}</div>}
+                    {typeof(count) === 'number' && <div style={{opacity:'0.42'}}>{count}</div>}
                 </div>
             </Link>
             {open && children && <div className="children">{children}</div>}

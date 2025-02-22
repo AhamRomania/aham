@@ -610,9 +610,7 @@ func GetAds(me int64, filter Filter) (ads []*Ad) {
 		where = append(where, Ads.ValidThrough.GT(
 			TimestampT(time.Now()),
 		))
-	}
-
-	if filter.Mode != "" {
+	} else if filter.Mode != "" {
 		where = append(where, Ads.Status.EQ(String(filter.Mode)))
 	}
 
@@ -680,15 +678,107 @@ func GetAds(me int64, filter Filter) (ads []*Ad) {
 	return ads
 }
 
+func GetAdCount(filter Filter) (count int64) {
+
+	stmt := Ads.SELECT(
+		Raw("count(*)"),
+	)
+
+	var where []BoolExpression = make([]BoolExpression, 0)
+
+	if filter.Mode == "published" {
+
+		where = append(where, Ads.Status.EQ(
+			String(string(STATUS_PUBLISHED)),
+		))
+
+		where = append(where, Ads.ValidThrough.GT(
+			TimestampT(time.Now()),
+		))
+	} else if filter.Mode != "" {
+		where = append(where, Ads.Status.EQ(String(filter.Mode)))
+	}
+
+	if filter.Owner != nil {
+		where = append(where, Ads.Owner.EQ(Int64(*filter.Owner)))
+	}
+
+	if filter.Query != nil && *filter.Query != "" {
+		query := StringExp(Raw(fmt.Sprintf("'%s'", regexp.QuoteMeta(*filter.Query))))
+		where = append(where, Ads.Title.REGEXP_LIKE(query).OR(Ads.Description.REGEXP_LIKE(query)))
+	}
+
+	if filter.Category != nil {
+
+		root := Category{
+			Name:     "root",
+			Children: GetCategoryTree(GetCategoriesFlat(), nil),
+		}
+
+		var ids []Expression = make([]Expression, 0)
+
+		for _, cur := range root.InIDS(*filter.Category) {
+			ids = append(ids, Int64(cur))
+		}
+
+		where = append(where, Ads.Category.IN(ids...))
+	}
+
+	stmt = stmt.WHERE(AND(where...))
+
+	sql, params := stmt.Sql()
+
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
+		context.TODO(),
+		sql,
+		params...,
+	)
+
+	if err := row.Scan(&count); err != nil {
+		return 0
+	}
+
+	return
+}
+
+func GetFavouriteCount(owner int64) (count int64) {
+
+	stmt := Favourites.SELECT(
+		Raw("count(*)"),
+	).WHERE(
+		Favourites.UserID.EQ(Int64(owner)),
+	)
+
+	sql, params := stmt.Sql()
+
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
+		context.TODO(),
+		sql,
+		params...,
+	)
+
+	if err := row.Scan(&count); err != nil {
+		return 0
+	}
+
+	return
+}
+
 func GetAdCounts(owner int64) *c.D {
 	return &c.D{
-		"drafts":    8,
-		"available": 8,
-		"approving": 8,
-		"public":    8,
-		"changing":  8,
-		"rejected":  8,
-		"favourite": 8,
+		"drafts":    GetAdCount(Filter{Mode: "drafts", Owner: &owner}),
+		"pending":   GetAdCount(Filter{Mode: "pending", Owner: &owner}),
+		"rejected":  GetAdCount(Filter{Mode: "rejected", Owner: &owner}),
+		"fixing":    GetAdCount(Filter{Mode: "fixing", Owner: &owner}),
+		"published": GetAdCount(Filter{Mode: "published", Owner: &owner}),
+		"completed": GetAdCount(Filter{Mode: "completed", Owner: &owner}),
+		"favourite": GetFavouriteCount(owner),
 	}
 }
 

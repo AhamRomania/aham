@@ -231,24 +231,24 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 <MenuItem
                   icon={<Category />}
                   title="Disponibile"
-                  count={counts.available}
+                  count={counts.completed}
                   href="/u/anunturi/disponibile"
                 />
                 <MenuItem
                   icon={<CheckCircle />}
                   title="Aprobare"
-                  count={counts.approving}
+                  count={counts.pending}
                   href="/u/anunturi/aprobare"
                 />
                 <MenuItem
                   icon={<Public />}
                   title="Publice"
-                  count={counts.public}
+                  count={counts.published}
                   href="/u/anunturi/publice"
                 />
                 <MenuItem
                   icon={<AssignmentTurnedIn />}
-                  count={counts.changing}
+                  count={counts.fixing}
                   title="Retușare"
                   href="/u/anunturi/retusare"
                 />
