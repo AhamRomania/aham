@@ -62,7 +62,7 @@ func (u *User) Notify(title, contents string, variant types.NotifType, href stri
 
 	_, err := conn.Exec(
 		context.Background(),
-		`insert into notifications ("user",variant, title, contents, href) values ($1, $2, $3, $4, $5)`,
+		`insert into notifications ("owner",variant, title, contents, href) values ($1, $2, $3, $4, $5)`,
 		u.ID, variant, title, contents, href,
 	)
 

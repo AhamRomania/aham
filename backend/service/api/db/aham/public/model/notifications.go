@@ -13,11 +13,12 @@ import (
 
 type Notifications struct {
 	ID       int32 `sql:"primary_key"`
+	Owner    int32
 	Variant  string
 	Title    string
 	Contents *string
 	Href     *string
 	Actions  *string
-	Seen     time.Time
+	Seen     *time.Time
 	Created  time.Time
 }

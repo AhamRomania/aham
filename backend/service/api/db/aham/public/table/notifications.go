@@ -18,6 +18,7 @@ type notificationsTable struct {
 
 	// Columns
 	ID       postgres.ColumnInteger
+	Owner    postgres.ColumnInteger
 	Variant  postgres.ColumnString
 	Title    postgres.ColumnString
 	Contents postgres.ColumnString
@@ -66,6 +67,7 @@ func newNotificationsTable(schemaName, tableName, alias string) *NotificationsTa
 func newNotificationsTableImpl(schemaName, tableName, alias string) notificationsTable {
 	var (
 		IDColumn       = postgres.IntegerColumn("id")
+		OwnerColumn    = postgres.IntegerColumn("owner")
 		VariantColumn  = postgres.StringColumn("variant")
 		TitleColumn    = postgres.StringColumn("title")
 		ContentsColumn = postgres.StringColumn("contents")
@@ -73,8 +75,8 @@ func newNotificationsTableImpl(schemaName, tableName, alias string) notification
 		ActionsColumn  = postgres.StringColumn("actions")
 		SeenColumn     = postgres.TimestampColumn("seen")
 		CreatedColumn  = postgres.TimestampColumn("created")
-		allColumns     = postgres.ColumnList{IDColumn, VariantColumn, TitleColumn, ContentsColumn, HrefColumn, ActionsColumn, SeenColumn, CreatedColumn}
-		mutableColumns = postgres.ColumnList{VariantColumn, TitleColumn, ContentsColumn, HrefColumn, ActionsColumn, SeenColumn, CreatedColumn}
+		allColumns     = postgres.ColumnList{IDColumn, OwnerColumn, VariantColumn, TitleColumn, ContentsColumn, HrefColumn, ActionsColumn, SeenColumn, CreatedColumn}
+		mutableColumns = postgres.ColumnList{OwnerColumn, VariantColumn, TitleColumn, ContentsColumn, HrefColumn, ActionsColumn, SeenColumn, CreatedColumn}
 	)
 
 	return notificationsTable{
@@ -82,6 +84,7 @@ func newNotificationsTableImpl(schemaName, tableName, alias string) notification
 
 		//Columns
 		ID:       IDColumn,
+		Owner:    OwnerColumn,
 		Variant:  VariantColumn,
 		Title:    TitleColumn,
 		Contents: ContentsColumn,

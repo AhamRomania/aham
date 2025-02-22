@@ -9,14 +9,22 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	. "github.com/go-jet/jet/v2/postgres"
 )
 
 func NotifRoutes(r chi.Router) {
-	r.Get("/", notifs)
-	r.Patch("/{id}", markAsSeen)
+	r.Get("/", c.Guard(notifs))
+	r.Patch("/{id}", c.Guard(markAsSeen))
 }
 
 func notifs(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
 
 	offset := c.QueryIntParam(r, "offset", 0)
 	limit := c.QueryIntParam(r, "limit", 0)
@@ -35,6 +43,8 @@ func notifs(w http.ResponseWriter, r *http.Request) {
 		Notifications.Created,
 	).FROM(
 		Notifications.Table,
+	).WHERE(
+		Notifications.Owner.EQ(Int(userID)),
 	).ORDER_BY(
 		Notifications.Created.DESC(),
 	).OFFSET(
@@ -80,12 +90,20 @@ func notifs(w http.ResponseWriter, r *http.Request) {
 }
 
 func markAsSeen(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+
 	id := c.ID(r, "id")
 	conn := c.DB()
 	defer conn.Release()
 	conn.Exec(
 		context.TODO(),
-		`update notifications set seen = now() where id = $1`,
-		id,
+		`update notifications set seen = now() where id=$1 and owner=$2`,
+		id, userID,
 	)
 }

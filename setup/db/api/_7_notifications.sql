@@ -1,6 +1,6 @@
 create table notifications (
     "id" serial not null primary key,
-    "user" integer not null references users(id),
+    "owner" integer not null references users(id) on update cascade on delete cascade,
     "variant" varchar(64) not null default 'info',
     "title" varchar(255) not null,
     "contents" text,
