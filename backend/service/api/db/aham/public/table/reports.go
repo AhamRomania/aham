@@ -21,7 +21,8 @@ type reportsTable struct {
 	Reporter      postgres.ColumnInteger
 	ReporterName  postgres.ColumnString
 	ReporterEmail postgres.ColumnString
-	Reference     postgres.ColumnString
+	Resource      postgres.ColumnString
+	Reference     postgres.ColumnInteger
 	Reason        postgres.ColumnString
 	Comments      postgres.ColumnString
 	Navitator     postgres.ColumnString
@@ -72,15 +73,16 @@ func newReportsTableImpl(schemaName, tableName, alias string) reportsTable {
 		ReporterColumn      = postgres.IntegerColumn("reporter")
 		ReporterNameColumn  = postgres.StringColumn("reporter_name")
 		ReporterEmailColumn = postgres.StringColumn("reporter_email")
-		ReferenceColumn     = postgres.StringColumn("reference")
+		ResourceColumn      = postgres.StringColumn("resource")
+		ReferenceColumn     = postgres.IntegerColumn("reference")
 		ReasonColumn        = postgres.StringColumn("reason")
 		CommentsColumn      = postgres.StringColumn("comments")
 		NavitatorColumn     = postgres.StringColumn("navitator")
 		IPColumn            = postgres.StringColumn("ip")
 		CreatedAtColumn     = postgres.TimestampColumn("created_at")
 		StatusColumn        = postgres.StringColumn("status")
-		allColumns          = postgres.ColumnList{IDColumn, ReporterColumn, ReporterNameColumn, ReporterEmailColumn, ReferenceColumn, ReasonColumn, CommentsColumn, NavitatorColumn, IPColumn, CreatedAtColumn, StatusColumn}
-		mutableColumns      = postgres.ColumnList{ReporterColumn, ReporterNameColumn, ReporterEmailColumn, ReferenceColumn, ReasonColumn, CommentsColumn, NavitatorColumn, IPColumn, CreatedAtColumn, StatusColumn}
+		allColumns          = postgres.ColumnList{IDColumn, ReporterColumn, ReporterNameColumn, ReporterEmailColumn, ResourceColumn, ReferenceColumn, ReasonColumn, CommentsColumn, NavitatorColumn, IPColumn, CreatedAtColumn, StatusColumn}
+		mutableColumns      = postgres.ColumnList{ReporterColumn, ReporterNameColumn, ReporterEmailColumn, ResourceColumn, ReferenceColumn, ReasonColumn, CommentsColumn, NavitatorColumn, IPColumn, CreatedAtColumn, StatusColumn}
 	)
 
 	return reportsTable{
@@ -91,6 +93,7 @@ func newReportsTableImpl(schemaName, tableName, alias string) reportsTable {
 		Reporter:      ReporterColumn,
 		ReporterName:  ReporterNameColumn,
 		ReporterEmail: ReporterEmailColumn,
+		Resource:      ResourceColumn,
 		Reference:     ReferenceColumn,
 		Reason:        ReasonColumn,
 		Comments:      CommentsColumn,

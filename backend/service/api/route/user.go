@@ -24,7 +24,7 @@ type CreateUserRequest struct {
 	City       int64  `json:"city"`
 }
 
-func Balance(w http.ResponseWriter, r *http.Request) {
+func UserBalance(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := c.UserID(r)
 

@@ -5,11 +5,13 @@ import (
 	"aham/service/api/db"
 	"aham/service/api/sam"
 	"net/http"
+	"sync"
 
 	"github.com/go-chi/chi/v5"
 )
 
 var sam_cache = make(map[int64]map[sam.Resource]sam.Perm)
+var mux sync.Mutex
 
 func SecureAccessMap(r chi.Router) {
 	r.Get("/flush", flush)
@@ -52,6 +54,9 @@ func verifyResource(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
+
+	mux.Lock()
+	defer mux.Unlock()
 
 	if _, cached := sam_cache[user.ID]; !cached {
 		sam_cache[user.ID] = make(map[sam.Resource]sam.Perm)

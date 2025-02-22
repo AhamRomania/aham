@@ -20,6 +20,7 @@ func UseSchema(schema string) {
 	Messages = Messages.FromSchema(schema)
 	MetaAssign = MetaAssign.FromSchema(schema)
 	MetaProps = MetaProps.FromSchema(schema)
+	Notifications = Notifications.FromSchema(schema)
 	Reports = Reports.FromSchema(schema)
 	Resources = Resources.FromSchema(schema)
 	Sam = Sam.FromSchema(schema)

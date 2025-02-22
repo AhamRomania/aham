@@ -3,7 +3,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import styles from './style.module.css';
 import { ListItemIcon, ListItemText, Menu, MenuItem, Button } from '@mui/material';
-import { Sell, Forum, Favorite, ManageAccounts, Logout, Add, Settings } from '@mui/icons-material';
+import { Sell, Forum, Favorite, ManageAccounts, Logout, Add, Settings, Analytics } from '@mui/icons-material';
 import UserAvatar from '../avatar';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -124,17 +124,23 @@ const HeadMenu: FC = () => {
                     </ListItemIcon>
                     <ListItemText>Anunțuri</ListItemText>
                 </MenuItem>
+                <MenuItem onClick={() => navigate('/u/anunturi/favorite')}>
+                    <ListItemIcon>
+                        <Favorite fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Favorite</ListItemText>
+                </MenuItem>
                 <MenuItem onClick={() => navigate('/u/mesaje')}>
                     <ListItemIcon>
                         <Forum fontSize="small" />
                     </ListItemIcon>
                     <ListItemText>Mesaje</ListItemText>
                 </MenuItem>
-                <MenuItem onClick={() => navigate('/u/anunturi/favorite')}>
+                <MenuItem onClick={() => navigate('/u/statistici')}>
                     <ListItemIcon>
-                        <Favorite fontSize="small" />
+                        <Analytics fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText>Favorite</ListItemText>
+                    <ListItemText>Statistici</ListItemText>
                 </MenuItem>
                 <MenuItem onClick={() => navigate('/u/cont')}>
                     <ListItemIcon>

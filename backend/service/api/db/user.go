@@ -4,6 +4,7 @@ import (
 	"aham/common/c"
 	"aham/common/emails"
 	"aham/service/api/sam"
+	"aham/service/api/types"
 	"context"
 	"strings"
 	"time"
@@ -52,6 +53,22 @@ type User struct {
 	PhoneActivatedAt      *time.Time      `json:"phone_activated_at,omitempty"`
 	Preferences           UserPreferences `json:"preferences,omitempty"`
 	CreatedAt             time.Time       `json:"created_at,omitempty"`
+}
+
+func (u *User) Notify(title, contents string, variant types.NotifType, href string, actions ...*c.D) {
+
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err := conn.Exec(
+		context.Background(),
+		`insert into notifications ("user",variant, title, contents, href) values ($1, $2, $3, $4, $5)`,
+		u.ID, variant, title, contents, href,
+	)
+
+	if err != nil {
+		c.Log().Error(err)
+	}
 }
 
 func (u *User) Min() UserMin {

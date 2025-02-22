@@ -16,7 +16,8 @@ type Reports struct {
 	Reporter      *int32
 	ReporterName  *string
 	ReporterEmail *string
-	Reference     string
+	Resource      string
+	Reference     int32
 	Reason        string
 	Comments      string
 	Navitator     string

@@ -526,8 +526,6 @@ func GetFavouriteAds(me int64, offset, limit int64) (ads []*Ad) {
 		limit,
 	)
 
-	fmt.Println(stmt.DebugSql())
-
 	sql, params := stmt.Sql()
 
 	conn := c.DB()
@@ -627,8 +625,6 @@ func GetAds(me int64, filter Filter) (ads []*Ad) {
 
 	stmt = stmt.WHERE(AND(where...))
 
-	fmt.Println(stmt.DebugSql())
-
 	sql, params := stmt.Sql()
 
 	conn := c.DB()
@@ -720,7 +716,7 @@ func getAdSqlBuilder(me int64) SelectStatement {
 		Raw("users.id"),
 		Raw("users.given_name"),
 		Raw("users.family_name"),
-		Raw("CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href"),
+		Raw("CONCAT('/',get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href"),
 		Raw("ad_promotion_index(COALESCE(transactions.amount, 0), ads.published, ads.valid_through) > 0 as promotion"),
 		Ads.Cycle,
 		Ads.Published,

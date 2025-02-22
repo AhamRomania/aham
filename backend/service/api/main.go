@@ -38,7 +38,7 @@ func main() {
 		r.Post("/auth/facebook", route.AuthWithFacebook)
 
 		r.Get("/config", route.Setup)
-		r.Get("/balance", c.Guard(route.Balance))
+		r.Get("/balance", c.Guard(route.UserBalance))
 
 		r.Route("/sam", route.SecureAccessMap)
 		r.Route("/gcm", route.GcmRoutes)
@@ -49,6 +49,7 @@ func main() {
 		r.Route("/seo", route.SeoRotues)
 		r.Route("/chat", route.ChatRoutes)
 		r.Route("/metrics", route.MetricsRoutes)
+		r.Route("/notif", route.NotifRoutes)
 
 		r.Post("/report", route.Report)
 

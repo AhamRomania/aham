@@ -5,6 +5,7 @@ import (
 	"aham/common/ws"
 	"aham/service/api/db"
 	"aham/service/api/sam"
+	"aham/service/api/types"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -262,6 +263,15 @@ func publish(w http.ResponseWriter, r *http.Request) {
 		"title": ad.Title,
 		"href":  ad.Href,
 	}))
+
+	if user := db.GetUserByID(userID); user != nil {
+		user.Notify(
+			fmt.Sprintf("Anunțul '%s' a fost publicat", ad.Title),
+			fmt.Sprintf("Anunțul '%s' a fost publicat și se poate vedea deja pe website.", ad.Title),
+			types.NotifInfo,
+			ad.Href,
+		)
+	}
 }
 
 func getContactDetails(w http.ResponseWriter, r *http.Request) {

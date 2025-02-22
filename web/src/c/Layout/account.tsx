@@ -215,11 +215,6 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             <Menu mobile={!open}>
               <MenuItem icon={<DashboardOutlined />} title="Panou" href="/u/" />
               <MenuItem
-                icon={<ChatOutlined />}
-                title="Mesaje"
-                href="/u/mesaje"
-              />
-              <MenuItem
                 icon={<AdsClickOutlined />}
                 title="Anunțuri"
                 href="/u/anunturi"
@@ -264,6 +259,11 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                   href="/u/anunturi/favorite"
                 />
               </MenuItem>
+              <MenuItem
+                icon={<ChatOutlined />}
+                title="Mesaje"
+                href="/u/mesaje"
+              />
               <MenuItem
                 icon={<Analytics />}
                 title="Statistici"
