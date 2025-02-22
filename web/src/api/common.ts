@@ -1,4 +1,4 @@
-import { Ad, ReportData, User } from "@/c/types";
+import { ReportData, User } from "@/c/types";
 import { getUser } from "@/c/Auth";
 import getApiFetch from "./api";
 
