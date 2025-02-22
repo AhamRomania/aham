@@ -36,6 +36,7 @@ type CreateAdRequest struct {
 func AdsRoutes(r chi.Router) {
 	r.Post("/", c.Guard(CreateAd))
 	r.Get("/", GetAds)
+	r.Get("/counts", c.Guard(GetAdCounts))
 	r.Get("/{id}", GetAd)
 	r.Delete("/{id}", c.Guard(RemoveAd))
 	r.Post("/{id}/reject", c.Guard(reject))
@@ -46,6 +47,18 @@ func AdsRoutes(r chi.Router) {
 	r.Post("/{id}/favourite", c.Guard(favouriteCreate))
 	r.Delete("/{id}/favourite", c.Guard(favouriteDelete))
 	r.Get("/favourites", c.Guard(getMyFavouriteAds))
+}
+
+func GetAdCounts(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	render.JSON(w, r, db.GetAdCounts(userID))
 }
 
 func RemoveAd(w http.ResponseWriter, r *http.Request) {

@@ -680,6 +680,18 @@ func GetAds(me int64, filter Filter) (ads []*Ad) {
 	return ads
 }
 
+func GetAdCounts(owner int64) *c.D {
+	return &c.D{
+		"drafts":    8,
+		"available": 8,
+		"approving": 8,
+		"public":    8,
+		"changing":  8,
+		"rejected":  8,
+		"favourite": 8,
+	}
+}
+
 func GetAd(me int64, id int64) (ad *Ad) {
 
 	ad = &Ad{

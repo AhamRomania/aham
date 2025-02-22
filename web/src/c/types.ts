@@ -133,4 +133,14 @@ export type ReportData = {
     reference: number;
 }
 
+export type AdCounts = {
+    "drafts":    number;
+    "available": number;
+    "approving": number;
+    "public":    number;
+    "changing":  number;
+    "rejected":  number;
+    "favourite": number;
+}
+
 export type D = { [key: string]: any };

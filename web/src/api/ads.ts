@@ -1,4 +1,4 @@
-import { Ad, AdMetrics, Prop } from "@/c/types";
+import { Ad, AdCounts, AdMetrics, Prop } from "@/c/types";
 import getApiFetch from "./api";
 
 export async function getAdMetrics(id: number): Promise<AdMetrics> {
@@ -31,6 +31,10 @@ export async function getFavouriteAds(): Promise<Ad[]> {
 
 export async function getCompletedAds(): Promise<Ad[]> {
     return await getApiFetch()<Ad[]>(`/ads?mode=completed`);
+}
+
+export async function getAdCounts(): Promise<AdCounts> {
+    return await getApiFetch()<AdCounts>(`/ads/counts`);
 }
 
 export async function getPublishedAds(): Promise<Ad[]> {

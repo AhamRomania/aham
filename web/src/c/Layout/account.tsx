@@ -32,7 +32,7 @@ import HeadMenu from "../HeadMenu";
 import Logo from "../logo";
 import Sam, { SamPermission, SamResource } from "../Sam";
 import Tip from "../tooltip";
-import { Ad, User } from "../types";
+import { Ad, AdCounts, User } from "../types";
 import { Menu, MenuItem } from "./aside";
 import { Space } from "./common";
 import { getBalance } from "@/api/common";
@@ -40,6 +40,7 @@ import { toMoney } from "../formatter";
 import useSocket from "../ws";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { getAdCounts } from "@/api/ads";
 
 export interface AccountLayoutAPI {
   setPath: (path: React.ReactElement) => void;
@@ -59,6 +60,7 @@ export const AccountLayoutContext = React.createContext<AccountLayoutAPI>(
 
 const AccountLayout = ({ children }: React.PropsWithChildren) => {
   const router = useRouter();
+  const [counts, setCounts] = useState<AdCounts>({} as AdCounts);
   const [balance, setBalance] = useState(0);
   const [open, setOpen] = useState(true);
   const [me, setMe] = useState<User | null>(null);
@@ -71,6 +73,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
     getUser().then(setMe);
     setUserLoaded(true);
     getBalance().then(setBalance);
+    getAdCounts().then(setCounts);
   }, []);
 
   const handleOpenSnackbar = (message: React.ReactNode, duration: number = 3000, endDecorator: React.ReactNode | null = null) => {
@@ -222,40 +225,43 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 <MenuItem
                   icon={<FiberNew />}
                   title="Ciorne"
-                  count={10}
+                  count={counts.drafts}
                   href="/u/anunturi"
                 />
                 <MenuItem
                   icon={<Category />}
                   title="Disponibile"
-                  count={10}
+                  count={counts.available}
                   href="/u/anunturi/disponibile"
                 />
                 <MenuItem
                   icon={<CheckCircle />}
                   title="Aprobare"
-                  count={10}
+                  count={counts.approving}
                   href="/u/anunturi/aprobare"
                 />
                 <MenuItem
                   icon={<Public />}
                   title="Publice"
+                  count={counts.public}
                   href="/u/anunturi/publice"
                 />
                 <MenuItem
                   icon={<AssignmentTurnedIn />}
-                  count={10}
+                  count={counts.changing}
                   title="Retușare"
                   href="/u/anunturi/retusare"
                 />
                 <MenuItem
                   icon={<ThumbDown />}
                   title="Respinse"
+                  count={counts.rejected}
                   href="/u/anunturi/respinse"
                 />
                 <MenuItem
                   icon={<FavoriteOutlined />}
                   title="Favorite"
+                  count={counts.favourite}
                   href="/u/anunturi/favorite"
                 />
               </MenuItem>
