@@ -13,7 +13,7 @@ import SocialShare from "../Widget/SocialShare";
 import { track } from "../funcs";
 import { getUser } from "../Auth";
 import AdPanel from "../Widget/AdPanel";
-import ReportAdDialog from "../Dialog/ReportAd";
+import ReportAdDialog from "../Dialog/Report";
 import AdSpectsListing from "../Widget/AdSpecsListing";
 
 export interface AdPageProps {
@@ -239,7 +239,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                 </div>
             </main>
             <MoreAds title="Asemănătoare" ads={extra!}/>
-            {showReportDialog && <ReportAdDialog ad={ad} onClose={() => setShowReportDialog(false)}/>}
+            {showReportDialog && <ReportAdDialog resource="ad" reference={ad.id} onClose={() => setShowReportDialog(false)}/>}
         </>
     )
 }

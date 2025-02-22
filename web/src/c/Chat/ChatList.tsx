@@ -8,6 +8,7 @@ import Confirm from "../Dialog/Confirm";
 import getDomain, { Domain } from "../domain";
 import { dateTime } from "../formatter";
 import { Chat, User } from "../types";
+import ReportDialog from "../Dialog/Report";
 
 export interface ChatListProps {
   items: Chat[] | [];
@@ -22,6 +23,7 @@ const ChatList: FC<ChatListProps> = ({ items, user, current, onChange }) => {
     const [archived, setArchived] = useState<boolean>(false);
     const [confirmChatDelete, setConfirmChatDelete] = useState<Chat|null>(null);
     const [confirmChatArchive, setConfirmChatArchive] = useState<Chat|null>(null);
+    const [showReportDialog, setShowReportDialog] = useState<Chat|null>(null);
 
     useEffect(() => {
         if (items && typeof(current) !== 'undefined' && user) {
@@ -47,6 +49,9 @@ const ChatList: FC<ChatListProps> = ({ items, user, current, onChange }) => {
         }
         if (key == 'delete') {
             setConfirmChatDelete(chat);
+        }
+        if (key == 'report') {
+            setShowReportDialog(chat);
         }
     }
 
@@ -234,6 +239,9 @@ const ChatList: FC<ChatListProps> = ({ items, user, current, onChange }) => {
                                 <MenuItem onClick={(e: MouseEvent<HTMLDivElement>)=>onMenuItemOptionClick(e,chat,'delete')}>
                                     <span>Șterge</span>
                                 </MenuItem>
+                                <MenuItem onClick={(e: MouseEvent<HTMLDivElement>)=>onMenuItemOptionClick(e,chat,'report')}>
+                                    <span>Raportează</span>
+                                </MenuItem>
                             </Menu>
                         </Dropdown>
                     </div>
@@ -246,6 +254,7 @@ const ChatList: FC<ChatListProps> = ({ items, user, current, onChange }) => {
     </div>
     {confirmChatArchive ? <Confirm color="primary" message={`Arhivezi ${confirmChatArchive.title}?`} onResponse={onArchiveChat}/> : null}
     {confirmChatDelete ? <Confirm color="danger" message={`Ștergi ${confirmChatDelete.title}?`} onResponse={onDeleteChat}/> : null}
+    {showReportDialog && <ReportDialog resource="chat" reference={showReportDialog.id} onClose={() => setShowReportDialog(null)}/>}
     </>
   );
 };

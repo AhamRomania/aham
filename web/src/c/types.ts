@@ -128,7 +128,8 @@ export type ReportData = {
     email: string
     reason: string
     message: string
-    reference: string;
+    resource: string;
+    reference: number;
 }
 
 export type D = { [key: string]: any };

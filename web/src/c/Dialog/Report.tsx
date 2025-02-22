@@ -16,16 +16,17 @@ import {
   Textarea,
 } from "@mui/joy";
 import { FC, useEffect, useRef, useState } from "react";
-import { Ad, ReportData, User } from "../types";
-import { getMe, saveAdReport } from "@/api/common";
+import { ReportData, User } from "../types";
+import { createReport, getMe } from "@/api/common";
 import { track } from "../funcs";
 
-export interface ReportAdDialog {
-  ad: Ad;
+export interface ReportAdDialogProps {
+  resource: 'ad' | 'chat';
+  reference: number;
   onClose: () => void;
 }
 
-const ReportAdDialog: FC<ReportAdDialog> = ({ ad, onClose }) => {
+const ReportDialog: FC<ReportAdDialogProps> = ({ resource, reference, onClose }) => {
   const [saving, setSaving] = useState<boolean>(false);
   const [reason, setReason] = useState<string>("");
   const [me, setMe] = useState<User>();
@@ -33,7 +34,7 @@ const ReportAdDialog: FC<ReportAdDialog> = ({ ad, onClose }) => {
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    track('ad/report/dialog/show',{"ad":ad.id});
+    track('report/dialog/show',{resource, reference});
   }, []);
 
   useEffect(() => {
@@ -51,7 +52,8 @@ const ReportAdDialog: FC<ReportAdDialog> = ({ ad, onClose }) => {
   };
 
   const save = (data: ReportData) => {
-    saveAdReport(ad, data).then(
+    data.reference = parseInt(data.reference + '');
+    createReport(data).then(
         () => {
             setSaving(false);
             onClose();
@@ -59,7 +61,7 @@ const ReportAdDialog: FC<ReportAdDialog> = ({ ad, onClose }) => {
     ).catch(
       () => {
             setSaving(false);
-            alert('Nu am putut salva. Posibil să fi raportat deja acest anunț, dacă nu te rugăm încearcă mai târziu.');
+            alert('Nu am putut raporta acest conținut. Posibil să fi raportat deja, te rugăm încearcă mai târziu.');
         }
     )
   }
@@ -79,7 +81,7 @@ const ReportAdDialog: FC<ReportAdDialog> = ({ ad, onClose }) => {
         `}
       >
         <ModalClose />
-        <DialogTitle>Raportează anunț</DialogTitle>
+        <DialogTitle>Raportează</DialogTitle>
         <DialogContent>
             <form
                 ref={formRef}
@@ -90,6 +92,8 @@ const ReportAdDialog: FC<ReportAdDialog> = ({ ad, onClose }) => {
                     save(data as any);
                 }}
             >
+                <input type="hidden" name="resource" value={resource}/>
+                <input type="hidden" name="reference" value={reference}/>
             {!me && (
                 <>
                     <FormControl>
@@ -133,4 +137,4 @@ const ReportAdDialog: FC<ReportAdDialog> = ({ ad, onClose }) => {
   );
 };
 
-export default ReportAdDialog;
+export default ReportDialog;

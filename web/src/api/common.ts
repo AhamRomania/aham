@@ -12,8 +12,7 @@ export async function getMe(fn?: (me: User | null) => void):Promise<User | undef
     return getUser().then(fn);
 }
 
-export async function saveAdReport(ad:Ad, data: ReportData): Promise<void> {
-    data.reference = `${ad.id}`;
+export async function createReport(data: ReportData): Promise<void> {
     const api = getApiFetch();
     return new Promise((resolve, reject) => {
         api(`/report`,{method:'POST',success:true, body: JSON.stringify(data)}).then(

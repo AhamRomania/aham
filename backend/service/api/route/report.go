@@ -11,7 +11,8 @@ import (
 type ReportRequest struct {
 	Name      string `json:"name"`
 	Email     string `json:"email"`
-	Reference string `json:"reference"`
+	Resource  string `json:"resource"`
+	Reference int64  `json:"reference"`
 	Reason    string `json:"reason"`
 	Comments  string `json:"comments"`
 }
@@ -45,10 +46,11 @@ func Report(w http.ResponseWriter, r *http.Request) {
 
 	_, err = conn.Exec(
 		context.Background(),
-		`INSERT INTO reports (reporter, reporter_name, reporter_email, reference, reason, comments, navitator, ip) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+		`INSERT INTO reports (reporter, reporter_name, reporter_email, resource, reference, reason, comments, navitator, ip) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
 		c.NilID(reporter),
 		c.NilString(req.Name),
 		c.NilString(req.Email),
+		req.Resource,
 		req.Reference,
 		req.Reason,
 		req.Comments,

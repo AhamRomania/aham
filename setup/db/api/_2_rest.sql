@@ -148,7 +148,8 @@ create table reports (
     reporter integer references users(id),
     reporter_name varchar(255),
     reporter_email varchar(255),
-    reference varchar(2000) not null,
+    resource varchar(32) not null,
+    reference integer not null,
     reason varchar(255) not null,
     comments text not null,
     navitator varchar(255) not null,
@@ -156,6 +157,7 @@ create table reports (
     created_at timestamp not null default current_timestamp,
     status varchar(20) not null default 'pending',
     foreign key (reporter) references users(id),
+    check (resource in ('ad', 'chat')),
     check (status in ('pending', 'approved', 'rejected')),
     check (reason in ('inappropriate', 'copyright', 'spam', 'other')),
     unique (reporter_email,reference,reason,comments,navitator,ip)
