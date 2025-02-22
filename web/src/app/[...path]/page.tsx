@@ -46,7 +46,7 @@ export default async function Page(props: any) {
     }
 
     if (data?.kind === 'category') {
-        const ads = await api<Ad[]>(`/ads?from=${data.vo.id}`)
+        const ads = await api<Ad[]>(`/ads?from=${data.vo.id}&skip-owner=true`)
         return (
             <>
                 <MainLayout>

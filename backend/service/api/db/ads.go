@@ -573,14 +573,14 @@ func GetAds(me int64, filter Filter) (ads []*Ad) {
 
 	ads = make([]*Ad, 0)
 
-	smtp := getAdSqlBuilder(me)
+	stmt := getAdSqlBuilder(me)
 
 	if filter.Limit != nil && *filter.Limit > 0 {
-		smtp = smtp.LIMIT(*filter.Limit)
+		stmt = stmt.LIMIT(*filter.Limit)
 	}
 
 	if filter.Offset != nil && *filter.Offset >= 0 {
-		smtp = smtp.OFFSET(*filter.Offset)
+		stmt = stmt.OFFSET(*filter.Offset)
 	}
 
 	var where []BoolExpression = make([]BoolExpression, 0)
@@ -625,9 +625,11 @@ func GetAds(me int64, filter Filter) (ads []*Ad) {
 		where = append(where, Ads.Category.IN(ids...))
 	}
 
-	smtp = smtp.WHERE(AND(where...))
+	stmt = stmt.WHERE(AND(where...))
 
-	sql, params := smtp.Sql()
+	fmt.Println(stmt.DebugSql())
+
+	sql, params := stmt.Sql()
 
 	conn := c.DB()
 	defer conn.Release()
