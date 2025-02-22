@@ -38,6 +38,72 @@ func AdsRoutes(r chi.Router) {
 	r.Post("/{id}/publish", c.Guard(publishAd))
 	r.Get("/{id}/contact", c.Guard(getContactDetails))
 	r.Get("/{id}/metrics", getAdMetrics)
+	r.Post("/{id}/favourite", c.Guard(favouriteCreate))
+	r.Delete("/{id}/favourite", c.Guard(favouriteDelete))
+}
+
+func favouriteCreate(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	ad := db.GetAd(userID, c.ID(r, "id"))
+
+	if ad == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err = conn.Exec(
+		context.TODO(),
+		`insert into favourites (user_id,ad_id) values ($1, $2)`,
+		userID,
+		ad.ID,
+	)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func favouriteDelete(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	ad := db.GetAd(userID, c.ID(r, "id"))
+
+	if ad == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err = conn.Exec(
+		context.TODO(),
+		`delete from favourites where user_id = $1 and ad_id = $2`,
+		userID,
+		ad.ID,
+	)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func getAdMetrics(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +125,7 @@ func reject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ad := db.GetAd(c.ID(r, "id"))
+	ad := db.GetAd(userID, c.ID(r, "id"))
 
 	if ad == nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -86,7 +152,7 @@ func publishAd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ad := db.GetAd(c.ID(r, "id"))
+	ad := db.GetAd(userID, c.ID(r, "id"))
 
 	if ad == nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -143,7 +209,14 @@ func publishAd(w http.ResponseWriter, r *http.Request) {
 
 func getContactDetails(w http.ResponseWriter, r *http.Request) {
 
-	ad := db.GetAd(c.ID(r, "id"))
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	ad := db.GetAd(userID, c.ID(r, "id"))
 
 	if ad == nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -232,8 +305,14 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 
 func GetAd(w http.ResponseWriter, r *http.Request) {
 
+	var meID int64 = 0
+
+	if id, err := c.UserID(r); err == nil && id > 0 {
+		meID = id
+	}
+
 	redirect := r.URL.Query().Get("redirect") == "true"
-	ad := db.GetAd(c.ID(r, "id"))
+	ad := db.GetAd(meID, c.ID(r, "id"))
 
 	if ad == nil {
 		if redirect {
@@ -310,7 +389,7 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if mode == "promotion" {
-		render.JSON(w, r, db.GetPromotionAds(filter))
+		render.JSON(w, r, db.GetPromotionAds(userID, filter))
 		return
 	}
 
@@ -339,5 +418,5 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	render.JSON(w, r, db.GetAds(filter))
+	render.JSON(w, r, db.GetAds(userID, filter))
 }

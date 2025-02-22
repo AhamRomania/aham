@@ -74,7 +74,7 @@ func createChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ad := db.GetAd(payload.Ad)
+	ad := db.GetAd(userID, payload.Ad)
 
 	if ad == nil {
 		w.WriteHeader(http.StatusNotFound)

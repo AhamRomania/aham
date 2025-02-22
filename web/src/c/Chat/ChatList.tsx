@@ -113,7 +113,7 @@ const ChatList: FC<ChatListProps> = ({ items, user, current, onChange }) => {
                     color: #999;
                 `}
             >
-                Niciun mesaj de afișat
+                Niciun mesaj primit
             </div>
         )
     }

@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { Favorite, LocalOffer, Phone, Report, Send } from "@mui/icons-material";
+import { Favorite, FavoriteBorderOutlined, LocalOffer, Phone, Report, Send } from "@mui/icons-material";
 import { Button, CircularProgress, Divider, IconButton, Stack, Textarea } from "@mui/joy";
 import { FC, useEffect, useState } from "react";
 import { Ad, Chat, Message, User } from "../types";
@@ -9,6 +9,7 @@ import { Space } from "../Layout";
 import getApiFetch from "@/api/api";
 import { useRouter } from "next/navigation";
 import { track } from "../funcs";
+import { createFavourite, removeFavourite } from "@/api/ads";
 
 export interface AdCtaProps {
     ad: Ad;
@@ -19,6 +20,7 @@ export interface AdCtaProps {
 const AdCta:FC<AdCtaProps> = ({ad, me, onAdReport}) => {
     const router = useRouter();
     const api = getApiFetch();
+    const [favourite, setFavourite] = useState(ad.favourite);
     const [fetchingPhoneNumber, setFetchingPhoneNumber] = useState(false)
     const [phoneNumber, setPhoneNumber] = useState<string|undefined>();
     const [chats, setChats] = useState<Chat[]>([]);
@@ -180,6 +182,22 @@ const AdCta:FC<AdCtaProps> = ({ad, me, onAdReport}) => {
         )
     }
 
+    const toggleFavourite = (ad: Ad) => {
+        if (favourite) {
+            removeFavourite(ad).then(
+                () => {
+                    setFavourite(false);
+                }
+            )
+        } else {
+            createFavourite(ad).then(
+                () => {
+                    setFavourite(true);
+                }
+            )
+        }
+    }
+
     return (
         <div
             css={css`
@@ -239,7 +257,7 @@ const AdCta:FC<AdCtaProps> = ({ad, me, onAdReport}) => {
                 <Divider/>
                 <Stack flexDirection="row" gap={2}>
                     <Stack flex={1}>
-                        <Button startDecorator={<Favorite fontSize="small"/>}>Favorite</Button>
+                        <Button onClick={()=>toggleFavourite(ad)} startDecorator={favourite?<Favorite fontSize="small"/>:<FavoriteBorderOutlined fontSize="small"/>}>Favorite</Button>
                     </Stack>
                     <Stack flex={1}>
                         <Button onClick={onAdReport} startDecorator={<Report fontSize="small"/>}>Raportează</Button>

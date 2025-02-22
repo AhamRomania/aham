@@ -67,6 +67,7 @@ type Ad struct {
 	Props        *c.D            `json:"props,omitempty"`
 	Status       Status          `json:"status,omitempty"`
 	History      []ListingPeriod `json:"history,omitempty"`
+	Favourite    bool            `json:"favourite,omitempty"`
 	Created      time.Time       `json:"created,omitempty"`
 	Published    *time.Time      `json:"published,omitempty"`
 	ValidThrough *time.Time      `json:"valid_through,omitempty"`
@@ -242,7 +243,7 @@ func (ad *Ad) Publish(tx pgx.Tx) (err error) {
 		return errors.New("user expected")
 	}
 
-	active := GetAds(Filter{
+	active := GetAds(user.ID, Filter{
 		Mode:  "published",
 		Owner: &user.ID,
 	})
@@ -393,10 +394,10 @@ type Filter struct {
 	Owner    *int64  `json:"owner"`
 }
 
-func GetPromotionAds(filter Filter) (ads []*Ad) {
+func GetPromotionAds(me int64, filter Filter) (ads []*Ad) {
 	ads = make([]*Ad, 0)
 
-	smtp := getAdSqlBuilder().WHERE(
+	smtp := getAdSqlBuilder(me).WHERE(
 		Ads.Status.EQ(String("published")).AND(
 			Transactions.Amount.GT(Float(0)),
 		),
@@ -453,7 +454,7 @@ func GetRecommendedAds(filter Filter) (ads []*Ad) {
 	return
 }
 
-func GetAds(filter Filter) (ads []*Ad) {
+func GetAds(me int64, filter Filter) (ads []*Ad) {
 
 	if filter.Mode == "" {
 		filter.Mode = "published"
@@ -461,7 +462,7 @@ func GetAds(filter Filter) (ads []*Ad) {
 
 	ads = make([]*Ad, 0)
 
-	smtp := getAdSqlBuilder()
+	smtp := getAdSqlBuilder(me)
 
 	if filter.Limit != nil && *filter.Limit > 0 {
 		smtp = smtp.LIMIT(*filter.Limit)
@@ -552,7 +553,7 @@ func GetAds(filter Filter) (ads []*Ad) {
 	return ads
 }
 
-func GetAd(id int64) (ad *Ad) {
+func GetAd(me int64, id int64) (ad *Ad) {
 
 	ad = &Ad{
 		Owner:    &UserMin{},
@@ -560,7 +561,7 @@ func GetAd(id int64) (ad *Ad) {
 		Location: &Location{},
 	}
 
-	sql, params := getAdSqlBuilder().WHERE(
+	sql, params := getAdSqlBuilder(me).WHERE(
 		Ads.ID.EQ(Int64(id)),
 	).Sql()
 
@@ -581,7 +582,7 @@ func GetAd(id int64) (ad *Ad) {
 	return
 }
 
-func getAdSqlBuilder() SelectStatement {
+func getAdSqlBuilder(me int64) SelectStatement {
 	return Ads.SELECT(
 		Ads.ID,
 		Ads.Title,
@@ -611,6 +612,7 @@ func getAdSqlBuilder() SelectStatement {
 		Ads.Cycle,
 		Ads.Published,
 		Ads.ValidThrough,
+		Raw("(EXISTS (SELECT 1 FROM favourites WHERE favourites.ad_id = ads.id AND favourites.user_id = USERID)) AS favourite", map[string]interface{}{"USERID": me}),
 	).FROM(
 		Ads.AS("ads").LEFT_JOIN(Users.AS("users").Table, Users.ID.EQ(Ads.Owner)).
 			LEFT_JOIN(Categories.AS("categories").Table, Categories.ID.EQ(Ads.Category)).
@@ -659,6 +661,7 @@ func scanAd(scanner SQLScanner, ad *Ad) (err error) {
 		&ad.Cycle,
 		&ad.Published,
 		&ad.ValidThrough,
+		&ad.Favourite,
 	)
 
 	if promotion != nil {

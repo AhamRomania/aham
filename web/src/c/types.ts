@@ -71,6 +71,7 @@ export type Ad = {
     created: string
     props:{[key:string]:any}
     promotion: boolean;
+    favourite: boolean;
 }
 
 export type TokenResponse = {

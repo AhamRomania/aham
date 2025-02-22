@@ -60,7 +60,7 @@ const ChatMessageList:FC<ChatMessageListProps> = ({chat}) => {
                     color: #999;
                 `}
             >
-                Niciun mesaj de afișat
+                Aici vezi mesajele primite
             </div>
         )
     }

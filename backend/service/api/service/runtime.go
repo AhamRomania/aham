@@ -40,7 +40,7 @@ func verifyCompletedAds(ticker *time.Ticker) {
 			return
 		}
 
-		ad := db.GetAd(id)
+		ad := db.GetAd(0, id)
 
 		c.Log().Infof("Finishing %s", ad.Href)
 

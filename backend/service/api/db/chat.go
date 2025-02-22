@@ -3,7 +3,6 @@ package db
 import (
 	"aham/common/c"
 	"context"
-	"fmt"
 	"slices"
 	"time"
 
@@ -294,8 +293,6 @@ func GetChats(userID int64, resourceContext resourceContext, reference int64, ar
 
 	conn := c.DB()
 	defer conn.Release()
-
-	fmt.Println(smtp.DebugSql())
 
 	sql, params := smtp.Sql()
 

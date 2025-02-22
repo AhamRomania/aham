@@ -17,7 +17,7 @@ func Sitemap(res http.ResponseWriter, req *http.Request) {
 		writeLoc(b, c.Link(), time.Now().Format("2006-01-02"))
 	}
 
-	for _, ad := range db.GetAds(db.Filter{}) {
+	for _, ad := range db.GetAds(0, db.Filter{}) {
 		writeLoc(b, c.URLF(c.Web, "/"+ad.Href), ad.Created.Format("2006-01-02"))
 	}
 
