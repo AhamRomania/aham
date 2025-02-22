@@ -46,7 +46,6 @@ const Footer: FC<FooterProps> = ({version}) => {
                                     <Link prefetch={false} href="/despre">Despre</Link>
                                     <Link prefetch={false} href="/promovare">Promovează</Link>
                                     <Link prefetch={false} href="/categorii">Categorii</Link>
-                                    <Link prefetch={false} href="/curiozitati">Curiozitati</Link>
                                     <Link prefetch={false} href="/contact">Contact</Link>
                                 </nav>
                                 <nav className={style.menu}>

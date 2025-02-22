@@ -166,9 +166,9 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                     size="md"
                     variant="solid"
                     color="primary"
-                    style={{ marginLeft: "10px" }}
+                    style={{ marginLeft: "10px", background:"transparent" }}
                   >
-                    <Home color="action" />
+                    <Home htmlColor="#FFF" />
                   </IconButton>
                 </Link>
                 <Link href="/u/anunturi/creaza" prefetch={false}>
@@ -176,9 +176,9 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                     size="md"
                     variant="solid"
                     color="primary"
-                    style={{ marginLeft: "10px" }}
+                    style={{ marginLeft: "5px", background:"transparent" }}
                   >
-                    <Add color="action" />
+                    <Add htmlColor="#FFF" />
                   </IconButton>
                 </Link>
               </>

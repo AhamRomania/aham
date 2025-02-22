@@ -24,7 +24,6 @@ export default function Page() {
 
   const {setPath} = useContext(AccountLayoutContext);
   const api = getApiFetch();
-  const router = useRouter();
 
   const [currency, setCurrency] = useState('LEI');
   const [category, setCategory] = useState<Category | null>(null);
@@ -35,12 +34,6 @@ export default function Page() {
 
   const onImagesChange = (images:GenericPicture[]) => {
     setImagesCount(images.length);
-  }
-
-  const cancelAdCreating = () => {
-      if(confirm('Anulează adăugarea anunțului')) {
-        router.push('/u/anunturi');
-      }
   }
 
   useEffect(() => {
@@ -139,14 +132,7 @@ export default function Page() {
         }  
       `}
     >
-      <PageName right={(
-        <IconButton
-          variant="plain"
-          onClick={() => cancelAdCreating()}
-        >
-            <Close/>
-        </IconButton>
-      )}>
+      <PageName>
         Crează anunț
       </PageName>
       <form
