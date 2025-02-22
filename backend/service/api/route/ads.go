@@ -2,6 +2,7 @@ package route
 
 import (
 	"aham/common/c"
+	"aham/common/cdn"
 	"aham/common/ws"
 	"aham/service/api/db"
 	"aham/service/api/sam"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 	"github.com/gosimple/slug"
 	"github.com/jackc/pgx/v5"
 )
@@ -35,6 +37,7 @@ func AdsRoutes(r chi.Router) {
 	r.Post("/", c.Guard(CreateAd))
 	r.Get("/", GetAds)
 	r.Get("/{id}", GetAd)
+	r.Delete("/{id}", c.Guard(RemoveAd))
 	r.Post("/{id}/reject", c.Guard(reject))
 	r.Post("/{id}/approve", c.Guard(approve))
 	r.Post("/{id}/publish", c.Guard(publish))
@@ -43,6 +46,39 @@ func AdsRoutes(r chi.Router) {
 	r.Post("/{id}/favourite", c.Guard(favouriteCreate))
 	r.Delete("/{id}/favourite", c.Guard(favouriteDelete))
 	r.Get("/favourites", c.Guard(getMyFavouriteAds))
+}
+
+func RemoveAd(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	ad := db.GetAd(userID, c.ID(r, "id"))
+
+	if ad == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if ad.Owner.ID != userID || !Can(r, sam.ADS, sam.PermDelete) {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	if err := ad.Delete(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, picture := range ad.Pictures {
+		if err := cdn.Remove(ad.Owner.ID, picture); err != nil {
+			c.Log().Error(err)
+		}
+	}
 }
 
 func getMyFavouriteAds(w http.ResponseWriter, r *http.Request) {
@@ -319,6 +355,18 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "can't parse payload", http.StatusBadRequest)
 		c.Log().Error(err)
 		return
+	}
+
+	if len(p.Pictures) == 0 {
+		http.Error(w, "expected at least one image", http.StatusBadRequest)
+		return
+	}
+
+	for _, picture := range p.Pictures {
+		if _, err := uuid.Parse(picture); err != nil {
+			http.Error(w, "pictures must be a list of uuid's", http.StatusBadRequest)
+			return
+		}
 	}
 
 	conn := c.DB()

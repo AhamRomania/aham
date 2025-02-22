@@ -4,14 +4,52 @@ import (
 	"aham/common/c"
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
+
+func Remove(owner int64, uuidv string) (err error) {
+
+	if _, err := uuid.Parse(uuidv); err != nil {
+		return errors.New("expected image uuid")
+	}
+
+	req, err := http.NewRequest(
+		"DELETE", c.URLF(c.Cdn, fmt.Sprintf("/%s", uuidv)),
+		nil,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	jwt, err := c.JWTUserID(owner)
+
+	if err != nil {
+		return errors.Wrap(err, "can't gen jwt")
+	}
+
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", jwt))
+
+	resp, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusGone {
+		return errors.New("expected 410 gone")
+	}
+
+	return
+}
 
 func Store(owner int64, url string, mimePrefix string) (id string, err error) {
 

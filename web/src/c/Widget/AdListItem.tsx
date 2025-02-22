@@ -4,9 +4,10 @@ import { css } from "@emotion/react";
 import AdPictures from "./AdPictures";
 import AdSpectsListing from "./AdSpecsListing";
 import { getCategoryProps, publishAd, removeAd } from "@/api/ads";
-import { Button } from "@mui/joy";
+import { Breadcrumbs, Button } from "@mui/joy";
 import { Delete, Edit, Publish } from "@mui/icons-material";
 import Confirm from "../Dialog/Confirm";
+import Link from "next/link";
 
 export interface AdListItemProps {
     ad: Ad;
@@ -23,18 +24,24 @@ const AdListItem: FC<AdListItemProps> = ({ad, onRemove}) => {
         getCategoryProps(ad.category.id).then(setProps);
     }, []);
 
-    const remove = () => {
+    const remove = (proceed?:boolean) => {
+        if (proceed) {
+            removeAd(ad.id).then(() => {
+                onRemove(ad);
+            })
+        }
+
         setShowRemoveConfig(false);
-        removeAd(ad.id).then(() => {
-            onRemove(ad);
-        })
     }
 
-    const publish = () => {
+    const publish = (proceed?:boolean) => {
+        if (proceed) {
+            publishAd(ad.id).then(() => {
+                onRemove(ad);
+            })
+        }
+
         setShowPublishConfirm(false);
-        publishAd(ad.id).then(() => {
-            onRemove(ad);
-        })
     }
 
     return (
@@ -73,6 +80,15 @@ const AdListItem: FC<AdListItemProps> = ({ad, onRemove}) => {
                                 flex: 1;
                             `}
                         >
+                            <Breadcrumbs
+                                css={css`font-size: 14px;padding:0;`}
+                                >
+                                {ad.category.path.split(' > ').map((item,index) => (
+                                    <Link key={index} href={'/'+ad.category.href.split('/').slice(0,index + 1).join('/')}>
+                                        {item}
+                                    </Link>
+                                ))}
+                            </Breadcrumbs>
                             <h1>{ad.title}</h1>
                             <p>{ad.description}</p>
                             {props && <AdSpectsListing props={props} ad={ad}/>}
@@ -93,11 +109,11 @@ const AdListItem: FC<AdListItemProps> = ({ad, onRemove}) => {
             </article>
 
             {showRemoveConfirm && (
-                <Confirm color="danger" message="Ștergi anunțul?" onResponse={() => remove()}/>
+                <Confirm color="danger" message="Ștergi anunțul?" onResponse={remove}/>
             )}
 
             {showPublishConfirm && (
-                <Confirm color="success" message="Publici anunțul?" onResponse={() => publish()}/>
+                <Confirm color="success" message="Publici anunțul?" onResponse={publish}/>
             )}
         </>
     )

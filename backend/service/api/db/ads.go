@@ -163,6 +163,24 @@ func (ad *Ad) Clone() (clone *Ad, err error) {
 	return
 }
 
+func (ad *Ad) Delete() (err error) {
+
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err = conn.Exec(
+		context.TODO(),
+		`delete from ads where id = $1`,
+		ad.ID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return
+}
+
 func (ad *Ad) Reject() (err error) {
 
 	if ad.Status == STATUS_REJECTED {
