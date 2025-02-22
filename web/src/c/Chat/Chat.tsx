@@ -40,7 +40,7 @@ const Chat: FC<ChatProps> = ({ selected }) => {
   useEffect(() => {
     if (chat && chat?.reference) {
       api<Ad>(`/ads/${chat?.reference}`).then((ad) => {
-        setAdURL("/" + ad.href);
+        setAdURL(ad.href);
       });
     }
   }, [chat]);

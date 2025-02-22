@@ -403,7 +403,7 @@ func GetAd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if redirect {
-		http.Redirect(w, r, c.URLF(c.Web, "/"+ad.Href), http.StatusPermanentRedirect)
+		http.Redirect(w, r, c.URLF(c.Web, ad.Href), http.StatusPermanentRedirect)
 		return
 	}
 

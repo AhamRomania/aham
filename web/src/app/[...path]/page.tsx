@@ -71,7 +71,7 @@ export default async function Page(props: any) {
         "availability": "https://schema.org/InStock",
         "validFrom": "2025-02-18",
         "validThrough": "2025-03-01",
-        "url": `http://aham.ro/${ad.href}`,
+        "url": `http://aham.ro${ad.href}`,
         "seller": {
             "@type": "Organization",
             "name": ad.owner.given_name,
