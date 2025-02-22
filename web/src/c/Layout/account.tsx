@@ -72,7 +72,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
     getBalance().then(setBalance);
   }, []);
 
-  const handleOpenSnackbar = (message: React.ReactNode, duration: number = 3000, endDecorator = null) => {
+  const handleOpenSnackbar = (message: React.ReactNode, duration: number = 3000, endDecorator: React.ReactNode | null = null) => {
     const id = new Date().getTime().toString();
     setSnackbars((prevSnackbars) => [
       ...prevSnackbars,
