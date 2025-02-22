@@ -157,7 +157,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		EmailActivationToken: c.String(uuid.NewString()),
 		Preferences: db.UserPreferences{
 			db.UserPrefActiveAds:  2,
-			db.UserPrefAdLifetime: 60 * 24 * 14,
+			db.UserPrefAdLifetime: 60 * 24 * 10,
 		},
 	}
 
