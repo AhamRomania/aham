@@ -35,7 +35,8 @@ func AdsRoutes(r chi.Router) {
 	r.Get("/", GetAds)
 	r.Get("/{id}", GetAd)
 	r.Post("/{id}/reject", c.Guard(reject))
-	r.Post("/{id}/publish", c.Guard(publishAd))
+	r.Post("/{id}/approve", c.Guard(approve))
+	r.Post("/{id}/publish", c.Guard(publish))
 	r.Get("/{id}/contact", c.Guard(getContactDetails))
 	r.Get("/{id}/metrics", getAdMetrics)
 	r.Post("/{id}/favourite", c.Guard(favouriteCreate))
@@ -156,7 +157,49 @@ func reject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func publishAd(w http.ResponseWriter, r *http.Request) {
+func approve(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	ad := db.GetAd(userID, c.ID(r, "id"))
+
+	if ad == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if !Can(r, sam.ADS, sam.PermPublish) {
+		http.Error(w, "forbidden", http.StatusForbidden)
+		return
+	}
+
+	conn := c.DB()
+	defer conn.Release()
+
+	tx, err := conn.Begin(context.TODO())
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := ad.Accept(tx); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := tx.Commit(context.TODO()); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func publish(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := c.UserID(r)
 
@@ -198,6 +241,7 @@ func publishAd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// todo use /approve
 	if err := ad.Accept(tx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

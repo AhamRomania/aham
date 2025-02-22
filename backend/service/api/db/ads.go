@@ -165,6 +165,10 @@ func (ad *Ad) Clone() (clone *Ad, err error) {
 
 func (ad *Ad) Reject() (err error) {
 
+	if ad.Status == STATUS_REJECTED {
+		return errors.New("already rejected")
+	}
+
 	conn := c.DB()
 	defer conn.Release()
 
@@ -189,6 +193,10 @@ func (ad *Ad) Reject() (err error) {
 
 func (ad *Ad) Accept(tx pgx.Tx) (err error) {
 
+	if ad.Status != STATUS_PENDING {
+		return errors.New("only pending ads can be approved")
+	}
+
 	cmd, err := tx.Exec(
 		context.TODO(),
 		`update ads set status = 'approved' where id = $1`,
@@ -204,6 +212,11 @@ func (ad *Ad) Accept(tx pgx.Tx) (err error) {
 	}
 
 	ad.Status = STATUS_APPROVED
+
+	ws.Send(ad.Owner.ID, ws.NewEvent("ad.approve", &c.D{
+		"ad":    ad.ID,
+		"title": ad.Title,
+	}))
 
 	return
 }
@@ -236,6 +249,10 @@ func (ad *Ad) PrePublish() (err error) {
 }
 
 func (ad *Ad) Publish(tx pgx.Tx) (err error) {
+
+	if ad.Status == STATUS_PUBLISHED {
+		return errors.New("already published")
+	}
 
 	user := GetUserByID(ad.Owner.ID)
 

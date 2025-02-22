@@ -25,6 +25,9 @@ const AdListItemAvailable: FC<AdListItemProps> = ({ad, onChange}) => {
                     if (onChange) {
                         onChange();
                     }
+                },
+                (e: any) => {
+                    alert(e);
                 }
             );
         }
