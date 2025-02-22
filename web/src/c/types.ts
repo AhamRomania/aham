@@ -95,6 +95,7 @@ export type Chat = {
     context: string;
     reference: string;
     participants: User[];
+    archived: number[];
     created_at: string;
 }
 

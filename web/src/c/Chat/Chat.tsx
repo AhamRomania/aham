@@ -1,17 +1,17 @@
 "use client";
-import { getChat, getChats } from "@/api/chat";
+import getApiFetch from "@/api/api";
+import { getChats } from "@/api/chat";
 import { css } from "@emotion/react";
 import { CircularProgress } from "@mui/joy";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FC, useContext, useEffect, useReducer, useState } from "react";
 import { AccountLayoutContext } from "../Layout/account";
-import { Ad, Chat as Vo } from "../types";
+import { Ad, User, Chat as Vo } from "../types";
+import ChatInput from "./ChatInput";
 import ChatList from "./ChatList";
 import ChatMessageList from "./ChatMessageList";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { LinkSharp, Preview } from "@mui/icons-material";
-import getApiFetch from "@/api/api";
-import ChatInput from "./ChatInput";
+import { getUser } from "../Auth";
 
 export interface ChatProps {
   selected?: number;
@@ -20,14 +20,19 @@ export interface ChatProps {
 const Chat: FC<ChatProps> = ({ selected }) => {
   const router = useRouter();
   const api = getApiFetch();
-  const [chats, setChats] = useState<Vo[]>();
+  const [user, setUser] = useState<User|null>(null);
+  const [chats, setChats] = useState<Vo[]>([]);
   const [chat, setChat] = useState<Vo | null>(null);
   const [adURL, setAdURL] = useState("");
   const { setPath } = useContext(AccountLayoutContext);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   useEffect(() => {
-    if (!selected && chats) {
+    getUser().then(setUser);
+  }, []);
+
+  useEffect(() => {
+    if (!selected && chats && chats.length) {
       router.push(`/u/mesaje/${chats[0].id}`);
     }
   }, [chats]);
@@ -80,6 +85,10 @@ const Chat: FC<ChatProps> = ({ selected }) => {
     fetchMessages();
   };
 
+  const onChatListChange = () => {
+    getChats().then(setChats);
+  }
+
   return (
     <div
       css={css`
@@ -93,7 +102,7 @@ const Chat: FC<ChatProps> = ({ selected }) => {
       `}
     >
       <aside>
-        <ChatList items={chats} current={selected} />
+        <ChatList user={user} onChange={onChatListChange} items={chats || []} current={selected} />
       </aside>
       <div
         css={css`

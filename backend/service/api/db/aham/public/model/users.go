@@ -22,6 +22,7 @@ type Users struct {
 	Picture              *string
 	Source               *string
 	Role                 *Role
+	Preferences          *string
 	ThirdParyAccessToken *string
 	EmailActivationToken *string
 	PhoneActivationToken *string

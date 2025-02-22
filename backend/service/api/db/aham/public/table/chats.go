@@ -22,7 +22,7 @@ type chatsTable struct {
 	Context      postgres.ColumnString
 	Reference    postgres.ColumnInteger
 	Participants postgres.ColumnString
-	Archived     postgres.ColumnBool
+	Archived     postgres.ColumnString
 	CreatedAt    postgres.ColumnTimestamp
 
 	AllColumns     postgres.ColumnList
@@ -69,7 +69,7 @@ func newChatsTableImpl(schemaName, tableName, alias string) chatsTable {
 		ContextColumn      = postgres.StringColumn("context")
 		ReferenceColumn    = postgres.IntegerColumn("reference")
 		ParticipantsColumn = postgres.StringColumn("participants")
-		ArchivedColumn     = postgres.BoolColumn("archived")
+		ArchivedColumn     = postgres.StringColumn("archived")
 		CreatedAtColumn    = postgres.TimestampColumn("created_at")
 		allColumns         = postgres.ColumnList{IDColumn, TitleColumn, ContextColumn, ReferenceColumn, ParticipantsColumn, ArchivedColumn, CreatedAtColumn}
 		mutableColumns     = postgres.ColumnList{TitleColumn, ContextColumn, ReferenceColumn, ParticipantsColumn, ArchivedColumn, CreatedAtColumn}

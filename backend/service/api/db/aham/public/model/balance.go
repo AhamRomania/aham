@@ -11,12 +11,12 @@ import (
 	"time"
 )
 
-type Chats struct {
-	ID           int32 `sql:"primary_key"`
-	Title        string
-	Context      *string
-	Reference    *int32
-	Participants string
-	Archived     string
-	CreatedAt    time.Time
+type Balance struct {
+	ID          int32 `sql:"primary_key"`
+	Owner       int32
+	Debit       *int32
+	Credit      *int32
+	Balance     int32
+	Description *string
+	Date        time.Time
 }

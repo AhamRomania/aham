@@ -3,6 +3,7 @@ export enum Domain {
     Api,
     Cdn,
     Url,
+    ApiV1
 }
 
 const getDomain = (context:Domain = Domain.Web, path: string = ''): string => {
@@ -14,6 +15,9 @@ const getDomain = (context:Domain = Domain.Web, path: string = ''): string => {
     switch (context) {
         case Domain.Api:
             domain = dev ? 'http://localhost:8001' : 'https://api.aham.ro';
+            break;
+        case Domain.ApiV1: // todo migrate by default to Api
+            domain = dev ? 'http://localhost:8001/v1' : 'https://api.aham.ro/v1';
             break;
         case Domain.Cdn:
             domain = dev ? 'http://localhost:8002' : 'https://cdn.aham.ro';

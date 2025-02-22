@@ -17,8 +17,27 @@ import (
 func ChatRoutes(r chi.Router) {
 	r.Post("/", c.Guard(createChat))
 	r.Get("/", c.Guard(getChats))
+	r.Put("/{id}", c.Guard(updateChat))
 	r.Post("/{id}", c.Guard(createChatMessage))
 	r.Get("/{id}", c.Guard(getChatMessages))
+}
+
+func updateChat(w http.ResponseWriter, r *http.Request) {
+
+	userID, _ := c.UserID(r)
+
+	chat := db.GetChat(c.ID(r, "id"))
+
+	if chat == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if err := chat.Archive(userID); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.Log().Error(err)
+		return
+	}
 }
 
 type createChatRequest struct {

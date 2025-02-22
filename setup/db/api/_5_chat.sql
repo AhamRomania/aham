@@ -4,7 +4,7 @@ create table chats (
     "context" varchar(16),
     "reference" integer,
     "participants" integer[] not null,
-    "archived" boolean default false,
+    "archived" integer[] not null,
     "created_at" timestamp not null default current_timestamp
 );
 

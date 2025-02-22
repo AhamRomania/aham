@@ -27,6 +27,7 @@ type usersTable struct {
 	Picture              postgres.ColumnString
 	Source               postgres.ColumnString
 	Role                 postgres.ColumnString
+	Preferences          postgres.ColumnString
 	ThirdParyAccessToken postgres.ColumnString
 	EmailActivationToken postgres.ColumnString
 	PhoneActivationToken postgres.ColumnString
@@ -83,14 +84,15 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 		PictureColumn              = postgres.StringColumn("picture")
 		SourceColumn               = postgres.StringColumn("source")
 		RoleColumn                 = postgres.StringColumn("role")
+		PreferencesColumn          = postgres.StringColumn("preferences")
 		ThirdParyAccessTokenColumn = postgres.StringColumn("third_pary_access_token")
 		EmailActivationTokenColumn = postgres.StringColumn("email_activation_token")
 		PhoneActivationTokenColumn = postgres.StringColumn("phone_activation_token")
 		CreatedAtColumn            = postgres.TimestampColumn("created_at")
 		EmailActivatedAtColumn     = postgres.TimestampColumn("email_activated_at")
 		PhoneActivatedAtColumn     = postgres.TimestampColumn("phone_activated_at")
-		allColumns                 = postgres.ColumnList{IDColumn, EmailColumn, PasswordColumn, GivenNameColumn, FamilyNameColumn, PhoneColumn, CityColumn, PictureColumn, SourceColumn, RoleColumn, ThirdParyAccessTokenColumn, EmailActivationTokenColumn, PhoneActivationTokenColumn, CreatedAtColumn, EmailActivatedAtColumn, PhoneActivatedAtColumn}
-		mutableColumns             = postgres.ColumnList{EmailColumn, PasswordColumn, GivenNameColumn, FamilyNameColumn, PhoneColumn, CityColumn, PictureColumn, SourceColumn, RoleColumn, ThirdParyAccessTokenColumn, EmailActivationTokenColumn, PhoneActivationTokenColumn, CreatedAtColumn, EmailActivatedAtColumn, PhoneActivatedAtColumn}
+		allColumns                 = postgres.ColumnList{IDColumn, EmailColumn, PasswordColumn, GivenNameColumn, FamilyNameColumn, PhoneColumn, CityColumn, PictureColumn, SourceColumn, RoleColumn, PreferencesColumn, ThirdParyAccessTokenColumn, EmailActivationTokenColumn, PhoneActivationTokenColumn, CreatedAtColumn, EmailActivatedAtColumn, PhoneActivatedAtColumn}
+		mutableColumns             = postgres.ColumnList{EmailColumn, PasswordColumn, GivenNameColumn, FamilyNameColumn, PhoneColumn, CityColumn, PictureColumn, SourceColumn, RoleColumn, PreferencesColumn, ThirdParyAccessTokenColumn, EmailActivationTokenColumn, PhoneActivationTokenColumn, CreatedAtColumn, EmailActivatedAtColumn, PhoneActivatedAtColumn}
 	)
 
 	return usersTable{
@@ -107,6 +109,7 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 		Picture:              PictureColumn,
 		Source:               SourceColumn,
 		Role:                 RoleColumn,
+		Preferences:          PreferencesColumn,
 		ThirdParyAccessToken: ThirdParyAccessTokenColumn,
 		EmailActivationToken: EmailActivationTokenColumn,
 		PhoneActivationToken: PhoneActivationTokenColumn,

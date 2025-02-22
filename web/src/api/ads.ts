@@ -8,7 +8,7 @@ export async function getAdMetrics(id: number): Promise<AdMetrics> {
 
 export async function getAdsToApprove(): Promise<Ad[]> {
     const api = getApiFetch();
-    return await api<Ad[]>(`/ads?mode=pending`);
+    return await api<Ad[]>(`/ads?mode=pending&skip-owner=true`);
 }
 
 export async function getDraftAds(): Promise<Ad[]> {

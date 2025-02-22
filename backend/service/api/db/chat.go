@@ -5,6 +5,10 @@ import (
 	"context"
 	"time"
 
+	. "aham/service/api/db/aham/public/table"
+
+	. "github.com/go-jet/jet/v2/postgres"
+
 	"github.com/pkg/errors"
 )
 
@@ -22,6 +26,7 @@ type Chat struct {
 	Reference       *int64          `json:"reference,omitempty"`
 	ParticipantsIDS []int64         `json:"-"`
 	Participants    []UserMin       `json:"participants,omitempty"`
+	Archived        []int64         `json:"archived,omitempty"`
 	CreatedAt       time.Time       `json:"created_at,omitempty"`
 }
 
@@ -40,6 +45,41 @@ type ChatAbout struct {
 	Reference *int64          `json:"reference"`
 }
 
+func (chat *Chat) Archive(userID int64) (err error) {
+
+	if GetUserByID(userID) == nil {
+		return errors.New("unknown user")
+	}
+
+	for _, user := range chat.Archived {
+		if user == userID {
+			return
+		}
+	}
+
+	chat.Archived = append(chat.Archived, userID)
+
+	conn := c.DB()
+	defer conn.Release()
+
+	cmd, err := conn.Exec(
+		context.TODO(),
+		`update chats set archived = $1 where id = $2`,
+		chat.Archived,
+		chat.ID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if cmd.RowsAffected() == 0 {
+		return errors.New("nothing updated")
+	}
+
+	return
+}
+
 func CreateChat(title string, participants []int64, about *ChatAbout) (chat *Chat, err error) {
 
 	if about == nil {
@@ -52,9 +92,9 @@ func CreateChat(title string, participants []int64, about *ChatAbout) (chat *Cha
 
 	sql := `
 		insert into chats 
-			(title, context, reference, participants, created_at)
+			(title, context, reference, participants, archived, created_at)
 		values
-			($1, $2, $3, $4, $5)
+			($1, $2, $3, $4, $5, $6)
 		returning id
 	`
 
@@ -68,6 +108,7 @@ func CreateChat(title string, participants []int64, about *ChatAbout) (chat *Cha
 		about.Context,
 		about.Reference,
 		participants,
+		[]int64{},
 		now,
 	)
 
@@ -77,6 +118,7 @@ func CreateChat(title string, participants []int64, about *ChatAbout) (chat *Cha
 		Reference:       about.Reference,
 		ParticipantsIDS: participants,
 		Participants:    usersmin(participants),
+		Archived:        []int64{},
 		CreatedAt:       now,
 	}
 
@@ -110,7 +152,8 @@ func GetChat(id int64) (chat *Chat) {
 			context,
 			reference,
 			participants,
-			created_at
+			created_at,
+			archived
 		from chats
 		where id = $1
 	`
@@ -133,6 +176,7 @@ func GetChat(id int64) (chat *Chat) {
 		&chat.Reference,
 		&chat.ParticipantsIDS,
 		&chat.CreatedAt,
+		&chat.Archived,
 	)
 
 	if err != nil {
@@ -149,32 +193,45 @@ func GetChats(userID int64, resourceContext resourceContext, reference int64, ar
 
 	chats = make([]*Chat, 0)
 
-	sql := `
-		select
-			id,
-			title,
-			context,
-			reference,
-			participants,
-			created_at
-		from chats
-		where participants @> ARRAY[$1]::int[]
-			and context = $2
-			and (reference = $3 OR $3 = 0)
-			and archived = $4
-		order by created_at desc
-	`
+	var where []BoolExpression = make([]BoolExpression, 0)
+
+	where = append(where, RawBool("participants @> ARRAY[user]::int[]", map[string]interface{}{"user": userID}))
+	where = append(where, Chats.Context.EQ(String(string(resourceContext))))
+
+	if reference > 0 {
+		where = append(where, Chats.Reference.EQ(Int(reference)))
+	}
+
+	/*
+		if archived {
+			where = append(where, RawBool("archived = @> ARRAY[user]::int[]", map[string]interface{}{"user": userID}))
+		} else {
+			where = append(where, RawBool("NOT archived @> ARRAY[user]::int[]", map[string]interface{}{"user": userID}))
+		}*/
+
+	smtp := Chats.SELECT(
+		Chats.ID,
+		Chats.Title,
+		Chats.Context,
+		Chats.Reference,
+		Chats.Participants,
+		Chats.CreatedAt,
+		Chats.Archived,
+	).WHERE(
+		AND(where...),
+	).ORDER_BY(
+		Chats.CreatedAt.DESC(),
+	)
 
 	conn := c.DB()
 	defer conn.Release()
 
+	sql, params := smtp.Sql()
+
 	rows, err := conn.Query(
 		context.TODO(),
 		sql,
-		userID,
-		resourceContext,
-		reference,
-		archived,
+		params...,
 	)
 
 	if err != nil {
@@ -193,6 +250,7 @@ func GetChats(userID int64, resourceContext resourceContext, reference int64, ar
 			&chat.Reference,
 			&chat.ParticipantsIDS,
 			&chat.CreatedAt,
+			&chat.Archived,
 		)
 
 		chat.Participants = usersmin(chat.ParticipantsIDS)

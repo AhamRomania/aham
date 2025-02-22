@@ -1,17 +1,55 @@
 import getDomain, { Domain } from "@/c/domain";
 import { Ad } from "./types";
 import { format } from 'timeago.js';
+import dayjs from "dayjs";
+import "dayjs/locale/ro";
+import utc from "dayjs/plugin/utc";
+
+dayjs.locale('ro');
+dayjs.extend(utc);
 
 export const adHref = (ad:Ad) => {
     return getDomain(Domain.Web) + `/${ad.category.slug}/${ad.slug}-${ad.id}`;
 }
 
-export function ago(v: string): string {
+export function ago(v: string, prefix = false): string {
     let ago = format(v, 'ro');
-    if (ago.indexOf('acum') === 0) {
+    if (!prefix && ago.indexOf('acum') === 0) {
         ago = ago.replaceAll('acum ', '');
     }
     return ago
+}
+
+export function dateTime(v: string): string {
+    
+    const now = dayjs();
+    const d = dayjs(v).utc();
+
+    if (Math.abs(d.diff(now, "hour")) <= 1) {
+        return ago(v,true)
+    }
+
+    if (d.isSame(now,"day")) {
+        return d.format('HH:mm');
+    }
+
+    if (d.isSame(now.subtract(1, "day"), "day")) {
+        return 'Ieri ' + d.format('HH:mm');
+    }
+
+    if (d.isSame(now,"week")) {
+        return d.format('dddd HH:mm');
+    }
+
+    if (d.isSame(now,"month")) {
+        return d.format('D dddd HH:mm');
+    }
+
+    if (d.isSame(now,"year")) {
+        return d.format('D dddd HH:mm');
+    }
+
+    return d.format('YYYY D MMMM HH:mm')
 }
 
 export function formatMoney(money: number, currency: string) {

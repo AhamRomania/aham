@@ -232,17 +232,32 @@ func CreateAd(w http.ResponseWriter, r *http.Request) {
 
 func GetAd(w http.ResponseWriter, r *http.Request) {
 
+	redirect := r.URL.Query().Get("redirect") == "true"
 	ad := db.GetAd(c.ID(r, "id"))
 
 	if ad == nil {
-		// todo check 410 gone is needed or 503
+		if redirect {
+			//todo: would be nice to show some content for this since is used from chat
+			http.Redirect(w, r, c.URLF(c.Web, "?adred=%d", ad), http.StatusTemporaryRedirect)
+			return
+		}
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	if ad.Status != db.STATUS_PUBLISHED {
 		w.Header().Add("X-Aham-Unpublished", fmt.Sprint(ad.Cycle))
+		if redirect {
+			//todo: would be nice to show some content for this
+			http.Redirect(w, r, c.URLF(c.Web, "?adred=%d&cycle=%d", ad.ID, ad.Cycle), http.StatusTemporaryRedirect)
+			return
+		}
 		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if redirect {
+		http.Redirect(w, r, c.URLF(c.Web, "/"+ad.Href), http.StatusPermanentRedirect)
 		return
 	}
 
