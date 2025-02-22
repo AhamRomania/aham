@@ -221,6 +221,28 @@ func adjustOpacity(img image.Image, opacity float64) *image.NRGBA {
 	return newImg
 }
 
+func CropToAspect(img image.Image, width, height int) image.Image {
+	aspectW, aspectH := 4, 3
+
+	var newWidth, newHeight int
+	if width*aspectH > height*aspectW {
+		newWidth = height * aspectW / aspectH
+		newHeight = height
+	} else {
+		newWidth = width
+		newHeight = width * aspectH / aspectW
+	}
+
+	x0 := (width - newWidth) / 2
+	y0 := 0
+
+	cropRect := image.Rect(x0, y0, x0+newWidth, y0+newHeight)
+	cropped := image.NewRGBA(cropRect)
+	draw.Draw(cropped, cropped.Bounds(), img, cropRect.Min, draw.Src)
+
+	return cropped
+}
+
 func serve(w http.ResponseWriter, r *http.Request) {
 
 	id, err := uuid.Parse(chi.URLParam(r, "uuid"))
@@ -305,8 +327,13 @@ func serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m := resize.Resize(width, 0, img, resize.Lanczos3)
+	// crop to aspect ratio
+	m := CropToAspect(img, img.Bounds().Dx(), img.Bounds().Dy())
 
+	// crop to requested size
+	m = resize.Resize(width, 0, m, resize.Lanczos3)
+
+	// add watermark
 	m = watermark(m)
 
 	buf := &bytes.Buffer{}

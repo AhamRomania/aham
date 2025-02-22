@@ -51,7 +51,6 @@ const Footer: FC<FooterProps> = ({version}) => {
                                 <nav className={style.menu}>
                                     <Link prefetch={false} href="https://blog.aham.ro">Blog</Link>
                                     <Link prefetch={false} href="/ajutor">Ajutor</Link>
-                                    <Link prefetch={false} href="/afla">Află</Link>
                                     <Link prefetch={false} href="/developeri">Developeri</Link>
                                 </nav>
                                 <nav className={style.hideOnDesktop + ' ' + style.menu}>
