@@ -7,6 +7,7 @@ import UserAvatar from "../avatar";
 import { Stack } from "@mui/material";
 import Tip from "../tooltip";
 import Link from "next/link";
+import ChatMessage from "./ChatMessage";
 
 export interface ChatMessageListProps {
     chat: Chat | null;
@@ -68,12 +69,12 @@ const ChatMessageList:FC<ChatMessageListProps> = ({chat}) => {
                         css={css`
                             display: flex;
                             margin-bottom: 10px;
-                            p {
+                            .message {
                                 padding: 12px;
                                 margin-bottom: 10px;
                                 border-radius: 8px;
                                 border: 1px solid #eaeaea;
-                                margin-top: -4px;
+                                margin-top: -2px;
                                 max-width: 500px;
                             }
 
@@ -81,11 +82,11 @@ const ChatMessageList:FC<ChatMessageListProps> = ({chat}) => {
                                 flex-direction: row-reverse;
                             }
 
-                            &.right p {
+                            &.right .message {
                                 margin-right: 10px;
                             }
 
-                            &.left p {
+                            &.left .message {
                                 margin-left: 10px;
                             }
                         `}
@@ -95,7 +96,7 @@ const ChatMessageList:FC<ChatMessageListProps> = ({chat}) => {
                                 <UserAvatar/>
                             </Link>
                         </Tip>
-                        <p>{item.message}</p>
+                        <ChatMessage message={item}/>
                     </li>
                 ))}
             </ul>
