@@ -164,7 +164,7 @@ const AdCta:FC<AdCtaProps> = ({ad, me, onAdReport}) => {
                     <p>{messages[messages.length - 1].message}</p>
                 </div>}
                 
-                {chats.length > 0 ? <Link href={`/u/mesaje?id=` + chats[0].id} prefetch={false}>
+                {chats.length > 0 ? <Link href={`/u/mesaje/` + chats[0].id} prefetch={false}>
                     <Button style={{width:'100%'}}>Vizualizează conversație activă</Button>
                 </Link> : []}
                 

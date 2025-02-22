@@ -234,14 +234,14 @@ func GetAd(w http.ResponseWriter, r *http.Request) {
 
 	ad := db.GetAd(c.ID(r, "id"))
 
-	if ad.Status != db.STATUS_PUBLISHED {
-		w.Header().Add("X-Aham-Unpublished", fmt.Sprint(ad.Cycle))
+	if ad == nil {
+		// todo check 410 gone is needed or 503
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	if ad == nil {
-		// todo check 410 gone is needed or 503
+	if ad.Status != db.STATUS_PUBLISHED {
+		w.Header().Add("X-Aham-Unpublished", fmt.Sprint(ad.Cycle))
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}

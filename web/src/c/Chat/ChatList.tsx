@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { FC } from "react";
 import { Chat } from "../types";
-import { Button } from "@mui/joy";
+import { Button, List, ListItem } from "@mui/joy";
+import { css } from "@emotion/react";
 
 export interface ChatListProps {
   items: Chat[] | undefined;
@@ -10,16 +11,37 @@ export interface ChatListProps {
 
 const ChatList: FC<ChatListProps> = ({items, current}) => {
   return (
-    <div>
-      {items?.map((chat) => (
-        <div key={chat.id} data-test={current}>
-            <Link href={`/u/mesaje/${chat.id}`} prefetch={false}>
-                <Button variant={chat.id === current ? 'solid' : 'outlined'}>
-                  {chat.title}
-                </Button>
-            </Link>
-        </div>
-      ))}
+    <div
+      css={css`
+        display: flex;  
+        flex-direction: column;
+      `}
+    >
+      <div
+        data-test="chat-list-header"
+        css={css`
+          height: 50px;
+          border-bottom: 1px solid #ededed;
+        `}
+      >
+        Test
+      </div>
+      <div
+        data-test="chat-list-items"
+        css={css`
+          overflow: hidden;  
+        `}
+      >
+        <List>
+          {items?.map((chat) => (
+            <ListItem key={chat.id} data-test={current}>
+                <Link href={`/u/mesaje/${chat.id}`} prefetch={false}>
+                    {chat.title}
+                </Link>
+            </ListItem>
+          ))}
+        </List>
+      </div>
     </div>
   );
 };

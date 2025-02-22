@@ -162,6 +162,7 @@ func GetChats(userID int64, resourceContext resourceContext, reference int64, ar
 			and context = $2
 			and (reference = $3 OR $3 = 0)
 			and archived = $4
+		order by created_at desc
 	`
 
 	conn := c.DB()

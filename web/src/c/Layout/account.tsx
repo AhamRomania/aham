@@ -23,7 +23,7 @@ import {
   SettingsOutlined,
   ThumbDown,
 } from "@mui/icons-material";
-import { Breadcrumbs, IconButton, Snackbar } from "@mui/joy";
+import { Breadcrumbs, Button, IconButton, Snackbar } from "@mui/joy";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { getUser } from "../Auth";
@@ -34,10 +34,11 @@ import Sam, { SamPermission, SamResource } from "../Sam";
 import Tip from "../tooltip";
 import { Ad, User } from "../types";
 import { Menu, MenuItem } from "./aside";
-import { Centred, Space } from "./common";
+import { Space } from "./common";
 import { getBalance } from "@/api/common";
 import { toMoney } from "../formatter";
 import useSocket from "../ws";
+import { useRouter } from "next/navigation";
 
 export interface AccountLayoutAPI {
   setPath: (path: React.ReactElement) => void;
@@ -48,6 +49,7 @@ interface SnackbarItem {
   message: React.ReactNode;
   open: boolean;
   duration: number;
+  endDecorator?:React.ReactNode|null;
 }
 
 export const AccountLayoutContext = React.createContext<AccountLayoutAPI>(
@@ -55,6 +57,7 @@ export const AccountLayoutContext = React.createContext<AccountLayoutAPI>(
 );
 
 const AccountLayout = ({ children }: React.PropsWithChildren) => {
+  const router = useRouter();
   const [balance, setBalance] = useState(0);
   const [open, setOpen] = useState(true);
   const [me, setMe] = useState<User | null>(null);
@@ -69,11 +72,11 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
     getBalance().then(setBalance);
   }, []);
 
-  const handleOpenSnackbar = (message: React.ReactNode, duration: number = 3000) => {
+  const handleOpenSnackbar = (message: React.ReactNode, duration: number = 3000, endDecorator = null) => {
     const id = new Date().getTime().toString();
     setSnackbars((prevSnackbars) => [
       ...prevSnackbars,
-      { id, message, open: true, duration },
+      { id, message, open: true, duration, endDecorator },
     ]);
   };
 
@@ -93,12 +96,20 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
     handleOpenSnackbar(<><CheckCircle color="success"/>Afișarea<strong>{ad.title}</strong>este finalizată</>, 3000);
   };
 
+  const onChatMessage = ({chat,message}:{message:any,chat:any}) => {
+    handleOpenSnackbar(<>{message.message}</>, 3000, <><Button onClick={() => router.push(`/u/mesaje/${chat.id}`)} variant="soft">Răspunde</Button></>);
+  };
+
   useEffect(() => {
     return socket.on<Ad>("ad.publish", onAdPublish);
   }, []);
 
   useEffect(() => {
     return socket.on<Ad>("ad.complete", onAdComplete);
+  }, []);
+
+  useEffect(() => {
+    return socket.on<any>("chat.message", onChatMessage);
   }, []);
 
   return (
@@ -410,6 +421,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           key={snackbar.id}
           variant="outlined"
           open={snackbar.open}
+          endDecorator={snackbar.endDecorator}
           autoHideDuration={snackbar.duration}
           onClose={() => handleCloseSnackbar(snackbar.id)}
           anchorOrigin={{ vertical: "top", horizontal: "right" }} // Customize position as needed
