@@ -772,7 +772,7 @@ func GetFavouriteCount(owner int64) (count int64) {
 
 func GetAdCounts(owner int64) *c.D {
 	return &c.D{
-		"drafts":    GetAdCount(Filter{Mode: "drafts", Owner: &owner}),
+		"drafts":    GetAdCount(Filter{Mode: "draft", Owner: &owner}),
 		"pending":   GetAdCount(Filter{Mode: "pending", Owner: &owner}),
 		"rejected":  GetAdCount(Filter{Mode: "rejected", Owner: &owner}),
 		"fixing":    GetAdCount(Filter{Mode: "fixing", Owner: &owner}),

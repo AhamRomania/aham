@@ -1,6 +1,5 @@
 "use client";
 
-import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import AdApproving from "@/c/Pages/AdApproving";
 import { useContext, useEffect } from "react";
@@ -17,7 +16,6 @@ export default function Page() {
   }, []);
   return (
     <>
-      <PageName>Anunțuri Noi</PageName>
       <AdApproving />
     </>
   );
