@@ -4,6 +4,8 @@ bin/*
 data/*
 !data/templates
 !data/cdn/.gitkeep
+!data/watermark.png
+!data/cdn/watermark.png
 !data/db/api/.gitkeep
 !data/db/redis/.gitkeep
 !data/db/wp/.gitkeep

@@ -5,6 +5,7 @@ ROOT_DIR="$(dirname $SCRIPT_DIR)"
 BIN_PATH="$ROOT_DIR/bin"
 
 mkdir -p $ROOT_DIR/data/cdn
+cp $ROOT_DIR/data/watermark.png $ROOT_DIR/data/cdn/
 mkdir -p $ROOT_DIR/data/db/api
 mkdir -p $ROOT_DIR/data/db/wp
 

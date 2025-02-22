@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"hash/crc32"
 	"image"
+	"image/color"
+	"image/draw"
 	_ "image/gif"
 	_ "image/jpeg"
 	"image/png"
@@ -20,7 +22,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/TwiN/go-color"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httprate"
@@ -63,11 +64,11 @@ func main() {
 
 	listen := os.Getenv("LISTEN")
 
-	c.Log().Infof("Server is listening on: %s", color.Ize(color.Yellow, listen))
+	c.Log().Infof("Server is listening on: %s", listen)
 
 	if os.Getenv("HTTP2") == "" {
 		if err := http.ListenAndServe(listen, mux); err != nil {
-			c.Log().Errorf("Error starting server: %s", color.Ize(color.Red, err.Error()))
+			c.Log().Errorf("Error starting server: %s", err.Error())
 		}
 		return
 	}
@@ -91,7 +92,7 @@ func main() {
 	c.Log().Infof("Key %s", key)
 
 	if err := server.ListenAndServeTLS(cert, key); err != nil {
-		c.Log().Errorf("Error starting server: %s", color.Ize(color.Red, err.Error()))
+		c.Log().Errorf("Error starting server: %s", err.Error())
 	}
 }
 
@@ -164,6 +165,60 @@ func remove(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
+
+func watermark(img image.Image) image.Image {
+
+	path := filepath.Join(os.Getenv("FILES"), "watermark.png")
+
+	watermarkFile, err := os.Open(path)
+
+	if err != nil {
+		c.Log().Error("Error opening watermark:", err)
+		return img
+	}
+
+	defer watermarkFile.Close()
+
+	watermarkImg, _, err := image.Decode(watermarkFile)
+
+	if err != nil {
+		c.Log().Error("Error decoding watermark:", err)
+		return img
+	}
+
+	watermarkImg = resize.Resize(42, 0, watermarkImg, resize.Lanczos3)
+
+	watermarkImg = adjustOpacity(watermarkImg, 0.24)
+
+	offset := image.Pt(img.Bounds().Dx()-watermarkImg.Bounds().Dx()-20, img.Bounds().Dy()-watermarkImg.Bounds().Dy()-20)
+
+	newImg := image.NewRGBA(img.Bounds())
+	draw.Draw(newImg, img.Bounds(), img, image.Point{}, draw.Src)
+	draw.Draw(newImg, watermarkImg.Bounds().Add(offset), watermarkImg, image.Point{}, draw.Over)
+
+	return newImg.SubImage(newImg.Rect)
+}
+
+func adjustOpacity(img image.Image, opacity float64) *image.NRGBA {
+	bounds := img.Bounds()
+	newImg := image.NewNRGBA(bounds)
+
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
+			r, g, b, a := img.At(x, y).RGBA()
+			alpha := uint16(float64(a) * opacity) // Adjust opacity (0.0 to 1.0)
+
+			newImg.Set(x, y, color.NRGBA{
+				R: uint8(r >> 8),
+				G: uint8(g >> 8),
+				B: uint8(b >> 8),
+				A: uint8(alpha >> 8),
+			})
+		}
+	}
+
+	return newImg
 }
 
 func serve(w http.ResponseWriter, r *http.Request) {
@@ -251,6 +306,8 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m := resize.Resize(width, 0, img, resize.Lanczos3)
+
+	m = watermark(m)
 
 	buf := &bytes.Buffer{}
 
