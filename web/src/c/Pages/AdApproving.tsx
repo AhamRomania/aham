@@ -18,14 +18,13 @@ import {
     ModalDialog,
     Textarea,
 } from "@mui/joy";
-import Link from "next/link";
 import { FC, useEffect, useState } from "react";
+import { PageName } from "../Layout";
 import { Ad, Prop } from "../types";
 import AdPictures from "../Widget/AdPictures";
 import AdSpectsListing from "../Widget/AdSpecsListing";
 import Loading from "../Widget/Loading";
 import NoResults from "../Widget/NoResults";
-import { PageName } from "../Layout";
 
 const AdApproving: FC = ({}) => {
   const [ads, setAds] = useState<Ad[] | null>(null);

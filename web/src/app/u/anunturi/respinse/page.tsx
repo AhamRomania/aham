@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 
 export default function Page() {
-  const [ads, setAds] = useState<Ad[] | null>(null);
+  const [ads] = useState<Ad[] | null>(null);
   const { setPath } = useContext(AccountLayoutContext);
   useEffect(() => {
     setPath(
