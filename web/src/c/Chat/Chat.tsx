@@ -21,7 +21,7 @@ const Chat: FC<ChatProps> = ({ selected }) => {
   const router = useRouter();
   const api = getApiFetch();
   const [user, setUser] = useState<User|null>(null);
-  const [chats, setChats] = useState<Vo[]>([]);
+  const [chats, setChats] = useState<Vo[] | null>(null);
   const [chat, setChat] = useState<Vo | null>(null);
   const [adURL, setAdURL] = useState("");
   const { setPath } = useContext(AccountLayoutContext);
@@ -58,7 +58,7 @@ const Chat: FC<ChatProps> = ({ selected }) => {
             <span>{chat.title}</span>
           )
         ) : (
-          <CircularProgress size="sm" />
+          typeof(chat) === 'undefined' ? <CircularProgress size="sm" /> : ''
         )}
       </>
     );
@@ -70,7 +70,7 @@ const Chat: FC<ChatProps> = ({ selected }) => {
 
   useEffect(() => {
     if (chats && selected) {
-      setChat(chats.find((i) => i.id === selected)!);
+      setChat(chats.find((i) => i.id === selected) || null);
     }
   }, [chats, selected]);
 
@@ -113,7 +113,7 @@ const Chat: FC<ChatProps> = ({ selected }) => {
         `}
       >
         <ChatMessageList chat={chat} />
-        <ChatInput onMessageCreated={onMessageCreated} chat={chat} />
+        {chat && <ChatInput onMessageCreated={onMessageCreated} chat={chat} />}
       </div>
     </div>
   );

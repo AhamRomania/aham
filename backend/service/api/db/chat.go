@@ -3,6 +3,8 @@ package db
 import (
 	"aham/common/c"
 	"context"
+	"fmt"
+	"slices"
 	"time"
 
 	. "aham/service/api/db/aham/public/table"
@@ -27,6 +29,7 @@ type Chat struct {
 	ParticipantsIDS []int64         `json:"-"`
 	Participants    []UserMin       `json:"participants,omitempty"`
 	Archived        []int64         `json:"archived,omitempty"`
+	Deleted         []int64         `json:"-"`
 	CreatedAt       time.Time       `json:"created_at,omitempty"`
 }
 
@@ -43,6 +46,66 @@ type Message struct {
 type ChatAbout struct {
 	Context   resourceContext `json:"name"`
 	Reference *int64          `json:"reference"`
+}
+
+func (chat *Chat) Delete(userID int64) (err error) {
+
+	if GetUserByID(userID) == nil {
+		return errors.New("unknown user")
+	}
+
+	for _, user := range chat.Archived {
+		if user == userID {
+			return
+		}
+	}
+
+	chat.Deleted = append(chat.Deleted, userID)
+
+	var permanentlyDelete = true
+
+	for _, user := range chat.ParticipantsIDS {
+		if slices.Index(chat.Deleted, user) == -1 {
+			permanentlyDelete = false
+			break
+		}
+	}
+
+	conn := c.DB()
+	defer conn.Release()
+
+	if permanentlyDelete {
+
+		_, err := conn.Exec(
+			context.TODO(),
+			`delete from chats where id = $1`,
+			chat.ID,
+		)
+
+		if err != nil {
+			c.Log().Error(err)
+			return err
+		}
+
+		return nil
+	}
+
+	cmd, err := conn.Exec(
+		context.TODO(),
+		`update chats set deleted = $1 where id = $2`,
+		chat.Deleted,
+		chat.ID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if cmd.RowsAffected() == 0 {
+		return errors.New("nothing updated")
+	}
+
+	return
 }
 
 func (chat *Chat) Archive(userID int64) (err error) {
@@ -92,9 +155,9 @@ func CreateChat(title string, participants []int64, about *ChatAbout) (chat *Cha
 
 	sql := `
 		insert into chats 
-			(title, context, reference, participants, archived, created_at)
+			(title, context, reference, participants, archived, deleted, created_at)
 		values
-			($1, $2, $3, $4, $5, $6)
+			($1, $2, $3, $4, $5, $6, $7)
 		returning id
 	`
 
@@ -108,6 +171,7 @@ func CreateChat(title string, participants []int64, about *ChatAbout) (chat *Cha
 		about.Context,
 		about.Reference,
 		participants,
+		[]int64{},
 		[]int64{},
 		now,
 	)
@@ -153,7 +217,8 @@ func GetChat(id int64) (chat *Chat) {
 			reference,
 			participants,
 			created_at,
-			archived
+			archived,
+			deleted
 		from chats
 		where id = $1
 	`
@@ -177,6 +242,7 @@ func GetChat(id int64) (chat *Chat) {
 		&chat.ParticipantsIDS,
 		&chat.CreatedAt,
 		&chat.Archived,
+		&chat.Deleted,
 	)
 
 	if err != nil {
@@ -202,6 +268,8 @@ func GetChats(userID int64, resourceContext resourceContext, reference int64, ar
 		where = append(where, Chats.Reference.EQ(Int(reference)))
 	}
 
+	where = append(where, RawBool("NOT deleted @> ARRAY[user]::int[]", map[string]interface{}{"user": userID}))
+
 	/*
 		if archived {
 			where = append(where, RawBool("archived = @> ARRAY[user]::int[]", map[string]interface{}{"user": userID}))
@@ -217,6 +285,7 @@ func GetChats(userID int64, resourceContext resourceContext, reference int64, ar
 		Chats.Participants,
 		Chats.CreatedAt,
 		Chats.Archived,
+		Chats.Deleted,
 	).WHERE(
 		AND(where...),
 	).ORDER_BY(
@@ -225,6 +294,8 @@ func GetChats(userID int64, resourceContext resourceContext, reference int64, ar
 
 	conn := c.DB()
 	defer conn.Release()
+
+	fmt.Println(smtp.DebugSql())
 
 	sql, params := smtp.Sql()
 
@@ -251,6 +322,7 @@ func GetChats(userID int64, resourceContext resourceContext, reference int64, ar
 			&chat.ParticipantsIDS,
 			&chat.CreatedAt,
 			&chat.Archived,
+			&chat.Deleted,
 		)
 
 		chat.Participants = usersmin(chat.ParticipantsIDS)

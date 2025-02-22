@@ -18,5 +18,6 @@ type Chats struct {
 	Reference    *int32
 	Participants string
 	Archived     string
+	Deleted      string
 	CreatedAt    time.Time
 }

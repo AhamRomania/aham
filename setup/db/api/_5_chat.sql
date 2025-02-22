@@ -5,6 +5,7 @@ create table chats (
     "reference" integer,
     "participants" integer[] not null,
     "archived" integer[] not null,
+    "deleted" integer[] not null,
     "created_at" timestamp not null default current_timestamp
 );
 
@@ -13,7 +14,7 @@ CREATE INDEX idx_chat_participants ON chats USING gin ("participants");
 
 create table messages (
     "id" serial not null primary key,
-    "chat" integer not null references chats(id),
+    "chat" integer not null references chats(id) ON DELETE CASCADE,
     "from" integer not null references users(id),
     "message" text not null,
     "seen" json,

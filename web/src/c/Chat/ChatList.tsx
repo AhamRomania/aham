@@ -27,7 +27,7 @@ const ChatList: FC<ChatListProps> = ({ items, user, current, onChange }) => {
         if (items && typeof(current) !== 'undefined' && user) {
             const subject = items.find(i => i.id == current);
             if (subject) {
-                setArchived(subject.archived.indexOf(user.id) >= 0);
+                setArchived((subject.archived||[]).indexOf(user.id) >= 0);
             }
         }
     }, [items, current, user]);
@@ -84,9 +84,9 @@ const ChatList: FC<ChatListProps> = ({ items, user, current, onChange }) => {
         let out = [];
 
         if (archived) {
-            out = items.filter(i => i.archived.indexOf(user.id) >= 0) || [];    
+            out = items.filter(i => (i.archived||[]).indexOf(user.id) >= 0) || [];    
         } else {
-            out = items.filter(i => i.archived.indexOf(user.id) === -1) || [];
+            out = items.filter(i => (i.archived||[]).indexOf(user.id) === -1) || [];
         }
         
         if (searchKeyword) {
@@ -94,6 +94,23 @@ const ChatList: FC<ChatListProps> = ({ items, user, current, onChange }) => {
         }
 
         return out.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    if (items.length === 0) {
+        return (
+            <div
+                css={css`
+                    height: 100%;
+                    display:flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: 12px;
+                    color: #999;
+                `}
+            >
+                Niciun mesaj de afișat
+            </div>
+        )
     }
 
   return (

@@ -23,6 +23,7 @@ type chatsTable struct {
 	Reference    postgres.ColumnInteger
 	Participants postgres.ColumnString
 	Archived     postgres.ColumnString
+	Deleted      postgres.ColumnString
 	CreatedAt    postgres.ColumnTimestamp
 
 	AllColumns     postgres.ColumnList
@@ -70,9 +71,10 @@ func newChatsTableImpl(schemaName, tableName, alias string) chatsTable {
 		ReferenceColumn    = postgres.IntegerColumn("reference")
 		ParticipantsColumn = postgres.StringColumn("participants")
 		ArchivedColumn     = postgres.StringColumn("archived")
+		DeletedColumn      = postgres.StringColumn("deleted")
 		CreatedAtColumn    = postgres.TimestampColumn("created_at")
-		allColumns         = postgres.ColumnList{IDColumn, TitleColumn, ContextColumn, ReferenceColumn, ParticipantsColumn, ArchivedColumn, CreatedAtColumn}
-		mutableColumns     = postgres.ColumnList{TitleColumn, ContextColumn, ReferenceColumn, ParticipantsColumn, ArchivedColumn, CreatedAtColumn}
+		allColumns         = postgres.ColumnList{IDColumn, TitleColumn, ContextColumn, ReferenceColumn, ParticipantsColumn, ArchivedColumn, DeletedColumn, CreatedAtColumn}
+		mutableColumns     = postgres.ColumnList{TitleColumn, ContextColumn, ReferenceColumn, ParticipantsColumn, ArchivedColumn, DeletedColumn, CreatedAtColumn}
 	)
 
 	return chatsTable{
@@ -85,6 +87,7 @@ func newChatsTableImpl(schemaName, tableName, alias string) chatsTable {
 		Reference:    ReferenceColumn,
 		Participants: ParticipantsColumn,
 		Archived:     ArchivedColumn,
+		Deleted:      DeletedColumn,
 		CreatedAt:    CreatedAtColumn,
 
 		AllColumns:     allColumns,
