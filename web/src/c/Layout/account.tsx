@@ -361,10 +361,16 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                   justify-content: center;
                   padding: 0 20px;
                   background: #fff;
+                  font-size: 20px;
+                  font-weight: bold;
+                  font-family: "Courier New", Courier, monospace;
+                  img {
+                    margin-left: 5px;
+                  }
                 `}
               >
-                {balance > 0 ? <strong>{toMoney(balance)}</strong> : 0}
-                <span>LEI</span>
+                <strong>{balance > 0 ? toMoney(balance) : 100}</strong>
+                <img width={16} height={16} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABVUlEQVR4nO1WQU7DMBA0ildQfoA48RDu5RnlSOkX+AS8Agl2Qx/Asb3xBFQOIBDXquz2YLSRGy7QJBtHlVBGsuTE6804Ox7buR5GhEd3sL7PzhjhhhHmQv6ZEZbaYn+uY+s8G2qsSwkmOGeCdyEIdZrGMsEoyceF/PgnuX8S8leC/nSV75+EB3eoTfv6rhgrYsr4cXsC6BdFMvSTENxeVbzGSO4v45xFewIUV2MhQBDSESBLCRIS4IYiTE4g6DbMsyEjXDPC7JdtONOxzTZMXwL8rxoIfzvcihHe6tbdpAFu6HAx+WdRb4IPRvgya0A6crjaGhCLw6GfRAIvy+ngONy6gVkDYlF3SSCBBqSlupngNQrVqgHoxOFqH0bS0uHCnTvS561/Cv3FzjTAVRcS6VgDVQty/SknbYwozVXL2614m7qbgAlGO7tub9DUB8qJPXo4G74BQpgHCXHbt1AAAAAASUVORK5CYII=" />
               </div>
               <div
                 css={css`
