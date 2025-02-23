@@ -1,0 +1,8 @@
+{{template "layout" .}}
+{{define "contents"}}
+Salut {{.NAME}},
+
+Anunțul {{.TITLE}} este disponibil pentru a fi publicat iarăși.
+
+Vizualizează anunț: <a href="{{.HREF}}">{{.HREF}}</a>
+{{end}}

@@ -1,8 +1,10 @@
 "use client";
 
+import { getFixingAds } from "@/api/ads";
 import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { Ad } from "@/c/types";
+import AdListItemFixing from "@/c/Widget/AdListItemFixing";
 import Loading from "@/c/Widget/Loading";
 import NoResults from "@/c/Widget/NoResults";
 import { Button } from "@mui/joy";
@@ -10,7 +12,7 @@ import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 
 export default function Page() {
-  const [ads] = useState<Ad[]|null>(null);
+  const [ads, setAds] = useState<Ad[]|null>(null);
   const { setPath } = useContext(AccountLayoutContext);
   useEffect(() => {
     setPath(
@@ -19,6 +21,12 @@ export default function Page() {
         <span>Retușare</span>
       </>
     );
+  }, []);
+
+  const update = () => getFixingAds().then(setAds);
+
+  useEffect(() => {
+    update();
   }, []);
 
   if (ads == null) {
@@ -40,7 +48,9 @@ export default function Page() {
   return (
     <>
       <PageName>Anunțuri Pentru Validare</PageName>
-      <div>Anunturi</div>
+      {ads?.map((ad, index) => (
+        <AdListItemFixing onChange={() => update()} key={index} ad={ad} />
+      ))}
     </>
   );
 }

@@ -3,6 +3,7 @@ package route
 import (
 	"aham/common/c"
 	"aham/common/cdn"
+	"aham/common/emails"
 	"aham/common/ws"
 	"aham/service/api/db"
 	"aham/service/api/sam"
@@ -309,11 +310,18 @@ func publish(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ws.Send(userID, ws.NewEvent("ad.publish", &c.D{
+	err = ws.Send(userID, ws.NewEvent("ad.publish", &c.D{
 		"id":    ad.ID,
 		"title": ad.Title,
 		"href":  ad.Href,
 	}))
+
+	if err != nil {
+		emails.OnAdPublished(db.GetUserByID(userID).Recipient(), emails.OnAdPublishedParams{
+			Title: ad.Title,
+			Href:  ad.Href,
+		})
+	}
 
 	if user := db.GetUserByID(userID); user != nil {
 		user.Notify(

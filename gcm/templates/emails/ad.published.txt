@@ -1,0 +1,8 @@
+{{template "layout" .}}
+{{define "contents"}}
+Salut {{.NAME}},
+
+Felicitări, anunțul {{.TITLE}} a fost aprobat și publicat!
+
+Vizualizează anunț: <a href="{{.HREF}}">{{.HREF}}</a>
+{{end}}

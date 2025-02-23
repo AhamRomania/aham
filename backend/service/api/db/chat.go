@@ -2,6 +2,8 @@ package db
 
 import (
 	"aham/common/c"
+	"aham/common/emails"
+	"aham/common/ws"
 	"context"
 	"slices"
 	"time"
@@ -363,6 +365,25 @@ func (chat *Chat) CreateMessage(from int64, message string) (msg *Message, err e
 		return nil, errors.New("expected message")
 	}
 
+	go func() {
+		for _, participant := range chat.ParticipantsIDS {
+			if participant != msg.From.ID {
+				ws.IsOnlineTouch(participant, func(online bool) {
+					if !online {
+						emails.OnChatMessage(
+							GetUserByID(participant).Recipient(),
+							emails.OnChatMessageParams{
+								Title: chat.Title,
+								From:  GetUserByID(msg.FromID).GivenName,
+								Href:  c.URLF(c.Web, "/u/mesaje/%d", msg.ChatID),
+							},
+						)
+					}
+				})
+			}
+		}
+	}()
+
 	return msg, nil
 }
 
@@ -374,6 +395,8 @@ func GetMessage(id int64) (message *Message) {
 			u.id,
 			u.given_name,
 			u.family_name,
+			u.id,
+			m.chat,
 			m.message,
 			m.seen,
 			m.created_at
@@ -398,6 +421,8 @@ func GetMessage(id int64) (message *Message) {
 		&message.From.ID,
 		&message.From.GivenName,
 		&message.From.FamilyName,
+		&message.FromID,
+		&message.ChatID,
 		&message.Message,
 		&message.Seen,
 		&message.CreatedAt,

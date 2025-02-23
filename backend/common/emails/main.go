@@ -52,6 +52,43 @@ func Welcome(to Recipient, params WelcomeParams) {
 	send(to, "welcome", params)
 }
 
+type OnAdApprovedProps struct {
+	Title string `json:"TITLE"`
+	Href  string `json:"HREF"`
+}
+
+func OnAdApproved(to Recipient, params OnAdApprovedProps) {
+	send(to, "ad.approved", params)
+}
+
+type OnAdPublishedParams struct {
+	Title string `json:"TITLE"`
+	Href  string `json:"HREF"`
+}
+
+func OnAdPublished(to Recipient, params OnAdPublishedParams) {
+	send(to, "ad.published", params)
+}
+
+type OnAdCompletedParams struct {
+	Title string `json:"TITLE"`
+	Href  string `json:"HREF"`
+}
+
+func OnAdCompleted(to Recipient, params OnAdCompletedParams) {
+	send(to, "ad.completed", params)
+}
+
+type OnChatMessageParams struct {
+	Title string `json:"TITLE"`
+	From  string `json:"FROM"`
+	Href  string `json:"HREF"`
+}
+
+func OnChatMessage(to Recipient, params OnChatMessageParams) {
+	send(to, "chat.message", params)
+}
+
 func send(recipient Recipient, template string, params any) {
 
 	var parmsChanged map[string]any

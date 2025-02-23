@@ -1,7 +1,9 @@
 package c
 
 import (
+	"crypto/rand"
 	"database/sql/driver"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -141,6 +143,19 @@ func Todo(todo string) http.HandlerFunc {
 		w.WriteHeader(http.StatusNotImplemented)
 		w.Write([]byte("Todo: " + todo))
 	}
+}
+
+func GenerateNonce(n int) (string, error) {
+	b := make([]byte, n)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	return base64.RawURLEncoding.EncodeToString(b), nil
+}
+
+func MustGenerateNonce(n int) string {
+	nonce, _ := GenerateNonce(n)
+	return nonce
 }
 
 func Copy(dst, from any) error {

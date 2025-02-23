@@ -3,6 +3,7 @@ package db
 import (
 	"aham/common/c"
 	"aham/common/cdn"
+	"aham/common/emails"
 	"aham/common/ws"
 	. "aham/service/api/db/aham/public/table"
 	"context"
@@ -231,10 +232,22 @@ func (ad *Ad) Accept(tx pgx.Tx) (err error) {
 
 	ad.Status = STATUS_APPROVED
 
-	ws.Send(ad.Owner.ID, ws.NewEvent("ad.approve", &c.D{
+	// send first on socket
+	err = ws.Send(ad.Owner.ID, ws.NewEvent("ad.approve", &c.D{
 		"ad":    ad.ID,
 		"title": ad.Title,
 	}))
+
+	// fallback on email
+	if err != nil {
+		emails.OnAdApproved(
+			GetUserByID(ad.Owner.ID).Recipient(),
+			emails.OnAdApprovedProps{
+				Title: ad.Title,
+				Href:  c.URLF(c.Web, "/u/anunturi?id=%d", ad.ID),
+			},
+		)
+	}
 
 	return
 }
@@ -963,10 +976,25 @@ func (ad *Ad) Finish() (err error) {
 		return errors.New("nothin updated")
 	}
 
-	ws.Send(ad.Owner.ID, ws.NewEvent("ad.complete", &c.D{
-		"ad":    ad.ID,
-		"title": ad.Title,
-	}))
+	go func() {
+
+		// send on socket first
+		err = ws.Send(ad.Owner.ID, ws.NewEvent("ad.complete", &c.D{
+			"ad":    ad.ID,
+			"title": ad.Title,
+		}))
+
+		// fallback to email
+		if err != nil {
+			emails.OnAdCompleted(
+				GetUserByID(ad.Owner.ID).Recipient(),
+				emails.OnAdCompletedParams{
+					Title: ad.Title,
+					Href:  c.URLF(c.Web, "/u/anunturi/disponibile?id=%d", ad.ID),
+				},
+			)
+		}
+	}()
 
 	return
 }

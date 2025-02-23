@@ -41,6 +41,14 @@ export async function getPublishedAds(): Promise<Ad[]> {
     return await getApiFetch()<Ad[]>(`/ads?mode=published`);
 }
 
+export async function getFixingAds(): Promise<Ad[]> {
+    return await getApiFetch()<Ad[]>(`/ads?mode=fixing`);
+}
+
+export async function getRejectedAds(): Promise<Ad[]> {
+    return await getApiFetch()<Ad[]>(`/ads?mode=rejected`);
+}
+
 export async function getAdsByQuery(query:string): Promise<Ad[]> {
     return await getApiFetch()<Ad[]>(`/ads?mode=published&skip-owner=true&query=${query}`);
 }

@@ -9,13 +9,15 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Cookie from 'js-cookie';
 import Tip from '../tooltip';
-import { ACCESS_TOKEN_COOKIE_NAME, getLoggedInState } from '../Auth';
+import { ACCESS_TOKEN_COOKIE_NAME, getLoggedInState, getUser } from '../Auth';
 import { CircularProgress } from '@mui/joy';
+import { User } from '../types';
 
 const HeadMenu: FC = () => {
 
     const [ready, setReady] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [me,setMe] = useState<User|null>()
 
     const router = useRouter()
 
@@ -26,6 +28,7 @@ const HeadMenu: FC = () => {
     };
     
     useEffect(() => {
+        getUser().then(setMe);
         getLoggedInState().then(
             state => {
                 setIsLoggedIn(state);
@@ -85,6 +88,7 @@ const HeadMenu: FC = () => {
 
             <Tip title='Deschide meniul'>
                 <button
+                    title={me?.given_name}
                     onClick={handleClick}
                     className={styles.headMenuButtonMore}
                     aria-controls={open ? 'basic-menu' : undefined}

@@ -25,6 +25,10 @@ const connectWebSocket = async () => {
         ws.addEventListener("message", (socketEvent) => {
             try {
                 const { event, data } = JSON.parse(socketEvent.data);
+                if (event == "touch") {
+                    ws!.send(JSON.stringify({ event, data }));
+                    return
+                }
                 handlers[event]?.forEach((fn) => fn(data));
             } catch (error) {
                 console.error("ws: error parsing message", error);

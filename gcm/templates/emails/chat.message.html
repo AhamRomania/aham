@@ -1,0 +1,6 @@
+{{template "layout" .}}
+{{define "contents"}}
+Salut {{.NAME}},<br/><br/>
+Ai primit un mesaj de la {{.FROM}} pentru anunțul {{.TITLE}}!<br/><br/>
+Vizualizează mesaje: <a href="{{.HREF}}">{{.HREF}}</a><br/><br/>
+{{end}}
