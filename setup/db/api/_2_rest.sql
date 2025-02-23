@@ -45,7 +45,7 @@ create table users (
     picture varchar(255),
     source varchar(20) default 'native',
     "role" role default 'user',
-    preferences json,
+    meta json,
     third_pary_access_token text,
     email_activation_token varchar(255),
     phone_activation_token varchar(255),

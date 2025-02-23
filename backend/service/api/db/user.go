@@ -6,6 +6,7 @@ import (
 	"aham/service/api/sam"
 	"aham/service/api/types"
 	"context"
+	"errors"
 	"strings"
 	"time"
 )
@@ -23,36 +24,76 @@ const (
 	UserPrefActiveAds UserPref = "active_ads"
 	// Ad lifetime in minutes
 	UserPrefAdLifetime UserPref = "ad_lifetime"
+	// Referrer ID
+	UserPrefReferrer UserPref = "referrer"
+	// User who referred me
+	UserPrefReferred UserPref = "referred"
 )
 
-type UserPreferences map[UserPref]any
+type UserMeta map[UserPref]any
 
-func (up UserPreferences) GetInt(key UserPref, def int) (res int) {
+func (up UserMeta) GetInt(key UserPref, def int) (res int) {
 	if value, exists := up[key]; exists {
 		return int(value.(float64))
 	}
 	return def
 }
 
+func (up UserMeta) GetString(key UserPref, def string) (res string) {
+	if value, exists := up[key]; exists {
+		if pref, isString := value.(string); isString {
+			return pref
+		}
+	}
+	return def
+}
+
+func (user *User) UpdateMeta(pref UserMeta) (err error) {
+
+	for k, v := range pref {
+		user.Meta[k] = v
+	}
+
+	conn := c.DB()
+	defer conn.Release()
+
+	cmd, err := conn.Exec(
+		context.TODO(),
+		`update users set meta = $1 where id = $2`,
+		user.Meta,
+		user.ID,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if cmd.RowsAffected() != 1 {
+		return errors.New("expected user updated")
+	}
+
+	return nil
+}
+
 type User struct {
-	ID                    int64           `json:"id"`
-	Email                 string          `json:"email,omitempty"`
-	Password              string          `json:"-"`
-	GivenName             string          `json:"given_name"`
-	FamilyName            string          `json:"family_name"`
-	Phone                 string          `json:"phone,omitempty"`
-	City                  int64           `json:"city,omitempty"`
-	Picture               *string         `json:"picture,omitempty"`
-	Source                string          `json:"source,omitempty"`
-	Role                  string          `json:"role,omitempty"`
-	ThirdPartyAccessToken string          `json:"third_pary_access_token,omitempty"`
-	Settled               bool            `json:"settled,omitempty"`
-	EmailActivationToken  *string         `json:"email_activation_token,omitempty"`
-	PhoneActivationToken  *string         `json:"phone_activation_token,omitempty"`
-	EmailActivatedAt      *time.Time      `json:"email_activated_at,omitempty"`
-	PhoneActivatedAt      *time.Time      `json:"phone_activated_at,omitempty"`
-	Preferences           UserPreferences `json:"preferences,omitempty"`
-	CreatedAt             time.Time       `json:"created_at,omitempty"`
+	ID                    int64      `json:"id"`
+	Email                 string     `json:"email,omitempty"`
+	Password              string     `json:"-"`
+	GivenName             string     `json:"given_name"`
+	FamilyName            string     `json:"family_name"`
+	Phone                 string     `json:"phone,omitempty"`
+	City                  int64      `json:"city,omitempty"`
+	Picture               *string    `json:"picture,omitempty"`
+	Source                string     `json:"source,omitempty"`
+	Role                  string     `json:"role,omitempty"`
+	ThirdPartyAccessToken string     `json:"third_pary_access_token,omitempty"`
+	Settled               bool       `json:"settled,omitempty"`
+	EmailActivationToken  *string    `json:"email_activation_token,omitempty"`
+	PhoneActivationToken  *string    `json:"phone_activation_token,omitempty"`
+	EmailActivatedAt      *time.Time `json:"email_activated_at,omitempty"`
+	PhoneActivatedAt      *time.Time `json:"phone_activated_at,omitempty"`
+	Meta                  UserMeta   `json:"meta,omitempty"`
+	CreatedAt             time.Time  `json:"created_at,omitempty"`
 }
 
 func (u *User) Notify(title, contents string, variant types.NotifType, href string, actions ...*c.D) {
@@ -201,7 +242,7 @@ func (u *User) Create() error {
 				source,
 				third_pary_access_token,
 				email_activation_token,
-				preferences
+				meta
 			)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
 		u.Email,
@@ -213,7 +254,7 @@ func (u *User) Create() error {
 		u.Source,
 		u.ThirdPartyAccessToken,
 		u.EmailActivationToken,
-		u.Preferences,
+		u.Meta,
 	)
 
 	err := row.Scan(&u.ID)
@@ -235,6 +276,26 @@ func VerifyEmailExists(email string) bool {
 	).Scan(&found)
 
 	return found > 0
+}
+
+func GetUserByReferrer(referrer string) (user *User) {
+
+	conn := c.DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
+		context.TODO(),
+		`select id from users where meta->>'referrer' = $1 LIMIT 1`,
+		referrer,
+	)
+
+	var userID int64
+
+	if err := row.Scan(&userID); err != nil {
+		return nil
+	}
+
+	return GetUserByID(userID)
 }
 
 func GetUserByEmail(email string) (user *User, err error) {
@@ -307,7 +368,7 @@ func GetUserByID(id int64) *User {
 			phone_activation_token,
 			created_at,
 			email_activated_at,
-			preferences
+			meta
 		FROM
 			users
 		WHERE
@@ -328,8 +389,12 @@ func GetUserByID(id int64) *User {
 		&user.PhoneActivationToken,
 		&user.CreatedAt,
 		&user.EmailActivatedAt,
-		&user.Preferences,
+		&user.Meta,
 	)
+
+	if user.Meta == nil {
+		user.Meta = make(UserMeta)
+	}
 
 	if err != nil {
 		c.Log().Error(err)

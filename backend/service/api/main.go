@@ -30,8 +30,8 @@ func main() {
 
 	rest.Route("/v1", func(r chi.Router) {
 
-		r.Post("/users", route.CreateUser)
-		r.Get("/me", c.Guard(route.GetCurrentUser))
+		r.Route("/users", route.UserRoutes)
+		r.Route("/me", route.MeRoutes)
 		r.Get("/activate", route.ActivateUser)
 		r.Post("/auth", route.Auth)
 		r.Post("/auth/google", route.AuthWithGoogle)

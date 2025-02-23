@@ -27,6 +27,10 @@ export async function getBalance(): Promise<number> {
     return await getApiFetch()<string>(`/balance`, {text:true}).then(n => parseInt(n as string));
 }
 
+export async function getReferrerURL(): Promise<string> {
+    return await getApiFetch()<string>(`/me/referrer`, {text:true});
+}
+
 export async function getSitemap(): Promise<string> {
     return await getApiFetch()<string>(`/sitemap`, {text:true,cache:'force-cache'});
 }

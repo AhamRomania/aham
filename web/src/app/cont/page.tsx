@@ -5,6 +5,7 @@ import Logo from "@/c/logo";
 import OrSection from "@/c/orsection";
 import { CreateUserRequest, CreateUserResponse } from "@/c/types";
 import { css } from "@emotion/react";
+import Cookies from "js-cookie";
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import {
   Button,
@@ -55,6 +56,13 @@ export default function Page() {
 
       <RegisterForm key="registerForm" saving={saving} onFormSubmit={(formJson: CreateUserRequest) => {
         setSaving(true);
+
+        const referrer = Cookies.get('referrer');
+
+        if (referrer != '') {
+            formJson.referrer = referrer;
+        }
+
         api<CreateUserResponse>("/users", {
           method: "POST",
           body: JSON.stringify({

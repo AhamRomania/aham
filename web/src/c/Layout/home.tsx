@@ -3,6 +3,7 @@ import LargeHeader from "../LargeHeader";
 import Footer from "../Footer";
 import { Centred } from "./common";
 import getConfig from "next/config";
+import Referrer from "../Widget/Referrer";
 
 const HomepageLayout = ({children}: React.PropsWithChildren) => {
 
@@ -15,6 +16,7 @@ const HomepageLayout = ({children}: React.PropsWithChildren) => {
                 {children}
             </Centred>
             <Footer version={publicRuntimeConfig.version}/>
+            <Referrer/>
         </main>
     )
 }

@@ -1,0 +1,46 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Aham API",
+      "description": "Aham API ADS"
+    },
+    "host": "https://api.aham.ro",
+    "basePath": "/v1",
+    "schemes": ["http"],
+    "paths": {
+      "/users": {
+        "post": {
+          "summary": "Crează un utilizator",
+          "responses": {
+            "200": {
+              "description": "Utilizatorul creat",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "given_ame": {
+            "type": "string"
+          },
+          "family_name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+  

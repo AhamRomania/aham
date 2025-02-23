@@ -1,7 +1,7 @@
 
 
 // On auth a cookie is stored with this name
-const ACCESS_TOKEN_COOKIE_NAME = 'ahamjwt';
+const ACCESS_TOKEN_COOKIE_NAME = 'aham';
 
 // Get access token from browser or request
 const getAccessToken = async (): Promise<string | null> => {

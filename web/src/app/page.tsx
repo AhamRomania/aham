@@ -6,9 +6,10 @@ import { HomepageLayout } from "@/c/Layout";
 import { Ad } from "@/c/types";
 import MoreAds from "@/c/Widget/MoreAds";
 
-export const metadata = seo('/', {
+export const metadata = seo("/", {
   title: "Aham: Bazarul tău preferat",
-  description: "Începe explorarea în bazarul tău preferat unde găsești și cunoști o grămadă de lucruri.",
+  description:
+    "Începe explorarea în bazarul tău preferat unde găsești și cunoști o grămadă de lucruri.",
   icons: {
     apple: "favicons/favicon-180x180.png",
   },
@@ -19,16 +20,16 @@ export const metadata = seo('/', {
   },
 });
 
-export default async function Home () {
+export default async function Home() {
   const api = getApiFetch();
-  const promotion = await api<Ad[]>('/ads?mode=promotion');
-  const recommended = await api<Ad[]>('/ads?mode=recommended');
+  const promotion = await api<Ad[]>("/ads?mode=promotion");
+  const recommended = await api<Ad[]>("/ads?mode=recommended");
   return (
     <HomepageLayout>
       <CategoryListSection category={await fetchCategory(1)} />
       <CategoryListSection category={await fetchCategory(2)} />
-      <MoreAds title="Promovate" ads={promotion}/>
-      <MoreAds title="Recomandate" ads={recommended}/>
+      <MoreAds title="Promovate" ads={promotion} />
+      <MoreAds title="Recomandate" ads={recommended} />
     </HomepageLayout>
   );
 }

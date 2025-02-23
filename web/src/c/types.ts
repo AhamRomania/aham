@@ -84,6 +84,7 @@ export type CreateUserRequest = {
     family_name: string;
     city: number;
     phone: string;
+    referrer?: string;
 }
 
 export type CreateUserResponse = {

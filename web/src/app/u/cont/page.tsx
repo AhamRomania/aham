@@ -1,10 +1,13 @@
 "use client";
 
+import { getReferrerURL } from "@/api/common";
 import { Centred, PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
-import { useContext, useEffect } from "react";
+import { Input } from "@mui/joy";
+import { useContext, useEffect, useState } from "react";
 
 export default function Page() {
+  const [refferrerURL, setRefferrerURL] = useState<string | null>();
   const { setPath } = useContext(AccountLayoutContext);
   useEffect(() => {
     setPath(
@@ -14,10 +17,14 @@ export default function Page() {
     );
   }, []);
 
+  useEffect(() => {
+    getReferrerURL().then(setRefferrerURL);
+  }, []);
+
   return (
     <Centred>
       <PageName>Cont</PageName>
-      <div>Cont</div>
+      <Input value={refferrerURL??''}/>
     </Centred>
   );
 }

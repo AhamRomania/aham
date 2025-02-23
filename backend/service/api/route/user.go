@@ -4,24 +4,28 @@ import (
 	"aham/common/c"
 	"aham/common/emails"
 	"aham/service/api/db"
+	"aham/service/api/types"
 	"aham/service/api/vo"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"unicode"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type CreateUserRequest struct {
-	Email      string `json:"email"`
-	Password   string `json:"password"`
-	GivenName  string `json:"given_name"`
-	FamilyName string `json:"family_name"`
-	Phone      string `json:"phone"`
-	City       int64  `json:"city"`
+	Email      string  `json:"email"`
+	Password   string  `json:"password"`
+	GivenName  string  `json:"given_name"`
+	FamilyName string  `json:"family_name"`
+	Phone      string  `json:"phone"`
+	City       int64   `json:"city"`
+	Referrer   *string `json:"referrer"`
 }
 
 func UserBalance(w http.ResponseWriter, r *http.Request) {
@@ -106,6 +110,62 @@ func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func UserRoutes(r chi.Router) {
+	r.Post("/", CreateUser)
+}
+
+func MeRoutes(r chi.Router) {
+	r.Get("/", c.Guard(GetCurrentUser))
+	r.Patch("/prefs", c.Guard(updateUserPref))
+	r.Get("/referrer", c.Guard(getReferrerURL))
+}
+
+func getReferrerURL(w http.ResponseWriter, r *http.Request) {
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	user := db.GetUserByID(userID)
+
+	referrer := user.Meta.GetString(db.UserPrefReferrer, "")
+
+	if referrer == "" {
+		referrer = c.MustGenerateNonce(32)
+		if err := user.UpdateMeta(db.UserMeta{db.UserPrefReferrer: referrer}); err != nil {
+			http.Error(w, "fail to gen referrer url", http.StatusUnauthorized)
+			return
+		}
+	}
+
+	render.PlainText(w, r, c.URLF(c.Web, "?referrer=%s", referrer))
+}
+
+func updateUserPref(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	var pref = make(db.UserMeta)
+
+	if err := json.NewDecoder(r.Body).Decode(&pref); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	user := db.GetUserByID(userID)
+	if err := user.UpdateMeta(pref); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var req CreateUserRequest
@@ -155,7 +215,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		City:                 req.City,
 		Source:               "native",
 		EmailActivationToken: c.String(uuid.NewString()),
-		Preferences: db.UserPreferences{
+		Meta: db.UserMeta{
 			db.UserPrefActiveAds:  2,
 			db.UserPrefAdLifetime: 60 * 24 * 10,
 		},
@@ -167,8 +227,37 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := user.UpdateBalance("Registration Gift", 0, 100); err != nil {
+	if err := user.UpdateBalance("Registration Gift", 0, 10000); err != nil {
 		c.Log().Error(err)
+	}
+
+	if req.Referrer != nil {
+		if referrer := db.GetUserByReferrer(*req.Referrer); referrer != nil {
+
+			if err := user.UpdateMeta(
+				db.UserMeta{
+					db.UserPrefReferred: referrer.Meta.GetString(db.UserPrefReferrer, ""),
+				},
+			); err != nil {
+				c.Log().Error(err)
+			}
+
+			var balanceAdded bool = true
+			if err := referrer.UpdateBalance(fmt.Sprintf("Referrer Gift UserID(%d)", user.ID), 0, 30000); err != nil {
+				c.Log().Error(err)
+				balanceAdded = false
+			}
+
+			if balanceAdded {
+				// Feature: posibility to send a message
+				referrer.Notify(
+					`Ai câștigat credit 300`,
+					fmt.Sprintf(`%s a devenit membru Aham`, user.GivenName),
+					types.NotifInfo,
+					"",
+				)
+			}
+		}
 	}
 
 	emails.Welcome(
