@@ -1,0 +1,5 @@
+{{define "layout"}}
+{{template "contents" .}}
+    
+— Echipa aham.ro
+{{end}}

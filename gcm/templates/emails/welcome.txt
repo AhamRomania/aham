@@ -1,0 +1,9 @@
+{{template "layout" .}}
+
+{{define "contents"}}
+Salut {{.NAME}},
+
+Contul tău a fost creat!
+
+Te rugăm activează apăsând pe link: {{.ACTIVATION_URL}}
+{{end}}

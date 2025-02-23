@@ -74,14 +74,12 @@ func send(recipient Recipient, template string, params any) {
 	from := "info@aham.ro"
 	to := []string{recipient.Email()}
 
-	subject := "Subject: Test Email\n"
-	body := "This is a test email sent from Golang!"
+	subject := "Subject: Salut\n"
+	//body := "This is a test email sent from Golang!"
 
 	var buffer bytes.Buffer
 
 	writer := multipart.NewWriter(&buffer)
-
-	// Write the plain text part
 
 	part, err := writer.CreatePart(map[string][]string{
 		"Content-Type":              {"text/plain; charset=UTF-8"},
@@ -92,7 +90,14 @@ func send(recipient Recipient, template string, params any) {
 		c.Log().Infof("Error creating plain text part: ", err)
 	}
 
-	io.WriteString(part, body)
+	text := &bytes.Buffer{}
+
+	if err := Render(text, "text.txt", "emails/"+template+".txt", parmsChanged); err != nil {
+		c.Log().Errorf("Failed to send: %s", err.Error())
+		return
+	}
+
+	io.WriteString(part, text.String())
 
 	// Create the HTML part
 	part, err = writer.CreatePart(map[string][]string{
@@ -105,7 +110,7 @@ func send(recipient Recipient, template string, params any) {
 
 	html := &bytes.Buffer{}
 
-	if err := Render(html, "aigen", "emails/"+template, parmsChanged); err != nil {
+	if err := Render(html, "aigen.html", "emails/"+template+".html", parmsChanged); err != nil {
 		c.Log().Errorf("Failed to send: %s", err.Error())
 		return
 	}
@@ -152,8 +157,8 @@ func Render(w io.Writer, layout string, source string, params any) (err error) {
 	}
 
 	tmpls := []string{
-		path + "/layouts/" + layout + ".html",
-		path + "/" + parts[0] + "/" + parts[1] + ".html",
+		path + "/layouts/" + layout,
+		path + "/" + parts[0] + "/" + parts[1],
 	}
 
 	t, err := template.ParseFiles(tmpls...)
@@ -162,5 +167,5 @@ func Render(w io.Writer, layout string, source string, params any) (err error) {
 		return err
 	}
 
-	return t.ExecuteTemplate(w, parts[1]+".html", params)
+	return t.ExecuteTemplate(w, parts[1], params)
 }
