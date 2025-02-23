@@ -18,15 +18,15 @@ const Confirm:FC<ConfirmProps> = ({message, color, onResponse}) => {
                 layout="center"
                 variant="soft"
                 role="alertdialog"
-                css={css`width:250px;`}
+                css={css`width:400px;`}
             >
                 <ModalClose />
-                <DialogContent>
+                <DialogContent css={css`padding:10px;margin-top:20px;display:flex;justify-content:center;align-items:center;`}>
                     {message}
                 </DialogContent>
-                <DialogActions>
+                <DialogActions css={css`justify-content:center;`}>
                     <Button color={color} onClick={() => onResponse(true)}>
-                        Confirm
+                        Da
                     </Button>
                     <Button variant="outlined" onClick={() => onResponse()}>
                         Anulează
