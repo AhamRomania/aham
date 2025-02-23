@@ -55,7 +55,7 @@ const AdPictures: FC<GalleryProps> = ({width, ad}) => {
                 <div
                     css={css`
                         img {
-                           
+                           width: 100%;
                         }
                     `}
                 >
