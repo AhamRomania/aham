@@ -9,6 +9,11 @@ const MAX_RECONNECT_ATTEMPTS = 5; // Set the max reconnection attempts.
 const RECONNECT_DELAY = 1000; // Delay in milliseconds (1 second).
 
 const connectWebSocket = async () => {
+    
+    if (typeof(window) === 'undefined') {
+        return;
+    }
+
     if (ws || connecting) return;
     
     connecting = true;
