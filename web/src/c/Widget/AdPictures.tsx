@@ -7,11 +7,11 @@ import getDomain, { Domain } from "../domain";
 import { Ad } from "../types";
 
 export interface GalleryProps {
-    width: number
+    width?: number
     ad: Ad;
 }
 
-const AdPictures: FC<GalleryProps> = ({width = 500, ad}) => {
+const AdPictures: FC<GalleryProps> = ({width, ad}) => {
 
     const [current, setCurrent] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -24,14 +24,9 @@ const AdPictures: FC<GalleryProps> = ({width = 500, ad}) => {
             setLoading(true);
             imgRef.current.addEventListener('load', () => {
                 setLoading(false)
-                if (containerRef.current) {
-                    const img:HTMLImageElement = imgRef.current!;
-                    const marging = -((img.naturalHeight-containerRef.current.offsetHeight) / 2);
-                    img.setAttribute('style',`margin-top:${marging}px`);
-                }
             });
         }
-        setSrc(getDomain(Domain.Cdn) + `/` + ad.pictures[current] + `?w=`+(width));
+        setSrc(getDomain(Domain.Cdn) + `/` + ad.pictures[current] + `?w=`+(width || 800));
     }, [imgRef, current]);
 
     return (
@@ -39,7 +34,7 @@ const AdPictures: FC<GalleryProps> = ({width = 500, ad}) => {
             data-test="gallery"
             ref={containerRef}
             css={css`
-                width: ${width}px;
+                ${width ? `width: ${width}px` : `width: auto;`}
                 background: #F0F0F0;
                 position: relative;
                 padding-bottom: 75%;
@@ -60,7 +55,7 @@ const AdPictures: FC<GalleryProps> = ({width = 500, ad}) => {
                 <div
                     css={css`
                         img {
-                            
+                           
                         }
                     `}
                 >

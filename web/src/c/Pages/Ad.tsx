@@ -167,7 +167,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                             }
                         `}
                     >
-                        <AdPictures width={700} ad={ad}/>
+                        <AdPictures ad={ad}/>
                     </div>
                     <div
                         data-test="ad-cta"
