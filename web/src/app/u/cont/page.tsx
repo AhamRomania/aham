@@ -1,6 +1,6 @@
 "use client";
 
-import { getReferrerURL, getShortURL } from "@/api/common";
+import { getReferrerURL } from "@/api/common";
 import { Centred, PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { Input } from "@mui/joy";
