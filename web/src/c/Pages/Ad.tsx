@@ -155,7 +155,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                             justifyContent="center"
                             alignItems="center"
                         >
-                            {typeof(window) !== 'undefined' && <SocialShare ad={ad} url={window.location.href}/>}
+                        {typeof(window) !== 'undefined' && <SocialShare ad={ad} url={window.location.href}/>}
                         </Stack>
                     </div>
                     <div

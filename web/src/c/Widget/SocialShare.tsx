@@ -1,41 +1,31 @@
+import { getShortURL } from "@/api/common";
+import { CheckCircle } from "@mui/icons-material";
+import { IconButton, Snackbar, Stack } from "@mui/joy";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
-import Tip from "../tooltip";
-import { IconButton, Snackbar, Stack } from "@mui/joy";
-import { CheckCircle } from "@mui/icons-material";
-import { Ad } from "../types";
-import getDomain, { Domain } from "../domain";
 import { formatMoney } from "../formatter";
 import { track } from "../funcs";
+import Tip from "../tooltip";
+import { Ad } from "../types";
 
 export interface SocialShareProps {
   url: string;
-  ad: Ad
+  ad: Ad;
 }
 
 const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
-
   const [showCopiedInfo, setShowCopiedInfo] = useState(false);
-  const [shortURL, setShortURL] = useState<string>('');
+  const [shortURL, setShortURL] = useState<string>("");
 
   useEffect(() => {
-    const data = new FormData();
-    data.set("url", url);
-    fetch(getDomain(Domain.Url), {method: "POST", body: data, cache:'no-cache' })
-      .then((response) => {
-        response.text().then((short) => {
-          if (short != '' && shortURL == '') {
-            setShortURL(short);
-          }
-        })
-      });
+    getShortURL(url).then(setShortURL);
   }, [url]);
 
   const handleCopyURL = () => {
     if (shortURL) {
       navigator.clipboard.writeText(shortURL!).then(
         () => {
-          track('ad/socials/copyUrl',{"ad":ad.id});
+          track("ad/socials/copyUrl", { ad: ad.id });
           setShowCopiedInfo(true);
         },
         () => {
@@ -48,10 +38,10 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
   const getShareMessage = () => {
     return encodeURIComponent(
       `${ad.title} la ${formatMoney(ad.price, ad.currency)}`
-    )
-  }
+    );
+  };
 
-  if (shortURL == '') {
+  if (shortURL == "") {
     return [];
   }
 
@@ -59,7 +49,11 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
     <>
       <Stack gap={1} flexDirection="row">
         <Tip delay={100} title="Distribuie pe X">
-          <Link suppressHydrationWarning href={`https://x.com/intent/tweet?text=${getShareMessage()}&url=${shortURL}`} target="_blank">
+          <Link
+            suppressHydrationWarning
+            href={`https://x.com/intent/tweet?text=${getShareMessage()}&url=${shortURL}`}
+            target="_blank"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
@@ -71,7 +65,11 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
         </Tip>
 
         <Tip delay={100} title="Distribuie pe Facebook">
-          <Link suppressHydrationWarning href={`https://www.facebook.com/sharer/sharer.php?u=${shortURL}`} target="_blank">
+          <Link
+            suppressHydrationWarning
+            href={`https://www.facebook.com/sharer/sharer.php?u=${shortURL}`}
+            target="_blank"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
@@ -83,7 +81,11 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
         </Tip>
 
         <Tip delay={100} title="Distribuie pe Pinterest">
-          <Link suppressHydrationWarning href={`https://pinterest.com/pin/create/button/?url=${shortURL}&description=${getShareMessage()}`} target="_blank">
+          <Link
+            suppressHydrationWarning
+            href={`https://pinterest.com/pin/create/button/?url=${shortURL}&description=${getShareMessage()}`}
+            target="_blank"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
               <path
                 fill="#000"
@@ -107,12 +109,12 @@ const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
       </Stack>
       <Snackbar
         variant="outlined"
-        anchorOrigin={{vertical:'top', horizontal:'center'}}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={showCopiedInfo}
         autoHideDuration={3000}
         onClose={() => setShowCopiedInfo(false)}
       >
-        <CheckCircle color="success"/>
+        <CheckCircle color="success" />
         Adresa URL a fost copiată!
       </Snackbar>
     </>
