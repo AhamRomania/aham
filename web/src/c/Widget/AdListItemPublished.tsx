@@ -20,7 +20,7 @@ const AdListItemPublished: FC<AdListItemProps> = ({ad}) => {
             <>
                 <Button onClick={() => window.open(ad.href)} variant="soft" startDecorator={<Preview/>}>Pagină anunț</Button>
                 <Button onClick={() => window.open(`/u/statistici/${ad.id}`)} variant="soft" startDecorator={<Analytics/>}>Statistici anunț</Button>
-                <Button disabled={!chat} onClick={() => window.open(`/u/mesaje/${ad.id}`)} variant="soft" startDecorator={<ChatIcon/>}>Mesaje anunț</Button>
+                <Button disabled={!chat} onClick={() => window.open(`/u/mesaje/${(chat||{}).id}`)} variant="soft" startDecorator={<ChatIcon/>}>Mesaje anunț</Button>
             </>
         )}/>
         </>
