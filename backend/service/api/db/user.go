@@ -17,29 +17,29 @@ type UserMin struct {
 	FamilyName string `json:"family_name,omitempty"`
 }
 
-type UserPref string
+type UserMetaKey string
 
 const (
 	// Number of published ads
-	UserPrefActiveAds UserPref = "active_ads"
+	UserMetaActiveAds UserMetaKey = "active_ads"
 	// Ad lifetime in minutes
-	UserPrefAdLifetime UserPref = "ad_lifetime"
+	UserMetaAdLifetime UserMetaKey = "ad_lifetime"
 	// Referrer ID
-	UserPrefReferrer UserPref = "referrer"
+	UserMetaReferrer UserMetaKey = "referrer"
 	// User who referred me
-	UserPrefReferred UserPref = "referred"
+	UserMetaReferred UserMetaKey = "referred"
 )
 
-type UserMeta map[UserPref]any
+type UserMeta map[UserMetaKey]any
 
-func (up UserMeta) GetInt(key UserPref, def int) (res int) {
+func (up UserMeta) GetInt(key UserMetaKey, def int) (res int) {
 	if value, exists := up[key]; exists {
 		return int(value.(float64))
 	}
 	return def
 }
 
-func (up UserMeta) GetString(key UserPref, def string) (res string) {
+func (up UserMeta) GetString(key UserMetaKey, def string) (res string) {
 	if value, exists := up[key]; exists {
 		if pref, isString := value.(string); isString {
 			return pref

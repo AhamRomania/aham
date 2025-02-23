@@ -130,11 +130,11 @@ func getReferrerURL(w http.ResponseWriter, r *http.Request) {
 
 	user := db.GetUserByID(userID)
 
-	referrer := user.Meta.GetString(db.UserPrefReferrer, "")
+	referrer := user.Meta.GetString(db.UserMetaReferrer, "")
 
 	if referrer == "" {
 		referrer = c.MustGenerateNonce(32)
-		if err := user.UpdateMeta(db.UserMeta{db.UserPrefReferrer: referrer}); err != nil {
+		if err := user.UpdateMeta(db.UserMeta{db.UserMetaReferrer: referrer}); err != nil {
 			http.Error(w, "fail to gen referrer url", http.StatusUnauthorized)
 			return
 		}
@@ -216,8 +216,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		Source:               "native",
 		EmailActivationToken: c.String(uuid.NewString()),
 		Meta: db.UserMeta{
-			db.UserPrefActiveAds:  2,
-			db.UserPrefAdLifetime: 60 * 24 * 10,
+			db.UserMetaActiveAds:  2,
+			db.UserMetaAdLifetime: 60 * 24 * 10,
 		},
 	}
 
@@ -236,7 +236,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 			if err := user.UpdateMeta(
 				db.UserMeta{
-					db.UserPrefReferred: referrer.Meta.GetString(db.UserPrefReferrer, ""),
+					db.UserMetaReferred: referrer.Meta.GetString(db.UserMetaReferrer, ""),
 				},
 			); err != nil {
 				c.Log().Error(err)

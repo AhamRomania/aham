@@ -296,7 +296,7 @@ func (ad *Ad) Publish(tx pgx.Tx) (err error) {
 		Owner: &user.ID,
 	})
 
-	if len(active)+1 > user.Meta.GetInt(UserPrefActiveAds, 2) {
+	if len(active)+1 > user.Meta.GetInt(UserMetaActiveAds, 2) {
 		return errors.New("ads limit exceeded")
 	}
 
@@ -310,7 +310,7 @@ func (ad *Ad) Publish(tx pgx.Tx) (err error) {
 
 	now := time.Now()
 
-	adLifetimeMinutes := user.Meta.GetInt(UserPrefAdLifetime, 24*7)
+	adLifetimeMinutes := user.Meta.GetInt(UserMetaAdLifetime, 24*7)
 
 	validThrough := now.Add(time.Duration(adLifetimeMinutes) * time.Minute)
 
