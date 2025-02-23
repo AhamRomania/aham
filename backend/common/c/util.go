@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"strconv"
@@ -196,25 +197,33 @@ func Ucfirst(s string) string {
 	return string(first) + s[size:]
 }
 
+// IP extracts the client IP address and returns it in a format compatible with PostgreSQL INET type
 func IP(r *http.Request) string {
 	// First, try to get the IP from X-Forwarded-For header (if behind a proxy)
 	forwarded := r.Header.Get("X-Forwarded-For")
 	if forwarded != "" {
 		// X-Forwarded-For may contain a comma-separated list of IPs
 		parts := strings.Split(forwarded, ",")
-		return strings.TrimSpace(parts[0]) // the first one is usually the client's real IP
+		clientIP := strings.TrimSpace(parts[0]) // the first one is usually the client's real IP
+		if net.ParseIP(clientIP) != nil {
+			return clientIP // return valid IP
+		}
 	}
 
 	// Fall back to RemoteAddr if not behind a proxy
-	ip := r.RemoteAddr
-	// Remove port information (if any) from RemoteAddr
-	if idx := strings.LastIndex(ip, ":"); idx != -1 {
-		ip = ip[:idx]
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		ip = r.RemoteAddr // In case there's no port
 	}
 
-	if ip == "[::1]" || ip == "::1" {
+	// Normalize localhost
+	if ip == "[::1]" || ip == "::1" || ip == "" {
 		ip = "127.0.0.1"
 	}
 
-	return ip
+	if net.ParseIP(ip) != nil {
+		return ip
+	}
+
+	return "" // Return empty string if IP is invalid
 }

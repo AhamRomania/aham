@@ -516,9 +516,10 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 
 	if query != "" {
 		filter.Query = c.String(query)
-		q, err := json.Marshal(query)
-		if err == nil {
-			Track(&userID, "ads/search/query", fmt.Sprintf(`{"query":"%s"}`, string(q)))
+		if q, err := json.Marshal(query); err == nil {
+			if err := Track(&userID, "ad/search", fmt.Sprintf(`{"query":%s}`, string(q))); err != nil {
+				c.Log().Error("can't track ad/search event")
+			}
 		}
 	}
 

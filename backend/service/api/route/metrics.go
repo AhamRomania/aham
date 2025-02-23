@@ -2,8 +2,9 @@ package route
 
 import (
 	"aham/common/c"
-	"aham/service/api/db"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -27,12 +28,19 @@ func Track(user *int64, kind string, metadata string) (err error) {
 	q.Add("kind", kind)
 	q.Add("metadata", metadata)
 	q.Add("user", fmt.Sprint(user))
+	u.RawQuery = q.Encode()
 	r, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return err
 	}
+
 	track(w, r)
-	return
+
+	if w.Result().StatusCode != http.StatusOK {
+		return errors.New("can't track event")
+	}
+
+	return nil
 }
 
 func track(w http.ResponseWriter, r *http.Request) {
@@ -48,13 +56,6 @@ func track(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 
-		if db.GetUserByID(user) == nil {
-			c.Log().Errorf("Can't see any user with the ID")
-			return
-		}
-
-		c.Log().Info("Connect to metrics...")
-
 		conn, err := pgx.Connect(context.Background(), os.Getenv("METRICS"))
 
 		if err != nil {
@@ -67,14 +68,29 @@ func track(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		var data = c.D{}
+		if err := json.Unmarshal([]byte(metadata), &data); err != nil {
+			c.Log().Error(err)
+			return
+		}
+
+		metadataJSON, err := json.Marshal(data)
+
+		if err != nil {
+			c.Log().Error(err)
+			return
+		}
+
+		ip := c.IP(r)
+
 		_, err = conn.Exec(
 			context.Background(),
 			`insert into events ("uuid","kind","user","metadata","ip","agent","time") values ($1,$2,$3,$4,$5,$6,$7)`,
 			uuid.New().String(),
 			kind,
 			user,
-			metadata,
-			c.IP(r),
+			string(metadataJSON),
+			ip,
 			r.UserAgent(),
 			time.Now(),
 		)

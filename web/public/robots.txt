@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /u/
+Crawl-delay: 10
+Sitemap: http://api.aham.ro/v1/sitemap
