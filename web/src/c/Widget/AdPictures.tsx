@@ -34,7 +34,7 @@ const AdPictures: FC<GalleryProps> = ({width, ad}) => {
             data-test="gallery"
             ref={containerRef}
             css={css`
-                ${width ? `width: ${width}px` : `width: auto;`}
+                ${width ? `width: ${width}px;` : `width: auto;`}
                 background: #F0F0F0;
                 position: relative;
                 padding-bottom: 75%;
