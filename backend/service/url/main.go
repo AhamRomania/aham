@@ -180,7 +180,9 @@ func externalPage(w http.ResponseWriter, url string) {
 			<body>
 				<div class="message">
 					<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAMAAADyHTlpAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAANJQTFRFAAAA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7oW/d+S/7sW/7QA/7QA/tNo/PTZ/7QA/7QA/7QA/tVx/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/7QA/tRu/7QA/7QA/7QA/78k/eu6/7QA/7QA/7YF/7QA/7QA/7QA/7oU/eOf/7QA/7QA/7QA/tJm/tJl/7QA/7QA/shC/PTY/7QA/7UC/sU6/7QA/7QA/7QA/7QA/7QA/7UAQLiuiAAAAEZ0Uk5TABp0GeT/mDoDyFtcE9aDKuv///8Eqv//qU/3/wfGYf0S3pHzJLb/pkT8//8L0f9n/ur//+kCif//NPD//5P//5Kop1myAoOuGIsAAAFPSURBVHic7dDvS8JAGAfw51GpZeGILCr8kWFQ9EMKFkj0or87iF4ERhISGQWJOYuKCsrIspo9nctt53bn1nvvxT333D5873YIgQcOqGgPgSgQDZu0HYQOdRLxKwAd/jFL6NOXKmiYNUItPxr9tu7R9KFjaIUp9Nafxj7s5chrX6pis5MMyNgoNfrQOL6weZy96zOrE8aTnM7gI5unDIg8sDpJd1KawHvgKEzTjYym8LaHzlJdQufwL8SmkKCamM5fg4tCsiqkarzuoSmsCKiStA7LNEC9sk7SW166aAcssHe97K6zdOGhK2jvwRKcOwlUdtMcnoFoLNOJi4bXyvbXVXaBU7vLldo9VMOSE7RRg8yx065Tkad5LDrfNlnqkdNqVODp9iF3vTyjBa7f2ufpzoHwn7o5ezyNpitSmdXfearFUJfINIV2eRpkDOg/6C9VO2QrFwCaMQAAAABJRU5ErkJggg==" /></p>
-					<p>Adresa pe care vrei să o accesezi este pe un website exterior, te rugăm verifică cu atenție adresa web înainte să accesezi: <strong><a href="%s">%s</a></strong></p>
+					<p>Linkul pe care încerci să îl accesezi duce către un website extern. Te rugăm să verifici cu atenție adresa înainte de a continua: <strong><a href="%s">%s</a></strong></p>
+					<p></p>
+					<p><a href="https://aham.ro?uiref=extpage">Navighează pe aham.ro</a></p>
 				</div>
 			</body>
 		</html>
