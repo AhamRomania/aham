@@ -6,6 +6,7 @@ import { FC, useEffect, useState } from "react";
 import { Ad, Prop } from "../types";
 import AdPictures from "./AdPictures";
 import AdSpectsListing from "./AdSpecsListing";
+import { dateTime } from "../formatter";
 
 export interface AdListItemProps {
     ad: Ad;
@@ -26,8 +27,31 @@ const AdListItem: FC<AdListItemProps> = ({ad, actions}) => {
                     border-radius: 8px;
                     border:1px solid #ddd;  
                     margin-bottom: 20px;  
+                    position: relative;
                 `}
             >
+                <div
+                    css={css`
+                        position:absolute;
+                        right: 10px;
+                        top: 10px; 
+                        font-size: 15px; 
+                        display: flex;
+                        > div {
+                            margin-left: 10px; 
+                        }  
+                    `}
+                >
+                    {ad.created && <div>
+                        <strong>Creat:</strong> <span>{dateTime(ad.created)}</span>
+                    </div>}
+                    {ad.published && <div>
+                        <strong>Publicat:</strong> <span>{dateTime(ad.published)}</span>
+                    </div>}
+                    {ad.valid_through && <div>
+                        <strong>Valabil:</strong> <span>{dateTime(ad.valid_through)}</span>
+                    </div>}
+                </div>
                 <div>
                     <AdPictures 
                         width={200}
@@ -63,7 +87,7 @@ const AdListItem: FC<AdListItemProps> = ({ad, actions}) => {
                                     </Link>
                                 ))}
                             </Breadcrumbs>
-                            <h1>{ad.title}</h1>
+                            <h1 style={{marginTop: '10px'}}>{ad.title}</h1>
                             <p>{ad.description}</p>
                             {props && <AdSpectsListing props={props} ad={ad}/>}
                         </div>
@@ -71,6 +95,7 @@ const AdListItem: FC<AdListItemProps> = ({ad, actions}) => {
                             css={css`
                                 display: flex;
                                 gap: 10px;
+                                padding-top: 20px;
                             `}
                         >
                             {actions}

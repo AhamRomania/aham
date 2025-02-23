@@ -42,11 +42,11 @@ export function dateTime(v: string): string {
     }
 
     if (d.isSame(now,"month")) {
-        return d.format('D dddd HH:mm');
+        return d.format('D HH:mm');
     }
 
     if (d.isSame(now,"year")) {
-        return d.format('D dddd HH:mm');
+        return d.format('D MMMM HH:mm');
     }
 
     return d.format('YYYY D MMMM HH:mm')
