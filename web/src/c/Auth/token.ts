@@ -3,6 +3,26 @@
 // On auth a cookie is stored with this name
 const ACCESS_TOKEN_COOKIE_NAME = 'aham';
 
+const destroyAccessToken = async () => {
+    if (typeof window !== 'undefined') {
+
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const cookies = require("js-cookie");
+
+        if (cookies.get(ACCESS_TOKEN_COOKIE_NAME)) {
+            return cookies.remove(ACCESS_TOKEN_COOKIE_NAME);
+        }
+
+    } else {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const cookies = await (await require('next/headers')).cookies()
+        const cookie = cookies.get(ACCESS_TOKEN_COOKIE_NAME)
+        if (cookie  && cookie.value) {
+            cookies.set(ACCESS_TOKEN_COOKIE_NAME, "", { expires: new Date(0), path: "/" });
+        }
+    }
+}
+
 // Get access token from browser or request
 const getAccessToken = async (): Promise<string | null> => {
 
@@ -29,5 +49,6 @@ const getAccessToken = async (): Promise<string | null> => {
 
 export {
     getAccessToken,
+    destroyAccessToken,
     ACCESS_TOKEN_COOKIE_NAME
 }
