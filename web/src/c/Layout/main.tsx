@@ -11,7 +11,7 @@ const MainLayout = ({children}: React.PropsWithChildren) => {
             <Centred>
                 {children}
             </Centred>
-            <Footer version={"0.1.0"}/>
+            <Footer version={"0.2.2"}/>
         </main>
     )
 }
