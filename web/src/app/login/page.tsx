@@ -160,13 +160,15 @@ export default function Page() {
             }).then((data:AuthInfo) => {
               setAccessToken(data)
               setLoggingIn(false);
-              const query = new URLSearchParams(window.location.search);
-              if (query.get('then')) {
-                router.push(query.get('then') as string);
-              } else {
-                router.push(`/u/anunturi/creaza`);
-              }
-              router.refresh();
+              setTimeout(() => {
+                const query = new URLSearchParams(window.location.search);
+                if (query.get('then')) {
+                    router.push(query.get('then') as string);
+                } else {
+                    router.push(`/u/anunturi/creaza`);
+                }
+                router.refresh();
+              },0);
             }).catch(() => {
               setLoggingIn(false);
               alert('Nu m-am putut loga');
