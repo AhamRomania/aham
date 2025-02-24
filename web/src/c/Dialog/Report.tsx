@@ -40,7 +40,7 @@ const ReportDialog: FC<ReportAdDialogProps> = ({ resource, reference, onClose })
   useEffect(() => {
     getMe().then(
         (me) => {
-            setMe(me);
+            setMe(me!);
             setFetching(false);
         }
     );
