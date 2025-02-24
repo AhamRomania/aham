@@ -310,7 +310,7 @@ func (ad *Ad) Publish(tx pgx.Tx) (err error) {
 
 	now := time.Now()
 
-	adLifetimeMinutes := user.Meta.GetInt(UserMetaAdLifetime, 24*7)
+	adLifetimeMinutes := user.Meta.GetInt(UserMetaAdLifetime, 60*24*7)
 
 	validThrough := now.Add(time.Duration(adLifetimeMinutes) * time.Minute)
 
