@@ -8,9 +8,9 @@ const HotjarTracking: React.FC = () => {
         h._hjSettings = { hjid: 5316679, hjsv: 6 };
         a = o.getElementsByTagName("head")[0];
         r = o.createElement("script");
-        r.async = true;
-        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-        a.appendChild(r);
+        r!.async = true;
+        r!.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+        a!.appendChild(r!);
       })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=");
     }
   }, []);
