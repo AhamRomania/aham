@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
     const isLoggedIn = await getLoggedInState();
     if (!isLoggedIn) {
         return NextResponse.redirect(new URL(
-            '/login',
+            '/login?mrv=' + Math.round(Math.random() * 100),
             request.url
         ))
     }
