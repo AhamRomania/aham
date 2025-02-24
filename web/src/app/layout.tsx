@@ -51,7 +51,6 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//cdn.aham.ro"/>
       </Head>
       <body className={`${interFont.className}`}>
-        <HotjarTracking/>
         <CacheProvider value={cache}>
           <AppRouterCacheProvider options={{ key: "aham" }}>
             <ThemeProvider theme={MaterialTheme}>
@@ -68,6 +67,7 @@ export default function RootLayout({
           </AppRouterCacheProvider>
         </CacheProvider>
       </body>
+      <HotjarTracking/>
       <GoogleAnalytics gaId="G-TYN5WNN10P" />
     </html>
   );
