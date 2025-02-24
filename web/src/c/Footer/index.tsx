@@ -34,6 +34,17 @@ const Footer: FC<FooterProps> = ({version}) => {
         setShowMobInfo(true);
     }
 
+    const checkMobileAppNotify = (os: string, e: any) => {
+        
+        if (e.target.checked) {
+            track(`mobile/${os.toLowerCase()}/subscribed`);
+        } else {
+            track(`mobile/${os.toLowerCase()}/unsubscribed`);
+        }
+
+        setShowMobOSNotify(true);
+    }
+
     return (
         <>
             <footer className={style.footer}>
@@ -173,7 +184,7 @@ const Footer: FC<FooterProps> = ({version}) => {
                     Ne cerem scuze, aplicația mobilă pentru <strong>{mobileOS}</strong> nu este încă
                     disponibilă.
                     {isLoggedIn && <Paper style={{padding: 20, paddingBottom: 15, marginTop: 20}}>
-                        <Checkbox onClick={() => setShowMobOSNotify(true)} label="Trimite un email când este disponibilă."/>
+                        <Checkbox onClick={(e) => checkMobileAppNotify(mobileOS,e)} label="Trimite un email când este disponibilă."/>
                     </Paper>}
                 </Typography>
                 </Sheet>
