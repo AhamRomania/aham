@@ -7,7 +7,7 @@ import NumericFormatAdapter from "@/c/Form/NumericFormatAdapter";
 import Pictures from "@/c/Form/Pictures/Pictures";
 import { GenericPicture } from "@/c/Form/Pictures/types";
 import { toCents } from "@/c/formatter";
-import { Centred, PageName } from "@/c/Layout";
+import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { BouncingLogo } from "@/c/logo";
 import { Category, Prop } from "@/c/types";

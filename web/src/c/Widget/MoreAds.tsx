@@ -9,7 +9,7 @@ import { css } from "@emotion/react";
 export interface MoreAdsProps {
     ads: Ad[];
     title?: string;
-    before: React.ReactNode;
+    before?: React.ReactNode;
     titleNodeType?: string;
 }
 

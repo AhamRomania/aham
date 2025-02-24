@@ -1,17 +1,16 @@
 "use client";
 
-import React, { FC, useEffect, useState } from 'react';
-import styles from './style.module.css';
-import { ListItemIcon, ListItemText, Menu, MenuItem, Button } from '@mui/material';
-import { Sell, Forum, Favorite, ManageAccounts, Logout, Add, Settings, Analytics } from '@mui/icons-material';
-import UserAvatar from '../avatar';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Cookie from 'js-cookie';
-import Tip from '../tooltip';
-import { ACCESS_TOKEN_COOKIE_NAME, getLoggedInState, getUser } from '../Auth';
+import { Add, Analytics, Favorite, Forum, Logout, ManageAccounts, Sell, Settings } from '@mui/icons-material';
 import { CircularProgress } from '@mui/joy';
+import { Button, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import React, { FC, useEffect, useState } from 'react';
+import { destroyCurrentSession, getLoggedInState, getUser } from '../Auth';
+import UserAvatar from '../avatar';
+import Tip from '../tooltip';
 import { User } from '../types';
+import styles from './style.module.css';
 
 const HeadMenu: FC = () => {
 
@@ -42,15 +41,8 @@ const HeadMenu: FC = () => {
     };
 
     const logout = () => {
-        Cookie.remove(
-            ACCESS_TOKEN_COOKIE_NAME,
-            {
-                //sameSite: 'strict',
-                //secure: true,
-                //domain: 'aham.ro'
-            }
-        );
-        window.location.reload()
+        destroyCurrentSession();
+        window.location.reload();
     }
 
     const navigate = (to: string) => {

@@ -12,7 +12,7 @@ export interface CentredStyleProps {
     padding?: number;
 }
 
-export const Centred: FC<CentredStyleProps&PropsWithChildren> = ({children, width, mode, padding}) => {
+export const Centred: FC<CentredStyleProps&PropsWithChildren> = ({children, width, mode, padding, ...props}) => {
     return (
         <div
             css={css`
@@ -21,6 +21,7 @@ export const Centred: FC<CentredStyleProps&PropsWithChildren> = ({children, widt
         >
             <div
                 data-test="centred"
+                {...props}
                 css={css`
                     @media only screen and (min-width : 1200px) {
                         width: ${width ? width : 1024}px;

@@ -145,4 +145,10 @@ export type AdCounts = {
     favourite: number;
 }
 
+export type AuthInfo = {
+    token: string;
+    // in days
+    expire: number;
+}
+
 export type D = { [key: string]: any };

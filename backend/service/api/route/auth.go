@@ -104,5 +104,5 @@ func authorize(w http.ResponseWriter, r *http.Request, user *db.User) {
 		return
 	}
 
-	render.JSON(w, r, map[string]string{"token": token})
+	render.JSON(w, r, map[string]any{"token": token, "expire": 60})
 }

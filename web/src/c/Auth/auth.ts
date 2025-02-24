@@ -1,12 +1,28 @@
 import getApiFetch from '@/api/api'
 import { User } from '../types';
+import { destroyAccessToken } from './token';
+
+const destroyCurrentSession = () => {
+    if (typeof(localStorage) != 'undefined') {
+        localStorage.removeItem('me');
+    }
+    destroyAccessToken();
+}
 
 const getUser = async (): Promise<User | null> => {
+    if (typeof(localStorage) != 'undefined' && localStorage.getItem('me')) {
+        return Promise.resolve(
+            JSON.parse(localStorage.getItem('me') as string),
+        );
+    }
     const api = getApiFetch();
     return new Promise((resolve, reject) => {
         api<User>('/me').then((me: User) => {
+            if (typeof(localStorage) != 'undefined') {
+                localStorage.setItem('me', JSON.stringify(me));
+            }
             resolve(me);
-        }).catch(() => reject());
+        }).catch(reject);
     });
 }
 
@@ -16,8 +32,8 @@ const getLoggedInState = async () => {
     
     try {
         me = await getUser();
-        // eslint-disable-next-line
     } catch(e: unknown) {
+        console.error('getLoggedInState:error:', e);
         return false;
     }
 
@@ -28,4 +44,4 @@ const getLoggedInState = async () => {
     return false;
 }
 
-export {getUser, getLoggedInState};
+export {getUser, getLoggedInState, destroyCurrentSession};

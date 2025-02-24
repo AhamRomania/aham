@@ -3,7 +3,8 @@ export enum Domain {
     Api,
     Cdn,
     Url,
-    ApiV1
+    ApiV1,
+    Cookie
 }
 
 const getDomain = (context:Domain = Domain.Web, path: string = ''): string => {
@@ -13,6 +14,8 @@ const getDomain = (context:Domain = Domain.Web, path: string = ''): string => {
     let domain = '';
 
     switch (context) {
+        case Domain.Cookie:
+            return dev ? 'localhost' : '.aham.ro';
         case Domain.Api:
             domain = dev ? 'http://localhost:8001' : 'https://api.aham.ro';
             break;

@@ -1,19 +1,19 @@
 "use client";
 
-import { ACCESS_TOKEN_COOKIE_NAME } from "@/c/Auth";
+import getApiFetch from "@/api/api";
+import { setAccessToken } from "@/c/Auth";
+import getConfig, { Config } from "@/c/config";
 import Logo from "@/c/logo";
 import OrSection from "@/c/orsection";
 import Tip from "@/c/tooltip";
-import getApiFetch from "@/api/api";
-import getConfig, { Config } from "@/c/config";
+import { AuthInfo } from "@/c/types";
 import { css } from "@emotion/react";
-import { Google, Facebook } from "@mui/icons-material";
-import { Button, CircularProgress, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Input, Modal, ModalDialog, Stack } from "@mui/joy";
-import Cookies from "js-cookie";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Facebook, Google } from "@mui/icons-material";
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+import { Button, CircularProgress, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Input, Modal, ModalDialog, Stack } from "@mui/joy";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 
 declare const FB: any;
@@ -154,23 +154,19 @@ export default function Page() {
             const formData = new FormData(event.currentTarget);
             const formJson = Object.fromEntries(formData.entries());
             setLoggingIn(true);
-            api<{ token: string }>("/auth", {
+            api<AuthInfo>("/auth", {
               method: "POST",
               body: JSON.stringify(formJson),
-            }).then((data) => {
-              Cookies.set(ACCESS_TOKEN_COOKIE_NAME, data.token, {
-                expires: 30,
-                //sameSite: "strict",
-                //secure: true,
-                //domain: "localhost",
-              });
+            }).then((data:AuthInfo) => {
+              setAccessToken(data)
               setLoggingIn(false);
               const query = new URLSearchParams(window.location.search);
               if (query.get('then')) {
                 router.push(query.get('then') as string);
               } else {
-                router.push(`/u/anunturi/creaza?r=` + Math.random());
+                router.push(`/u/anunturi/creaza`);
               }
+              router.refresh();
             }).catch(() => {
               setLoggingIn(false);
               alert('Nu m-am putut loga');
