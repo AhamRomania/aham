@@ -121,14 +121,7 @@ export default function Page() {
   }
 
   return (
-    <Centred
-      width={720}
-      css={css`
-        hr {
-          margin: 30px 0px;
-        }  
-      `}
-    >
+    <>
       <PageName>
         Crează anunț
       </PageName>
@@ -153,7 +146,7 @@ export default function Page() {
               props: getFormDataProps(data)
             }),
           }).then((response: any) => {
-            window.location.href = '/u/anunturi/creaza?id=' + response.id;
+            window.location.href = '/u/anunturi?id=' + response.id;
           }).catch(e => {
             setSavingAd(false);
             console.log(e);
@@ -163,7 +156,10 @@ export default function Page() {
             margin-bottom:50px;
             .MuiFormControl-root {
                 margin-bottom: 20px;
-            }    
+            }
+            hr {
+                margin: 30px 0;
+            }
         `}
       >
         <FormControl size="lg" required>
@@ -279,14 +275,24 @@ export default function Page() {
         </FormControl>
 
         <Grid
-          css={css`margin-top:100px;`}
+          css={css`
+            margin-top:100px;
+            flex-direction: column;
+            @media only screen and (min-width : 1200px) {
+                flex-direction: row;
+            }
+          `}
           container
           gap={2}
         >
           <Grid
             css={css`
               gap: 10px;
-              display: flex;  
+              display: flex; 
+              flex: 1;
+              button {
+              flex: 1;
+              } 
             `}
           >
             <Button
@@ -305,7 +311,7 @@ export default function Page() {
               type="submit"
               loading={savingAd}
             >
-              Publică anunțul
+              Publică
             </Button>
           </Grid>
           <Grid flex={1}>
@@ -314,6 +320,7 @@ export default function Page() {
             </p> 
           </Grid>
         </Grid>
+
         <Backdrop
           sx={(theme) => ({ color: '#FFF', zIndex: theme.zIndex.drawer + 1 })}
           open={savingAd}
@@ -321,6 +328,6 @@ export default function Page() {
           <BouncingLogo/>
         </Backdrop>
       </form>
-    </Centred>
+      </>
   );
 }

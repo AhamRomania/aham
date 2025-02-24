@@ -7,7 +7,9 @@ import { MainLayout } from "@/c/Layout";
 import AdPage from "@/c/Pages/Ad";
 import { Ad, Category, Prop } from "@/c/types";
 import MoreAds from "@/c/Widget/MoreAds";
+import { Breadcrumbs } from "@mui/joy";
 import { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 
@@ -46,11 +48,27 @@ export default async function Page(props: any) {
     }
 
     if (data?.kind === 'category') {
-        const ads = await api<Ad[]>(`/ads?from=${data.vo.id}&skip-owner=true`)
+        const ads = await api<Ad[]>(`/ads?from=${data.vo.id}&skip-owner=true`);
+        const category = (data.vo as Category);
         return (
             <>
                 <MainLayout>
-                    <MoreAds title={(data.vo as Category).path} ads={ads}/>
+                    <MoreAds
+                        before={(
+                            <div style={{marginBottom: '10px'}}>
+                                <Breadcrumbs sx={{padding:'0'}}>
+                                    {category.path.split(' > ').map((item:string,index: number) => (
+                                        <Link prefetch={false} key={index} href={'/'+category.href.split('/').slice(0,index + 1).join('/')}>
+                                            {item}
+                                        </Link>
+                                    ))}
+                                </Breadcrumbs>
+                            </div>
+                        )}
+                        titleNodeType="h1"
+                        title={category.name}
+                        ads={ads}
+                    />
                 </MainLayout>
             </>
         )

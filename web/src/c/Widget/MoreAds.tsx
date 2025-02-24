@@ -9,12 +9,16 @@ import { css } from "@emotion/react";
 export interface MoreAdsProps {
     ads: Ad[];
     title?: string;
+    before: React.ReactNode;
+    titleNodeType?: string;
 }
 
-const MoreAds:FC<MoreAdsProps> = ({ads,title}) => {
+const MoreAds:FC<MoreAdsProps> = ({ads,title,before,titleNodeType = 'h2'}) => {
     return (
         <Section
             title={title?title:''}
+            before={before}
+            titleNodeType={titleNodeType}
             css={css`
                 display: grid; 
                 grid-template-columns: 1fr; 

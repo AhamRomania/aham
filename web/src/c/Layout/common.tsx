@@ -12,24 +12,32 @@ export interface CentredStyleProps {
     padding?: number;
 }
 
-export const CentredStyle = ({width, mode, padding}:CentredStyleProps) =>
-    css`
-        @media only screen and (min-width : 1200px) {
-            width: ${width ? width : 1024}px;
-            margin: 0 auto;
-            padding: 0px;
-        }
-        height: 100%;
-        display: flex;
-        flex-direction: ${mode ? mode : 'column'};
-        padding: 20px ${typeof(padding) === 'number' ? padding + 'px' : '20px'};
-        padding-bottom: 200px;
-    `
-
-export const Centred = styled(Flex)`
-    ${CentredStyle}
-`;
-
+export const Centred: FC<CentredStyleProps&PropsWithChildren> = ({children, width, mode, padding}) => {
+    return (
+        <div
+            css={css`
+                margin-bottom: 20px;
+            `}
+        >
+            <div
+                data-test="centred"
+                css={css`
+                    @media only screen and (min-width : 1200px) {
+                        width: ${width ? width : 1024}px;
+                        margin: 0 auto;
+                        padding: 0px;  
+                    }
+                    height: 100%;
+                    display: flex;
+                    flex-direction: ${mode ? mode : 'column'};
+                    padding: 20px ${typeof(padding) === 'number' ? padding + 'px' : '20px'};
+                `}
+            >
+                {children}
+            </div>
+        </div>
+    )
+}
 export const Space = styled.div`flex: 1;`
 
 export interface PageNameProps {

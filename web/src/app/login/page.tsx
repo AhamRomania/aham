@@ -169,7 +169,7 @@ export default function Page() {
               if (query.get('then')) {
                 router.push(query.get('then') as string);
               } else {
-                router.push(`/u/anunturi/creaza`);
+                router.push(`/u/anunturi/creaza?r=` + Math.random());
               }
             }).catch(() => {
               setLoggingIn(false);
