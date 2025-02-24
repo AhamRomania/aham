@@ -33,7 +33,6 @@ const getLoggedInState = async () => {
     try {
         me = await getUser();
     } catch(e: unknown) {
-        console.error('getLoggedInState:error:', e);
         return false;
     }
 
