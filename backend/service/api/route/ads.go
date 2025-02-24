@@ -172,12 +172,16 @@ func favouriteDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAdMetrics(w http.ResponseWriter, r *http.Request) {
-	// todo
+
+	userID, _ := c.UserID(r)
+
+	ad := db.GetAd(userID, c.ID(r, "id"))
+
 	render.JSON(w, r, map[string]any{
-		"views":      25,
-		"messages":   20,
-		"favourites": 5,
-		"week":       []int{2, 4, 7, 7, 5, 5, 2},
+		"views":      db.GetAdTotalViews(ad),
+		"messages":   db.GetAdMessagesCount(ad),
+		"favourites": db.GetAdFavouriteCount(ad),
+		"week":       db.GetAdLastWeekViews(ad),
 	})
 }
 

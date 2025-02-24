@@ -25,7 +25,7 @@ const AdPanel:FC<AdPanelProps> = ({ad}) => {
             graph.current,
             null,
             {
-                height: 140
+                height: 140,
             },
         );
 
@@ -35,7 +35,12 @@ const AdPanel:FC<AdPanelProps> = ({ad}) => {
               data: ['LU', 'MA', 'MI', 'JO', 'VI', 'SÂ', 'DU']
             },
             yAxis: {
-              type: 'value'
+              type: 'value',
+              axisLabel: {
+                formatter: function (value: any) {
+                    return parseInt(value);
+                }
+              }
             },
             textStyle: {
                 fontSize: 10,
@@ -141,9 +146,6 @@ const AdPanel:FC<AdPanelProps> = ({ad}) => {
                 </Link>
                 <Link href={`/u/mesaje?ad=${ad.id}`} prefetch={false}>
                     <Button>Vezi mesaje</Button>
-                </Link>
-                <Link href={`/u/mesage?ad=${ad.id}`} prefetch={false}>
-                    <Button color="danger">Oprește afișarea</Button>
                 </Link>
             </div>
         </div>
