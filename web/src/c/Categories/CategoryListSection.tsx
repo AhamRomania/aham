@@ -28,6 +28,7 @@ export const Item: FC<CategoryProps> = ({ category }) => {
             margin-bottom: 20px;
             svg {
                 margin-right: 15px;
+                min-width: 42px;
             }
       `)}
     >
