@@ -32,6 +32,7 @@ const getLoggedInState = async () => {
     
     try {
         me = await getUser();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch(e: unknown) {
         return false;
     }
