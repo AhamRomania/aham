@@ -153,6 +153,10 @@ export async function track(kind: string, metadata?: D) {
     }
 
     (new Image()).src = getDomain(Domain.Api) + `/v1/metrics/track` + buildQueryParams(query);
+
+    if (typeof(window['gtag']) === 'function') {
+        window['gtag']('event', kind);
+    }
 }
 
 export function buildQueryParams(params: { [key: string]: any }): string {
