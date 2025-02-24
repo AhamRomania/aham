@@ -227,7 +227,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := user.UpdateBalance("Registration Gift", 0, 10000); err != nil {
+	if err := user.UpdateBalance("Cadou înregistrare", 0, 5000); err != nil {
 		c.Log().Error(err)
 	}
 
@@ -243,7 +243,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 			}
 
 			var balanceAdded bool = true
-			if err := referrer.UpdateBalance(fmt.Sprintf("Referrer Gift UserID(%d)", user.ID), 0, 30000); err != nil {
+			if err := referrer.UpdateBalance(fmt.Sprintf("%s a creat cont din referință", c.Ucfirst(req.GivenName)), 0, 30000); err != nil {
 				c.Log().Error(err)
 				balanceAdded = false
 			}

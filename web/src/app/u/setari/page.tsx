@@ -2,6 +2,8 @@
 
 import { Centred, PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
+import NextFeature from "@/c/Widget/Feature";
+import AccountSection from "@/c/Widget/Section";
 import { useContext, useEffect } from "react";
 
 export default function Page() {
@@ -17,7 +19,9 @@ export default function Page() {
   return (
     <Centred>
       <PageName>Setări</PageName>
-      <div>Setări</div>
+      <AccountSection title="Notificări">
+        <NextFeature feature="settings/notifications">Notificări pentru stări anunțuri și mesaje.</NextFeature>
+      </AccountSection>
     </Centred>
   );
 }

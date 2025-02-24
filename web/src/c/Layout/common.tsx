@@ -23,6 +23,7 @@ export const CentredStyle = ({width, mode, padding}:CentredStyleProps) =>
         display: flex;
         flex-direction: ${mode ? mode : 'column'};
         padding: 20px ${typeof(padding) === 'number' ? padding + 'px' : '20px'};
+        padding-bottom: 200px;
     `
 
 export const Centred = styled(Flex)`
@@ -54,7 +55,15 @@ export const PageName: FC<PageNameProps & PropsWithChildren> = ({children, right
                 {children}
             </h1>
             <Space/>
+            <div
+                css={css`
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;    
+                `}
+            >
             {right}
+            </div>
         </div>
     )
 }

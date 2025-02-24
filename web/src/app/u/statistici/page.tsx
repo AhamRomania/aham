@@ -2,6 +2,7 @@
 
 import { Centred, PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
+import NextFeature from "@/c/Widget/Feature";
 import { useContext, useEffect } from "react";
 
 export default function Page() {
@@ -17,7 +18,7 @@ export default function Page() {
   return (
     <Centred>
       <PageName>Statistici</PageName>
-      <div></div>
+      <NextFeature>Statistici pentru anunțuri</NextFeature>
     </Centred>
   );
 }

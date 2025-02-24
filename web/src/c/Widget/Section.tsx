@@ -11,7 +11,7 @@ export interface SectionProps {
 
 const AccountSection: FC<SectionProps & PropsWithChildren> = ({title, after, className, children}) => {
     return (
-        <div css={css`margin-bottom: 30px; margin-top: 20px; width: 100%;`}>
+        <div css={css`padding-bottom: 30px; padding-top: 20px; width: 100%;`}>
             <h2>{title}</h2>
             <div className={className} css={css`margin-top: 20px;`}>{children}</div>
             {after && <div css={css`display: flex; justify-content: flex-end;`}>

@@ -3,11 +3,11 @@ import { getUser } from "@/c/Auth";
 import getApiFetch from "./api";
 import getDomain, { Domain } from "@/c/domain";
 
-export async function getMe(fn?: (me: User | null) => void):Promise<User | undefined> {
+export async function getMe(fn?: (me: User | null) => void):Promise<User | null> {
     
     if (fn) {
-    getUser().then(fn)
-        return;
+        getUser().then(fn)
+        return null;
     }
 
     return getUser().then(fn);
