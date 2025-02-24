@@ -3,8 +3,12 @@ name: Test backend services
 on:
   push:
     branches: [ "main" ]
+    branches-ignore:
+      - '**'
   pull_request:
     branches: [ "main" ]
+    branches-ignore:
+      - '**'
 
 jobs:
 
