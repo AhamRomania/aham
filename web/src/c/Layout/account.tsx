@@ -212,6 +212,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             data-test="account-aside-menu"
             css={css`
               flex: 1;
+              overflow-y: auto;
             `}
           >
             {/* MENU DOWN */}

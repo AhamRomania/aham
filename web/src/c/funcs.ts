@@ -1,8 +1,8 @@
 import getApiFetch from "@/api/api";
-import { Ad, Category, D, SeoEntry, User } from "./types"
 import { Metadata } from "next";
-import getDomain, { Domain } from "./domain";
 import { getUser } from "./Auth";
+import getDomain, { Domain } from "./domain";
+import { Ad, Category, D, SeoEntry, User } from "./types";
 
 export const isPrivilegedUser = (user: User | null): boolean => {
     if (user === null) { return false }
@@ -133,7 +133,7 @@ export async function seo(uri?: string, extra?: Metadata): Promise<Metadata> {
 
 export async function track(kind: string, metadata?: D) {
 
-    const query: {[key:string]:any} = {
+    const query: { [key: string]: any } = {
         "kind": kind,
     };
 
@@ -155,7 +155,7 @@ export async function track(kind: string, metadata?: D) {
     (new Image()).src = getDomain(Domain.Api) + `/v1/metrics/track` + buildQueryParams(query);
 }
 
-export function buildQueryParams(params: {[key: string]:any}):string {
+export function buildQueryParams(params: { [key: string]: any }): string {
     let query = '?';
     for (const key in params) {
         if (params.hasOwnProperty(key)) {

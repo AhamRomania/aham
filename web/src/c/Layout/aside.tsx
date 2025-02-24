@@ -2,6 +2,7 @@ import { css } from "@emotion/react";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import Link from "next/link";
 import { createContext, FC, useContext, useState } from "react";
+import { useLocalStorageState } from "../hooks";
 
 interface MobileProps {
     mobile?: boolean;
@@ -33,7 +34,7 @@ interface MenuItemProps {
 
 export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, count, title, href, children}) => {
 
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useLocalStorageState<boolean>(`menu-${title}`,false);
     const [showIconOnly,] = useState(useContext(MenuContext));
 
     const handle = (e: MouseEvent) => {
