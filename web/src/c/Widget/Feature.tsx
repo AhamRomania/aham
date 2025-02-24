@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { Check, FavoriteBorderOutlined, FavoriteRounded, ThumbDown, ThumbUp } from "@mui/icons-material";
+import { Check, FavoriteRounded, ThumbDown, ThumbUp } from "@mui/icons-material";
 import { IconButton, Stack } from "@mui/joy";
 import { FC, useState } from "react";
 import { track } from "../funcs";
@@ -9,9 +9,9 @@ export interface NextFeatureProps {
 }
 
 const NextFeature: FC<NextFeatureProps & React.PropsWithChildren> = ({feature,children}) => {
-    const [voted,setVoted] = useState(false);
+    const [voted,setVoted] = useState<'up' | 'down' | null>(null);
     const voteUp = () => {
-        setVoted(true);
+        setVoted('up');
         if (feature && feature != '') {
             track(`feature/${feature}/up`);
         } else {
@@ -19,12 +19,19 @@ const NextFeature: FC<NextFeatureProps & React.PropsWithChildren> = ({feature,ch
         }
     }
     const voteDown = () => {
-        setVoted(true);
+        setVoted('down');
         if (feature && feature != '') {
             track(`feature/${feature}/down`);
         } else {
             track(`feature/down`);
         }
+    }
+    const renderAfterFeedback = () => {
+        if (voted === 'up') {
+            return <FavoriteRounded fontSize="small"/>;
+        }
+
+        return <Check fontSize="small"/>;
     }
     return (
         <div
@@ -41,10 +48,8 @@ const NextFeature: FC<NextFeatureProps & React.PropsWithChildren> = ({feature,ch
             >
                 <Stack gap={1} flexDirection="row" alignItems="center">
                     <div css={css`padding:10px 0;`}><strong>Urmează:</strong>{children}</div>
-                    {!voted ? <><IconButton size="sm" onClick={voteUp} variant="soft"><ThumbUp fontSize="small"/></IconButton>
-                    <IconButton size="sm" onClick={voteDown}variant="soft"><ThumbDown fontSize="small"/></IconButton></> : (
-                        <FavoriteRounded fontSize="small"/>
-                    )}
+                    {voted === null ? <><IconButton size="sm" onClick={voteUp} variant="soft"><ThumbUp fontSize="small"/></IconButton>
+                    <IconButton size="sm" onClick={voteDown}variant="soft"><ThumbDown fontSize="small"/></IconButton></> : renderAfterFeedback()}
                 </Stack>
             </div>
         </div>
