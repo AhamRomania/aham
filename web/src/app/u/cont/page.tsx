@@ -105,6 +105,9 @@ export default function Page() {
       <AccountSection title="Tranzacții">
         <NextFeature feature="account/transactions">Cheltuieli anunțuri, câștiguri referințe.</NextFeature>
       </AccountSection>
+      <AccountSection title="Aplicații">
+        <NextFeature feature="account/apps">Definește aplicații pentru integrare cu terțe părți.</NextFeature>
+      </AccountSection>
       <AccountSection title="Zonă periculoasă">
         <Stack gap={2} flexDirection="row">
           <Button

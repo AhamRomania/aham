@@ -21,7 +21,7 @@ export default function Page() {
       <div>
         <CheckCircleOutline css={css`color: green; width: 40px; height: 40px; margin-bottom: 20px;`}/>
       </div>
-      <p><strong>{searchParams.get('name')}</strong>, contul a fost activat!</p>
+      <p style={{marginBottom:"10px"}}><strong>{searchParams.get('name')}</strong>, contul a fost activat!</p>
       <Link href="/login">
         <Button variant="outlined">Întră în cont</Button>
       </Link>
