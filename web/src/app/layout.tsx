@@ -26,6 +26,7 @@ import Head from "next/head";
 // import CssBaseline from "@mui/material/CssBaseline";
 import { register } from 'timeago.js';
 import ro from 'timeago.js/lib/lang/ro';
+import HotjarTracking from "@/c/hotjar";
 
 register('ro', ro);
 
@@ -50,6 +51,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//cdn.aham.ro"/>
       </Head>
       <body className={`${interFont.className}`}>
+        <HotjarTracking/>
         <CacheProvider value={cache}>
           <AppRouterCacheProvider options={{ key: "aham" }}>
             <ThemeProvider theme={MaterialTheme}>
@@ -66,7 +68,7 @@ export default function RootLayout({
           </AppRouterCacheProvider>
         </CacheProvider>
       </body>
-      <GoogleAnalytics gaId="G-1X7Y30KPPK" />
+      <GoogleAnalytics gaId="G-TYN5WNN10P" />
     </html>
   );
 }
