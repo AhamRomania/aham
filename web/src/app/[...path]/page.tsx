@@ -67,7 +67,7 @@ export default async function Page(props: any) {
                                     ))}
                                 </Breadcrumbs>
                             </div>
-                            <CategoryListSection title={false} category={await fetchCategory(category.id)}/>
+                            <CategoryListSection showMoreButton={false} title={false} category={await fetchCategory(category.id)}/>
                             </>
                         )}
                         titleNodeType="h1"

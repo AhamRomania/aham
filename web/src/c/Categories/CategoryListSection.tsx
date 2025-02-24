@@ -11,6 +11,7 @@ import { Category } from "../types";
 export interface CategoryListSectionProps {
   category: Category;
   title?: boolean
+  showMoreButton?:boolean;
 }
 
 export interface CategoryProps {
@@ -38,7 +39,7 @@ export const Item: FC<CategoryProps> = ({ category }) => {
   );
 };
 
-const CategoryListSection: FC<CategoryListSectionProps> = ({ category, title = true }) => {
+const CategoryListSection: FC<CategoryListSectionProps> = ({ category, title = true, showMoreButton = true }) => {
     
   if (!category) {
     return (
@@ -54,7 +55,7 @@ const CategoryListSection: FC<CategoryListSectionProps> = ({ category, title = t
   }
 
   return (
-    <Section title={title ? (category?.name || "Categorii") : ''} after={<Link href={category.href} prefetch={false}><Button size="lg" variant="plain" endDecorator={<ArrowRight/>}>Vezi toate categoriile</Button></Link>}>
+    <Section title={title ? (category?.name || "Categorii") : ''} after={showMoreButton ? <Link href={category.href} prefetch={false}><Button size="lg" variant="plain" endDecorator={<ArrowRight/>}>Vezi toate categoriile</Button></Link> : null}>
       <div
         css={css(`
               display: grid;
