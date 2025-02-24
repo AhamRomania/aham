@@ -1,6 +1,8 @@
 "use server";
 
 import getApiFetch from "@/api/api";
+import { fetchCategory } from "@/api/categories";
+import { CategoryListSection } from "@/c/Categories";
 import { toMoney } from "@/c/formatter";
 import { getAdOrCategory } from "@/c/funcs";
 import { MainLayout } from "@/c/Layout";
@@ -55,6 +57,7 @@ export default async function Page(props: any) {
                 <MainLayout>
                     <MoreAds
                         before={(
+                            <>
                             <div style={{marginBottom: '10px'}}>
                                 <Breadcrumbs sx={{padding:'0'}}>
                                     {category.path.split(' > ').map((item:string,index: number) => (
@@ -64,6 +67,8 @@ export default async function Page(props: any) {
                                     ))}
                                 </Breadcrumbs>
                             </div>
+                            <CategoryListSection title={false} category={await fetchCategory(category.id)}/>
+                            </>
                         )}
                         titleNodeType="h1"
                         title={category.name}

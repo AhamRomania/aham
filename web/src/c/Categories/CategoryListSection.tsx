@@ -10,6 +10,7 @@ import { Category } from "../types";
 
 export interface CategoryListSectionProps {
   category: Category;
+  title?: boolean
 }
 
 export interface CategoryProps {
@@ -37,8 +38,8 @@ export const Item: FC<CategoryProps> = ({ category }) => {
   );
 };
 
-const CategoryListSection: FC<CategoryListSectionProps> = ({ category }) => {
-
+const CategoryListSection: FC<CategoryListSectionProps> = ({ category, title = true }) => {
+    
   if (!category) {
     return (
       <Stack flexDirection="row" gap={1} css={css`padding: 20px 0;`}>
@@ -48,8 +49,12 @@ const CategoryListSection: FC<CategoryListSectionProps> = ({ category }) => {
     )
   }
 
+  if (!category.children || category.children.length == 0) {
+    return null;
+  }
+
   return (
-    <Section title={category?.name || "Categorii"} after={<Link href={category.href} prefetch={false}><Button size="lg" variant="plain" endDecorator={<ArrowRight/>}>Vezi toate categoriile</Button></Link>}>
+    <Section title={title ? (category?.name || "Categorii") : ''} after={<Link href={category.href} prefetch={false}><Button size="lg" variant="plain" endDecorator={<ArrowRight/>}>Vezi toate categoriile</Button></Link>}>
       <div
         css={css(`
               display: grid;
