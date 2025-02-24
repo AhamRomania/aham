@@ -8,13 +8,13 @@ import { css } from "@emotion/react";
 
 export interface MoreAdsProps {
     ads: Ad[];
-    title: string;
+    title?: string;
 }
 
 const MoreAds:FC<MoreAdsProps> = ({ads,title}) => {
     return (
         <Section
-            title={title}
+            title={title?title:''}
             css={css`
                 display: grid; 
                 grid-template-columns: 1fr; 
