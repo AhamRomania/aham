@@ -29,7 +29,7 @@ const Footer: FC<FooterProps> = ({version}) => {
     }, [mobileOS]);
 
     const openMobileApp = (os: string) => {
-        track(`open/mobile/${os.toLowerCase()}`);
+        track(`mobile/${os.toLowerCase()}/click`);
         setMobileOS(os)
         setShowMobInfo(true);
     }
@@ -44,12 +44,10 @@ const Footer: FC<FooterProps> = ({version}) => {
                             <main>
                                 <nav className={style.menu}>
                                     <Link prefetch={false} href="/despre">Despre</Link>
-                                    <Link prefetch={false} href="/promovare">Promovează</Link>
                                     <Link prefetch={false} href="/categorii">Categorii</Link>
-                                    <Link prefetch={false} href="/contact">Contact</Link>
+                                    <Link prefetch={false} href="https://blog.aham.ro">Blog</Link>
                                 </nav>
                                 <nav className={style.menu}>
-                                    <Link prefetch={false} href="https://blog.aham.ro">Blog</Link>
                                     <Link prefetch={false} href="/ajutor">Ajutor</Link>
                                     <Link prefetch={false} href="/developeri">Developeri</Link>
                                 </nav>

@@ -36,6 +36,7 @@
     "react-dom": "^19.0.0",
     "react-imask": "^7.6.1",
     "react-number-format": "^5.4.3",
+    "redoc": "^2.4.0",
     "timeago.js": "^4.0.2"
   },
   "devDependencies": {

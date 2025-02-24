@@ -1,28 +1,52 @@
 {
     "swagger": "2.0",
     "info": {
-      "version": "1.0.0",
+      "version": "v1",
       "title": "Aham API",
-      "description": "Aham API ADS"
+      "description": "Documentație integrare sistem de anunțuri Aham"
     },
-    "host": "https://api.aham.ro",
+    "host": "api.aham.ro",
     "basePath": "/v1",
     "schemes": ["http"],
     "paths": {
-      "/users": {
+      "/auth": {
         "post": {
-          "summary": "Crează un utilizator",
-          "responses": {
-            "200": {
-              "description": "Utilizatorul creat",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/User"
+            "summary": "Autentificare",
+            "requestBody": {
+                "description": "Autentificare pentru a genera cod nou pentru folosire API",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/definitions/Auth"    
+                        }
+                    }
                 }
-              }
             }
-          }
+        }
+      },
+      "/me": {
+        "post": {
+            "summary": "Informații user"
+        }
+      },
+      "/me/referrer": {
+        "post": {
+            "summary": "Link pentru referințe"
+        }
+      },
+      "/ads": {
+        "post": {
+            "summary": "Crează anunțuri"
+        }
+      },
+      "/ads/{id}": {
+        "get": {
+            "summary": "Obține un anunț"
+        }
+      },
+      "/ads/{id}/publish": {
+        "post": {
+            "summary": "Publică anunț"
         }
       }
     },
@@ -37,6 +61,17 @@
             "type": "string"
           },
           "family_name": {
+            "type": "string"
+          }
+        }
+      },
+      "Auth": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
             "type": "string"
           }
         }
