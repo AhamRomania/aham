@@ -103,7 +103,7 @@
             <div class="right">
                 <div class="version">
                     <a href="https://aham.ro/status">
-                        2.4.2
+                        0.4.2
                     </a>
                 </div>
                 <a title="Navighează la pagina principală" href="https://aham.ro?uiref=bottom_logo">
