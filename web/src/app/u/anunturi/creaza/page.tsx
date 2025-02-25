@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import getApiFetch from "@/api/api";
 import CategorySelector from "@/c/Categories/CategorySelector";
@@ -12,38 +12,48 @@ import { AccountLayoutContext } from "@/c/Layout/account";
 import { BouncingLogo } from "@/c/logo";
 import { Category, Prop } from "@/c/types";
 import { css } from "@emotion/react";
-import { Button, Checkbox, Divider, FormControl, FormHelperText, FormLabel, Grid, Input, Option, Select, Stack, Textarea } from "@mui/joy";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Grid,
+  Input,
+  Option,
+  Select,
+  Stack,
+  Textarea,
+} from "@mui/joy";
 import { Backdrop, useMediaQuery } from "@mui/material";
 import Link from "next/link";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { FC, Fragment, useContext, useEffect, useState } from "react";
 
 export default function Page() {
-
-  const {setPath} = useContext(AccountLayoutContext);
+  const { setPath } = useContext(AccountLayoutContext);
   const api = getApiFetch();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const [currency, setCurrency] = useState('LEI');
+  const [currency, setCurrency] = useState("LEI");
   const [category, setCategory] = useState<Category | null>(null);
   const [descriptionCharCount, setDescriptionCharCount] = useState(0);
-  const [imagesCount, setImagesCount] = useState(0)
+  const [imagesCount, setImagesCount] = useState(0);
   const [savingAd, setSavingAd] = useState(false);
   const [props, setProps] = useState<Prop[]>();
 
-  const onImagesChange = (images:GenericPicture[]) => {
+  const onImagesChange = (images: GenericPicture[]) => {
     setImagesCount(images.length);
-  }
+  };
 
   useEffect(() => {
     setPath(
       <>
-        <Link href="/u/anunturi">
-          Anunțuri
-        </Link>
+        <Link href="/u/anunturi">Anunțuri</Link>
         <span>Crează aunț</span>
       </>
-    )
-  },[]);
+    );
+  }, []);
 
   useEffect(() => {
     if (category && category.id) {
@@ -53,79 +63,111 @@ export default function Page() {
 
   const propElementFactory = (prop: Prop) => {
     switch (prop.type) {
-      case 'NUMBER':
-        return <FormControl key={prop.id} size="lg">
+      case "NUMBER":
+        return (
+          <FormControl key={prop.id} size="lg">
             <FormLabel>{prop.title}</FormLabel>
-            <Input type="number" name={`prop[${prop.name}]`} endDecorator={prop.template ?? prop.template}/>
-            {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
-        </FormControl>
-      case 'TEXT':
-        return <FormControl key={prop.id} size="lg">
+            <Input
+              type="number"
+              name={`prop[${prop.name}]`}
+              endDecorator={prop.template ?? prop.template}
+            />
+            {prop.description && (
+              <FormHelperText>{prop.description}</FormHelperText>
+            )}
+          </FormControl>
+        );
+      case "TEXT":
+        return (
+          <FormControl key={prop.id} size="lg">
             <FormLabel>{prop.title}</FormLabel>
-            <AutocompletePropValue prop={prop} endDecorator={prop.template ?? prop.template}/>
-            {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
-        </FormControl>
-      case 'BOOL':
-        return <FormControl key={prop.id} size="lg">
+            <AutocompletePropValue
+              prop={prop}
+              endDecorator={prop.template ?? prop.template}
+            />
+            {prop.description && (
+              <FormHelperText>{prop.description}</FormHelperText>
+            )}
+          </FormControl>
+        );
+      case "BOOL":
+        return (
+          <FormControl key={prop.id} size="lg">
             <FormLabel>{prop.title}</FormLabel>
-            <Checkbox name={`prop[${prop.name}]`}/>
-            {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
-        </FormControl>
-      case 'DATE':
-        return <FormControl key={prop.id} size="lg">
+            <Checkbox name={`prop[${prop.name}]`} />
+            {prop.description && (
+              <FormHelperText>{prop.description}</FormHelperText>
+            )}
+          </FormControl>
+        );
+      case "DATE":
+        return (
+          <FormControl key={prop.id} size="lg">
             <FormLabel>{prop.title}</FormLabel>
-            <Input type="date" name={`prop[${prop.name}]`} endDecorator={prop.template ?? prop.template}/>
-            {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
-        </FormControl>
-      case 'SELECT':
+            <Input
+              type="date"
+              name={`prop[${prop.name}]`}
+              endDecorator={prop.template ?? prop.template}
+            />
+            {prop.description && (
+              <FormHelperText>{prop.description}</FormHelperText>
+            )}
+          </FormControl>
+        );
+      case "SELECT":
         return (
           <FormControl key={prop.id} size="lg">
             <FormLabel>{prop.title}</FormLabel>
             <Select name={`prop[${prop.name}]`}>
               <Option value="-1">Alege {prop.title}</Option>
-              {prop.options.values.map((v: string,i: number) => <Option key={i} value={i}>{v}</Option>)}
+              {prop.options.values.map((v: string, i: number) => (
+                <Option key={i} value={i}>
+                  {v}
+                </Option>
+              ))}
               <Option value="0">Nu este în listă</Option>
             </Select>
-            {prop.description && <FormHelperText>{prop.description}</FormHelperText>}
+            {prop.description && (
+              <FormHelperText>{prop.description}</FormHelperText>
+            )}
           </FormControl>
-        )
+        );
     }
-  }
+  };
 
   const renderProps = () => {
     return props?.map((prop: Prop, index: number) => {
-        return (
-          <div key={index} data-type={prop.type}>
-            {propElementFactory(prop)}
-          </div>
-        )
-    })
-  }
+      return (
+        <div key={index} data-type={prop.type}>
+          {propElementFactory(prop)}
+        </div>
+      );
+    });
+  };
 
-  const getFormDataProps = (formData:{[key:string]:any}): {[key:string]:any} => {
-    
+  const getFormDataProps = (formData: {
+    [key: string]: any;
+  }): { [key: string]: any } => {
     if (!props || props.length === 0) {
       return {};
     }
 
-    const values: {[key:string]:any} = {};
+    const values: { [key: string]: any } = {};
 
-    Object.keys(formData).forEach(formKey => {
-        const reg = new RegExp(/^prop\[(.*)\]$/)
-        if (formData[formKey] !== '' && reg.test(formKey)) {
-          const propKey = formKey.match(reg)![1];
-          values[propKey] = formData[formKey];
-        }
+    Object.keys(formData).forEach((formKey) => {
+      const reg = new RegExp(/^prop\[(.*)\]$/);
+      if (formData[formKey] !== "" && reg.test(formKey)) {
+        const propKey = formKey.match(reg)![1];
+        values[propKey] = formData[formKey];
+      }
     });
 
-    return values
-  }
+    return values;
+  };
 
   return (
     <>
-      <PageName>
-        Crează anunț
-      </PageName>
+      <PageName>Crează anunț</PageName>
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -133,154 +175,149 @@ export default function Page() {
           const data = Object.fromEntries((formData as any).entries());
           setSavingAd(true);
           api(`/ads`, {
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify({
               category: parseInt(data.category),
               description: data.description,
-              messages: (data.messages === 'on'),
-              show_phone: (data.phone === 'on'),
-              phone: (data.phone || ''),
-              pictures: (data.pictures||'').split(','),
+              messages: data.messages === "on",
+              show_phone: data.phone === "on",
+              phone: data.phone || "",
+              pictures: (data.pictures || "").split(","),
               currency: currency,
               price: toCents(data.price),
               title: data.title,
-              props: getFormDataProps(data)
+              props: getFormDataProps(data),
             }),
-          }).then((response: any) => {
-            window.location.href = '/u/anunturi?id=' + response.id;
-          }).catch(e => {
-            setSavingAd(false);
-            console.log(e);
-          });
+          })
+            .then((response: any) => {
+              window.location.href = "/u/anunturi?id=" + response.id;
+            })
+            .catch((e) => {
+              setSavingAd(false);
+              console.log(e);
+            });
         }}
         css={css`
-            margin-bottom:50px;
-            .MuiFormControl-root {
-                margin-bottom: 20px;
-            }
-            hr {
-                margin: 30px 0;
-            }
+          padding-bottom: 50px;
+          .MuiFormControl-root {
+            margin-bottom: 20px;
+          }
+          label {
+            padding-bottom: 10px;
+          }
+          hr {
+            margin: 30px 0;
+          }
         `}
       >
         <FormControl size="lg" required>
-            <FormLabel>Categorie</FormLabel>
-            <CategorySelector mode={isMobile?'overlay':'columns'} name="category" onCategorySelect={setCategory}/>
+          <FormLabel>Categorie</FormLabel>
+          <CategorySelector
+            mode={isMobile ? "overlay" : "columns"}
+            name="category"
+            onCategorySelect={setCategory}
+          />
         </FormControl>
 
-        <Divider/>
+        <Divider />
 
         <FormControl size="lg" required>
-            <FormLabel>Imagini</FormLabel>
-            <Pictures name="pictures" onChange={onImagesChange}/>
-            <FormHelperText>
-                <Grid flex="1" container flexDirection="row">
-                  <Grid></Grid>
-                  <Grid flex={1}></Grid>
-                  <Grid>
-                    {imagesCount}/20
-                  </Grid>
-                </Grid>
-            </FormHelperText>
+          <FormLabel>Imagini</FormLabel>
+          <Pictures name="pictures" onChange={onImagesChange} />
+          <FormHelperText>
+            <Grid flex="1" container flexDirection="row">
+              <Grid></Grid>
+              <Grid flex={1}></Grid>
+              <Grid>{imagesCount}/20</Grid>
+            </Grid>
+          </FormHelperText>
         </FormControl>
 
-        <Divider/>
+        <Divider />
 
         <FormControl size="lg" required>
-            <FormLabel>Titlu</FormLabel>
-            <Input name="title"/>
+          <FormLabel>Titlu</FormLabel>
+          <Input name="title" />
         </FormControl>
 
         <div
           css={css`
-            @media only screen and (min-width : 1200px) {
-              display: grid; 
-              grid-template-columns: 1fr 1fr; 
+            @media only screen and (min-width: 1200px) {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
               gap: 20px;
             }
           `}
         >
-        {renderProps()}
+          {renderProps()}
         </div>
 
         <FormControl size="lg" required>
-            <FormLabel>Descriere</FormLabel>
-            <Textarea
-              name="description"
-              onChange={(e) => {
-                setDescriptionCharCount(e.target.value.length);
-              }}
-              minRows={5}
-              maxRows={15}
-            />
-            <FormHelperText>
-                <Grid flex="1" container flexDirection="row">
-                  <Grid></Grid>
-                  <Grid flex={1}></Grid>
-                  <Grid>
-                    {descriptionCharCount}/10000
-                  </Grid>
-                </Grid>
-            </FormHelperText>
+          <FormLabel>Descriere</FormLabel>
+          <Textarea
+            name="description"
+            onChange={(e) => {
+              setDescriptionCharCount(e.target.value.length);
+            }}
+            minRows={5}
+            maxRows={15}
+          />
+          <FormHelperText>
+            <Grid flex="1" container flexDirection="row">
+              <Grid></Grid>
+              <Grid flex={1}></Grid>
+              <Grid>{descriptionCharCount}/10000</Grid>
+            </Grid>
+          </FormHelperText>
         </FormControl>
 
         <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-            <Grid>
-                <FormControl size="lg" required>
-                    <FormLabel>Preț</FormLabel>
-                    <Input
-                        name="price"
-                        slotProps={{
-                          input: {
-                            component: NumericFormatAdapter,
-                          },
-                        }}
-                        sx={{ width: 300 }}
-                        endDecorator={
-                          <Fragment>
-                            <Divider orientation="vertical" />
-                            <Select
-                              variant="plain"
-                              value={currency}
-                              onChange={(_, value) => setCurrency(value!)}
-                              slotProps={{
-                                listbox: {
-                                  variant: 'outlined',
-                                },
-                              }}
-                              sx={{ mr: -1.5, '&:hover': { bgcolor: 'transparent' } }}
-                            >
-                              <Option value="EUR">EUR</Option>
-                              <Option value="LEI">LEI</Option>
-                            </Select>
-                          </Fragment>
-                        }
-                    />
-                </FormControl>
-            </Grid>
+          <Grid>
+            <div>
+              <label style={{paddingBottom:"10px",display:"block"}}>Preț*</label>
+              <Input
+                name="price"
+                slotProps={{
+                  input: {
+                    component: NumericFormatAdapter,
+                  },
+                }}
+                sx={{ width: 300 }}
+                endDecorator={<CurrencySelector currency={currency} onChange={setCurrency} />}
+              />
+            </div>
+          </Grid>
         </Grid>
 
-        <Divider/>
+        <Divider />
 
         <FormControl size="lg">
-            <FormLabel>Contact</FormLabel>
-            <Stack gap={2} flexDirection="column">
-              <Checkbox name="messages" size="md" label="Vreau să primesc mesaje pe platformă"/>
-            </Stack>
+          <FormLabel>Contact</FormLabel>
+          <Stack gap={2} flexDirection="column">
+            <Checkbox
+              name="messages"
+              size="md"
+              label="Vreau să primesc mesaje pe platformă"
+            />
+          </Stack>
         </FormControl>
 
         <FormControl size="lg">
-            <Stack gap={2} flexDirection="column">
-            <Checkbox name="phone" size="md" label="Afișează numărul de telefon"/>
-            </Stack>
+          <Stack gap={2} flexDirection="column">
+            <Checkbox
+              name="phone"
+              size="md"
+              label="Afișează numărul de telefon"
+            />
+          </Stack>
         </FormControl>
 
         <Grid
           css={css`
-            margin-top:100px;
+            margin-top: 100px;
             flex-direction: column;
-            @media only screen and (min-width : 1200px) {
-                flex-direction: row;
+            @media only screen and (min-width: 1200px) {
+              flex-direction: row;
             }
           `}
           container
@@ -289,11 +326,11 @@ export default function Page() {
           <Grid
             css={css`
               gap: 10px;
-              display: flex; 
+              display: flex;
               flex: 1;
               button {
-              flex: 1;
-              } 
+                flex: 1;
+              }
             `}
           >
             <Button
@@ -316,19 +353,61 @@ export default function Page() {
             </Button>
           </Grid>
           <Grid flex={1}>
-            <p css={css`font-size:12px;`}>
-              Selectând <strong>publică anunțul</strong>, ești de acord că ai citit și ai acceptat <a href="/termeni-si-conditii" target="_blank">termenii și condiții</a> de utilizare. Vă rugăm să consultați de asemenea pagina de <a href="/confidentialitate" target="_blank">confidențialitate</a> pentru informații cu privire la prelucrarea datelor dumneavoastră. Vă rugăm să vizitați pagina noastră de contact pentru a solicita asistență suplimentară.
-            </p> 
+            <p
+              css={css`
+                font-size: 12px;
+              `}
+            >
+              Selectând <strong>publică anunțul</strong>, ești de acord că ai
+              citit și ai acceptat{" "}
+              <a href="/termeni-si-conditii" target="_blank">
+                termenii și condiții
+              </a>{" "}
+              de utilizare. Vă rugăm să consultați de asemenea pagina de{" "}
+              <a href="/confidentialitate" target="_blank">
+                confidențialitate
+              </a>{" "}
+              pentru informații cu privire la prelucrarea datelor dumneavoastră.
+              Vă rugăm să vizitați pagina noastră de contact pentru a solicita
+              asistență suplimentară.
+            </p>
           </Grid>
         </Grid>
 
         <Backdrop
-          sx={(theme) => ({ color: '#FFF', zIndex: theme.zIndex.drawer + 1 })}
+          sx={(theme) => ({ color: "#FFF", zIndex: theme.zIndex.drawer + 1 })}
           open={savingAd}
         >
-          <BouncingLogo/>
+          <BouncingLogo />
         </Backdrop>
       </form>
-      </>
+    </>
   );
 }
+
+interface CurrencySelectorProps {
+    currency:string;
+    onChange:(currency:string)=>void;
+}
+
+const CurrencySelector: FC<CurrencySelectorProps> = ({currency, onChange}) => {
+  return (
+    <Fragment>
+      <Divider orientation="vertical" />
+      <Select
+        variant="plain"
+        value={currency}
+        onChange={(_, value) => onChange(value!)}
+        slotProps={{
+          listbox: {
+            variant: "outlined",
+          },
+        }}
+        sx={{ mr: -1.5, "&:hover": { bgcolor: "transparent" } }}
+      >
+        <Option value="EUR">EUR</Option>
+        <Option value="LEI">LEI</Option>
+      </Select>
+    </Fragment>
+  );
+};

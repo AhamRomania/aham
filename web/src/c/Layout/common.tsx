@@ -15,6 +15,7 @@ export interface CentredStyleProps {
 export const Centred: FC<CentredStyleProps&PropsWithChildren> = ({children, width, mode, padding, ...props}) => {
     return (
         <div
+            data-test="centred-container"
             css={css`
                 margin-bottom: 20px;
                 height: 100%;

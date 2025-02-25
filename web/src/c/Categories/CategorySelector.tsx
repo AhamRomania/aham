@@ -30,6 +30,8 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', on
     const [tree, setTree] = useState<CategoryTreeNode|null>(null); // root is selected category
     // current branch selection, if no children is a leaf and apply category
     const [branch, setBranch] = useState<CategoryTreeNode|null>(null); // top items selected item
+    // columns to display currently if mode is it
+    const [columns, setColumns] = useState<number[]>([]);
     // search results on keyword change
     const [hintResults, setHintResults] = useState<CategoryTreeNode[]>([]);
 
@@ -38,10 +40,26 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', on
     },[])
 
     useEffect(() => {
-        setKeyword(branch?.path.map(b => b.name).join(' / ') as string);
+        
+        setKeyword(branch?.path.map(b => b.name).join(' / ') || '');
+        
         if (branch && branch.children.length === 0) {
             onCategorySelect(branch.category)
         }
+        
+        if (branch) {
+            
+            let n = 0;
+            
+            if (branch.children && branch.children.length) {
+                n = branch.path.length;
+            } else {
+                n = branch.path.length - 1;
+            }
+
+            setColumns([...Array(n).keys()]);
+        }
+
     }, [branch]);
 
     const renderSubcategoryList = (column: number): React.ReactNode => {
@@ -81,24 +99,9 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', on
         );
     };
 
-    const determineColumnLength = (): number[] => {
-
-        let n = 0;
-
-        if (branch) {
-            if (branch.children && branch.children.length) {
-                n = branch.path.length;
-            } else {
-                n = branch.path.length - 1;
-            }
-        }
-
-        return [...Array(n).keys()]
-    }
-
     const onKeywordChange = (e: any) => {
         const keyword = e.target.value
-        setKeyword(keyword);
+        setKeyword(keyword || '');
         if (tree && keyword != '' && keyword.length > 2) {
             const results = tree!.search(keyword);
             if (results && results.length) {
@@ -126,7 +129,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', on
             return;
         }
 
-        setKeyword(node.path.map(i=>i.name).join(' / '));
+        setKeyword(node.path.map(i=>i.name).join(' / ') || '');
         setHintResults([]);
     }
 
@@ -150,7 +153,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', on
                 `}
             >
                 <CircularProgress thickness={2} size="sm"/>
-                <span>Construim selectorul de categorii...</span>
+                <span style={{fontSize:"14px"}}>Construim selectorul de categorii...</span>
             </div>
         )
     }
@@ -250,16 +253,18 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', on
                 </div>
 
                 <div
+                    data-columns={columns.length}
+                    data-test="path-container"
                     css={css`
                         padding: 20px;
                         display: grid;
                         overflow-x: auto;
                         position: relative;
-                        height: ${mode === 'columns' ? 'auto' : '400px'};
-                        grid-template-columns: ${mode === 'columns' ? determineColumnLength().map(() => '1fr').join(' ') : 'auto'};
+                        height: ${mode === 'columns' ? 'auto' : (columns.length > 0 ? '400px' : 'auto')};
+                        grid-template-columns: ${mode === 'columns' ? columns.map(() => '1fr').join(' ') : 'auto'};
                     `}
                 >
-                    {(determineColumnLength().map((index) => (
+                    {(columns.map((index) => (
                         <div
                             key={`tree-level-${index}`}
                             data-testid="category-tree-levels"
