@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import { ArrowLeft, Check, Close, KeyboardArrowRightOutlined } from "@mui/icons-material";
 import { CircularProgress, FormControl, FormLabel, IconButton, Input, List, ListItem, ListItemButton, ListItemContent } from "@mui/joy";
 import Image from "next/image";
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useEffect, useReducer, useState } from "react";
 import { Category } from "../types";
 import { CategoryTreeNode, categoryTreeRootFromArray } from "./core";
 
@@ -34,6 +34,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', on
     const [columns, setColumns] = useState<number[]>([]);
     // search results on keyword change
     const [hintResults, setHintResults] = useState<CategoryTreeNode[]>([]);
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     useEffect(() => {
         fetchCategories().then(a => setTree(categoryTreeRootFromArray(a)))
@@ -58,6 +59,8 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', on
             }
 
             setColumns([...Array(n).keys()]);
+        } else {
+            setColumns([...Array(0).keys()]);
         }
 
     }, [branch]);
@@ -65,6 +68,10 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', on
     const renderSubcategoryList = (column: number): React.ReactNode => {
 
         if (!branch) {
+            return null;
+        }
+
+        if (!branch?.path[column]) {
             return null;
         }
 
@@ -121,16 +128,10 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', on
     }
 
     const applyCategoryFromNode = (node: CategoryTreeNode | null) => {
-
+        setKeyword(node?.path.map(i=>i.name).join(' / ') || '');
         setBranch(node);
-
-        if (!node) {
-            setKeyword('');
-            return;
-        }
-
-        setKeyword(node.path.map(i=>i.name).join(' / ') || '');
         setHintResults([]);
+        forceUpdate();
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
