@@ -216,8 +216,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		Source:               "native",
 		EmailActivationToken: c.String(uuid.NewString()),
 		Meta: db.UserMeta{
-			db.UserMetaActiveAds:  2,
-			db.UserMetaAdLifetime: 60 * 24 * 10,
+			db.UserMetaActiveAds:  c.DEFAULT_ADS_PER_USER,
+			db.UserMetaAdLifetime: c.DEFAULT_AD_LIFETIME,
 		},
 	}
 
@@ -227,7 +227,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := user.UpdateBalance("Cadou înregistrare", 0, 5000); err != nil {
+	if err := user.UpdateBalance("Cadou înregistrare", 0, c.DEFAULT_REGISTER_GIFT); err != nil {
 		c.Log().Error(err)
 	}
 
@@ -243,7 +243,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 			}
 
 			var balanceAdded bool = true
-			if err := referrer.UpdateBalance(fmt.Sprintf("%s a creat cont din referință", c.Ucfirst(req.GivenName)), 0, 30000); err != nil {
+
+			trmsg := fmt.Sprintf("%s a creat cont din referință", c.Ucfirst(req.GivenName))
+
+			if err := referrer.UpdateBalance(trmsg, 0, c.DEFAULT_REFERRER_GIFT); err != nil {
 				c.Log().Error(err)
 				balanceAdded = false
 			}

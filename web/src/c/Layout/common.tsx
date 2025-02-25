@@ -17,6 +17,7 @@ export const Centred: FC<CentredStyleProps&PropsWithChildren> = ({children, widt
         <div
             css={css`
                 margin-bottom: 20px;
+                height: 100%;
             `}
         >
             <div
