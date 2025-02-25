@@ -9,17 +9,16 @@ import Tip from "../tooltip";
 import { Ad } from "../types";
 
 export interface SocialShareProps {
-  url: string;
   ad: Ad;
 }
 
-const SocialShare: FC<SocialShareProps> = ({ url, ad }) => {
+const SocialShare: FC<SocialShareProps> = ({ ad }) => {
   const [showCopiedInfo, setShowCopiedInfo] = useState(false);
   const [shortURL, setShortURL] = useState<string>("");
 
   useEffect(() => {
-    getShortURL(url).then(setShortURL);
-  }, [url]);
+    getShortURL(window.location.href).then(setShortURL);
+  }, [window.location.href]);
 
   const handleCopyURL = () => {
     if (shortURL) {
