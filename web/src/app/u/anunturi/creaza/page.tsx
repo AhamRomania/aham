@@ -13,7 +13,7 @@ import { BouncingLogo } from "@/c/logo";
 import { Category, Prop } from "@/c/types";
 import { css } from "@emotion/react";
 import { Button, Checkbox, Divider, FormControl, FormHelperText, FormLabel, Grid, Input, Option, Select, Stack, Textarea } from "@mui/joy";
-import { Backdrop } from "@mui/material";
+import { Backdrop, useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import { Fragment, useContext, useEffect, useState } from "react";
 
@@ -21,6 +21,7 @@ export default function Page() {
 
   const {setPath} = useContext(AccountLayoutContext);
   const api = getApiFetch();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const [currency, setCurrency] = useState('LEI');
   const [category, setCategory] = useState<Category | null>(null);
@@ -164,7 +165,7 @@ export default function Page() {
       >
         <FormControl size="lg" required>
             <FormLabel>Categorie</FormLabel>
-            <CategorySelector name="category" onCategorySelect={setCategory}/>
+            <CategorySelector mode={isMobile?'overlay':'columns'} name="category" onCategorySelect={setCategory}/>
         </FormControl>
 
         <Divider/>

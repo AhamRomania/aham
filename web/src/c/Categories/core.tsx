@@ -73,6 +73,10 @@ export class CategoryTreeNode {
         return null;
     }
 
+    contains(node: CategoryTreeNode): boolean {
+        return !!this.path.find(n => n.id === node.id)
+    }
+
     findByID(id: number): CategoryTreeNode | null {
         
         if (id === -1) {

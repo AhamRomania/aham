@@ -1,6 +1,6 @@
 import { fetchCategories } from "@/api/categories";
 import { css } from "@emotion/react";
-import { Check, Close, KeyboardArrowRightOutlined } from "@mui/icons-material";
+import { ArrowLeft, Check, Close, KeyboardArrowRightOutlined } from "@mui/icons-material";
 import { CircularProgress, FormControl, FormLabel, IconButton, Input, List, ListItem, ListItemButton, ListItemContent } from "@mui/joy";
 import Image from "next/image";
 import { FC, ReactNode, useEffect, useState } from "react";
@@ -19,10 +19,11 @@ const icon:{[key: number]: string} = {
 
 export interface CategorySelectorProps {
     name: string;
+    mode: 'columns' | 'overlay';
     onCategorySelect: (category: Category | null) => void;
 }
 
-const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) => {
+const CategorySelector: FC<CategorySelectorProps> = ({name, mode = 'columns', onCategorySelect}) => {
     // keyword on pending interaction to select one category
     const [keyword, setKeyword] = useState('');
     // the main tree of categories
@@ -43,7 +44,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
         }
     }, [branch]);
 
-    const renderSubcategoryColumn = (column: number): React.ReactNode => {
+    const renderSubcategoryList = (column: number): React.ReactNode => {
 
         if (!branch) {
             return null;
@@ -51,12 +52,8 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
 
         const children = branch?.path[column].children.sort((a, b) => a.category.sort - b.category.sort);
 
-        const selected = (node: CategoryTreeNode): boolean => {
-            return branch.path.find(pn => pn.id === node.id) ? true : false;
-        }
-
         const afterIcon = (node: CategoryTreeNode): ReactNode => {
-            if (!selected(node)) {
+            if (!branch.contains(node)) {
                 return null;
             }
             return (!node.children || node.children.length == 0) ? <Check/> : <KeyboardArrowRightOutlined/>;
@@ -68,7 +65,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                     <ListItem
                         style={{
                             borderBottom: "1px solid #ddd",
-                            fontWeight: selected(node) ? "bold" : "normal",
+                            fontWeight: branch.contains(node) ? "bold" : "normal",
                         }}
                         onClick={() => setBranch(node)}
                         key={node.id}
@@ -131,6 +128,13 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
 
         setKeyword(node.path.map(i=>i.name).join(' / '));
         setHintResults([]);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const back = (from: number) => {
+        if (branch?.parent) {
+            setBranch(branch?.parent);
+        }
     }
 
     if (tree == null) {
@@ -203,15 +207,15 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                                 display: inline-block;
                                 margin-right: 10px;
                                 justify-content:center;
-                                flex-direction: column;  
-                                border: 1px solid #CDD7E1;
-                                background: ${branch === node ? '#eee' : 'transparent'};
+                                flex-direction: column;
+                                background: ${branch?.contains(node) ? '#eee' : 'transparent'};
+                                border: ${branch?.contains(node) ? '1px solid #000' : '1px solid #eee'};
                                 align-items: center;  
                                 border-radius: 10px;
                                 padding: 10px 15px;
                                 cursor: pointer;
                                 font-size: 16px;
-                                
+
                                 &:last-child {
                                     margin-right: 0px;
                                 }
@@ -250,7 +254,9 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                         padding: 20px;
                         display: grid;
                         overflow-x: auto;
-                        grid-template-columns: ${determineColumnLength().map(() => '1fr').join(' ')}
+                        position: relative;
+                        height: ${mode === 'columns' ? 'auto' : '400px'};
+                        grid-template-columns: ${mode === 'columns' ? determineColumnLength().map(() => '1fr').join(' ') : 'auto'};
                     `}
                 >
                     {(determineColumnLength().map((index) => (
@@ -260,16 +266,34 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                             data-deepth-level={index + 1}
                             css={css`
                                 padding: 20px;
+                                position: ${mode === 'columns' ? 'relative' : 'absolute'};
                                 text-align: center;
-                                border-right: 1px solid #CDD7E1;
+                                border-right: ${mode === 'columns' ? '1px solid #CDD7E1' : 'none'};
                                 overflow-y: auto;
+                                background: #FFF;
+                                left: 0;
+                                top: 0;
+                                right: 0;
+                                bottom: 0;
                                 height: 400px;
+                                display: flex;
+                                    flex-direction: row;
                                 &:last-child {
                                     border-right: none;
                                 }
                             `}
                         >
-                            {renderSubcategoryColumn(index)}
+                            {mode == 'overlay' && <div
+                                css={css`
+                                    height: 100%;
+                                    display: flex;
+                                    align-items: center;
+                                    margin-right: 40px;
+                                `}
+                            >
+                                {<IconButton onClick={() => back(index)} variant="solid"><ArrowLeft/></IconButton>}
+                            </div>}
+                            {renderSubcategoryList(index)}
                         </div>
                     )))}
                 </div>
