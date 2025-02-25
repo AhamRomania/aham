@@ -6,7 +6,7 @@ import { Breadcrumbs, Card, Checkbox, CircularProgress, DialogContent, DialogTit
 import { FC, useEffect, useReducer, useState } from "react";
 import { Category, Prop } from "../types";
 import { css } from "@emotion/react";
-import { CategoryTreeNode } from "./core";
+import { CategoryTreeNode, categoryTreeRootFromArray } from "./core";
 
 const CategoriesEditor:FC = () => {
     
@@ -23,17 +23,7 @@ const CategoriesEditor:FC = () => {
     const update = () => {
         api<Category[]>('/categories?tree=true').then(
             (categories) => {
-
-                const root = new CategoryTreeNode({
-                    id: -1,
-                    name: 'root',
-                    description: 'root',
-                    slug: 'root',
-                    href: 'root',
-                    path: 'root',
-                    children: categories,
-                });
-
+                const root = categoryTreeRootFromArray(categories);
                 setRoot(root);
                 setNode(root);
             }

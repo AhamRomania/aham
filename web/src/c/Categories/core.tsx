@@ -133,5 +133,5 @@ function searchRecursive(keyword: string, nodes: CategoryTreeNode[]): CategoryTr
 }
 
 export function categoryTreeRootFromArray(children:Category[]): CategoryTreeNode {
-    return new CategoryTreeNode({id:0, name:'root', children} as Category,  null);
+    return new CategoryTreeNode({id:-1, name:'root', children} as Category,  null);
 }

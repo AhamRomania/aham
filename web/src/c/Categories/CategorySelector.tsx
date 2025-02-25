@@ -1,7 +1,7 @@
 import { fetchCategories } from "@/api/categories";
 import { css } from "@emotion/react";
 import { Check, Close, KeyboardArrowRightOutlined } from "@mui/icons-material";
-import { Button, CircularProgress, FormControl, FormLabel, IconButton, Input, List, ListItem, ListItemButton, ListItemContent } from "@mui/joy";
+import { CircularProgress, FormControl, FormLabel, IconButton, Input, List, ListItem, ListItemButton, ListItemContent } from "@mui/joy";
 import Image from "next/image";
 import { FC, ReactNode, useEffect, useState } from "react";
 import { Category } from "../types";
