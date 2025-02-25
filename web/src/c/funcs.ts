@@ -154,7 +154,7 @@ export async function track(kind: string, metadata?: D) {
 
     (new Image()).src = getDomain(Domain.Api) + `/v1/metrics/track` + buildQueryParams(query);
 
-    if (typeof(window['gtag']) === 'function') {
+    if (typeof (window['gtag']) === 'function') {
         window['gtag']('event', kind);
     }
 }
@@ -167,4 +167,15 @@ export function buildQueryParams(params: { [key: string]: any }): string {
         }
     }
     return query.slice(0, -1); // Remove the trailing '&'
+}
+
+export function unaccent(str: string): string {
+    const accents: {[key: string]: string} = {
+        'ă': 'a', 'Ă': 'A',
+        'â': 'a', 'Â': 'A',
+        'î': 'i', 'Î': 'I',
+        'ș': 's', 'Ș': 'S',
+        'ț': 't', 'Ț': 'T'
+    };
+    return str.replace(/[ăĂâÂîÎșȘțȚ]/g, match => accents[match] || match);
 }

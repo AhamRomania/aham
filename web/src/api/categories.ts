@@ -1,7 +1,7 @@
 import { Category } from "@/c/types";
 import getApiFetch from "@/api/api";
 
-let tree: Category[] = [];
+let tree: Category[] | null = null;
 
 export async function fetchCategories():Promise<Category[]> {
     if (tree) { return Promise.resolve(tree); }

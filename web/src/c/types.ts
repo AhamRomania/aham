@@ -14,6 +14,7 @@ export type Category = {
     slug: string;
     href: string;
     path: string;
+    sort: number;
     price?: boolean;
     children?: Category[];
 }

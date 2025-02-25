@@ -6,130 +6,25 @@ import { Breadcrumbs, Card, Checkbox, CircularProgress, DialogContent, DialogTit
 import { FC, useEffect, useReducer, useState } from "react";
 import { Category, Prop } from "../types";
 import { css } from "@emotion/react";
-
-class Node {
-    
-    category: Category;
-    parent: Node | null;
-    children: Node[];
-    saving: boolean;
-
-    constructor(category: Category, parent: Node | null = null) {
-        this.category = category;
-        this.parent = parent;
-        this.saving = false;
-        this.children = this.category.children?.map(item => new Node(item, this)) || [];
-    }
-
-    get id() {
-        return this.category.id || 0;
-    }
-
-    get name() {
-        return this.category.name || '';
-    }
-
-    get slug() {
-        return this.category.slug || '';
-    }
-
-    get path(): Node[] {
-
-        let items = [];
-
-        items.push(this);
-
-        let parent = this.parent;
-
-        while (parent) {
-            items.push(parent);
-            parent = parent.parent
-        }
-
-        items = items.reverse();
-
-        items.shift();
-
-        return items;
-    }
-
-    get root(): Node {
-
-        let node = this.parent;
-
-        if (!node) {
-            return this;
-        }
-
-        while (node.parent) {
-            node = node.parent
-        }
-        return node;
-    }
-
-    remove(): Category | null {
-        
-        if (this.parent && this.parent.children) {
-            const index = this.parent.children.indexOf(this)
-            const clone = Object.assign({}, this.parent.children[index].category);
-            this.parent.children.splice(index, 1);
-            return clone
-        }
-
-        return null;
-    }
-
-    findByID(id: number): Node | null {
-        
-        if (id === -1) {
-            return this.root;
-        }
-    
-        if (!this.children || this.children.length === 0) {
-            return null;
-        }
-    
-        for (let i = 0; i < this.children.length; i++) {
-            
-            if (this.children[i].id === id) {
-                return this.children[i];
-            }
-    
-            // Recursive call to search in child nodes
-            const foundNode = this.children[i].findByID(id);
-
-            if (foundNode) {
-                return foundNode; // Return only if a node is found
-            }
-        }
-    
-        return null; // Return null if no node is found
-    }
-
-    create() {
-        this.children.push(
-            new Node({} as Category, this)
-        )
-    }
-}
+import { CategoryTreeNode } from "./core";
 
 const CategoriesEditor:FC = () => {
     
     const api = getApiFetch();
 
-    const [root, setRoot] = useState<Node>();
-    const [node, setNode] = useState<Node>();
+    const [root, setRoot] = useState<CategoryTreeNode>();
+    const [node, setNode] = useState<CategoryTreeNode>();
     const [props, setProps] = useState<Prop[]>([]);
     const [assigned, setAssigned] = useState<{[key:string]:Prop | undefined}>({});
     const [assignProps, setAssignProps] = useState<boolean>(false);
-    const [assignTo, setAssignTo] = useState<Node | null>(null);
+    const [assignTo, setAssignTo] = useState<CategoryTreeNode | null>(null);
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const update = () => {
         api<Category[]>('/categories?tree=true').then(
             (categories) => {
 
-                const root = new Node({
+                const root = new CategoryTreeNode({
                     id: -1,
                     name: 'root',
                     description: 'root',
@@ -167,7 +62,7 @@ const CategoriesEditor:FC = () => {
         }
     }
 
-    const deleteCurrentNode = (node: Node) => {
+    const deleteCurrentNode = (node: CategoryTreeNode) => {
 
         let msg = 'Delete category?'
 
@@ -194,7 +89,7 @@ const CategoriesEditor:FC = () => {
         }
     }
 
-    const saveCurrentNodeData = (item: Node) => {
+    const saveCurrentNodeData = (item: CategoryTreeNode) => {
         
         item.saving = true;
         
@@ -236,13 +131,13 @@ const CategoriesEditor:FC = () => {
         );
     }
 
-    const makeSlugFromName = (node: Node) => {
+    const makeSlugFromName = (node: CategoryTreeNode) => {
         node.category.slug = slugify(node.name);
         forceUpdate();
         saveCurrentNodeData(node);
     }
 
-    const showPropAssign = (node: Node) => {
+    const showPropAssign = (node: CategoryTreeNode) => {
         
         if (!node) {
             console.error("node must be non empty");

@@ -1,10 +1,11 @@
-import getApiFetch from "@/api/api";
-import { FC, useEffect, useReducer, useState } from "react";
-import { Category } from "../types";
+import { fetchCategories } from "@/api/categories";
 import { css } from "@emotion/react";
-import { Button } from "@mui/joy";
-import { Check, KeyboardArrowRightOutlined } from "@mui/icons-material";
+import { Check, Close, KeyboardArrowRightOutlined } from "@mui/icons-material";
+import { Button, CircularProgress, FormControl, FormLabel, IconButton, Input, List, ListItem, ListItemButton, ListItemContent } from "@mui/joy";
 import Image from "next/image";
+import { FC, ReactNode, useEffect, useState } from "react";
+import { Category } from "../types";
+import { CategoryTreeNode, categoryTreeRootFromArray } from "./core";
 
 const icon:{[key: number]: string} = {
     1: 'cars.svg',
@@ -18,101 +19,136 @@ const icon:{[key: number]: string} = {
 
 export interface CategorySelectorProps {
     name: string;
-    onCategorySelect: (category: Category) => void;
+    onCategorySelect: (category: Category | null) => void;
 }
 
 const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) => {
-
-    const api = getApiFetch();
-    const [categoryID, setCategoryID] = useState(0);
-    const [categories, setCategories] = useState<Category[]>([]); // top root childs
-    const [mainCategory, setMainCategory] = useState(-1); // top items selected item
-    const [tree, setTree] = useState<Category>(); // root is selected category
-    const [path, setPath] = useState<number[]>([]); // index 0 is from selected category children
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
+    // keyword on pending interaction to select one category
+    const [keyword, setKeyword] = useState('');
+    // the main tree of categories
+    const [tree, setTree] = useState<CategoryTreeNode|null>(null); // root is selected category
+    // current branch selection, if no children is a leaf and apply category
+    const [branch, setBranch] = useState<CategoryTreeNode|null>(null); // top items selected item
+    // search results on keyword change
+    const [hintResults, setHintResults] = useState<CategoryTreeNode[]>([]);
 
     useEffect(() => {
-        api<Category[]>('/categories').then(
-            (response) => {
-                setCategories(response);
-            }
-        );
+        fetchCategories().then(a => setTree(categoryTreeRootFromArray(a)))
     },[])
 
-    const setCurrentCategory = (index:number) => {
-        setMainCategory(index);
-        setTree(categories[index]);
-        setPath([]);
-        forceUpdate();
-    }
+    useEffect(() => {
+        setKeyword(branch?.path.map(b => b.name).join(' / ') as string);
+        if (branch && branch.children.length === 0) {
+            onCategorySelect(branch.category)
+        }
+    }, [branch]);
 
-    const nodeOfCurrentPath = (column: number) => {
+    const renderSubcategoryColumn = (column: number): React.ReactNode => {
 
-        let node = tree;
-    
-        for (let i = 0; i < column; i++) {
-            if (!node?.children || path.length <= i) {
-                return undefined; // Ensure safe access and return undefined if out of bounds
+        if (!branch) {
+            return null;
+        }
+
+        const children = branch?.path[column].children.sort((a, b) => a.category.sort - b.category.sort);
+
+        const selected = (node: CategoryTreeNode): boolean => {
+            return branch.path.find(pn => pn.id === node.id) ? true : false;
+        }
+
+        const afterIcon = (node: CategoryTreeNode): ReactNode => {
+            if (!selected(node)) {
+                return null;
             }
-            node = node.children[path[i]]; // Traverse to the next level
-        }
-    
-        return node;
-    };
-
-    const renderDeepthColumn = (column: number): React.ReactNode => {
-
-        const columnCategory = nodeOfCurrentPath(column)
-
-        if (!columnCategory || !columnCategory.children) {
-            return [];
+            return (!node.children || node.children.length == 0) ? <Check/> : <KeyboardArrowRightOutlined/>;
         }
 
-        const columnCategories = sortListByName(columnCategory.children) || [];
-
-        return columnCategories.map((node,index) => (
-            <div onClick={() => selectTreeBranch(node, column, index)} key={node.id}>
-                <Button
-                    variant="plain"
-                    endDecorator={path[column] == index ? (node.children ? <KeyboardArrowRightOutlined/> : <Check/>) : []}>
-                    {node.name}
-                </Button>
-            </div>
-        ));
-    };
-
-    const sortListByName = (list: Category[], ascending = true): Category[] => {
-        
-        if (!list || list.length == 0) {
-            return [];
-        }
-
-        return list.sort((a, b) => 
-            ascending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
+        return (
+            <List>
+                {children.map((node) => (
+                    <ListItem
+                        style={{
+                            borderBottom: "1px solid #ddd",
+                            fontWeight: selected(node) ? "bold" : "normal",
+                        }}
+                        onClick={() => setBranch(node)}
+                        key={node.id}
+                    >
+                        <ListItemButton>
+                            {node.name}
+                            {node.children && node.children.length > 0 && <span style={{color: "#999"}}>({node.children.length})</span>}
+                            {afterIcon(node)}
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+            </List>
         );
-    };
-
-    const selectTreeBranch = (category: Category, level: number, index: number) => {
-        
-        if (!category.children) {
-            setCategoryID(category.id);
-            onCategorySelect(category);
-        }
-
-        setPath([...path.slice(0, level), index]);
     };
 
     const determineColumnLength = (): number[] => {
 
         let n = 0;
 
-        for (let i = 0; i < 5; i++) {
-            if (nodeOfCurrentPath(i)?.children) {
-                n++;
+        if (branch) {
+            if (branch.children && branch.children.length) {
+                n = branch.path.length;
+            } else {
+                n = branch.path.length - 1;
             }
         }
 
         return [...Array(n).keys()]
+    }
+
+    const onKeywordChange = (e: any) => {
+        const keyword = e.target.value
+        setKeyword(keyword);
+        if (tree && keyword != '' && keyword.length > 2) {
+            const results = tree!.search(keyword);
+            if (results && results.length) {
+                setHintResults(results);
+            }
+        } else {
+            setHintResults([]);
+        }
+    }
+
+    const onSearchResultSelect = (node: CategoryTreeNode) => {
+        applyCategoryFromNode(node);
+    }
+
+    const destroySelectedSearchResult = () => {
+        applyCategoryFromNode(null);
+    }
+
+    const applyCategoryFromNode = (node: CategoryTreeNode | null) => {
+
+        setBranch(node);
+
+        if (!node) {
+            setKeyword('');
+            return;
+        }
+
+        setKeyword(node.path.map(i=>i.name).join(' / '));
+        setHintResults([]);
+    }
+
+    if (tree == null) {
+        return (
+            <div
+                css={css`
+                    padding: 20px;
+                    border: 1px solid #CDD7E1;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                `}
+            >
+                <CircularProgress thickness={2} size="sm"/>
+                <span>Construim selectorul de categorii...</span>
+            </div>
+        )
     }
 
     return (
@@ -125,10 +161,34 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                 `}
             >
                 <div
+                    css={css`
+                        margin-bottom: 20px;    
+                    `}
+                >
+                    <FormControl>
+                        <FormLabel>Caută</FormLabel>
+                        <Input
+                            size="lg"
+                            value={keyword}
+                            onChange={onKeywordChange}
+                            endDecorator={branch ? <IconButton onClick={destroySelectedSearchResult}><Close/></IconButton> : null}
+                        />
+                    </FormControl>
+                    {hintResults && hintResults.length > 0 &&<List>
+                        {hintResults?.map(result => <ListItem key={result.id}>
+                            <ListItemButton onClick={() => onSearchResultSelect(result)}>
+                                <ListItemContent>{result.path.map(i=>i.name).join(' / ')}</ListItemContent>
+                            </ListItemButton>
+                        </ListItem>)}
+                    </List>}
+                </div>
+                <div
                     data-testid="category-toplevel"
                     css={css`
                         border-bottom: 1px solid #CDD7E1;
+                        border-top: 1px solid #CDD7E1;
                         padding-bottom: 20px;
+                        padding-top: 20px;
                         white-space: nowrap;
                         overflow-x: auto;
                         @media only screen and (min-width : 1200px) {
@@ -136,7 +196,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                         }
                     `}
                 >
-                    {categories.map((c, index) => (
+                    {tree && tree?.children.map((node, index) => (
                         <div
                             key={index}
                             css={css`
@@ -145,7 +205,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                                 justify-content:center;
                                 flex-direction: column;  
                                 border: 1px solid #CDD7E1;
-                                background: ${mainCategory == index ? '#eee' : 'transparent'};
+                                background: ${branch === node ? '#eee' : 'transparent'};
                                 align-items: center;  
                                 border-radius: 10px;
                                 padding: 10px 15px;
@@ -168,7 +228,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                                     background:#eee;
                                 }
                             `}
-                            onClick={() => setCurrentCategory(index)}
+                            onClick={() => setBranch(node)}
                         >
                             <div
                                 css={css`
@@ -178,8 +238,8 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                                     flex-direction: column;    
                                 `}
                             >
-                                <Image width={20} height={20} src={'/categories/'+icon[c.id]} alt=""/>
-                                <span>{c.name}</span>
+                                <Image width={20} height={20} src={'/categories/'+icon[node.id]} alt=""/>
+                                <span>{node.name}</span>
                             </div>
                         </div>
                     ))}
@@ -193,7 +253,7 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                         grid-template-columns: ${determineColumnLength().map(() => '1fr').join(' ')}
                     `}
                 >
-                    {(determineColumnLength().map((v, index) => (
+                    {(determineColumnLength().map((index) => (
                         <div
                             key={`tree-level-${index}`}
                             data-testid="category-tree-levels"
@@ -209,12 +269,12 @@ const CategorySelector: FC<CategorySelectorProps> = ({name, onCategorySelect}) =
                                 }
                             `}
                         >
-                            {renderDeepthColumn(index)}
+                            {renderSubcategoryColumn(index)}
                         </div>
                     )))}
                 </div>
             </div>
-            <input type="hidden" name={name} value={categoryID}/>
+            <input type="hidden" name={name} value={branch?.children.length === 0 ? branch?.id : ''}/>
         </div>
     )
 }
