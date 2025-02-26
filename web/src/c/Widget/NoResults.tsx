@@ -15,9 +15,12 @@ const NoResults:FC<NoResultsProps> = ({after}) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                @media (max-width: 768px) {
+                    .image { width: 225px; height: 225px; }
+                }
             `}
         >
-            <Image width={450} height={450} alt="NoResults" src="/empty-results.png"/>
+            <Image className="image" width={450} height={450} alt="NoResults" src="/empty-results.png"/>
             {after}
         </div>
     )
