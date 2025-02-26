@@ -41,8 +41,7 @@ export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, coun
         if (children) {
             setOpen(!open);
             e.preventDefault();
-            e.stopPropagation()
-            e.stopImmediatePropagation();
+            e.stopPropagation();
         }
     }
 

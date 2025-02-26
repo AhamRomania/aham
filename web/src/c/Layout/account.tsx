@@ -1,7 +1,6 @@
 "use client";
 
 import { getAdCounts } from "@/api/ads";
-import { getBalance } from "@/api/common";
 import { css } from "@emotion/react";
 import {
     Add,
@@ -20,30 +19,29 @@ import {
     FolderSpecialOutlined,
     Home,
     Menu as MenuIcon,
-    Notifications,
     Pages,
     Person,
     Public,
     SettingsOutlined,
-    ThumbDown,
+    ThumbDown
 } from "@mui/icons-material";
-import { Breadcrumbs, Button, IconButton, Snackbar } from "@mui/joy";
+import { Breadcrumbs, Button, IconButton, Snackbar, Stack } from "@mui/joy";
 import { useMediaQuery } from "@mui/material";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { FC, useEffect, useState } from "react";
 import { getUser } from "../Auth";
-import { toMoney } from "../formatter";
 import { isPrivilegedUser } from "../funcs";
 import HeadMenu from "../HeadMenu";
 import Logo from "../logo";
 import Sam, { SamPermission, SamResource } from "../Sam";
 import Tip from "../tooltip";
 import { Ad, AdCounts, User } from "../types";
+import NotificationsBadge from "../Widget/NotificationsBadge";
 import useSocket from "../ws";
 import { Menu, MenuItem } from "./aside";
 import { Space } from "./common";
+import Balance from "../Widget/Balance";
 
 export interface AccountLayoutAPI {
   setPath: (path: React.ReactElement) => void;
@@ -65,17 +63,15 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
   const router = useRouter();
   const [mobileDropDownOpen, setMobileDropDownOpen] = useState(false);
   const [counts, setCounts] = useState<AdCounts>({} as AdCounts);
-  const [balance, setBalance] = useState(0);
   const [open, setOpen] = useState(true);
   const [me, setMe] = useState<User | null | undefined>();
   const [path, setPath] = useState<React.ReactElement>(<></>);
   const [snackbars, setSnackbars] = useState<SnackbarItem[]>([]);
-  const mobile = useMediaQuery("(max-width: 768px)");
+  const mobile = useMediaQuery("(max-width: 768px)",{defaultMatches:true});
   const socket = useSocket();
 
   useEffect(() => {
     getUser().then(setMe);
-    getBalance().then(setBalance);
     getAdCounts().then(setCounts);
   }, []);
 
@@ -220,44 +216,48 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               </>
             )}
             <Space />
-            <div
-              css={css`
-                #account-aside-menu-dropdown {
-                  position: fixed;
-                  top: 100px;
-                  right: 20px;
-                  height: 500px;
-                  width: 80%;
-                  max-width: 300px;
-                  background: white;
-                  padding: 20px;
-                  border-radius: 10px;
-                  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                  background: var(--main-color);
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-                  z-index: 100;
-                  overflow-y: scroll;
-                }
-              `}
-            >
-              {mobile && (
-                <IconButton
-                  variant={mobileDropDownOpen ? "solid" : "solid"}
-                  onClick={() => setMobileDropDownOpen(!mobileDropDownOpen)}
+            <Stack gap={1} flexDirection="row">
+                {mobile && <Balance/>}
+                {mobile && <NotificationsBadge/>}
+                <div
+                css={css`
+                    #account-aside-menu-dropdown {
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    height: 500px;
+                    width: 80%;
+                    max-width: 300px;
+                    background: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                    background: var(--main-color);
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+                    z-index: 100;
+                    overflow-y: scroll;
+                    }
+                `}
                 >
-                  {mobileDropDownOpen ? (
-                    <Close />
-                  ) : (
-                    <MenuIcon htmlColor="#FFF" />
-                  )}
-                </IconButton>
-              )}
-              {mobile && mobileDropDownOpen && (
-                <div id="account-aside-menu-dropdown">
-                  {renderAccountMenu()}
+                {mobile && (
+                    <IconButton
+                    variant={mobileDropDownOpen ? "solid" : "solid"}
+                    onClick={() => setMobileDropDownOpen(!mobileDropDownOpen)}
+                    >
+                    {mobileDropDownOpen ? (
+                        <Close />
+                    ) : (
+                        <MenuIcon htmlColor="#FFF" />
+                    )}
+                    </IconButton>
+                )}
+                {mobile && mobileDropDownOpen && (
+                    <div id="account-aside-menu-dropdown">
+                    {renderAccountMenu()}
+                    </div>
+                )}
                 </div>
-              )}
-            </div>
+            </Stack>
           </div>
           <button
             onClick={() => setOpen(!open)}
@@ -336,67 +336,8 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 margin-right: 20px;
               `}
             >
-              <div
-                css={css`
-                  height: 42px;
-                  border: 1px solid #ddd;
-                  border-radius: 8px;
-                  margin-right: 20px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  padding: 0 20px;
-                  background: #fff;
-                  font-size: 20px;
-                  font-weight: bold;
-                  font-family: "Courier New", Courier, monospace;
-                  img {
-                    margin-left: 5px;
-                  }
-                `}
-              >
-                <strong>{balance > 0 ? toMoney(balance) : 0}</strong>
-                <Image
-                  alt="coins"
-                  width={16}
-                  height={16}
-                  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABVUlEQVR4nO1WQU7DMBA0ildQfoA48RDu5RnlSOkX+AS8Agl2Qx/Asb3xBFQOIBDXquz2YLSRGy7QJBtHlVBGsuTE6804Ox7buR5GhEd3sL7PzhjhhhHmQv6ZEZbaYn+uY+s8G2qsSwkmOGeCdyEIdZrGMsEoyceF/PgnuX8S8leC/nSV75+EB3eoTfv6rhgrYsr4cXsC6BdFMvSTENxeVbzGSO4v45xFewIUV2MhQBDSESBLCRIS4IYiTE4g6DbMsyEjXDPC7JdtONOxzTZMXwL8rxoIfzvcihHe6tbdpAFu6HAx+WdRb4IPRvgya0A6crjaGhCLw6GfRAIvy+ngONy6gVkDYlF3SSCBBqSlupngNQrVqgHoxOFqH0bS0uHCnTvS561/Cv3FzjTAVRcS6VgDVQty/SknbYwozVXL2614m7qbgAlGO7tub9DUB8qJPXo4G74BQpgHCXHbt1AAAAAASUVORK5CYII="
-                />
-              </div>
-              <div
-                css={css`
-                  cursor: pointer;
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 5px;
-                  background: #fff;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  background: #bdbdbd;
-                  color: #fff;
-                  position: relative;
-                `}
-              >
-                <div
-                  css={css`
-                    position: absolute;
-                    right: 2px;
-                    top: 2px;
-                    width: 20px;
-                    height: 20px;
-                    background: #f44336;
-                    border-radius: 50%;
-                    font-size: 12px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  `}
-                >
-                  10
-                </div>
-                <Notifications />
-              </div>
+              {!mobile && <Balance/>}
+              {!mobile && <NotificationsBadge/>}
             </div>
             <HeadMenu />
           </div>
