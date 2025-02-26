@@ -39,8 +39,10 @@ export const MenuItem:FC<MenuItemProps & React.PropsWithChildren> = ({icon, coun
 
     const handle = (e: MouseEvent) => {
         if (children) {
-            e.preventDefault();
             setOpen(!open);
+            e.preventDefault();
+            e.stopPropagation()
+            e.stopImmediatePropagation();
         }
     }
 
