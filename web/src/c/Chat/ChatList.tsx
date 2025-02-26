@@ -130,9 +130,9 @@ const ChatList: FC<ChatListProps> = ({ items, user, current, onChange }) => {
       <div
         data-test="chat-list-header"
         css={css`
-          height: 50px;
           display: flex;
-          padding: 5px;
+          padding: 10px;
+          margin-left: 3px;
           gap: 5px;
           border-bottom: 1px solid #ededed;
         `}
