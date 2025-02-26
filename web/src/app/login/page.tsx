@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 
 declare const FB: any;
 
-declare const gapi: any;
+//declare const gapi: any;
 
 export default function Page() {
   
@@ -28,7 +28,7 @@ export default function Page() {
   const [loggingIn, setLoggingIn] = useState(false);
   const [config, setConfig] = useState<Config>({} as Config);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState<string>('');
+  const [dialogMessage] = useState<string>('');
 
   useEffect(() => {
     getConfig().then(setConfig);
@@ -53,7 +53,10 @@ export default function Page() {
   });
 
   const loginWithFacebook = () => {
-    FB.login(
+    alert('Vă rugăm folosiți formularul de înregistrare');
+    router.push('/cont');
+    return
+    /*FB.login(
       
       function (response: any) {
         if (response.authResponse) {
@@ -77,10 +80,14 @@ export default function Page() {
       {
         scope: "public_profile,email",
       }
-    );
+    );*/
   };
 
   const setupGoogleLoginButton = () => {
+    alert('Vă rugăm folosiți formularul de înregistrare');
+    router.push('/cont');
+    return
+    /*
     if (config && config.GOOGLE_CLIENT_ID && window && document) {
       
       const script = document.createElement("script");
@@ -117,6 +124,7 @@ export default function Page() {
       body.appendChild(script);
 
     }
+    */
   }
 
   return (
@@ -217,7 +225,7 @@ export default function Page() {
             <div>
               <Tip title="Conectare cu Google">
                 <IconButton
-                  onMouseOver={() => setupGoogleLoginButton()}
+                  onClick={() => setupGoogleLoginButton()}
                   id="connect_with_google"
                   variant="outlined"
                   size="lg"
