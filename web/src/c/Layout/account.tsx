@@ -225,9 +225,8 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 #account-aside-menu-dropdown {
                   position: fixed;
                   top: 100px;
-                  left: 50%;
+                  right: 20px;
                   height: 500px;
-                  transform: translate(-30px, -30px);
                   width: 80%;
                   max-width: 300px;
                   background: white;
