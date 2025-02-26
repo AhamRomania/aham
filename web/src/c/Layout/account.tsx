@@ -1,47 +1,25 @@
 "use client";
 
-import { getAdCounts } from "@/api/ads";
 import { css } from "@emotion/react";
 import {
     Add,
-    AddTaskOutlined,
-    AdsClickOutlined,
-    Analytics,
-    AssignmentTurnedIn,
-    Category,
-    ChatOutlined,
     CheckCircle,
-    Close,
-    DashboardOutlined,
-    FavoriteOutlined,
-    FiberNew,
-    FolderOutlined,
-    FolderSpecialOutlined,
-    Home,
-    Menu as MenuIcon,
-    Pages,
-    Person,
-    Public,
-    SettingsOutlined,
-    ThumbDown
+    Home
 } from "@mui/icons-material";
 import { Breadcrumbs, Button, IconButton, Snackbar, Stack } from "@mui/joy";
 import { useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { FC, useEffect, useState } from "react";
-import { getUser } from "../Auth";
-import { isPrivilegedUser } from "../funcs";
-import HeadMenu from "../HeadMenu";
+import React, { useEffect, useState } from "react";
 import Logo from "../logo";
-import Sam, { SamPermission, SamResource } from "../Sam";
 import Tip from "../tooltip";
-import { Ad, AdCounts, User } from "../types";
+import { Ad } from "../types";
+import AccountBadge from "../Widget/AccountBadge";
+import AccountMenu from "../Widget/AccountMenu";
+import Balance from "../Widget/Balance";
 import NotificationsBadge from "../Widget/NotificationsBadge";
 import useSocket from "../ws";
-import { Menu, MenuItem } from "./aside";
 import { Space } from "./common";
-import Balance from "../Widget/Balance";
 
 export interface AccountLayoutAPI {
   setPath: (path: React.ReactElement) => void;
@@ -61,19 +39,11 @@ export const AccountLayoutContext = React.createContext<AccountLayoutAPI>(
 
 const AccountLayout = ({ children }: React.PropsWithChildren) => {
   const router = useRouter();
-  const [mobileDropDownOpen, setMobileDropDownOpen] = useState(false);
-  const [counts, setCounts] = useState<AdCounts>({} as AdCounts);
   const [open, setOpen] = useState(true);
-  const [me, setMe] = useState<User | null | undefined>();
   const [path, setPath] = useState<React.ReactElement>(<></>);
   const [snackbars, setSnackbars] = useState<SnackbarItem[]>([]);
-  const mobile = useMediaQuery("(max-width: 768px)",{defaultMatches:true});
+  const mobile = useMediaQuery("(max-width: 768px)") || window.innerWidth <= 768;
   const socket = useSocket();
-
-  useEffect(() => {
-    getUser().then(setMe);
-    getAdCounts().then(setCounts);
-  }, []);
 
   const handleOpenSnackbar = (
     message: React.ReactNode,
@@ -141,10 +111,6 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
   useEffect(() => {
     return socket.on<any>("chat.message", onChatMessage);
   }, []);
-
-  const renderAccountMenu = () => (
-    <AccountMenu counts={counts} me={me} onClose={() => setMobileDropDownOpen(false)} />
-  );
 
   return (
     <>
@@ -240,21 +206,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 `}
                 >
                 {mobile && (
-                    <IconButton
-                    variant={mobileDropDownOpen ? "solid" : "solid"}
-                    onClick={() => setMobileDropDownOpen(!mobileDropDownOpen)}
-                    >
-                    {mobileDropDownOpen ? (
-                        <Close />
-                    ) : (
-                        <MenuIcon htmlColor="#FFF" />
-                    )}
-                    </IconButton>
-                )}
-                {mobile && mobileDropDownOpen && (
-                    <div id="account-aside-menu-dropdown">
-                    {renderAccountMenu()}
-                    </div>
+                    <AccountBadge menu={true}/>
                 )}
                 </div>
             </Stack>
@@ -288,9 +240,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               overflow-y: auto;
             `}
           >
-            <div id="aside-menu-container">
-              <div id="aside-menu">{!mobile && renderAccountMenu()}</div>
-            </div>
+            {!mobile && <AccountMenu hideLogout/>}
           </div>
         </div>
         <div
@@ -334,12 +284,13 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 align-items: center;
                 justify-content: center;
                 margin-right: 20px;
+                gap: 10px;
               `}
             >
               {!mobile && <Balance/>}
               {!mobile && <NotificationsBadge/>}
+              {!mobile && <AccountBadge menu={true} />}
             </div>
-            <HeadMenu />
           </div>
           <div
             data-test="account-layout"
@@ -368,111 +319,6 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         </Snackbar>
       ))}
     </>
-  );
-};
-
-interface AccountMenuProps {
-  counts: AdCounts;
-  me: User | null | undefined;
-  onClose: () => void;
-}
-
-const AccountMenu: FC<AccountMenuProps> = ({ counts, me, onClose }) => {
-  return (
-    <div onClick={() => onClose()}>
-      <Menu collapsed={false}>
-        <MenuItem icon={<DashboardOutlined />} title="Panou" href="/u/" />
-        <MenuItem
-          icon={<AdsClickOutlined />}
-          title="Anunțuri"
-          href="/u/anunturi"
-        >
-          <MenuItem
-            icon={<FiberNew />}
-            title="Ciorne"
-            count={counts.drafts}
-            href="/u/anunturi"
-          />
-          <MenuItem
-            icon={<Category />}
-            title="Disponibile"
-            count={counts.completed}
-            href="/u/anunturi/disponibile"
-          />
-          <MenuItem
-            icon={<CheckCircle />}
-            title="Aprobare"
-            count={counts.pending}
-            href="/u/anunturi/aprobare"
-          />
-          <MenuItem
-            icon={<Public />}
-            title="Publice"
-            count={counts.published}
-            href="/u/anunturi/publice"
-          />
-          <MenuItem
-            icon={<AssignmentTurnedIn />}
-            count={counts.fixing}
-            title="Retușare"
-            href="/u/anunturi/retusare"
-          />
-          <MenuItem
-            icon={<ThumbDown />}
-            title="Respinse"
-            count={counts.rejected}
-            href="/u/anunturi/respinse"
-          />
-          <MenuItem
-            icon={<FavoriteOutlined />}
-            title="Favorite"
-            count={counts.favourite}
-            href="/u/anunturi/favorite"
-          />
-        </MenuItem>
-        <MenuItem icon={<ChatOutlined />} title="Mesaje" href="/u/mesaje" />
-        <MenuItem
-          icon={<Analytics />}
-          title="Statistici"
-          href="/u/statistici"
-        />
-        <MenuItem icon={<Person />} title="Cont" href="/u/cont" />
-        <MenuItem
-          icon={<SettingsOutlined />}
-          title="Settings"
-          href="/u/setari"
-        />
-        {typeof me !== "undefined" && isPrivilegedUser(me) && (
-          <MenuItem
-            icon={<FolderSpecialOutlined />}
-            title="Administrare"
-            href="/u/admin"
-          >
-            <MenuItem
-              icon={<AddTaskOutlined />}
-              title="Anunțuri"
-              href="/u/admin/anunturi"
-            />
-            <MenuItem
-              icon={<FolderOutlined />}
-              title="Atribute"
-              href="/u/admin/atribute"
-            />
-            <Sam
-              resource={SamResource.CATEGORIES}
-              permission={SamPermission.WRITE}
-            >
-              <MenuItem
-                icon={<FolderOutlined />}
-                title="Categorii"
-                href="/u/admin/categorii"
-              />
-            </Sam>
-            <MenuItem icon={<Pages />} title="SEO" href="/u/admin/seo" />
-          </MenuItem>
-        )}
-      </Menu>
-    </div>
   );
 };
 

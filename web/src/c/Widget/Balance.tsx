@@ -17,18 +17,19 @@ const Balance: FC = () => {
     <div
       css={css`
         height: 42px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        margin-right: 20px;
+        border-radius: 5px;
         display: flex;
         align-items: center;
         color: #000;
         justify-content: center;
-        padding: 0 20px;
-        background: #fff;
-        font-size: 20px;
-        font-weight: bold;
+        padding: 0 5px 0 10px;
+        background: #F0F4F8;
+        font-size: 16px;
+        font-weight: 100;
         font-family: "Courier New", Courier, monospace;
+        strong {
+            margin-top: 2px;
+        }
         img {
           margin-left: 5px;
         }

@@ -6,7 +6,7 @@ const destroyCurrentSession = () => {
     if (typeof(localStorage) != 'undefined') {
         localStorage.removeItem('me');
     }
-    destroyAccessToken();
+    return destroyAccessToken();
 }
 
 const getUser = async (): Promise<User | null> => {
@@ -16,13 +16,15 @@ const getUser = async (): Promise<User | null> => {
         );
     }
     const api = getApiFetch();
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         api<User>('/me').then((me: User) => {
             if (typeof(localStorage) != 'undefined') {
                 localStorage.setItem('me', JSON.stringify(me));
             }
             resolve(me);
-        }).catch(reject);
+        }).catch(()=>{
+            resolve(null);
+        });
     });
 }
 

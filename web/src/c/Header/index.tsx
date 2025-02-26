@@ -7,6 +7,8 @@ import Tip from "../tooltip";
 import Link from "next/link";
 import { Centred, Space } from "../Layout";
 import HeadMenu from "../HeadMenu";
+import AccountBadge from "../Widget/AccountBadge";
+import { ArrowDropDown } from "@mui/icons-material";
 
 const Header: FC = () => {
   
@@ -35,7 +37,7 @@ const Header: FC = () => {
           </Link>
         </Tip>
         <Space/>
-        <HeadMenu />
+        <AccountBadge menu={false} icon={<ArrowDropDown/>}/>
       </Centred>
     </header>
   );

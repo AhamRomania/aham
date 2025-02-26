@@ -1,11 +1,12 @@
-import { FC } from "react";
 import getConfig from "next/config";
-import styles from "./style.module.css";
-import SearchInput from "../SearchInput";
-import Logo from "../logo";
-import HeadMenu from "../HeadMenu";
 import Link from "next/link";
+import { FC } from "react";
+import Logo from "../logo";
+import SearchInput from "../SearchInput";
 import Tip from "../tooltip";
+import AccountBadge from "../Widget/AccountBadge";
+import styles from "./style.module.css";
+import { Add } from "@mui/icons-material";
 
 const LargeHeader: FC = async () => {
   const { publicRuntimeConfig } = getConfig();
@@ -20,7 +21,7 @@ const LargeHeader: FC = async () => {
             </Link>
           </Tip>
           <div style={{ flex: 1 }}></div>
-          <HeadMenu />
+          <AccountBadge/>
         </div>
 
         <div className={styles.messages}>

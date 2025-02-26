@@ -16,7 +16,7 @@ const NotificationsBadge: FC = () => {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #bdbdbd;
+        background: #F0F4F8;
         color: #fff;
         position: relative;
       `}
@@ -38,7 +38,7 @@ const NotificationsBadge: FC = () => {
       >
         10
       </div>
-      <Notifications />
+      <Notifications htmlColor="#000" />
     </div>
   );
 };
