@@ -6,22 +6,20 @@ import SearchInput from "../SearchInput";
 import Tip from "../tooltip";
 import AccountBadge from "../Widget/AccountBadge";
 import styles from "./style.module.css";
-import { Add } from "@mui/icons-material";
 
 const LargeHeader: FC = async () => {
   const { publicRuntimeConfig } = getConfig();
   return (
     <header className={styles.header}>
       <div style={{ paddingTop: 25 }} className={styles.wrapper}>
-
         <div className={styles.actual}>
           <Tip title="Navighează la pagina principală">
             <Link href="/">
-                <Logo size={60} padding={17} bg="#9c27b0" color="#FFF" />
+              <Logo size={60} padding={17} bg="#9c27b0" color="#FFF" />
             </Link>
           </Tip>
           <div style={{ flex: 1 }}></div>
-          <AccountBadge/>
+          <AccountBadge />
         </div>
 
         <div className={styles.messages}>

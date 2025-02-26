@@ -15,7 +15,7 @@ const UserMenuDialog: FC<UserMenuDialogProps> = ({ open, onClose }) => {
     <Modal open={open} onClose={() => onClose()}>
       <>
         <div
-          onClick={(e) => {
+          onClick={() => {
             if (onClose) {
               onClose();
             }
