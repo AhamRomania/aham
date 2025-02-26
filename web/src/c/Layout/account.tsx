@@ -42,7 +42,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
   const [open, setOpen] = useState(true);
   const [path, setPath] = useState<React.ReactElement>(<></>);
   const [snackbars, setSnackbars] = useState<SnackbarItem[]>([]);
-  const mobile = useMediaQuery("(max-width: 768px)") || window.innerWidth <= 768;
+  const mobile = useMediaQuery("(max-width: 768px)") || (typeof window !== "undefined" && window.innerWidth <= 768);
   const socket = useSocket();
 
   const handleOpenSnackbar = (
