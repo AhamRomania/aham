@@ -16,7 +16,7 @@ const Balance: FC = () => {
   return (
     <div
       css={css`
-        height: 42px;
+        height: 40px;
         border-radius: 5px;
         display: flex;
         align-items: center;

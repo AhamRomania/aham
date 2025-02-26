@@ -185,30 +185,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             <Stack gap={1} flexDirection="row">
                 {mobile && <Balance/>}
                 {mobile && <NotificationsBadge/>}
-                <div
-                css={css`
-                    #account-aside-menu-dropdown {
-                    position: fixed;
-                    top: 100px;
-                    right: 20px;
-                    height: 500px;
-                    width: 80%;
-                    max-width: 300px;
-                    background: white;
-                    padding: 20px;
-                    border-radius: 10px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                    background: var(--main-color);
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-                    z-index: 100;
-                    overflow-y: scroll;
-                    }
-                `}
-                >
-                {mobile && (
-                    <AccountBadge menu={true}/>
-                )}
-                </div>
+                {mobile && <AccountBadge menu={true}/>}
             </Stack>
           </div>
           <button
@@ -238,6 +215,9 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             css={css`
               flex: 1;
               overflow-y: auto;
+              @media (max-width: 768px) {
+                * { display: none; }
+              }
             `}
           >
             {!mobile && <AccountMenu hideLogout/>}
@@ -280,11 +260,14 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             <Space />
             <div
               css={css`
+                gap: 10px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 margin-right: 20px;
-                gap: 10px;
+                @media (max-width: 768px) {
+                div { display: none; }
+                }
               `}
             >
               {!mobile && <Balance/>}
