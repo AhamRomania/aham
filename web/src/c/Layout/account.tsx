@@ -1,5 +1,7 @@
 "use client";
 
+import { getAdCounts } from "@/api/ads";
+import { getBalance } from "@/api/common";
 import { css } from "@emotion/react";
 import {
   Add,
@@ -10,12 +12,14 @@ import {
   Category,
   ChatOutlined,
   CheckCircle,
+  Close,
   DashboardOutlined,
   FavoriteOutlined,
   FiberNew,
   FolderOutlined,
   FolderSpecialOutlined,
   Home,
+  Menu as MenuIcon,
   Notifications,
   Pages,
   Person,
@@ -24,23 +28,22 @@ import {
   ThumbDown,
 } from "@mui/icons-material";
 import { Breadcrumbs, Button, IconButton, Snackbar } from "@mui/joy";
+import { useMediaQuery } from "@mui/material";
+import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { FC, MouseEventHandler, useEffect, useState } from "react";
 import { getUser } from "../Auth";
+import { toMoney } from "../formatter";
 import { isPrivilegedUser } from "../funcs";
 import HeadMenu from "../HeadMenu";
 import Logo from "../logo";
 import Sam, { SamPermission, SamResource } from "../Sam";
 import Tip from "../tooltip";
 import { Ad, AdCounts, User } from "../types";
+import useSocket from "../ws";
 import { Menu, MenuItem } from "./aside";
 import { Space } from "./common";
-import { getBalance } from "@/api/common";
-import { toMoney } from "../formatter";
-import useSocket from "../ws";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { getAdCounts } from "@/api/ads";
 
 export interface AccountLayoutAPI {
   setPath: (path: React.ReactElement) => void;
@@ -51,7 +54,7 @@ interface SnackbarItem {
   message: React.ReactNode;
   open: boolean;
   duration: number;
-  endDecorator?:React.ReactNode|null;
+  endDecorator?: React.ReactNode | null;
 }
 
 export const AccountLayoutContext = React.createContext<AccountLayoutAPI>(
@@ -60,23 +63,27 @@ export const AccountLayoutContext = React.createContext<AccountLayoutAPI>(
 
 const AccountLayout = ({ children }: React.PropsWithChildren) => {
   const router = useRouter();
+  const [mobileDropDownOpen, setMobileDropDownOpen] = useState(false);
   const [counts, setCounts] = useState<AdCounts>({} as AdCounts);
   const [balance, setBalance] = useState(0);
   const [open, setOpen] = useState(true);
-  const [me, setMe] = useState<User | null>(null);
-  const [userLoaded, setUserLoaded] = useState(false);
+  const [me, setMe] = useState<User | null | undefined>();
   const [path, setPath] = useState<React.ReactElement>(<></>);
   const [snackbars, setSnackbars] = useState<SnackbarItem[]>([]);
+  const mobile = useMediaQuery("(max-width: 768px)");
   const socket = useSocket();
 
   useEffect(() => {
     getUser().then(setMe);
-    setUserLoaded(true);
     getBalance().then(setBalance);
     getAdCounts().then(setCounts);
   }, []);
 
-  const handleOpenSnackbar = (message: React.ReactNode, duration: number = 3000, endDecorator: React.ReactNode | null = null) => {
+  const handleOpenSnackbar = (
+    message: React.ReactNode,
+    duration: number = 3000,
+    endDecorator: React.ReactNode | null = null
+  ) => {
     const id = new Date().getTime().toString();
     setSnackbars((prevSnackbars) => [
       ...prevSnackbars,
@@ -93,15 +100,38 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
   };
 
   const onAdPublish = (ad: Ad) => {
-    handleOpenSnackbar(<><CheckCircle color="success"/><strong>{ad.title}</strong>a fost publicat</>, 3000);
+    handleOpenSnackbar(
+      <>
+        <CheckCircle color="success" />
+        <strong>{ad.title}</strong>a fost publicat
+      </>,
+      3000
+    );
   };
 
   const onAdComplete = (ad: Ad) => {
-    handleOpenSnackbar(<><CheckCircle color="success"/>Afișarea<strong>{ad.title}</strong>este finalizată</>, 3000);
+    handleOpenSnackbar(
+      <>
+        <CheckCircle color="success" />
+        Afișarea<strong>{ad.title}</strong>este finalizată
+      </>,
+      3000
+    );
   };
 
-  const onChatMessage = ({chat,message}:{message:any,chat:any}) => {
-    handleOpenSnackbar(<>{message.message}</>, 3000, <><Button onClick={() => router.push(`/u/mesaje/${chat.id}`)} variant="soft">Răspunde</Button></>);
+  const onChatMessage = ({ chat, message }: { message: any; chat: any }) => {
+    handleOpenSnackbar(
+      <>{message.message}</>,
+      3000,
+      <>
+        <Button
+          onClick={() => router.push(`/u/mesaje/${chat.id}`)}
+          variant="soft"
+        >
+          Răspunde
+        </Button>
+      </>
+    );
   };
 
   useEffect(() => {
@@ -116,6 +146,10 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
     return socket.on<any>("chat.message", onChatMessage);
   }, []);
 
+  const renderAccountMenu = () => (
+    <AccountMenu counts={counts} me={me} onClose={setMobileDropDownOpen} />
+  );
+
   return (
     <>
       <div
@@ -129,7 +163,6 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         `}
       >
         <div
-          data-test="account-aside"
           css={css`
             background: var(--main-color);
             transition: width 0.6s;
@@ -147,9 +180,9 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
           `}
         >
           <div
-            data-test="account-aside-header"
             css={css`
               max-height: 80px;
+              min-height: 80px;
               display: flex;
               align-items: center;
               justify-content: flex-start;
@@ -169,7 +202,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                     size="md"
                     variant="solid"
                     color="primary"
-                    style={{ marginLeft: "10px", background:"transparent" }}
+                    style={{ marginLeft: "10px", background: "transparent" }}
                   >
                     <Home htmlColor="#FFF" />
                   </IconButton>
@@ -179,17 +212,58 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                     size="md"
                     variant="solid"
                     color="primary"
-                    style={{ marginLeft: "5px", background:"transparent" }}
+                    style={{ marginLeft: "5px", background: "transparent" }}
                   >
                     <Add htmlColor="#FFF" />
                   </IconButton>
                 </Link>
               </>
             )}
+            <Space />
+            <div
+              css={css`
+                #account-aside-menu-dropdown {
+                  position: fixed;
+                  top: 100px;
+                  left: 50%;
+                  height: 500px;
+                  transform: translate(-30px, -30px);
+                  width: 80%;
+                  max-width: 300px;
+                  background: white;
+                  padding: 20px;
+                  border-radius: 10px;
+                  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                  background: var(--main-color);
+                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+                  z-index: 100;
+                  overflow-y: scroll;
+                }
+              `}
+            >
+              {mobile && (
+                <IconButton
+                  variant={mobileDropDownOpen ? "solid" : "solid"}
+                  onClick={() => setMobileDropDownOpen(!mobileDropDownOpen)}
+                >
+                  {mobileDropDownOpen ? (
+                    <Close />
+                  ) : (
+                    <MenuIcon htmlColor="#FFF" />
+                  )}
+                </IconButton>
+              )}
+              {mobile && mobileDropDownOpen && (
+                <div id="account-aside-menu-dropdown">
+                  {renderAccountMenu()}
+                </div>
+              )}
+            </div>
           </div>
           <button
             onClick={() => setOpen(!open)}
             css={css`
+              display: ${mobile ? "none" : "block"};
               width: 7px;
               border: none;
               height: 100%;
@@ -215,104 +289,9 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               overflow-y: auto;
             `}
           >
-            {/* MENU DOWN */}
-            <Menu mobile={!open}>
-              <MenuItem icon={<DashboardOutlined />} title="Panou" href="/u/" />
-              <MenuItem
-                icon={<AdsClickOutlined />}
-                title="Anunțuri"
-                href="/u/anunturi"
-              >
-                <MenuItem
-                  icon={<FiberNew />}
-                  title="Ciorne"
-                  count={counts.drafts}
-                  href="/u/anunturi"
-                />
-                <MenuItem
-                  icon={<Category />}
-                  title="Disponibile"
-                  count={counts.completed}
-                  href="/u/anunturi/disponibile"
-                />
-                <MenuItem
-                  icon={<CheckCircle />}
-                  title="Aprobare"
-                  count={counts.pending}
-                  href="/u/anunturi/aprobare"
-                />
-                <MenuItem
-                  icon={<Public />}
-                  title="Publice"
-                  count={counts.published}
-                  href="/u/anunturi/publice"
-                />
-                <MenuItem
-                  icon={<AssignmentTurnedIn />}
-                  count={counts.fixing}
-                  title="Retușare"
-                  href="/u/anunturi/retusare"
-                />
-                <MenuItem
-                  icon={<ThumbDown />}
-                  title="Respinse"
-                  count={counts.rejected}
-                  href="/u/anunturi/respinse"
-                />
-                <MenuItem
-                  icon={<FavoriteOutlined />}
-                  title="Favorite"
-                  count={counts.favourite}
-                  href="/u/anunturi/favorite"
-                />
-              </MenuItem>
-              <MenuItem
-                icon={<ChatOutlined />}
-                title="Mesaje"
-                href="/u/mesaje"
-              />
-              <MenuItem
-                icon={<Analytics />}
-                title="Statistici"
-                href="/u/statistici"
-              />
-              <MenuItem icon={<Person />} title="Cont" href="/u/cont" />
-              <MenuItem
-                icon={<SettingsOutlined />}
-                title="Settings"
-                href="/u/setari"
-              />
-              {userLoaded && isPrivilegedUser(me) && (
-                <MenuItem
-                  icon={<FolderSpecialOutlined />}
-                  title="Administrare"
-                  href="/u/admin"
-                >
-                  <MenuItem
-                    icon={<AddTaskOutlined />}
-                    title="Anunțuri"
-                    href="/u/admin/anunturi"
-                  />
-                  <MenuItem
-                    icon={<FolderOutlined />}
-                    title="Atribute"
-                    href="/u/admin/atribute"
-                  />
-                  <Sam
-                    resource={SamResource.CATEGORIES}
-                    permission={SamPermission.WRITE}
-                  >
-                    <MenuItem
-                      icon={<FolderOutlined />}
-                      title="Categorii"
-                      href="/u/admin/categorii"
-                    />
-                  </Sam>
-                  <MenuItem icon={<Pages />} title="SEO" href="/u/admin/seo" />
-                </MenuItem>
-              )}
-            </Menu>
-            {/* MENU UP */}
+            <div id="aside-menu-container">
+              <div id="aside-menu">{!mobile && renderAccountMenu()}</div>
+            </div>
           </div>
         </div>
         <div
@@ -378,7 +357,12 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 `}
               >
                 <strong>{balance > 0 ? toMoney(balance) : 0}</strong>
-                <Image alt="coins" width={16} height={16} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABVUlEQVR4nO1WQU7DMBA0ildQfoA48RDu5RnlSOkX+AS8Agl2Qx/Asb3xBFQOIBDXquz2YLSRGy7QJBtHlVBGsuTE6804Ox7buR5GhEd3sL7PzhjhhhHmQv6ZEZbaYn+uY+s8G2qsSwkmOGeCdyEIdZrGMsEoyceF/PgnuX8S8leC/nSV75+EB3eoTfv6rhgrYsr4cXsC6BdFMvSTENxeVbzGSO4v45xFewIUV2MhQBDSESBLCRIS4IYiTE4g6DbMsyEjXDPC7JdtONOxzTZMXwL8rxoIfzvcihHe6tbdpAFu6HAx+WdRb4IPRvgya0A6crjaGhCLw6GfRAIvy+ngONy6gVkDYlF3SSCBBqSlupngNQrVqgHoxOFqH0bS0uHCnTvS561/Cv3FzjTAVRcS6VgDVQty/SknbYwozVXL2614m7qbgAlGO7tub9DUB8qJPXo4G74BQpgHCXHbt1AAAAAASUVORK5CYII=" />
+                <Image
+                  alt="coins"
+                  width={16}
+                  height={16}
+                  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABVUlEQVR4nO1WQU7DMBA0ildQfoA48RDu5RnlSOkX+AS8Agl2Qx/Asb3xBFQOIBDXquz2YLSRGy7QJBtHlVBGsuTE6804Ox7buR5GhEd3sL7PzhjhhhHmQv6ZEZbaYn+uY+s8G2qsSwkmOGeCdyEIdZrGMsEoyceF/PgnuX8S8leC/nSV75+EB3eoTfv6rhgrYsr4cXsC6BdFMvSTENxeVbzGSO4v45xFewIUV2MhQBDSESBLCRIS4IYiTE4g6DbMsyEjXDPC7JdtONOxzTZMXwL8rxoIfzvcihHe6tbdpAFu6HAx+WdRb4IPRvgya0A6crjaGhCLw6GfRAIvy+ngONy6gVkDYlF3SSCBBqSlupngNQrVqgHoxOFqH0bS0uHCnTvS561/Cv3FzjTAVRcS6VgDVQty/SknbYwozVXL2614m7qbgAlGO7tub9DUB8qJPXo4G74BQpgHCXHbt1AAAAAASUVORK5CYII="
+                />
               </div>
               <div
                 css={css`
@@ -444,6 +428,111 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         </Snackbar>
       ))}
     </>
+  );
+};
+
+interface AccountMenuProps {
+  counts: AdCounts;
+  me: User | null | undefined;
+  onClose: () => void;
+}
+
+const AccountMenu: FC<AccountMenuProps> = ({ counts, me, onClose }) => {
+  return (
+    <div onClick={() => onClose()}>
+      <Menu collapsed={false}>
+        <MenuItem icon={<DashboardOutlined />} title="Panou" href="/u/" />
+        <MenuItem
+          icon={<AdsClickOutlined />}
+          title="Anunțuri"
+          href="/u/anunturi"
+        >
+          <MenuItem
+            icon={<FiberNew />}
+            title="Ciorne"
+            count={counts.drafts}
+            href="/u/anunturi"
+          />
+          <MenuItem
+            icon={<Category />}
+            title="Disponibile"
+            count={counts.completed}
+            href="/u/anunturi/disponibile"
+          />
+          <MenuItem
+            icon={<CheckCircle />}
+            title="Aprobare"
+            count={counts.pending}
+            href="/u/anunturi/aprobare"
+          />
+          <MenuItem
+            icon={<Public />}
+            title="Publice"
+            count={counts.published}
+            href="/u/anunturi/publice"
+          />
+          <MenuItem
+            icon={<AssignmentTurnedIn />}
+            count={counts.fixing}
+            title="Retușare"
+            href="/u/anunturi/retusare"
+          />
+          <MenuItem
+            icon={<ThumbDown />}
+            title="Respinse"
+            count={counts.rejected}
+            href="/u/anunturi/respinse"
+          />
+          <MenuItem
+            icon={<FavoriteOutlined />}
+            title="Favorite"
+            count={counts.favourite}
+            href="/u/anunturi/favorite"
+          />
+        </MenuItem>
+        <MenuItem icon={<ChatOutlined />} title="Mesaje" href="/u/mesaje" />
+        <MenuItem
+          icon={<Analytics />}
+          title="Statistici"
+          href="/u/statistici"
+        />
+        <MenuItem icon={<Person />} title="Cont" href="/u/cont" />
+        <MenuItem
+          icon={<SettingsOutlined />}
+          title="Settings"
+          href="/u/setari"
+        />
+        {typeof me !== "undefined" && isPrivilegedUser(me) && (
+          <MenuItem
+            icon={<FolderSpecialOutlined />}
+            title="Administrare"
+            href="/u/admin"
+          >
+            <MenuItem
+              icon={<AddTaskOutlined />}
+              title="Anunțuri"
+              href="/u/admin/anunturi"
+            />
+            <MenuItem
+              icon={<FolderOutlined />}
+              title="Atribute"
+              href="/u/admin/atribute"
+            />
+            <Sam
+              resource={SamResource.CATEGORIES}
+              permission={SamPermission.WRITE}
+            >
+              <MenuItem
+                icon={<FolderOutlined />}
+                title="Categorii"
+                href="/u/admin/categorii"
+              />
+            </Sam>
+            <MenuItem icon={<Pages />} title="SEO" href="/u/admin/seo" />
+          </MenuItem>
+        )}
+      </Menu>
+    </div>
   );
 };
 

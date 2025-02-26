@@ -5,12 +5,12 @@ import { createContext, FC, useContext, useState } from "react";
 import { useLocalStorageState } from "../hooks";
 
 interface MobileProps {
-    mobile?: boolean;
+    collapsed?: boolean;
 }
 
 export const MenuContext = createContext<boolean>(false);
 
-export const Menu:FC<MobileProps&React.PropsWithChildren> = ({mobile = false, children}) => {
+export const Menu:FC<MobileProps&React.PropsWithChildren> = ({collapsed = false, children}) => {
     return (
         <div
             css={css`
@@ -18,7 +18,7 @@ export const Menu:FC<MobileProps&React.PropsWithChildren> = ({mobile = false, ch
                 flex-direction: column;
             `}
         >
-            <MenuContext.Provider value={mobile}>
+            <MenuContext.Provider value={collapsed}>
                 {children}
             </MenuContext.Provider>
         </div>
