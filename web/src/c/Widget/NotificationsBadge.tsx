@@ -24,8 +24,8 @@ const NotificationsBadge: FC = () => {
       <div
         css={css`
           position: absolute;
-          right: 2px;
-          top: 2px;
+          right: 0px;
+          top: 0px;
           width: 20px;
           height: 20px;
           background: #f44336;
