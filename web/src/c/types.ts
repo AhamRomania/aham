@@ -67,6 +67,7 @@ export type Ad = {
     currency: 'Lei',
     location: Location;
     messages: boolean,
+    show_phone: boolean;
     status: 'published',
     published: string;
     valid_through: string;

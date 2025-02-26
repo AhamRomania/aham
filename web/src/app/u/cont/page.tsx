@@ -97,8 +97,7 @@ export default function Page() {
             }
           />
           <p style={{ marginTop: "10px", fontSize: "14px" }}>
-            Distribuie acest link și <strong>primești 300 credit</strong> pentru
-            a promova anunțuri gratuit.
+          Distribuie acest link și <strong>primești 300 credit</strong> pentru fiecare utilizator nou.
           </p>
         </Stack>
       </AccountSection>

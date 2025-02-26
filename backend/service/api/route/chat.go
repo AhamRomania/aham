@@ -81,6 +81,11 @@ func createChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !ad.Messages {
+		w.WriteHeader(http.StatusNotAcceptable)
+		return
+	}
+
 	if os.Getenv("DEV") != "true" && userID == ad.Owner.ID {
 		http.Error(w, "nu poți trimite ție însuți", http.StatusNotFound)
 		return

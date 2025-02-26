@@ -232,6 +232,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.Referrer != nil {
+		// todo this should be on activate
 		if referrer := db.GetUserByReferrer(*req.Referrer); referrer != nil {
 
 			if err := user.UpdateMeta(

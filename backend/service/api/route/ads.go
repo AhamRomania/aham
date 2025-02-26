@@ -348,6 +348,11 @@ func getContactDetails(w http.ResponseWriter, r *http.Request) {
 
 	ad := db.GetAd(userID, c.ID(r, "id"))
 
+	if !ad.ShowPhone {
+		w.WriteHeader(http.StatusNotAcceptable)
+		return
+	}
+
 	if ad == nil {
 		w.WriteHeader(http.StatusNotFound)
 		return

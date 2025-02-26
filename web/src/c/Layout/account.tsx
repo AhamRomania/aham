@@ -4,35 +4,35 @@ import { getAdCounts } from "@/api/ads";
 import { getBalance } from "@/api/common";
 import { css } from "@emotion/react";
 import {
-  Add,
-  AddTaskOutlined,
-  AdsClickOutlined,
-  Analytics,
-  AssignmentTurnedIn,
-  Category,
-  ChatOutlined,
-  CheckCircle,
-  Close,
-  DashboardOutlined,
-  FavoriteOutlined,
-  FiberNew,
-  FolderOutlined,
-  FolderSpecialOutlined,
-  Home,
-  Menu as MenuIcon,
-  Notifications,
-  Pages,
-  Person,
-  Public,
-  SettingsOutlined,
-  ThumbDown,
+    Add,
+    AddTaskOutlined,
+    AdsClickOutlined,
+    Analytics,
+    AssignmentTurnedIn,
+    Category,
+    ChatOutlined,
+    CheckCircle,
+    Close,
+    DashboardOutlined,
+    FavoriteOutlined,
+    FiberNew,
+    FolderOutlined,
+    FolderSpecialOutlined,
+    Home,
+    Menu as MenuIcon,
+    Notifications,
+    Pages,
+    Person,
+    Public,
+    SettingsOutlined,
+    ThumbDown,
 } from "@mui/icons-material";
 import { Breadcrumbs, Button, IconButton, Snackbar } from "@mui/joy";
 import { useMediaQuery } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { FC, MouseEventHandler, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { getUser } from "../Auth";
 import { toMoney } from "../formatter";
 import { isPrivilegedUser } from "../funcs";
@@ -147,7 +147,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
   }, []);
 
   const renderAccountMenu = () => (
-    <AccountMenu counts={counts} me={me} onClose={setMobileDropDownOpen} />
+    <AccountMenu counts={counts} me={me} onClose={() => setMobileDropDownOpen(false)} />
   );
 
   return (

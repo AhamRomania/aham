@@ -33,7 +33,6 @@ const AdCta:FC<AdCtaProps> = ({ad, me, onAdReport}) => {
     )
 
     const fetchPhoneNumber = () => {
-        if (phoneNumber === '') {return;}
         setFetchingPhoneNumber(true);
         api<string>(`/ads/${ad.id}/contact`,{text: true}).then(
             (nr) => {
@@ -171,13 +170,14 @@ const AdCta:FC<AdCtaProps> = ({ad, me, onAdReport}) => {
                 </Link> : []}
                 
                 <Textarea
+                    disabled={!ad.messages}
                     value={messageToSend}
                     onFocus={() => track('ad/cta/message/focus', {"ad": ad.id})}
                     onChange={(e: any) => setMessageToSend(e.target.value)}
                     placeholder={chats.length > 0?'Mesaj nou':''}
                 />
 
-                <Button disabled={messageToSend === ''} onClick={() => sendNewMessage()} startDecorator={<Send fontSize="small"/>}>Trimite</Button>
+                <Button disabled={messageToSend === '' || !ad.messages} onClick={() => sendNewMessage()} startDecorator={<Send fontSize="small"/>}>Trimite</Button>
             </>
         )
     }
@@ -223,9 +223,9 @@ const AdCta:FC<AdCtaProps> = ({ad, me, onAdReport}) => {
                 </Link>
                 <span>{ad.owner.given_name}</span>
                 <Space/>
-                <IconButton onClick={() => fetchPhoneNumber()} variant="solid">
+                {ad.show_phone && <IconButton onClick={() => fetchPhoneNumber()} variant="solid">
                     {fetchingPhoneNumber ? <CircularProgress size="sm"/> : <Phone/>}
-                </IconButton>
+                </IconButton>}
             </div>
             {phoneNumber && <div
                 css={css`
