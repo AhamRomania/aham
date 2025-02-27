@@ -8,14 +8,14 @@ const ACCESS_TOKEN_COOKIE_NAME = 'aham';
 const destroyAccessToken = async () => {
     if (isBrowserContext()) {
         if (Cookies.get(ACCESS_TOKEN_COOKIE_NAME)) {
-            return Cookies.remove(ACCESS_TOKEN_COOKIE_NAME, {path: '', domain: getDomain(Domain.Cookie)});
+            return Cookies.remove(ACCESS_TOKEN_COOKIE_NAME, {path: '/', domain: getDomain(Domain.Cookie)});
         }
     } else {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const cookies = await (await require('next/headers')).cookies()
         const cookie = cookies.get(ACCESS_TOKEN_COOKIE_NAME)
         if (cookie  && cookie.value) {
-            cookies.set(ACCESS_TOKEN_COOKIE_NAME, "", { expires: new Date(0), path: "", domain: getDomain(Domain.Cookie) });
+            cookies.set(ACCESS_TOKEN_COOKIE_NAME, "", { expires: new Date(0), path: '/', domain: getDomain(Domain.Cookie) });
         }
     }
 }
@@ -41,11 +41,11 @@ const getAccessToken = async (): Promise<string | null> => {
 
 const setAccessToken = async(data: AuthInfo):Promise<void> => {
     if (isBrowserContext()) {
-        Cookies.set(ACCESS_TOKEN_COOKIE_NAME, data.token, {expires: data.expire, path:'', domain: getDomain(Domain.Cookie)});
+        Cookies.set(ACCESS_TOKEN_COOKIE_NAME, data.token, {expires: data.expire, path:'/', domain: getDomain(Domain.Cookie)});
     } else {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const cookies = await (await require('next/headers')).cookies()
-        cookies.set(ACCESS_TOKEN_COOKIE_NAME, data.token, {expires: data.expire, path: '', domain: getDomain(Domain.Cookie)});
+        cookies.set(ACCESS_TOKEN_COOKIE_NAME, data.token, {expires: data.expire, path: '/', domain: getDomain(Domain.Cookie)});
     }
 }
 
