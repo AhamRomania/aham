@@ -58,7 +58,8 @@ const NotificationsDialog: FC<NotificationsDialogProps> = ({
                 left: auto;
                 min-width: 300px;
                 max-width: 300px;
-                min-height: 400px;
+                height: auto;
+                bottom: auto;
                 max-height: 400px;
                 overflow-y: auto;
                 padding: 10px 10px;

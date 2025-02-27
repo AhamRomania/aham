@@ -5,7 +5,7 @@ import { Notifications } from "@mui/icons-material";
 import { FC, useEffect, useRef, useState } from "react";
 import NotificationsDialog from "../Dialog/Notifications";
 import { CircularProgress } from "@mui/joy";
-import { getNotifications } from "@/api/common";
+import { getNotifications, getNotificationsCount } from "@/api/common";
 import { Notification } from "../types";
 
 const NotificationsBadge: FC = () => {
@@ -15,18 +15,17 @@ const NotificationsBadge: FC = () => {
   const [fetching, setFetching] = useState(false);
   const triggerRef = useRef<HTMLDivElement|null>(null);
   useEffect(() => {
-    getNotifications().then((response) => {
-        setNotifications(response.notifications || []);
-        setCount(response.unseen);
-    });
-  }, []);
+    setFetching(true)
+    getNotifications(0,10).then(setNotifications);
+    getNotificationsCount().then(
+        (c) => {
+            setFetching(false);
+            setCount(c);
+        }
+    );
+  }, [open]);
   const expand = () => {
-    if (open) {return;}
-    setFetching(true);
-    setTimeout(() => {
-        setOpen(true);
-        setFetching(false);
-    }, 100);
+    setOpen(true);
   }
   return (
     <div

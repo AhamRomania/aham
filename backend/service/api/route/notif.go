@@ -5,6 +5,7 @@ import (
 	. "aham/service/api/db/aham/public/table"
 	"aham/service/api/types"
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -28,9 +29,34 @@ func notifs(w http.ResponseWriter, r *http.Request) {
 
 	offset := c.QueryIntParam(r, "offset", 0)
 	limit := c.QueryIntParam(r, "limit", 10)
+	count := r.URL.Query().Get("count") == "true"
 
 	conn := c.DB()
 	defer conn.Release()
+
+	if count {
+
+		stmt := Notifications.SELECT(
+			COUNT(String("*")),
+		).WHERE(
+			Notifications.Owner.EQ(Int(userID)).AND(
+				Notifications.Seen.IS_NULL(),
+			),
+		)
+
+		sql, params := stmt.Sql()
+
+		row := conn.QueryRow(context.TODO(), sql, params...)
+
+		var count int64
+
+		if err := row.Scan(&count); err != nil {
+			c.Log().Error(err)
+		}
+
+		w.Write([]byte(fmt.Sprint(count)))
+		return
+	}
 
 	stmt := Notifications.SELECT(
 		Notifications.ID,
@@ -44,7 +70,13 @@ func notifs(w http.ResponseWriter, r *http.Request) {
 	).FROM(
 		Notifications.Table,
 	).WHERE(
-		Notifications.Owner.EQ(Int(userID)),
+		Notifications.Owner.EQ(Int(userID)).AND(
+			Notifications.Seen.GT_EQ(
+				TimestampExp(Raw("NOW() - INTERVAL '7 days'")),
+			).OR(
+				Notifications.Seen.IS_NULL(),
+			),
+		),
 	).ORDER_BY(
 		Notifications.Created.DESC(),
 	).OFFSET(
@@ -86,28 +118,7 @@ func notifs(w http.ResponseWriter, r *http.Request) {
 		notifs = append(notifs, n)
 	}
 
-	stmt = Notifications.SELECT(
-		COUNT(String("*")),
-	).WHERE(
-		Notifications.Owner.EQ(Int(userID)).AND(
-			Notifications.Seen.IS_NULL(),
-		),
-	)
-
-	sql, params = stmt.Sql()
-
-	row := conn.QueryRow(context.TODO(), sql, params...)
-
-	var count int64
-
-	if err := row.Scan(&count); err != nil {
-		c.Log().Error(err)
-	}
-
-	render.JSON(w, r, map[string]any{
-		"notifications": notifs,
-		"unseen":        count,
-	})
+	render.JSON(w, r, notifs)
 }
 
 func markAsSeen(w http.ResponseWriter, r *http.Request) {

@@ -45,13 +45,12 @@ export async function getSitemap(): Promise<string> {
     return await getApiFetch()<string>(`/sitemap`, {text:true,cache:'force-cache'});
 }
 
-export type NotificationsResponse = {
-    notifications: Notification[];
-    unseen: number;
+export async function getNotifications(offset:number, limit:number = 10): Promise<Notification[]> {
+    return await getApiFetch()<Notification[]>(`/notif?limit=${limit}&offset=${offset}`);
 }
 
-export async function getNotifications(): Promise<NotificationsResponse> {
-    return await getApiFetch()<NotificationsResponse>(`/notif`);
+export async function getNotificationsCount(): Promise<number> {
+    return await getApiFetch()<number>(`/notif?count=true`);
 }
 
 export async function markAsSeen(n: Notification): Promise<void> {
