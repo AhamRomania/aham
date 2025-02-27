@@ -1,14 +1,8 @@
 "use client";
 
 import { css } from "@emotion/react";
-import {
-    Add,
-    ArrowDropDown,
-    CheckCircle,
-    Home
-} from "@mui/icons-material";
+import { Add, ArrowDropDown, CheckCircle, Home } from "@mui/icons-material";
 import { Breadcrumbs, Button, IconButton, Snackbar, Stack } from "@mui/joy";
-import { useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -21,6 +15,7 @@ import Balance from "../Widget/Balance";
 import NotificationsBadge from "../Widget/NotificationsBadge";
 import useSocket from "../ws";
 import { Space } from "./common";
+import { useIsMobile } from "../hooks/mobile";
 
 export interface AccountLayoutAPI {
   setPath: (path: React.ReactElement) => void;
@@ -43,7 +38,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
   const [open, setOpen] = useState(true);
   const [path, setPath] = useState<React.ReactElement>(<></>);
   const [snackbars, setSnackbars] = useState<SnackbarItem[]>([]);
-  const mobile = useMediaQuery("(max-width: 768px)") || (typeof window !== "undefined" && window.innerWidth <= 768);
+  const mobile = useIsMobile();
   const socket = useSocket();
 
   const handleOpenSnackbar = (
@@ -183,11 +178,11 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               </>
             )}
             <Space />
-            <Stack gap={1} flexDirection="row">
-                {mobile && <Balance/>}
-                {mobile && <NotificationsBadge/>}
-                {mobile && <AccountBadge menu={true} pre={<ArrowDropDown/>}/>}
-            </Stack>
+            {mobile && <Stack gap={1} flexDirection="row">
+              <Balance />
+              <NotificationsBadge />
+              <AccountBadge menu={true} pre={<ArrowDropDown />} />
+            </Stack>}
           </div>
           <button
             onClick={() => setOpen(!open)}
@@ -217,11 +212,13 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               flex: 1;
               overflow-y: auto;
               @media (max-width: 768px) {
-                * { display: none; }
+                * {
+                  display: none;
+                }
               }
             `}
           >
-            {!mobile && <AccountMenu hideLogout/>}
+            {!mobile && <AccountMenu hideLogout />}
           </div>
         </div>
         <div
@@ -240,7 +237,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               background: #fafafa;
               padding: 0 10px;
               @media only screen and (min-width: 1200px) {
-                height: 80px;  
+                height: 80px;
                 padding: 0 20px;
               }
             `}
@@ -252,7 +249,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 display: flex;
                 align-items: center;
                 @media only screen and (min-width: 1200px) {
-                    height: 80px;
+                  height: 80px;
                 }
               `}
             >
@@ -266,7 +263,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
               </Breadcrumbs>
             </div>
             <Space />
-            <div
+            {!mobile && <div
               css={css`
                 gap: 10px;
                 display: flex;
@@ -274,14 +271,16 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 justify-content: center;
                 margin-right: 20px;
                 @media (max-width: 768px) {
-                    div { display: none; }
+                  div {
+                    display: none;
+                  }
                 }
               `}
             >
-              {!mobile && <Balance/>}
-              {!mobile && <NotificationsBadge/>}
-              {!mobile && <AccountBadge menu={true} pre={<ArrowDropDown/>} />}
-            </div>
+                <Balance />
+                <NotificationsBadge />
+                <AccountBadge menu={true} pre={<ArrowDropDown />} />
+            </div>}
           </div>
           <div
             data-test="account-layout"

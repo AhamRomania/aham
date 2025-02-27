@@ -1,16 +1,16 @@
 import { Notification, ReportData, User } from "@/c/types";
-import { getUser } from "@/c/Auth";
 import getApiFetch from "./api";
 import getDomain, { Domain } from "@/c/domain";
 
-export async function getMe(fn?: (me: User | null) => void):Promise<User | null> {
-    
-    if (fn) {
-        getUser().then(fn)
-        return null;
-    }
-
-    return getUser().then(fn);
+export async function getMe():Promise<User | null> {
+    const api = getApiFetch();
+    return new Promise((resolve) => {
+        api<User>('/me',{cache:'no-cache'}).then((me: User) => {
+            resolve(me);
+        }).catch(()=>{
+            resolve(null);
+        });
+    });
 }
 
 export async function createReport(data: ReportData): Promise<void> {

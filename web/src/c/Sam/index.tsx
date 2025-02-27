@@ -24,11 +24,12 @@ const Sam:FC<SamProps & PropsWithChildren> = ({resource, permission, children}) 
     const api = getApiFetch();
     const [ok, setOK] = useState(false);
 
-
     useEffect(() => {
         api(`/sam/${resource}/${permission}`,{success: true}).then(
             () => setOK(true),
-        )
+        ).then(
+            () => setOK(false),
+        );
     }, [resource, permission]);
 
     if (!ok) {

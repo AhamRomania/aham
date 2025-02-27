@@ -179,3 +179,7 @@ export function unaccent(str: string): string {
     };
     return str.replace(/[ăĂâÂîÎșȘțȚ]/g, match => accents[match] || match);
 }
+
+export function isBrowserContext(): boolean {
+    return (typeof window !== 'undefined');
+}

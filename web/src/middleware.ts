@@ -3,14 +3,12 @@ import type { NextRequest } from 'next/server'
 import { getLoggedInState } from './c/Auth';
 
 export async function middleware(request: NextRequest) {
-    const isLoggedIn = await getLoggedInState();
-    if (!isLoggedIn) {
+    if (!(await getLoggedInState())) {
         return NextResponse.redirect(new URL(
             '/login?mrv=' + Math.round(Math.random() * 100),
             request.url
         ))
     }
-
     return NextResponse.next();
 }
 

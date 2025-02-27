@@ -1,26 +1,25 @@
 import getApiFetch from '@/api/api'
 import { User } from '../types';
-import { destroyAccessToken } from './token';
+import { destroyAccessToken, getAccessToken } from './token';
 
-const destroyCurrentSession = () => {
-    if (typeof(localStorage) != 'undefined') {
-        localStorage.removeItem('me');
-    }
-    return destroyAccessToken();
-}
+const destroyCurrentSession = async () => {
+    
+    const forceDelete = async () => {
+        if (await getAccessToken()) {
+            destroyAccessToken();
+            setTimeout(forceDelete, 0);
+        }
+    };
+    
+    await forceDelete();
+
+    return
+};
 
 const getUser = async (): Promise<User | null> => {
-    if (typeof(localStorage) != 'undefined' && localStorage.getItem('me')) {
-        return Promise.resolve(
-            JSON.parse(localStorage.getItem('me') as string),
-        );
-    }
     const api = getApiFetch();
     return new Promise((resolve) => {
-        api<User>('/me').then((me: User) => {
-            if (typeof(localStorage) != 'undefined') {
-                localStorage.setItem('me', JSON.stringify(me));
-            }
+        api<User>('/me',{cache:'no-cache'}).then((me: User) => {
             resolve(me);
         }).catch(()=>{
             resolve(null);
@@ -28,21 +27,18 @@ const getUser = async (): Promise<User | null> => {
     });
 }
 
-const getLoggedInState = async () => {
-    
-    let me = null;
-    
-    try {
-        me = await getUser();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch(e: unknown) {
-        return false;
+const getLoggedInState = async ():Promise<boolean> => {
+
+    const me = await getUser();
+
+    if (!me) {
+        return false
     }
 
-    if (me && typeof(me['hasOwnProperty']) != 'undefined') {
-        return me.hasOwnProperty('id');
+    if (me && me.id) {
+        return true;
     }
-    
+
     return false;
 }
 

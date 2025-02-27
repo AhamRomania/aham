@@ -7,6 +7,7 @@ import NumericFormatAdapter from "@/c/Form/NumericFormatAdapter";
 import Pictures from "@/c/Form/Pictures/Pictures";
 import { GenericPicture } from "@/c/Form/Pictures/types";
 import { toCents } from "@/c/formatter";
+import { useIsMobile } from "@/c/hooks/mobile";
 import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { BouncingLogo } from "@/c/logo";
@@ -26,14 +27,14 @@ import {
   Stack,
   Textarea,
 } from "@mui/joy";
-import { Backdrop, useMediaQuery } from "@mui/material";
+import { Backdrop } from "@mui/material";
 import Link from "next/link";
 import { FC, Fragment, useContext, useEffect, useState } from "react";
 
 export default function Page() {
   const { setPath } = useContext(AccountLayoutContext);
   const api = getApiFetch();
-  const isMobile = useMediaQuery("(max-width: 768px)") || (typeof window !== "undefined" && window.innerWidth <= 768);
+  const isMobile = useIsMobile();
 
   const [currency, setCurrency] = useState("LEI");
   const [category, setCategory] = useState<Category | null>(null);
@@ -274,7 +275,9 @@ export default function Page() {
         <Grid container spacing={2} sx={{ flexGrow: 1 }}>
           <Grid>
             <div>
-              <label style={{paddingBottom:"10px",display:"block"}}>Preț*</label>
+              <label style={{ paddingBottom: "10px", display: "block" }}>
+                Preț*
+              </label>
               <Input
                 name="price"
                 slotProps={{
@@ -283,7 +286,12 @@ export default function Page() {
                   },
                 }}
                 sx={{ width: 300 }}
-                endDecorator={<CurrencySelector currency={currency} onChange={setCurrency} />}
+                endDecorator={
+                  <CurrencySelector
+                    currency={currency}
+                    onChange={setCurrency}
+                  />
+                }
               />
             </div>
           </Grid>
@@ -386,11 +394,14 @@ export default function Page() {
 }
 
 interface CurrencySelectorProps {
-    currency:string;
-    onChange:(currency:string)=>void;
+  currency: string;
+  onChange: (currency: string) => void;
 }
 
-const CurrencySelector: FC<CurrencySelectorProps> = ({currency, onChange}) => {
+const CurrencySelector: FC<CurrencySelectorProps> = ({
+  currency,
+  onChange,
+}) => {
   return (
     <Fragment>
       <Divider orientation="vertical" />

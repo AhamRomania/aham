@@ -2,7 +2,7 @@ import { markAsSeen } from "@/api/common";
 import { css } from "@emotion/react";
 import { Launch } from "@mui/icons-material";
 import { List, ListItemButton, Modal, ModalDialog } from "@mui/joy";
-import { FC, RefObject, useEffect, useReducer, useRef, useState } from "react";
+import { FC, RefObject, useEffect, useReducer, useState } from "react";
 import { Notification } from "../types";
 
 export interface NotificationsDialogProps {
@@ -18,7 +18,6 @@ const NotificationsDialog: FC<NotificationsDialogProps> = ({
   open,
   onClose,
 }) => {
-  const divRef = useRef<HTMLDivElement>(null);
   const [rect, setRect] = useState<DOMRect>();
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   useEffect(() => {
@@ -26,20 +25,14 @@ const NotificationsDialog: FC<NotificationsDialogProps> = ({
       setRect(triggerRef.current.getBoundingClientRect());
     }
   }, [triggerRef]);
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (divRef.current && !divRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-  const select = (n: Notification) => {
+  
+  const select = (n: Notification, e:MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     markAsSeen(n).then(() => {
         n.seen = new Date();
         if (n.href) {
+            onClose();
             window.location.href = n.href;
         }
         forceUpdate();
@@ -47,7 +40,7 @@ const NotificationsDialog: FC<NotificationsDialogProps> = ({
   }
   return (
     <Modal open={open} hideBackdrop>
-      <div ref={divRef}>
+      <div>
         <ModalDialog
           layout={`fullscreen`}
           css={css`
@@ -90,7 +83,7 @@ const NotificationsDialog: FC<NotificationsDialogProps> = ({
         >
             <List>
             {items?.map((item) => (
-                <ListItemButton onClick={() => select(item)} key={item.id} className={item.seen ? 'item seen' : 'item unseen'}>
+                <ListItemButton onMouseDown={(e: any) => select(item,e)} key={item.id} className={item.seen ? 'item seen' : 'item unseen'}>
                     {item.title}
                     {item.href && <Launch fontSize="small" htmlColor="#DDD"/>}
                 </ListItemButton>

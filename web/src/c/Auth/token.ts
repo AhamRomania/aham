@@ -1,27 +1,28 @@
 import getDomain, { Domain } from "../domain";
+import { isBrowserContext } from "../funcs";
 import { AuthInfo } from "../types";
 import Cookies from "js-cookie";
 // On auth a cookie is stored with this name
 const ACCESS_TOKEN_COOKIE_NAME = 'aham';
 
 const destroyAccessToken = async () => {
-    if (typeof window !== 'undefined') {
+    if (isBrowserContext()) {
         if (Cookies.get(ACCESS_TOKEN_COOKIE_NAME)) {
-            return Cookies.remove(ACCESS_TOKEN_COOKIE_NAME, {path: '/', domain: getDomain(Domain.Cookie)});
+            return Cookies.remove(ACCESS_TOKEN_COOKIE_NAME, {path: '', domain: getDomain(Domain.Cookie)});
         }
     } else {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const cookies = await (await require('next/headers')).cookies()
         const cookie = cookies.get(ACCESS_TOKEN_COOKIE_NAME)
         if (cookie  && cookie.value) {
-            cookies.set(ACCESS_TOKEN_COOKIE_NAME, "", { expires: new Date(0), path: "/", domain: getDomain(Domain.Cookie) });
+            cookies.set(ACCESS_TOKEN_COOKIE_NAME, "", { expires: new Date(0), path: "", domain: getDomain(Domain.Cookie) });
         }
     }
 }
 
 // Get access token from browser or request
 const getAccessToken = async (): Promise<string | null> => {
-    if (typeof window !== 'undefined') {
+    if (isBrowserContext()) {
         if (Cookies.get(ACCESS_TOKEN_COOKIE_NAME)) {
             return Cookies.get(ACCESS_TOKEN_COOKIE_NAME)!;
         }
@@ -39,7 +40,7 @@ const getAccessToken = async (): Promise<string | null> => {
 }
 
 const setAccessToken = async(data: AuthInfo):Promise<void> => {
-    if (typeof window !== 'undefined') {
+    if (isBrowserContext()) {
         Cookies.set(ACCESS_TOKEN_COOKIE_NAME, data.token, {expires: data.expire, path:'', domain: getDomain(Domain.Cookie)});
     } else {
         // eslint-disable-next-line @typescript-eslint/no-require-imports

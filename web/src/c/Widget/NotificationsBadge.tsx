@@ -9,61 +9,87 @@ import { getNotifications, getNotificationsCount } from "@/api/common";
 import { Notification } from "../types";
 
 const NotificationsBadge: FC = () => {
-  const [count,setCount] = useState(0)
+  const [count, setCount] = useState(0);
   const [notifications, setNotifications] = useState<Notification[]>();
   const [open, setOpen] = useState(false);
   const [fetching, setFetching] = useState(false);
-  const triggerRef = useRef<HTMLDivElement|null>(null);
+  const [any, setAny] = useState(false);
+  const triggerRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    setFetching(true)
-    getNotifications(0,10).then(setNotifications);
-    getNotificationsCount().then(
-        (c) => {
-            setFetching(false);
-            setCount(c);
-        }
-    );
+    setFetching(true);
+    fetch();
   }, [open]);
+  const fetch = () => {
+    getNotifications(0, 10).then((items) => {
+        setNotifications(items);
+        setAny(items.length > 0);   
+    });
+    getNotificationsCount().then((c) => {
+      setFetching(false);
+      setCount(c);
+    });
+  }
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (triggerRef.current && !triggerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [triggerRef]);
   const expand = () => {
+    if (count == 0) {
+        fetch();
+    }
     setOpen(true);
+  };
+  if (!any) {
+    return [];
   }
   return (
     <div
       ref={triggerRef}
       onClick={() => expand()}
       css={css`
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 5px;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f0f4f8;
-            color: #fff;
-            position: relative;
-            &:hover {
-                background:#d3d3d3;
-            }
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 5px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f4f8;
+        color: #fff;
+        position: relative;
+        &:hover {
+          background: #d3d3d3;
+        }
       `}
     >
       <div
         css={css`
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            bottom: 0px;
-            left: 0px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+          position: absolute;
+          top: 0px;
+          right: 0px;
+          bottom: 0px;
+          left: 0px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         `}
       >
-        {fetching ? <CircularProgress thickness={2} size="sm"/> : <Notifications htmlColor="#000"/>}
+        {fetching ? (
+          <CircularProgress thickness={2} size="sm" />
+        ) : (
+          <Notifications htmlColor="#000" />
+        )}
       </div>
-      {count>0&&<div
-        css={css`
+      {count > 0 && (
+        <div
+          css={css`
             position: absolute;
             right: 0px;
             top: 0px;
@@ -75,11 +101,17 @@ const NotificationsBadge: FC = () => {
             display: flex;
             align-items: center;
             justify-content: center;
-        `}
-      >
-        {count}
-      </div>}
-      <NotificationsDialog items={notifications || []} triggerRef={triggerRef} open={open} onClose={() => setOpen(true)}/>
+          `}
+        >
+          {count}
+        </div>
+      )}
+      <NotificationsDialog
+        items={notifications || []}
+        triggerRef={triggerRef}
+        open={open}
+        onClose={() => setOpen(true)}
+      />
     </div>
   );
 };
