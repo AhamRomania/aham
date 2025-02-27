@@ -1,10 +1,9 @@
+import { markAsSeen } from "@/api/common";
 import { css } from "@emotion/react";
-import { Divider, List, ListItem, ListItemButton, Modal, ModalDialog } from "@mui/joy";
+import { Launch } from "@mui/icons-material";
+import { List, ListItemButton, Modal, ModalDialog } from "@mui/joy";
 import { FC, RefObject, useEffect, useReducer, useRef, useState } from "react";
 import { Notification } from "../types";
-import Link from "next/link";
-import { markAsSeen } from "@/api/common";
-import { Launch, Visibility } from "@mui/icons-material";
 
 export interface NotificationsDialogProps {
   triggerRef: RefObject<HTMLElement | null>;

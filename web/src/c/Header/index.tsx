@@ -1,13 +1,12 @@
 "use client";
 
-import { FC } from "react";
 import { css } from "@emotion/react";
+import Link from "next/link";
+import { FC } from "react";
+import { Centred, Space } from "../Layout";
 import Logo from "../logo";
 import Tip from "../tooltip";
-import Link from "next/link";
-import { Centred, Space } from "../Layout";
 import AccountBadge from "../Widget/AccountBadge";
-import { ArrowDropDown, ArrowRightAlt } from "@mui/icons-material";
 
 const Header: FC = () => {
   
