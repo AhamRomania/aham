@@ -25,7 +25,6 @@ func UseSchema(schema string) {
 	Resources = Resources.FromSchema(schema)
 	Sam = Sam.FromSchema(schema)
 	Seo = Seo.FromSchema(schema)
-	Shares = Shares.FromSchema(schema)
 	Templates = Templates.FromSchema(schema)
 	Transactions = Transactions.FromSchema(schema)
 	Users = Users.FromSchema(schema)

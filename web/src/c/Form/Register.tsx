@@ -11,6 +11,7 @@ import { IMaskInput } from "react-imask";
 import { FC, useEffect, useState } from "react";
 import getApiFetch from "@/api/api";
 import { css } from "@emotion/react";
+import { track } from "../funcs";
 
 interface RegisterFormProps {
   saving: boolean;
@@ -26,6 +27,7 @@ const RegisterForm: FC<RegisterFormProps> = ({ onFormSubmit, saving }) => {
   const [counties, setCounties] = useState<City[]>([]);
   useEffect(() => {
     api<City[]>("/cities").then(setCounties);
+    track('register/view');
   }, []);
   return (
     <form
@@ -38,6 +40,7 @@ const RegisterForm: FC<RegisterFormProps> = ({ onFormSubmit, saving }) => {
         ) as unknown as CreateUserRequest;
         formJson.city = parseInt(formJson.city + "");
         onFormSubmit(formJson);
+        track('register/submit');
       }}
     >
       <Stack spacing={1}>

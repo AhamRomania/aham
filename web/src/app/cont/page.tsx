@@ -20,6 +20,7 @@ import {
 import RegisterForm from "@/c/Form/Register";
 import Link from "next/link";
 import { useState } from "react";
+import { track } from "@/c/funcs";
 
 export default function Page() {
   const api = getApiFetch();
@@ -78,6 +79,7 @@ export default function Page() {
           }
         }).catch(
           () => {
+            track('register/failed',formJson);
             setSaving(false);
           }
         );

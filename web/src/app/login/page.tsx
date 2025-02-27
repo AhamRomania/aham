@@ -3,6 +3,7 @@
 import getApiFetch from "@/api/api";
 import { setAccessToken } from "@/c/Auth";
 import getConfig, { Config } from "@/c/config";
+import { track } from "@/c/funcs";
 import Logo from "@/c/logo";
 import OrSection from "@/c/orsection";
 import Tip from "@/c/tooltip";
@@ -32,6 +33,7 @@ export default function Page() {
 
   useEffect(() => {
     getConfig().then(setConfig);
+    track('login/view');
   }, []);
 
   useEffect(() => {
@@ -53,6 +55,7 @@ export default function Page() {
   });
 
   const loginWithFacebook = () => {
+    track('login/facebook/click');
     alert('Vă rugăm folosiți formularul de înregistrare');
     router.push('/cont');
     return
@@ -84,6 +87,7 @@ export default function Page() {
   };
 
   const setupGoogleLoginButton = () => {
+    track('login/google/click');
     alert('Vă rugăm folosiți formularul de înregistrare');
     router.push('/cont');
     return
@@ -178,6 +182,7 @@ export default function Page() {
                 router.refresh();
               },0);
             }).catch(() => {
+              track('login/failed',formJson);
               setLoggingIn(false);
               alert('Nu m-am putut loga');
             });
