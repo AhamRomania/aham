@@ -27,7 +27,7 @@ func notifs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	offset := c.QueryIntParam(r, "offset", 0)
-	limit := c.QueryIntParam(r, "limit", 0)
+	limit := c.QueryIntParam(r, "limit", 10)
 
 	conn := c.DB()
 	defer conn.Release()
@@ -86,7 +86,28 @@ func notifs(w http.ResponseWriter, r *http.Request) {
 		notifs = append(notifs, n)
 	}
 
-	render.JSON(w, r, notifs)
+	stmt = Notifications.SELECT(
+		COUNT(String("*")),
+	).WHERE(
+		Notifications.Owner.EQ(Int(userID)).AND(
+			Notifications.Seen.IS_NULL(),
+		),
+	)
+
+	sql, params = stmt.Sql()
+
+	row := conn.QueryRow(context.TODO(), sql, params...)
+
+	var count int64
+
+	if err := row.Scan(&count); err != nil {
+		c.Log().Error(err)
+	}
+
+	render.JSON(w, r, map[string]any{
+		"notifications": notifs,
+		"unseen":        count,
+	})
 }
 
 func markAsSeen(w http.ResponseWriter, r *http.Request) {

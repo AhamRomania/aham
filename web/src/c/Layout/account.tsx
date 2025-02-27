@@ -3,6 +3,7 @@
 import { css } from "@emotion/react";
 import {
     Add,
+    ArrowDropDown,
     CheckCircle,
     Home
 } from "@mui/icons-material";
@@ -143,8 +144,8 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         >
           <div
             css={css`
-              max-height: 80px;
-              min-height: 80px;
+              max-height: 60px;
+              min-height: 60px;
               display: flex;
               align-items: center;
               justify-content: flex-start;
@@ -185,7 +186,7 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
             <Stack gap={1} flexDirection="row">
                 {mobile && <Balance/>}
                 {mobile && <NotificationsBadge/>}
-                {mobile && <AccountBadge menu={true}/>}
+                {mobile && <AccountBadge menu={true} pre={<ArrowDropDown/>}/>}
             </Stack>
           </div>
           <button
@@ -234,18 +235,25 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
         >
           <div
             css={css`
-              height: 80px;
+              height: 60px;
               display: flex;
               background: #fafafa;
-              padding: 0 20px;
+              padding: 0 10px;
+              @media only screen and (min-width: 1200px) {
+                height: 80px;  
+                padding: 0 20px;
+              }
             `}
           >
             <div
               data-test="account-header-breadcrumbs"
               css={css`
-                height: 80px;
+                height: 60px;
                 display: flex;
                 align-items: center;
+                @media only screen and (min-width: 1200px) {
+                    height: 80px;
+                }
               `}
             >
               <Breadcrumbs separator="›" aria-label="breadcrumbs">
@@ -266,13 +274,13 @@ const AccountLayout = ({ children }: React.PropsWithChildren) => {
                 justify-content: center;
                 margin-right: 20px;
                 @media (max-width: 768px) {
-                div { display: none; }
+                    div { display: none; }
                 }
               `}
             >
               {!mobile && <Balance/>}
               {!mobile && <NotificationsBadge/>}
-              {!mobile && <AccountBadge menu={true} />}
+              {!mobile && <AccountBadge menu={true} pre={<ArrowDropDown/>} />}
             </div>
           </div>
           <div

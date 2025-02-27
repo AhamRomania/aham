@@ -153,4 +153,16 @@ export type AuthInfo = {
     expire: number;
 }
 
+export type Notification = {
+    id: number;
+    owner: number;
+    variant: 'info' | 'alert' | 'warning' | 'error' | 'fatal' | 'system' | 'promotion',
+    title: string;
+    contents: string;
+    href: string;
+    actions:{[key:string]:string};
+    seen: Date | string;
+    created: Date | string;
+}
+
 export type D = { [key: string]: any };

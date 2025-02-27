@@ -1,4 +1,4 @@
-import { ReportData, User } from "@/c/types";
+import { Notification, ReportData, User } from "@/c/types";
 import { getUser } from "@/c/Auth";
 import getApiFetch from "./api";
 import getDomain, { Domain } from "@/c/domain";
@@ -43,4 +43,17 @@ export async function getReferrerURL(): Promise<string> {
 
 export async function getSitemap(): Promise<string> {
     return await getApiFetch()<string>(`/sitemap`, {text:true,cache:'force-cache'});
+}
+
+export type NotificationsResponse = {
+    notifications: Notification[];
+    unseen: number;
+}
+
+export async function getNotifications(): Promise<NotificationsResponse> {
+    return await getApiFetch()<NotificationsResponse>(`/notif`);
+}
+
+export async function markAsSeen(n: Notification): Promise<void> {
+    return await getApiFetch()(`/notif/${n.id}`,{method:'PATCH', success: true});
 }

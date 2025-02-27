@@ -33,7 +33,7 @@ import { FC, Fragment, useContext, useEffect, useState } from "react";
 export default function Page() {
   const { setPath } = useContext(AccountLayoutContext);
   const api = getApiFetch();
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery("(max-width: 768px)") || (typeof window !== "undefined" && window.innerWidth <= 768);
 
   const [currency, setCurrency] = useState("LEI");
   const [category, setCategory] = useState<Category | null>(null);

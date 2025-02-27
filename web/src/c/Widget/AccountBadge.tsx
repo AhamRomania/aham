@@ -13,10 +13,10 @@ import { Button } from "@mui/material";
 
 export interface AccountBadgeProps {
   menu?: boolean;
-  icon?: ReactNode;
+  pre?: ReactNode;
 }
 
-const AccountBadge: FC<AccountBadgeProps> = ({ icon, menu }) => {
+const AccountBadge: FC<AccountBadgeProps> = ({ pre, menu }) => {
   const router = useRouter();
   const [me, setMe] = useState<User | null | undefined>();
   const [showMenu, setShowMenu] = useState(false);
@@ -70,9 +70,12 @@ const AccountBadge: FC<AccountBadgeProps> = ({ icon, menu }) => {
           display: flex;
           align-items: center;
           cursor: pointer;
+          &:hover div {
+            background:#d3d3d3;
+          }
         `}
       >
-        {icon}
+        {pre}
         <Avatar sx={{ borderRadius: "5px" }}>
           <Face />
         </Avatar>
