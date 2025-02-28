@@ -1,6 +1,7 @@
 package c
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -41,7 +42,24 @@ func getAccessToken(r *http.Request) string {
 	return ""
 }
 
+func getAppOwnerFromRequest(r *http.Request) (owner int64, err error) {
+
+	conn := DB()
+	defer conn.Release()
+
+	row := conn.QueryRow(
+		context.TODO(),
+		`select owner from applications from key = $1`,
+		getAccessToken(r),
+	)
+
+	err = row.Scan(&owner)
+
+	return
+}
+
 func UserID(r *http.Request) (id int64, err error) {
+
 	token, err := jwt.Parse(getAccessToken(r), func(token *jwt.Token) (interface{}, error) {
 		// Validate the algorithm
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -51,6 +69,11 @@ func UserID(r *http.Request) (id int64, err error) {
 	})
 
 	if err != nil {
+
+		if owner, err := getAppOwnerFromRequest(r); err == nil {
+			return owner, nil
+		}
+
 		return 0, errors.Wrap(err, "can't parse jwt")
 	}
 
