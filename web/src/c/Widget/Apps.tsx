@@ -1,5 +1,5 @@
 import { createNewUserApp, getUserApps, removeUserApp } from "@/api/common";
-import { Add, CopyAll, Delete } from "@mui/icons-material";
+import { Add, Check, CopyAll, Delete } from "@mui/icons-material";
 import { IconButton, Input, Stack, Table } from "@mui/joy";
 import { FC, useEffect, useState } from "react";
 import { UserApp } from "../types";
@@ -10,6 +10,7 @@ import { track } from "../funcs";
 const AppList: FC = () => {
   const [apps, setApps] = useState<UserApp[]>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<UserApp | null>();
+  const [appCopied, setAppCopied] = useState<UserApp|null>();
   useEffect(() => {
     getUserApps().then(setApps);
   }, []);
@@ -36,6 +37,10 @@ const AppList: FC = () => {
   const copyKeyToClipboard = (app: UserApp) => {
     navigator.clipboard.writeText(app.key!).then(
       () => {
+        setAppCopied(app);
+        setTimeout(() => {
+            setAppCopied(null);
+        }, 2000);
         track("cont/apps/copyKey", { app: app.id });
       },
       () => {
@@ -80,7 +85,7 @@ const AppList: FC = () => {
                           onClick={() => copyKeyToClipboard(app)}
                           variant="soft"
                         >
-                          <CopyAll />
+                          {appCopied ? <Check /> : <CopyAll />}
                         </IconButton>
                       }
                     />
