@@ -8,6 +8,7 @@ import { track } from "@/c/funcs";
 import { Centred, PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { User } from "@/c/types";
+import AppList from "@/c/Widget/Apps";
 import NextFeature from "@/c/Widget/Feature";
 import AccountSection from "@/c/Widget/Section";
 import { Check, ContentCopy } from "@mui/icons-material";
@@ -104,9 +105,7 @@ export default function Page() {
       <AccountSection title="Tranzacții">
         <NextFeature feature="account/transactions">Cheltuieli anunțuri, câștiguri referințe.</NextFeature>
       </AccountSection>
-      <AccountSection title="Aplicații">
-        <NextFeature feature="account/apps">Definește aplicații pentru integrare cu terțe părți.</NextFeature>
-      </AccountSection>
+      <AppList/>
       <AccountSection title="Zonă periculoasă">
         <Stack gap={2} flexDirection="row">
           <Button

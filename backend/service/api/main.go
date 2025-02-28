@@ -32,6 +32,7 @@ func main() {
 
 		r.Route("/users", route.UserRoutes)
 		r.Route("/me", route.MeRoutes)
+		r.Route("/me/apps", route.AppsRouter)
 		r.Get("/activate", route.ActivateUser)
 		r.Post("/auth", route.Auth)
 		r.Post("/auth/google", route.AuthWithGoogle)

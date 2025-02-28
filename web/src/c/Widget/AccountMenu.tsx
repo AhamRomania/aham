@@ -104,10 +104,7 @@ const AccountMenu: FC<AccountMenuProp> = ({hideLogout}) => {
             title="Atribute"
             href="/u/admin/atribute"
           />
-          <Sam
-            resource={SamResource.CATEGORIES}
-            permission={SamPermission.WRITE}
-          >
+          <Sam resource={SamResource.CATEGORIES} permission={SamPermission.WRITE}>
             <MenuItem
               icon={<FolderOutlined />}
               title="Categorii"

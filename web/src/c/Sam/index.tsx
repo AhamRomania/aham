@@ -1,5 +1,5 @@
-import getApiFetch from "@/api/api";
-import { FC, useState, PropsWithChildren, useEffect } from "react";
+import { checkPermission } from "@/api/common";
+import { FC, PropsWithChildren, useEffect, useState } from "react";
 
 export enum SamResource {
     CITIES = 1,
@@ -21,14 +21,11 @@ export interface SamProps {
 
 const Sam:FC<SamProps & PropsWithChildren> = ({resource, permission, children}) => {
 
-    const api = getApiFetch();
     const [ok, setOK] = useState(false);
 
     useEffect(() => {
-        api(`/sam/${resource}/${permission}`,{success: true}).then(
-            () => setOK(true),
-        ).then(
-            () => setOK(false),
+        checkPermission(resource, permission).then(
+            () => setOK(true)
         );
     }, [resource, permission]);
 

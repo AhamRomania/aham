@@ -165,4 +165,14 @@ export type Notification = {
     created: Date | string;
 }
 
+export type UserApp = {
+    id: number;
+    owner_id: number;
+    owner: any;
+    name: string;
+    key: string;
+    enabled: boolean;
+    created: Date | string;
+}
+
 export type D = { [key: string]: any };

@@ -1,10 +1,10 @@
 "use client"
 
 import { css } from "@emotion/react";
-import { FC, PropsWithChildren } from "react";
+import { FC, PropsWithChildren, ReactNode } from "react";
 
 export interface SectionProps {
-    title: string;
+    title: string | ReactNode;
     after?: React.ReactNode
     className?: string
 }

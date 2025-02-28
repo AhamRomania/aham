@@ -1,4 +1,4 @@
-import { Notification, ReportData, User } from "@/c/types";
+import { Notification, ReportData, User, UserApp } from "@/c/types";
 import getApiFetch from "./api";
 import getDomain, { Domain } from "@/c/domain";
 
@@ -55,4 +55,20 @@ export async function getNotificationsCount(): Promise<number> {
 
 export async function markAsSeen(n: Notification): Promise<void> {
     return await getApiFetch()(`/notif/${n.id}`,{method:'PATCH', success: true});
+}
+
+export async function checkPermission(resource: number, permission: number):Promise<boolean> {
+    return await getApiFetch()(`/sam/${resource}/${permission}`,{success: true});
+}
+
+export async function getUserApps():Promise<UserApp[]> {
+    return await getApiFetch()(`/me/apps`);
+}
+
+export async function createNewUserApp():Promise<UserApp> {
+    return await getApiFetch()(`/me/apps`,{method:'POST'});
+}
+
+export async function removeUserApp(id: number):Promise<void> {
+    return await getApiFetch()(`/me/apps/${id}`,{method:'DELETE', success: true});
 }
