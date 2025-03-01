@@ -296,7 +296,7 @@ func (ad *Ad) Publish(tx pgx.Tx) (err error) {
 		Owner: &user.ID,
 	})
 
-	if len(active)+1 > user.Meta.GetInt(UserMetaActiveAds, 2) {
+	if len(active)+1 > user.Meta.GetInt(UserMetaActiveAds, c.DEFAULT_ADS_PER_USER) {
 		return errors.New("ads limit exceeded")
 	}
 
