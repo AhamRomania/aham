@@ -863,6 +863,7 @@ func getAdSqlBuilder(me int64) SelectStatement {
 			LEFT_JOIN(Transactions.AS("transactions").Table, Transactions.AdID.EQ(Ads.ID)),
 	).ORDER_BY(
 		Raw("ad_promotion_index(COALESCE(transactions.amount, 0), ads.published, ads.valid_through) DESC"),
+		Raw("ads.published DESC"),
 	)
 }
 
