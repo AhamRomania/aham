@@ -3,6 +3,7 @@
 import getApiFetch from "@/api/api";
 import { fetchCategory } from "@/api/categories";
 import { CategoryListSection } from "@/c/Categories";
+import getDomain, { Domain } from "@/c/domain";
 import { toMoney } from "@/c/formatter";
 import { getAdOrCategory } from "@/c/funcs";
 import { MainLayout } from "@/c/Layout";
@@ -26,6 +27,19 @@ export async function generateMetadata(props: any): Promise<Metadata> {
         return {
             title: vo.title + ' | Aham',
             description: vo.description,
+            openGraph: {
+                siteName: 'Aham',
+                url: getDomain(Domain.Web,vo.href),
+                title: vo.title + ' | Aham',
+                description: vo.description,
+                images: vo.pictures.map(p => {
+                    return {
+                        "url": `http://cdn.aham.ro/${p}`,
+                        "secureUrl": `https://cdn.aham.ro/${p}`,
+                        "alt": vo.title,
+                    }
+                })
+            }
         };
     }
 
