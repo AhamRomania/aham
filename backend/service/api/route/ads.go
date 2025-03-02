@@ -39,6 +39,7 @@ func AdsRoutes(r chi.Router) {
 	r.Get("/", GetAds)
 	r.Get("/counts", c.Guard(GetAdCounts))
 	r.Get("/{id}", GetAd)
+	r.Get("/{id}/recommended", recommended)
 	r.Delete("/{id}", c.Guard(RemoveAd))
 	r.Post("/{id}/reject", c.Guard(reject))
 	r.Post("/{id}/approve", c.Guard(approve))
@@ -48,6 +49,18 @@ func AdsRoutes(r chi.Router) {
 	r.Post("/{id}/favourite", c.Guard(favouriteCreate))
 	r.Delete("/{id}/favourite", c.Guard(favouriteDelete))
 	r.Get("/favourites", c.Guard(getMyFavouriteAds))
+}
+
+func recommended(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	render.JSON(w, r, db.GetRecommendedAds(userID, c.ID(r, "id"), 0, 20))
 }
 
 func GetAdCounts(w http.ResponseWriter, r *http.Request) {
@@ -534,16 +547,6 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 
 	if from != 0 {
 		filter.Category = &from
-	}
-
-	if mode == "promotion" {
-		render.JSON(w, r, db.GetPromotionAds(userID, filter))
-		return
-	}
-
-	if mode == "recommended" {
-		render.JSON(w, r, db.GetRecommendedAds(filter))
-		return
 	}
 
 	if filter.Mode == string(db.STATUS_DRAFT) {

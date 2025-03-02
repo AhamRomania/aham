@@ -1,9 +1,8 @@
-import getApiFetch from "@/api/api";
+import { getRecommendedAds } from "@/api/ads";
 import { fetchCategory } from "@/api/categories";
 import { CategoryListSection } from "@/c/Categories";
 import { seo } from "@/c/funcs";
 import { HomepageLayout } from "@/c/Layout";
-import { Ad } from "@/c/types";
 import MoreAds from "@/c/Widget/MoreAds";
 
 export const metadata = seo("/", {
@@ -21,14 +20,11 @@ export const metadata = seo("/", {
 });
 
 export default async function Home() {
-  const api = getApiFetch();
-  const promotion = await api<Ad[]>("/ads?mode=promotion");
-  const recommended = await api<Ad[]>("/ads?mode=recommended");
+  const recommended = await getRecommendedAds(0);
   return (
     <HomepageLayout>
       <CategoryListSection category={await fetchCategory(1)} />
       <CategoryListSection category={await fetchCategory(2)} />
-      <MoreAds title="Promovate" ads={promotion} />
       <MoreAds title="Recomandate" ads={recommended} />
     </HomepageLayout>
   );

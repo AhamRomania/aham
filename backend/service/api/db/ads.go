@@ -439,36 +439,89 @@ type Filter struct {
 	Limit    *int64  `json:"limit"`
 	Offset   *int64  `json:"offset"`
 	Category *int64  `json:"category"`
+	ID       *int64  `json:"id"`
 	Owner    *int64  `json:"owner"`
 }
 
-func GetPromotionAds(me int64, filter Filter) (ads []*Ad) {
+func GetRecommendedAds(me int64, id int64, offset, limit int64) (ads []*Ad) {
+
+	if id == 0 {
+		return GetAds(me, Filter{
+			Limit:  &limit,
+			Offset: &offset,
+		})
+	}
+
+	if limit == 0 {
+		limit = 10000 //todo
+	}
+
 	ads = make([]*Ad, 0)
 
-	smtp := getAdSqlBuilder(me).WHERE(
-		Ads.Status.EQ(String("published")).AND(
-			Transactions.Amount.GT(Float(0)),
-		),
+	ad := GetAd(me, id)
+
+	if ad == nil {
+		c.Log().Error("expected ad")
+		return ads
+	}
+
+	stmt := Ads.SELECT(
+		Ads.ID,
+		Ads.Title,
+		Ads.Description,
+		Ads.Props,
+		Ads.Pictures,
+		Raw("CONCAT(counties.name,' / ',cities.name) as location_text"),
+		Raw("lower(unaccent(CONCAT(counties.name, '/', cities.name))) as location_href"),
+		Raw("ARRAY[counties.id, cities.id] as location_refs"),
+		Ads.Price,
+		Ads.Currency,
+		Ads.Created,
+		Ads.URL,
+		Ads.Messages,
+		Ads.ShowPhone,
+		Ads.Phone,
+		Ads.Status,
+		Categories.ID,
+		Categories.Name,
+		Raw("get_category_path(ads.category)::text AS category_path"),
+		Raw("get_category_href(ads.category)::text AS category_href"),
+		Raw("users.id"),
+		Raw("users.given_name"),
+		Raw("users.family_name"),
+		Raw("CONCAT(get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href"),
+		Raw("ad_promotion_index(COALESCE(transactions.amount, 0), ads.published, ads.valid_through) > 0 as promotion"),
+		Ads.Cycle,
+		Ads.Published,
+		Ads.ValidThrough,
+		Raw("(EXISTS (SELECT 1 FROM favourites WHERE favourites.ad_id = ads.id AND favourites.user_id = USERID)) AS favourite", map[string]interface{}{"USERID": me}),
+	).FROM(
+		Ads.AS("ads").LEFT_JOIN(Users.AS("users").Table, Users.ID.EQ(Ads.Owner)).
+			LEFT_JOIN(Categories.AS("categories").Table, Categories.ID.EQ(Ads.Category)).
+			LEFT_JOIN(Cities.AS("cities").Table, Cities.ID.EQ(Ads.City)).
+			LEFT_JOIN(Counties.AS("counties").Table, Counties.ID.EQ(Cities.County)).
+			LEFT_JOIN(Transactions.AS("transactions").Table, Transactions.AdID.EQ(Ads.ID)),
 	).ORDER_BY(
-		Raw("ad_promotion_index(transactions.amount, ads.published, ads.valid_through) DESC"),
+		Raw("ad_promotion_index(COALESCE(transactions.amount, 0), ads.published, ads.valid_through) DESC"),
+		Raw("ads.published desc"),
 	).WHERE(
-		BoolExp(Raw("ad_promotion_index(transactions.amount, ads.published, ads.valid_through) > 0")),
+		Ads.Category.EQ(Int64(ad.Category.ID)),
+	).OFFSET(
+		offset,
+	).LIMIT(
+		limit,
 	)
 
-	if filter.Limit != nil && *filter.Limit > 0 {
-		smtp = smtp.LIMIT(*filter.Limit)
-	}
-
-	if filter.Offset != nil && *filter.Offset >= 0 {
-		smtp = smtp.OFFSET(*filter.Offset)
-	}
-
-	sql, params := smtp.Sql()
+	sql, params := stmt.Sql()
 
 	conn := c.DB()
 	defer conn.Release()
 
-	rows, err := conn.Query(context.TODO(), sql, params...)
+	rows, err := conn.Query(
+		context.Background(),
+		sql,
+		params...,
+	)
 
 	if err != nil {
 		c.Log().Error(err)
@@ -485,8 +538,6 @@ func GetPromotionAds(me int64, filter Filter) (ads []*Ad) {
 
 		err = scanAd(rows, ad)
 
-		ad.Promotion = true
-
 		if err != nil {
 			c.Log().Error(err)
 			return ads
@@ -496,10 +547,6 @@ func GetPromotionAds(me int64, filter Filter) (ads []*Ad) {
 	}
 
 	return ads
-}
-
-func GetRecommendedAds(filter Filter) (ads []*Ad) {
-	return
 }
 
 func GetFavouriteAds(me int64, offset, limit int64) (ads []*Ad) {

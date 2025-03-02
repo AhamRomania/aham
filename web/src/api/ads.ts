@@ -65,3 +65,7 @@ export async function removeAd(id:number): Promise<void> {
 export async function publishAd(id:number): Promise<void> {
     return await getApiFetch()(`/ads/${id}/publish`,{success: true, method: 'POST'});
 }
+
+export async function getRecommendedAds(id:number): Promise<Ad[]> {
+    return await getApiFetch()(`/ads/${id}/recommended`);
+}
