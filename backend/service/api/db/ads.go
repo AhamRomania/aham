@@ -850,7 +850,7 @@ func getAdSqlBuilder(me int64) SelectStatement {
 		Raw("users.given_name"),
 		Raw("users.family_name"),
 		Raw("CONCAT('/',get_category_href(ads.category)::text, '/', ads.slug, '-', ads.id) as href"),
-		Raw("ad_promotion_index(COALESCE(transactions.amount, 0), ads.published, ads.valid_through) > 0 as promotion"),
+		Raw("COALESCE(transactions.amount, 0) > 0 as promotion"),
 		Ads.Cycle,
 		Ads.Published,
 		Ads.ValidThrough,
