@@ -52,14 +52,7 @@ func AdsRoutes(r chi.Router) {
 }
 
 func recommended(w http.ResponseWriter, r *http.Request) {
-
-	userID, err := c.UserID(r)
-
-	if err != nil {
-		http.Error(w, "unauthorized", http.StatusUnauthorized)
-		return
-	}
-
+	userID, _ := c.UserID(r)
 	render.JSON(w, r, db.GetRecommendedAds(userID, c.ID(r, "id"), 0, 20))
 }
 
