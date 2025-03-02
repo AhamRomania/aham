@@ -57,6 +57,10 @@ func (tpsi *ThirdPartySignIn) GetUser() (user *db.User, err error) {
 		return nil, err
 	}
 
+	if info.Email == "" {
+		return nil, errors.New("email expected")
+	}
+
 	user, _ = db.GetUserByEmail(info.Email)
 
 	if user == nil {
