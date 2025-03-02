@@ -20,12 +20,11 @@ export const metadata = seo("/", {
 });
 
 export default async function Home() {
-  const recommended = await getRecommendedAds(0);
   return (
     <HomepageLayout>
       <CategoryListSection category={await fetchCategory(1)} />
       <CategoryListSection category={await fetchCategory(2)} />
-      <MoreAds title="Recomandate" ads={recommended} />
+      <MoreAds title="Recomandate" ads={await getRecommendedAds(0)} />
     </HomepageLayout>
   );
 }
