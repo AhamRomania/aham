@@ -65,16 +65,13 @@ export default function Page() {
         if (response.authResponse) {
           const access_token = response.authResponse.accessToken; //get access token
           const user_id = response.authResponse.userID; //get FB UID
-          api("/auth/facebook", {
+          api<AuthInfo>("/auth/facebook", {
             method: "POST",
             body: JSON.stringify({
               access_token,
               user_id,
             }),
-          }).then(() => {
-            setDialogOpen(true);
-            setDialogMessage("Eroare la conectarea cu Facebook.");
-          });
+          }).then(onAuthSuccess).catch(onAuthFail);
         } else {
           setDialogOpen(true);
           setDialogMessage("Eroare la conectarea cu Facebook.");
@@ -127,6 +124,26 @@ export default function Page() {
     track("login/view");
   }, []);
 
+  const onAuthSuccess = (data: AuthInfo) => {
+    setAccessToken(data);
+    setLoggingIn(false);
+    setTimeout(() => {
+        const query = new URLSearchParams(window.location.search);
+        if (query.get("then")) {
+        router.push(query.get("then") as string);
+        } else {
+        router.push(`/u/anunturi/creaza`);
+        }
+        router.refresh();
+    }, 0);
+  }
+
+  const onAuthFail = () => {
+    track("login/failed");
+    setLoggingIn(false);
+    alert("Nu m-am putut loga");
+  }
+
   return (
     <>
       <div
@@ -166,24 +183,8 @@ export default function Page() {
               method: "POST",
               body: JSON.stringify(formJson),
             })
-              .then((data: AuthInfo) => {
-                setAccessToken(data);
-                setLoggingIn(false);
-                setTimeout(() => {
-                  const query = new URLSearchParams(window.location.search);
-                  if (query.get("then")) {
-                    router.push(query.get("then") as string);
-                  } else {
-                    router.push(`/u/anunturi/creaza`);
-                  }
-                  router.refresh();
-                }, 0);
-              })
-              .catch(() => {
-                track("login/failed", formJson);
-                setLoggingIn(false);
-                alert("Nu m-am putut loga");
-              });
+              .then(onAuthSuccess)
+              .catch(onAuthFail);
           }}
         >
           <Stack spacing={1}>
