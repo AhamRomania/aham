@@ -10,31 +10,36 @@ import Tip from "@/c/tooltip";
 import { AuthInfo } from "@/c/types";
 import { css } from "@emotion/react";
 import { Facebook, Google } from "@mui/icons-material";
-import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
-import { Button, CircularProgress, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Input, Modal, ModalDialog, Stack } from "@mui/joy";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
+import {
+  Button,
+  CircularProgress,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  Input,
+  Modal,
+  ModalDialog,
+  Stack,
+} from "@mui/joy";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-
 declare const FB: any;
 
-//declare const gapi: any;
+declare const gapi: any;
 
 export default function Page() {
-  
   const router = useRouter();
   const api = getApiFetch();
 
   const [loggingIn, setLoggingIn] = useState(false);
   const [config, setConfig] = useState<Config>({} as Config);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogMessage] = useState<string>('');
-
-  useEffect(() => {
-    getConfig().then(setConfig);
-    track('login/view');
-  }, []);
+  const [dialogMessage, setDialogMessage] = useState<string>("");
 
   useEffect(() => {
     if (config && window && document) {
@@ -55,81 +60,72 @@ export default function Page() {
   });
 
   const loginWithFacebook = () => {
-    track('login/facebook/click');
-    alert('Vă rugăm folosiți formularul de înregistrare');
-    router.push('/cont');
-    return
-    /*FB.login(
-      
+    FB.login(
       function (response: any) {
         if (response.authResponse) {
           const access_token = response.authResponse.accessToken; //get access token
           const user_id = response.authResponse.userID; //get FB UID
-          api('/auth/facebook',{
-            method:'POST',
+          api("/auth/facebook", {
+            method: "POST",
             body: JSON.stringify({
               access_token,
               user_id,
-            })
+            }),
           }).then(() => {
-            setDialogOpen(true)
-            setDialogMessage('Eroare la conectarea cu Facebook.')
-          })
+            setDialogOpen(true);
+            setDialogMessage("Eroare la conectarea cu Facebook.");
+          });
         } else {
-          setDialogOpen(true)
-          setDialogMessage('Eroare la conectarea cu Facebook.')
+          setDialogOpen(true);
+          setDialogMessage("Eroare la conectarea cu Facebook.");
         }
       },
       {
         scope: "public_profile,email",
       }
-    );*/
+    );
   };
 
-  const setupGoogleLoginButton = () => {
-    track('login/google/click');
-    alert('Vă rugăm folosiți formularul de înregistrare');
-    router.push('/cont');
-    return
-    /*
+  useEffect(() => {
     if (config && config.GOOGLE_CLIENT_ID && window && document) {
-      
       const script = document.createElement("script");
       const body = document.getElementsByTagName("body")[0];
       script.src = "https://apis.google.com/js/api:client.js";
 
       script.addEventListener("load", () => {
-        
         gapi.load("auth2", function (auth2: any) {
-          // Retrieve the singleton for the GoogleAuth library and set up the client.
+
           auth2 = gapi.auth2.init({
             client_id: config.GOOGLE_CLIENT_ID,
-            //cookiepolicy: "single_host_origin",
+            cookiepolicy: "single_host_origin",
           });
 
           const element = document.getElementById("connect_with_google");
 
           auth2.attachClickHandler(
             element,
-            {},
-            
+            {scope: "profile email"},
             function (googleUser: any) {
               console.log(googleUser.getBasicProfile());
             },
-            
             function (error: any) {
-              setDialogOpen(true)
-              setDialogMessage('Eroare la conectarea cu Google. Detalii: ' + error.error)
+              setDialogOpen(true);
+              setDialogMessage(
+                "Eroare la conectarea cu Google. Detalii: " + error.error
+              );
             }
           );
         });
       });
 
       body.appendChild(script);
-
     }
-    */
-  }
+  }, [config]);
+
+  useEffect(() => {
+    getConfig().then(setConfig);
+    track("login/view");
+  }, []);
 
   return (
     <>
@@ -169,23 +165,25 @@ export default function Page() {
             api<AuthInfo>("/auth", {
               method: "POST",
               body: JSON.stringify(formJson),
-            }).then((data:AuthInfo) => {
-              setAccessToken(data)
-              setLoggingIn(false);
-              setTimeout(() => {
-                const query = new URLSearchParams(window.location.search);
-                if (query.get('then')) {
-                    router.push(query.get('then') as string);
-                } else {
+            })
+              .then((data: AuthInfo) => {
+                setAccessToken(data);
+                setLoggingIn(false);
+                setTimeout(() => {
+                  const query = new URLSearchParams(window.location.search);
+                  if (query.get("then")) {
+                    router.push(query.get("then") as string);
+                  } else {
                     router.push(`/u/anunturi/creaza`);
-                }
-                router.refresh();
-              },0);
-            }).catch(() => {
-              track('login/failed',formJson);
-              setLoggingIn(false);
-              alert('Nu m-am putut loga');
-            });
+                  }
+                  router.refresh();
+                }, 0);
+              })
+              .catch(() => {
+                track("login/failed", formJson);
+                setLoggingIn(false);
+                alert("Nu m-am putut loga");
+              });
           }}
         >
           <Stack spacing={1}>
@@ -206,7 +204,7 @@ export default function Page() {
               required
             />
             <Button size="lg" type="submit" data-test="login-submit">
-              {loggingIn ? <CircularProgress size="sm"/> : 'Intră'}
+              {loggingIn ? <CircularProgress size="sm" /> : "Intră"}
             </Button>
           </Stack>
         </form>
@@ -230,7 +228,6 @@ export default function Page() {
             <div>
               <Tip title="Conectare cu Google">
                 <IconButton
-                  onClick={() => setupGoogleLoginButton()}
                   id="connect_with_google"
                   variant="outlined"
                   size="lg"
@@ -281,17 +278,18 @@ export default function Page() {
             Conectare cu terțe servicii
           </DialogTitle>
           <Divider />
-          <DialogContent>
-            {dialogMessage}
-          </DialogContent>
+          <DialogContent>{dialogMessage}</DialogContent>
           <DialogActions>
-            <Button variant="solid" color="danger" onClick={() => setDialogOpen(false)}>
+            <Button
+              variant="solid"
+              color="danger"
+              onClick={() => setDialogOpen(false)}
+            >
               OK
             </Button>
           </DialogActions>
         </ModalDialog>
       </Modal>
-
     </>
   );
 }
