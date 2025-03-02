@@ -434,13 +434,14 @@ func (ad *Ad) Save(tx pgx.Tx) error {
 }
 
 type Filter struct {
-	Query    *string `json:"query"`
-	Mode     string  `json:"mode"`
-	Limit    *int64  `json:"limit"`
-	Offset   *int64  `json:"offset"`
-	Category *int64  `json:"category"`
-	ID       *int64  `json:"id"`
-	Owner    *int64  `json:"owner"`
+	Query    *string  `json:"query"`
+	Mode     string   `json:"mode"`
+	Limit    *int64   `json:"limit"`
+	Offset   *int64   `json:"offset"`
+	Category *int64   `json:"category"`
+	Except   *[]int64 `json:"except"`
+	ID       *int64   `json:"id"`
+	Owner    *int64   `json:"owner"`
 }
 
 func GetRecommendedAds(me int64, id int64, offset, limit int64) (ads []*Ad) {
@@ -676,6 +677,17 @@ func GetAds(me int64, filter Filter) (ads []*Ad) {
 
 	if filter.Owner != nil {
 		where = append(where, Ads.Owner.EQ(Int64(*filter.Owner)))
+	}
+
+	if filter.Except != nil && len(*filter.Except) > 0 {
+
+		var ids = make([]Expression, 0)
+
+		for _, id := range *filter.Except {
+			ids = append(ids, Int64(id))
+		}
+
+		where = append(where, Ads.ID.NOT_IN(ids...))
 	}
 
 	if filter.Query != nil && *filter.Query != "" {

@@ -503,6 +503,7 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 	offset := c.QueryIntParam(r, "offset", -1)
 	limit := c.QueryIntParam(r, "limit", -1)
 	from := c.QueryIntParam(r, "from", 0)
+	except := c.QueryIntParam(r, "except", 0)
 	skipOwner := r.URL.Query().Get("skip-owner") == "true"
 
 	if mode == "" {
@@ -519,6 +520,10 @@ func GetAds(w http.ResponseWriter, r *http.Request) {
 
 	if limit != -1 {
 		filter.Limit = c.Int64P(limit)
+	}
+
+	if except != 0 {
+		filter.Except = &[]int64{except}
 	}
 
 	userID, errUserID := c.UserID(r)
