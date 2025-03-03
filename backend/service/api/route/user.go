@@ -118,6 +118,43 @@ func MeRoutes(r chi.Router) {
 	r.Get("/", c.Guard(GetCurrentUser))
 	r.Patch("/prefs", c.Guard(updateUserPref))
 	r.Get("/referrer", c.Guard(getReferrerURL))
+	r.Post("/picture", c.Guard(updatePicture))
+}
+
+type updatePictureRequest struct {
+	Picture string `json:"picture"`
+}
+
+func updatePicture(w http.ResponseWriter, r *http.Request) {
+
+	userID, err := c.UserID(r)
+
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	var req updatePictureRequest
+
+	if err := render.DecodeJSON(r.Body, &req); err != nil {
+		http.Error(w, "Failed to decode request body for setting avatar picture", http.StatusBadRequest)
+		return
+	}
+
+	conn := c.DB()
+	defer conn.Release()
+
+	_, err = conn.Exec(
+		context.TODO(),
+		`update users set picture = $1 where id = $2`,
+		req.Picture,
+		userID,
+	)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func getReferrerURL(w http.ResponseWriter, r *http.Request) {

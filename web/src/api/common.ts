@@ -13,6 +13,11 @@ export async function getMe():Promise<User | null> {
     });
 }
 
+
+export async function updateUserPicture(uuid: string):Promise<void> {
+    return await getApiFetch()(`/me/picture`,{method:'POST', body: JSON.stringify({"picture": uuid})});
+}
+
 export async function createReport(data: ReportData): Promise<void> {
     const api = getApiFetch();
     return new Promise((resolve, reject) => {

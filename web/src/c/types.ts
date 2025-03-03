@@ -3,7 +3,7 @@ export type User = {
     username?: string;
     given_name: string;
     family_name: string;
-    avatar?: string;
+    picture?: string;
     role: string;
 }
 

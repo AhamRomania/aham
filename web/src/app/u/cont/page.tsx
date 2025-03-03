@@ -9,6 +9,7 @@ import { Centred, PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { User } from "@/c/types";
 import AppList from "@/c/Widget/Apps";
+import AvatarEditor from "@/c/Widget/AvatarEditor";
 import NextFeature from "@/c/Widget/Feature";
 import AccountSection from "@/c/Widget/Section";
 import { Check, ContentCopy } from "@mui/icons-material";
@@ -81,7 +82,7 @@ export default function Page() {
     <Centred>
       <PageName right={<div style={{color: "#999"}}>ID: {me?.id}</div>}>Cont</PageName>
       <AccountSection title="Profil">
-        <NextFeature feature="account/profile">Schimbă avatar, număr de telefon, oraș.</NextFeature>
+        <AvatarEditor/>
       </AccountSection>
       <AccountSection title="Securitate">
         <NextFeature feature="account/security">Formular schimbare parolă</NextFeature>

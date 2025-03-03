@@ -10,6 +10,7 @@ import UserMenuDialog from "../Dialog/UserMenuDialog";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@mui/material";
+import getDomain, { Domain } from "../domain";
 
 export interface AccountBadgeProps {
   menu?: boolean;
@@ -76,7 +77,7 @@ const AccountBadge: FC<AccountBadgeProps> = ({ pre, menu }) => {
         `}
       >
         {pre}
-        <Avatar sx={{ borderRadius: "5px" }}>
+        <Avatar src={me.picture ? getDomain(Domain.Cdn) + '/' + me.picture : ''} sx={{ borderRadius: "5px" }}>
           <Face />
         </Avatar>
       </div>
