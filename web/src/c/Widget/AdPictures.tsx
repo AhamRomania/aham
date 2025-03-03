@@ -60,11 +60,11 @@ const AdPictures: FC<GalleryProps> = ({width, ad}) => {
                     `}
                 >
                     {/* eslint-disable-next-line @next/next/no-img-element*/}
-                    <img
+                    { src != '' && <img
                         ref={imgRef}
-                        src={src?src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=='}
+                        src={src?src:''}
                         alt="Gallery Image"
-                    />
+                    />}
                 </div>
                 {ad.pictures.length>1&&<Navigate
                     css={css`

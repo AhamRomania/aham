@@ -199,7 +199,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                     >
                         <div>
                             <h2>Descriere</h2>
-                            <p>{ad.description}</p>
+                            <p itemProp="description">{ad.description}</p>
                         </div>
                         {ad.props && Object.keys(ad.props||[]).length > 0 && <div>
                             <h2>Specificații</h2>
