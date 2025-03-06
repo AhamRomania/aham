@@ -1,5 +1,6 @@
 "use client";
 
+import { publishAd } from "@/api/ads";
 import getApiFetch from "@/api/api";
 import CategorySelector from "@/c/Categories/CategorySelector";
 import AutocompletePropValue from "@/c/Form/AutocompletePropValue";
@@ -11,7 +12,7 @@ import { useIsMobile } from "@/c/hooks/mobile";
 import { PageName } from "@/c/Layout";
 import { AccountLayoutContext } from "@/c/Layout/account";
 import { BouncingLogo } from "@/c/logo";
-import { Category, Prop } from "@/c/types";
+import { Ad, Category, Prop } from "@/c/types";
 import { css } from "@emotion/react";
 import {
   Button,
@@ -29,13 +30,14 @@ import {
 } from "@mui/joy";
 import { Backdrop } from "@mui/material";
 import Link from "next/link";
-import { FC, Fragment, useContext, useEffect, useState } from "react";
+import { FC, Fragment, useContext, useEffect, useRef, useState } from "react";
 
 export default function Page() {
   const { setPath } = useContext(AccountLayoutContext);
   const api = getApiFetch();
   const isMobile = useIsMobile();
 
+  const formRef = useRef<HTMLFormElement>(null);
   const [currency, setCurrency] = useState("LEI");
   const [category, setCategory] = useState<Category | null>(null);
   const [descriptionCharCount, setDescriptionCharCount] = useState(0);
@@ -166,38 +168,49 @@ export default function Page() {
     return values;
   };
 
+  const createNewAd = (publish?:boolean) => {
+    const formData = new FormData(formRef.current as HTMLFormElement);
+    const data = Object.fromEntries((formData as any).entries());
+    setSavingAd(true);
+    api<Ad>(`/ads`, {
+        method: "POST",
+        body: JSON.stringify({
+            category: parseInt(data.category),
+            description: data.description,
+            messages: data.messages === "on",
+            show_phone: data.phone === "on",
+            phone: data.phone || "",
+            pictures: (data.pictures || "").split(","),
+            currency: currency,
+            price: toCents(data.price),
+            title: data.title,
+            props: getFormDataProps(data),
+        }),
+    })
+    .then((ad: Ad) => {
+        if (publish) {
+            publishAd(ad.id).then(() => {
+                window.location.href = "/u/anunturi/aprobare?id=" + ad.id;
+            }).catch(
+                () => {
+                    alert('Anunțul a fost adăugat însă nu am putut publica.');
+                }
+            )
+        } else {
+            window.location.href = "/u/anunturi?id=" + ad.id;
+        }
+    })
+    .catch((e) => {
+        setSavingAd(false);
+        console.log(e);
+    });
+  }
+
   return (
     <>
       <PageName>Crează anunț</PageName>
       <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          const formData = new FormData(event.currentTarget);
-          const data = Object.fromEntries((formData as any).entries());
-          setSavingAd(true);
-          api(`/ads`, {
-            method: "POST",
-            body: JSON.stringify({
-              category: parseInt(data.category),
-              description: data.description,
-              messages: data.messages === "on",
-              show_phone: data.phone === "on",
-              phone: data.phone || "",
-              pictures: (data.pictures || "").split(","),
-              currency: currency,
-              price: toCents(data.price),
-              title: data.title,
-              props: getFormDataProps(data),
-            }),
-          })
-            .then((response: any) => {
-              window.location.href = "/u/anunturi?id=" + response.id;
-            })
-            .catch((e) => {
-              setSavingAd(false);
-              console.log(e);
-            });
-        }}
+        ref={formRef}
         css={css`
           padding-bottom: 50px;
           .MuiFormControl-root {
@@ -345,7 +358,7 @@ export default function Page() {
               data-test="add-button"
               variant="outlined"
               size="lg"
-              type="submit"
+              onClick={() => createNewAd()}
               loading={savingAd}
             >
               Salvează
@@ -354,7 +367,7 @@ export default function Page() {
               data-test="add-button"
               variant="solid"
               size="lg"
-              type="submit"
+              onClick={() => createNewAd(true)}
               loading={savingAd}
             >
               Publică
