@@ -8,14 +8,14 @@ import (
 )
 
 func ProcessRuntimeUpdates() {
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(time.Second * 42)
 	defer ticker.Stop()
 	for range ticker.C {
-		verifyCompletedAds(ticker)
+		verifyCompletedAds()
 	}
 }
 
-func verifyCompletedAds(ticker *time.Ticker) {
+func verifyCompletedAds() {
 
 	conn := c.DB()
 	defer conn.Release()
@@ -37,7 +37,7 @@ func verifyCompletedAds(ticker *time.Ticker) {
 
 		if err := rows.Scan(&id); err != nil {
 			c.Log().Error(err)
-			return
+			continue
 		}
 
 		ad := db.GetAd(0, id)
@@ -47,21 +47,5 @@ func verifyCompletedAds(ticker *time.Ticker) {
 		if err := ad.Finish(); err != nil {
 			c.Log().Error(err)
 		}
-	}
-
-	row := conn.QueryRow(
-		context.TODO(),
-		`select valid_through from ads where status = 'published' order by valid_through ASC LIMIT 1`,
-	)
-
-	var nextValidThrough time.Time
-
-	if err := row.Scan(&nextValidThrough); err == nil {
-		wait := nextValidThrough.Sub(time.Now().Add(time.Hour * 2)) // fix
-		if wait > 0 {
-			ticker.Reset(wait)
-		}
-	} else {
-		ticker.Reset(time.Second * 5)
 	}
 }
