@@ -336,7 +336,7 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	m = resize.Resize(width, 0, m, resize.Lanczos3)
 
 	// add watermark
-	m = watermark(m)
+	//m = watermark(m)
 
 	buf := &bytes.Buffer{}
 
