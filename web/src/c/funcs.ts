@@ -183,3 +183,7 @@ export function unaccent(str: string): string {
 export function isBrowserContext(): boolean {
     return (typeof window !== 'undefined');
 }
+
+export function parseDescription(v: string) {
+    return v.replace(/\r?\n/g, '<br>');
+}

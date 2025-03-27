@@ -10,7 +10,7 @@ import AdCta from "../Widget/AdCta";
 import AdPictures from "../Widget/AdPictures";
 import MoreAds from "../Widget/MoreAds";
 import SocialShare from "../Widget/SocialShare";
-import { track } from "../funcs";
+import { parseDescription, track } from "../funcs";
 import { getUser } from "../Auth";
 import AdPanel from "../Widget/AdPanel";
 import ReportAdDialog from "../Dialog/Report";
@@ -199,7 +199,7 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                     >
                         <div>
                             <h2>Descriere</h2>
-                            <p itemProp="description">{ad.description}</p>
+                            <p itemProp="description" dangerouslySetInnerHTML={{__html:parseDescription(ad.description)}}></p>
                         </div>
                         {ad.props && Object.keys(ad.props||[]).length > 0 && <div>
                             <h2>Specificații</h2>
