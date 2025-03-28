@@ -4,7 +4,7 @@ import { css } from "@emotion/react";
 import { Breadcrumbs, CircularProgress, Stack } from "@mui/joy";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
-import { formatMoney } from "../formatter";
+import { dateTime, formatMoney } from "../formatter";
 import { Ad, Prop, User } from "../types";
 import AdCta from "../Widget/AdCta";
 import AdPictures from "../Widget/AdPictures";
@@ -15,6 +15,7 @@ import { getUser } from "../Auth";
 import AdPanel from "../Widget/AdPanel";
 import ReportAdDialog from "../Dialog/Report";
 import AdSpectsListing from "../Widget/AdSpecsListing";
+import dayjs from "dayjs";
 
 export interface AdPageProps {
     ad: Ad;
@@ -197,6 +198,16 @@ const AdPage:FC<AdPageProps> = ({ad,extra,props}) => {
                             }
                         `}
                     >
+                        <div
+                            title={dayjs(ad.published).format()}
+                            css={css`
+                                font-size: 12px;
+                                text-align: right;  
+                                color: #999;  
+                            `}
+                        >
+                            Publicat <strong>{dateTime(ad.published)}</strong>
+                        </div>
                         <div>
                             <h2>Descriere</h2>
                             <p itemProp="description" dangerouslySetInnerHTML={{__html:parseDescription(ad.description)}}></p>

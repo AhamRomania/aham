@@ -126,8 +126,8 @@ const AdPanel:FC<AdPanelProps> = ({ad}) => {
                     <span>Favorite</span>
                 </div>
                 <div>
-                    <strong>{dayjs(ad.created).diff(new Date(),'day')}</strong>
-                    <span>Zile Rămase</span>
+                    <strong>{dayjs(ad.valid_through).diff(dayjs(),'day')}</strong>
+                    <span>Zile afișare</span>
                 </div>
             </div>
             <div
