@@ -1,5 +1,7 @@
 # Aham Ads Platform [![Go](https://github.com/albulescu/aham/actions/workflows/go.yml/badge.svg)](https://github.com/albulescu/aham/actions/workflows/go.yml)
 
+[Open Website](http://aham.ro)
+
 **Essence guide:**
 - See great things
 - Things reveal themselfs so have patience
