@@ -218,10 +218,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isPasswordComplex(req.Password) {
-		http.Error(w, "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.", http.StatusBadRequest)
-		return
-	}
+	//if !isPasswordComplex(req.Password) {
+	//	http.Error(w, "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.", http.StatusBadRequest)
+	//	return
+	//}
 
 	password, err := bcrypt.GenerateFromPassword(
 		[]byte(req.Password),
