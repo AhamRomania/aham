@@ -31,7 +31,7 @@
     "emoji-dictionary": "^1.0.12",
     "js-cookie": "^3.0.5",
     "marked": "^15.0.6",
-    "next": "^15.1.5",
+    "next": "^15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-imask": "^7.6.1",
