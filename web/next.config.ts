@@ -4,7 +4,7 @@ import { version } from './package.json';
 const nextConfig: NextConfig = {
   publicRuntimeConfig: {
     version,
-    searchDefaultPlaceholder: 'Capace roți rotative',
+    searchDefaultPlaceholder: 'Jucarii copii',
   },
   reactStrictMode: true,
   compiler: {
