@@ -23,6 +23,7 @@ mkdir -p /var/www/aham.ro/web
 mkdir -p /var/www/aham.ro/blog
 mkdir -p /var/www/aham.ro/mail
 mkdir -p /var/www/aham.ro/certs
+mkdir -p /var/www/aham.ro/dl
 
 chmod 775 /var/www/aham.ro
 
@@ -37,6 +38,7 @@ certbot certonly --webroot -w /var/www/aham.ro/certs -d cdn.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d url.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d blog.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d mail.aham.ro
+certbot certonly --webroot -w /var/www/aham.ro/certs -d dl.aham.ro
 
 cp $ROOT_DIR/web/src/app/favicon.ico /var/www/aham.ro
 
