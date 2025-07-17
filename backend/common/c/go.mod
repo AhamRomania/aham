@@ -1,6 +1,6 @@
 module aham/common/c
 
-go 1.23.4
+go 1.24.5
 
 require (
 	github.com/golang-jwt/jwt/v4 v4.5.1

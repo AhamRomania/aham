@@ -1,6 +1,6 @@
 module aham/common/emails
 
-go 1.23.4
+go 1.24.5
 
 require github.com/mailgun/mailgun-go/v4 v4.21.0
 
