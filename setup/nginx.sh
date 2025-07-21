@@ -39,6 +39,7 @@ certbot certonly --webroot -w /var/www/aham.ro/certs -d url.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d blog.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d mail.aham.ro
 certbot certonly --webroot -w /var/www/aham.ro/certs -d dl.aham.ro
+certbot certonly --webroot -w /var/www/aham.ro/certs -d voka.games.aham.ro
 
 cp $ROOT_DIR/web/src/app/favicon.ico /var/www/aham.ro
 
