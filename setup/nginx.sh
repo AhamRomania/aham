@@ -24,6 +24,7 @@ mkdir -p /var/www/aham.ro/web
 mkdir -p /var/www/aham.ro/blog
 mkdir -p /var/www/aham.ro/mail
 mkdir -p /var/www/aham.ro/certs
+mkdir -p /var/www/aham.ro/games
 mkdir -p /var/www/aham.ro/dl
 
 chmod 775 /var/www/aham.ro
@@ -33,9 +34,23 @@ cp -f $SCRIPT_DIR/conf/maintenance.html /var/www/aham.ro/maintenance.html
 
 service nginx restart
 
-DOMAINS=(aham.ro api.aham.ro cdn.aham.ro url.aham.ro blog.aham.ro mail.aham.ro dl.aham.ro voka.games.aham.ro)
+DOMAINS=(
+    aham.ro
+    api.aham.ro
+    cdn.aham.ro
+    url.aham.ro
+    blog.aham.ro
+    mail.aham.ro
+    dl.aham.ro
+    games.aham.ro
+    api.games.aham.ro
+)
+
 for domain in "${DOMAINS[@]}"; do
-    certbot certonly --webroot -w /var/www/aham.ro/certs -d "$domain"
+    certbot certonly \
+        --webroot \
+        -w /var/www/aham.ro/certs \
+        -d "$domain"
 done
 
 cp $ROOT_DIR/web/src/app/favicon.ico /var/www/aham.ro
