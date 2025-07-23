@@ -19,3 +19,15 @@
 
 **Hosting candidates:**
 - thc.ro/servere-dedicate - 300 ron / m
+
+**Features**
+
+**UI**
+aham.ro/bazar/
+aham.ro/blog/
+aham.ro/jocuri/
+
+**DOMAINS**
+api.aham.ro
+cdn.aham.ro
+url.aham.ro
